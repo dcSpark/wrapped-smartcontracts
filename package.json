@@ -1,6 +1,26 @@
 {
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "lint": "solhint 'contracts/**/*.sol' && eslint . --max-warnings=0",
+    "format:check": "prettier --check 'contracts/**/*.sol' 'test/**/*.ts'",
+    "format": "prettier --write 'contracts/**/*.sol' 'test/**/*.ts'"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "hardhat": "^2.11.2"
-  }
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
+    "eslint": "^8.23.1",
+    "hardhat": "^2.11.2",
+    "pre-commit": "^1.2.2",
+    "pre-push": "^0.1.4",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "solhint": "^3.3.7"
+  },
+  "pre-commit": "format",
+  "pre-push": [
+    "lint",
+    "format:check"
+  ]
 }

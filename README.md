@@ -1,13 +1,5 @@
-# Sample Hardhat Project
+# Milkomeda Wrapped Smart Contracts
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+[Shortcut Epic](https://app.shortcut.com/dcspark/epic/7930)
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+[Proposal](https://docs.google.com/document/d/1tbhMmctw6RQKW_UUox0qOnqhOfBe7uHRO0sMx7Isaac)
