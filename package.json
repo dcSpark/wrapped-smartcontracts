@@ -1,13 +1,26 @@
 {
   "scripts": {
+    "postinstall": "cp .env.example .env",
     "test": "hardhat test",
     "compile": "hardhat compile",
+    "dev": "ts-node-dev server/index.ts",
+    "build": "tsc server/*.ts --outDir build --resolveJsonModule --esModuleInterop",
+    "start": "node build/server/index.js",
     "lint": "solhint 'contracts/**/*.sol' && eslint . --max-warnings=0",
     "format:check": "prettier --check 'contracts/**/*.sol' 'test/**/*.ts'",
     "format": "prettier --write 'contracts/**/*.sol' 'test/**/*.ts'"
   },
+  "dependencies": {
+    "@prisma/client": "^4.3.1",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.2",
+    "ethers": "^5.7.1",
+    "express": "^4.18.1"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@types/express": "^4.17.14",
+    "@types/node": "^18.7.20",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "eslint": "^8.23.1",
@@ -16,7 +29,9 @@
     "pre-push": "^0.1.4",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
-    "solhint": "^3.3.7"
+    "prisma": "^4.3.1",
+    "solhint": "^3.3.7",
+    "ts-node-dev": "^2.0.0"
   },
   "pre-commit": "format",
   "pre-push": [

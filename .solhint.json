@@ -3,6 +3,8 @@
   "rules": {
     "compiler-version": "off",
     "func-visibility": ["warn", { "ignoreConstructors": true }],
-    "avoid-low-level-calls": "off"
+    "avoid-low-level-calls": "off",
+    "no-empty-blocks": "off",
+    "no-inline-assembly": "off"
   }
 }

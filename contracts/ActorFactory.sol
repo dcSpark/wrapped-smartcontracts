@@ -6,12 +6,17 @@ import {Actor} from "./Actor.sol";
 contract ActorFactory {
     event Deployed(address indexed actorAddress);
 
-    function deploy(
-        bytes32 salt,
-        bytes calldata txData,
-        address destinationContract
-    ) public {
-        Actor actor = new Actor{salt: salt}(txData, destinationContract);
-        emit Deployed(address(actor));
+    function deploy(bytes32 salt, bytes memory initCode) public {
+        address actor;
+
+        assembly {
+            actor := create2(callvalue(), add(initCode, 32), mload(initCode), salt)
+
+            if iszero(extcodesize(actor)) {
+                revert(0, 0)
+            }
+        }
+
+        emit Deployed(actor);
     }
 }

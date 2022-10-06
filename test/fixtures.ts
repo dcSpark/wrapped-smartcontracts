@@ -1,6 +1,7 @@
-import { artifacts, ethers } from "hardhat";
-import { ActorFactory, Actor__factory } from "../typechain-types";
+import { ethers } from "hardhat";
+import { ActorFactory } from "../typechain-types";
 import { BytesLike } from "@ethersproject/bytes";
+import { ActorConstructorArgs } from "../types/Actor";
 
 export const deployActorFactory = async () => {
   const factory = await ethers.getContractFactory("ActorFactory");
@@ -14,16 +15,18 @@ export const deployExampleContract = async () => {
 
 export const deployActor = async (
   actorFactory: ActorFactory,
+  actorName: string,
   salt: BytesLike,
-  ...actorParams: Parameters<Actor__factory["getDeployTransaction"]>
+  constructorArgs: ActorConstructorArgs
 ) => {
-  const initCodeHash = ethers.utils.keccak256(await getActorInitCode(...actorParams));
+  const initCode = await getActorInitCode(actorName, constructorArgs);
+  const initCodeHash = ethers.utils.keccak256(initCode);
 
   const actorAddress = ethers.utils.getCreate2Address(actorFactory.address, salt, initCodeHash);
 
-  await actorFactory.deploy(salt, ...actorParams);
+  await actorFactory.deploy(salt, initCode);
 
-  return await ethers.getContractAt("Actor", actorAddress);
+  return await ethers.getContractAt(actorName, actorAddress);
 };
 
 export const deployContracts = async () => {
@@ -34,18 +37,9 @@ export const deployContracts = async () => {
 };
 
 export const getActorInitCode = async (
-  ...constructorParameters: Parameters<Actor__factory["getDeployTransaction"]>
+  actorName: string,
+  { executeArgs, executeConditionArgs }: ActorConstructorArgs
 ) => {
-  const actorFactory = await ethers.getContractFactory("Actor");
-  return actorFactory.getDeployTransaction(...constructorParameters).data ?? [];
-};
-
-export const encodeTransaction = async (
-  contractName: string,
-  functionName: string,
-  parameters: unknown[]
-) => {
-  const artifact = await artifacts.readArtifactSync(contractName);
-  const iface = new ethers.utils.Interface(artifact.abi);
-  return iface.encodeFunctionData(functionName, parameters);
+  const factory = await ethers.getContractFactory(actorName);
+  return factory.getDeployTransaction(executeArgs, executeConditionArgs).data ?? [];
 };

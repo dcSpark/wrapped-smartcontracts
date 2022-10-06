@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-contract Actor {
-    bytes public txData;
-    address public destinationContract;
+abstract contract Actor {
+    bytes public _executeArgs;
+    bytes public _executeConditionArgs;
 
     bool public executed;
 
-    event Response(bool success, bytes data);
+    event Response(bytes response);
 
     modifier onlyOnce() {
         require(!executed, "Transaction was already executed");
@@ -15,13 +15,26 @@ contract Actor {
         executed = true;
     }
 
-    constructor(bytes memory _txData, address _destinationContract) {
-        txData = _txData;
-        destinationContract = _destinationContract;
+    constructor(bytes memory executeArgs, bytes memory executeConditionArgs) {
+        _executeArgs = executeArgs;
+        _executeConditionArgs = executeConditionArgs;
+    }
+
+    function canExecute() public view returns (bool) {
+        return executePredicate(_executeConditionArgs);
     }
 
     function execute() public onlyOnce {
-        (bool success, bytes memory data) = destinationContract.call(txData);
-        emit Response(success, data);
+        require(canExecute(), "Transaction condition not met");
+        bytes memory response = executeCallback(_executeArgs);
+        emit Response(response);
     }
+
+    function executePredicate(bytes memory executeConditionArgs)
+        public
+        view
+        virtual
+        returns (bool);
+
+    function executeCallback(bytes memory executeArgs) public virtual returns (bytes memory);
 }
