@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { deployContracts, getActorInitCode } from "./fixtures";
+import { deployContracts, encodePayload, getActorInitCode } from "./fixtures";
 
 describe("Factory", () => {
   it("should deploy successfully and return correct address", async () => {
@@ -9,13 +9,15 @@ describe("Factory", () => {
     const { actorFactory, exampleContract } = await loadFixture(deployContracts);
 
     const salt = ethers.utils.keccak256("0x01");
-    const executeArgs = ethers.utils.defaultAbiCoder.encode(
-      ["string", "address"],
-      ["Hello World", exampleContract.address]
+    const payload = encodePayload(
+      ["bool", "string", "address"],
+      [true, "Hello World", exampleContract.address]
     );
-    const executeConditionArgs = ethers.utils.defaultAbiCoder.encode(["bool"], [true]);
 
-    const initCode = await getActorInitCode("ExampleActor", { executeArgs, executeConditionArgs });
+    const initCode = await getActorInitCode("ExampleActor", {
+      payload,
+      emergencyWithdrawalTimeout: 42,
+    });
 
     const expectedActorAddress = ethers.utils.getCreate2Address(
       actorFactory.address,
@@ -29,6 +31,8 @@ describe("Factory", () => {
       .withArgs(expectedActorAddress);
 
     const actor = await ethers.getContractAt("ExampleActor", expectedActorAddress);
-    expect(await actor._executeArgs()).to.equal(executeArgs);
+    expect(await actor.emergencyWithdrawPossibleAt()).to.equal(
+      (await ethers.provider.getBlockNumber()) + 42
+    );
   });
 });

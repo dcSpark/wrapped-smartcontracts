@@ -4,34 +4,45 @@ pragma solidity ^0.8.15;
 import {Actor} from "../Actor.sol";
 import {ExampleContract} from "./ExampleContract.sol";
 
-contract ExampleActor is Actor {
-    constructor(bytes memory executeArgs, bytes memory executeConditionArgs)
-        Actor(executeArgs, executeConditionArgs)
-    {}
+import "hardhat/console.sol";
 
-    function executePredicate(bytes memory executeConditionArgs)
-        public
-        pure
-        override
-        returns (bool)
-    {
-        bool pass = abi.decode(executeConditionArgs, (bool));
-        return pass;
+contract ExampleActor is Actor {
+    struct Payload {
+        bool pass;
+        string message;
+        ExampleContract destinationContract;
     }
 
-    function executeCallback(bytes memory executeArgs)
-        public
-        view
-        override
-        returns (bytes memory)
-    {
-        (string memory message, ExampleContract destinationContract) = abi.decode(
-            executeArgs,
-            (string, ExampleContract)
-        );
+    constructor(bytes memory payload, uint256 emergencyWithdrawalTimeout)
+        Actor(payload, emergencyWithdrawalTimeout)
+    {}
 
-        string memory response = destinationContract.foo(message);
+    function executePredicate() internal view override returns (bool) {
+        Payload memory payload = _getPayload();
+        return payload.pass;
+    }
+
+    function executeCallback() internal view override returns (bytes memory) {
+        Payload memory payload = _getPayload();
+
+        string memory response = payload.destinationContract.foo(payload.message);
 
         return abi.encode(response);
+    }
+
+    function withdrawPredicate() internal pure override returns (bool) {
+        return true;
+    }
+
+    function withdrawCallback() internal pure override returns (bytes memory) {
+        return abi.encode(true);
+    }
+
+    function emergencyWithdrawCallback() internal pure override returns (bytes memory) {
+        return abi.encode(true);
+    }
+
+    function _getPayload() private view returns (Payload memory) {
+        return abi.decode(_payload, (Payload));
     }
 }

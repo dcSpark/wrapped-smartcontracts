@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, Transaction } from "ethers";
 import { Actor } from "../../typechain-types";
 import ActorArtifact from "../../artifacts/contracts/Actor.sol/Actor.json";
 import { onConfirmation, wallet, webSocketProvider } from "./blockchain.service";
@@ -8,18 +8,16 @@ const attachActor = (actorAddress: string) => {
 };
 
 const postExecute = async (receipt: ethers.ContractReceipt) => {
-  const responseEvent = receipt.events?.find(({ event }) => event === "Response");
+  const responseEvent = receipt.events?.find(({ event }) => event === "ExecuteResponse");
 
   if (!responseEvent?.args) throw new Error("Unexpected error, no response event");
 
   const { response } = responseEvent.args;
 
-  console.log(
-    `Actor execution sucessful: ${ethers.utils.defaultAbiCoder.decode(["string"], response)}`
-  );
+  console.log(`Actor execution sucessful: ${response}`);
 };
 
-export const execute = async (actorAddress: string): Promise<void> => {
+export const execute = async (actorAddress: string): Promise<Transaction> => {
   const actor = attachActor(actorAddress);
 
   if (!(await actor.canExecute())) throw new Error("Execute condition not met");
@@ -27,6 +25,8 @@ export const execute = async (actorAddress: string): Promise<void> => {
   const tx = await actor.connect(wallet).execute();
 
   onConfirmation(tx, postExecute);
+
+  return tx;
 };
 
 export const canExecute = async (actorAddress: string): Promise<boolean> =>

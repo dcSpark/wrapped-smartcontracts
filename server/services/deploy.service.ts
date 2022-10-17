@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, Transaction } from "ethers";
 import { abi as FactoryAbi } from "../../artifacts/contracts/ActorFactory.sol/ActorFactory.json";
 import { ActorFactory } from "../../typechain-types";
 import config from "../config";
@@ -13,12 +13,10 @@ export const actorFactory = new ethers.Contract(
 const getPostDeploy = (actorAddress: string) => async () =>
   console.log(`Actor deployed at: ${actorAddress}`);
 
-export interface DeployResponse {
-  actorAddress: string;
-  txHash: string;
-}
-
-export const deployActor = async (salt: string, initCode: string): Promise<DeployResponse> => {
+export const deployActor = async (
+  salt: string,
+  initCode: string
+): Promise<{ tx: Transaction; actorAddress: string }> => {
   const initCodeHash = ethers.utils.keccak256(initCode);
 
   const actorAddress = ethers.utils.getCreate2Address(actorFactory.address, salt, initCodeHash);
@@ -27,5 +25,5 @@ export const deployActor = async (salt: string, initCode: string): Promise<Deplo
 
   onConfirmation(tx, getPostDeploy(actorAddress));
 
-  return { actorAddress, txHash: tx.hash };
+  return { actorAddress, tx };
 };

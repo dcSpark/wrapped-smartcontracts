@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { canExecute } from "../services/execute.service";
+import { canWithdraw } from "../services/withdraw.service";
 
 export default async (req: Request, res: Response) => {
   const { actorAddress } = req.params;
 
   try {
     return res.json({
-      canExecute: await canExecute(actorAddress),
+      canWithdraw: await canWithdraw(actorAddress),
       success: true,
     });
   } catch (err) {

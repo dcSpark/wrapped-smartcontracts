@@ -1,9 +1,9 @@
 import axios from "axios";
 import { ethers } from "hardhat";
-import { DeployResponse } from "../server/services/deploy.service";
-import { getActorInitCode } from "../test/fixtures";
+import { encodePayload, getActorInitCode } from "../test/fixtures";
+import { ExampleContract } from "../typechain-types/dev";
 
-const main = async () => {
+const prepareExampleContract = async (): Promise<ExampleContract> => {
   const exampleFactory = await ethers.getContractFactory("ExampleContract");
   const exampleContract = await exampleFactory.deploy();
 
@@ -11,17 +11,24 @@ const main = async () => {
   await exampleContract.deployTransaction.wait();
   console.log("Example contract deployed");
 
-  const salt = ethers.utils.hashMessage(Date.now().toString());
-  const executeArgs = ethers.utils.defaultAbiCoder.encode(
-    ["string", "address"],
-    ["Hello World", exampleContract.address]
-  );
-  const executeConditionArgs = ethers.utils.defaultAbiCoder.encode(["bool"], [true]);
+  return exampleContract;
+};
 
-  const initCode = await getActorInitCode("ExampleActor", { executeArgs, executeConditionArgs });
+const main = async () => {
+  const exampleContract = await prepareExampleContract();
+
+  const salt = ethers.utils.hashMessage(Date.now().toString());
+
+  const initCode = await getActorInitCode("ExampleActor", {
+    payload: encodePayload(
+      ["bool", "string", "address"],
+      [true, "Hello World", exampleContract.address]
+    ),
+    emergencyWithdrawalTimeout: 0,
+  });
 
   console.log("Sending request to deploy actor");
-  const { data } = await axios.post<DeployResponse>("http://localhost:8080/deploy", {
+  const { data } = await axios.post("http://localhost:8080/deploy", {
     salt,
     initCode,
   });
