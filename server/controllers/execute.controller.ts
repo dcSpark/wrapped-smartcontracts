@@ -14,6 +14,6 @@ export default async (req: Request, res: Response) => {
     return res.status(200).json({ txHash, success: true });
   } catch (err) {
     const error = err as Error;
-    return res.status(400).json({ error: error.message });
+    return res.status(400).json({ error: error.message, success: false });
   }
 };
