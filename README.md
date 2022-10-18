@@ -14,12 +14,30 @@ To install dependencies run:
 npm install
 ```
 
+To create `.env` file run:
+
+```
+npm run create-env
+```
+
 ## Tests
 
-To run unit tests:
+To run all tests:
 
 ```
 npm test
+```
+
+To run only unit tests:
+
+```
+npm run unit-test
+```
+
+To run only integration tests:
+
+```
+npm run integration-test
 ```
 
 ## Project Description

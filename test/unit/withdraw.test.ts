@@ -1,8 +1,8 @@
 import { loadFixture, mine } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { SwapActor } from "../typechain-types";
-import { deployActor, deployContracts, encodePayload } from "./fixtures";
+import { SwapActor } from "../../typechain-types";
+import { deployActor, deployContracts, encodePayload } from "../fixtures";
 
 describe("Withdraw function", () => {
   it("should successfuly swap and withdraw", async () => {

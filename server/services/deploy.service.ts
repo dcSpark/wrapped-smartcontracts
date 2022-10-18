@@ -1,14 +1,6 @@
 import { ethers, Transaction } from "ethers";
-import { abi as FactoryAbi } from "../../artifacts/contracts/ActorFactory.sol/ActorFactory.json";
-import { ActorFactory } from "../../typechain-types";
-import config from "../config";
-import { onConfirmation, wallet, webSocketProvider } from "./blockchain.service";
-
-export const actorFactory = new ethers.Contract(
-  config.factoryAddress,
-  FactoryAbi,
-  webSocketProvider
-) as ActorFactory;
+import { actorFactory } from "./actor.service";
+import { onConfirmation, wallet } from "./blockchain.service";
 
 const getPostDeploy = (actorAddress: string) => async () =>
   console.log(`Actor deployed at: ${actorAddress}`);

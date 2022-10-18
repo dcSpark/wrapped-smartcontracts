@@ -18,7 +18,7 @@ const loadConfig = () => {
 
   return Object.freeze({
     port: loadNum("PORT", 8080),
-    websocketProviderUrl: loadStr("WEBSOCKET_PROVIDER", "ws://localhost:8545"),
+    providerUrl: loadStr("PROVIDER_URL", "ws://localhost:8545"),
     factoryAddress: loadStr("FACTORY_ADDRESS"),
     privateKey: loadStr("PRIVATE_KEY"),
     transactionConfirmations: loadNum("TRANSACTION_CONFIRMATIONS", 1),

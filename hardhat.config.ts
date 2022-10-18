@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import { config as dotenv } from "dotenv";
+import "./tasks/prepareChainForTests";
 
 dotenv();
 

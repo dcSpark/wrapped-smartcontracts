@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { deployActor } from "../services/deploy.service";
-import { wallet } from "../services/blockchain.service";
+import config from "../config";
 
 export default async (req: Request, res: Response) => {
   const { salt, initCode } = req.body;
@@ -10,8 +10,8 @@ export default async (req: Request, res: Response) => {
 
     return res.json({
       actorAddress,
+      factoryAddress: config.factoryAddress,
       txHash: tx.hash,
-      deployerAddress: wallet.address,
       success: true,
     });
   } catch (err) {

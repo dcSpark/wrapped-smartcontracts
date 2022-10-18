@@ -1,11 +1,6 @@
 import { ethers, Transaction } from "ethers";
-import { Actor } from "../../typechain-types";
-import ActorArtifact from "../../artifacts/contracts/Actor.sol/Actor.json";
-import { onConfirmation, wallet, webSocketProvider } from "./blockchain.service";
-
-const attachActor = (actorAddress: string) => {
-  return new ethers.Contract(actorAddress, ActorArtifact.abi, webSocketProvider) as Actor;
-};
+import { attachActor } from "./actor.service";
+import { onConfirmation, wallet } from "./blockchain.service";
 
 const postExecute = async (receipt: ethers.ContractReceipt) => {
   const responseEvent = receipt.events?.find(({ event }) => event === "ExecuteResponse");

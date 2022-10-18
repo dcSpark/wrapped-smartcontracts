@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import config from "../config";
 
-export const webSocketProvider = new ethers.providers.JsonRpcProvider(config.websocketProviderUrl);
+export const jsonRpcProvider = new ethers.providers.JsonRpcProvider(config.providerUrl);
 
-export const wallet = new ethers.Wallet(config.privateKey, webSocketProvider);
+export const wallet = new ethers.Wallet(config.privateKey, jsonRpcProvider);
 
 export const onConfirmation = (
   tx: ethers.ContractTransaction,

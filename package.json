@@ -1,7 +1,9 @@
 {
   "scripts": {
-    "postinstall": "cp .env.example .env",
-    "test": "hardhat test",
+    "create-env": "cp .env.example .env",
+    "test": "npm run unit-test && npm run integration-test",
+    "unit-test": "hardhat test test/unit/*",
+    "integration-test": "bash ./test/integration/run.sh",
     "compile": "hardhat compile",
     "dev": "ts-node-dev server/index.ts",
     "build": "tsc server/*.ts --outDir build --resolveJsonModule --esModuleInterop",
@@ -23,6 +25,7 @@
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
     "axios": "^1.0.0",
+    "chai-http": "^4.3.0",
     "eslint": "^8.23.1",
     "hardhat": "^2.11.2",
     "pre-commit": "^1.2.2",

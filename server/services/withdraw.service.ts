@@ -1,11 +1,6 @@
 import { ethers, Transaction } from "ethers";
-import { Actor } from "../../typechain-types";
-import ActorArtifact from "../../artifacts/contracts/Actor.sol/Actor.json";
-import { onConfirmation, wallet, webSocketProvider } from "./blockchain.service";
-
-const attachActor = (actorAddress: string) => {
-  return new ethers.Contract(actorAddress, ActorArtifact.abi, webSocketProvider) as Actor;
-};
+import { attachActor } from "./actor.service";
+import { onConfirmation, wallet } from "./blockchain.service";
 
 const postWithdraw = async (receipt: ethers.ContractReceipt) => {
   const responseEvent = receipt.events?.find(({ event }) => event === "WithdrawResponse");
@@ -33,7 +28,7 @@ export const withdraw = async (actorAddress: string): Promise<Transaction> => {
 export const emergencyWithdraw = async (actorAddress: string): Promise<Transaction> => {
   const actor = attachActor(actorAddress);
 
-  if (!(await actor.executed()) || !(await actor.canEmergencyWithdraw()))
+  if (!(await actor.canEmergencyWithdraw()))
     throw new Error("Emergency withdraw condition not met");
 
   const tx = await actor.connect(wallet).emergencyWithdraw();

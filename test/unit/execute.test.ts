@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { deployActor, deployContracts, encodePayload } from "./fixtures";
+import { deployActor, deployContracts, encodePayload } from "../fixtures";
 
 describe("Execute function", () => {
   it("should execute ExampleContract and get the correct return value", async () => {

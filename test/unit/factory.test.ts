@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { deployContracts, encodePayload, getActorInitCode } from "./fixtures";
+import { deployContracts, encodePayload, getActorInitCode } from "../fixtures";
 
 describe("Factory", () => {
   it("should deploy successfully and return correct address", async () => {
