@@ -24,11 +24,14 @@ result=$(npx hardhat prepare-chain-for-tests --network localhost)
 private_key=$(echo $result | cut -d " " -f 1)
 factory_address=$(echo $result | cut -d " " -f 2)
 
+echo "Building server"
+npm run build
+
 PROVIDER_URL=http://localhost:8545 \
 PRIVATE_KEY=$private_key \
 FACTORY_ADDRESS=$factory_address \
 PORT=8080 \
-npm run dev > /dev/null & wait_for_service server http://localhost:8080/ping
+npm start > /dev/null & wait_for_service server http://localhost:8080/ping
 server_pid=$!
 
 npx hardhat test --network localhost test/integration/**.test.ts
