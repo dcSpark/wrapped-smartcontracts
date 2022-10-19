@@ -70,5 +70,5 @@ export const getActorInitCode = async (
 };
 
 export const encodePayload = (types: string[], values: unknown[]) => {
-  return ethers.utils.defaultAbiCoder.encode([`typle(${types.join(",")})`], [values]);
+  return ethers.utils.defaultAbiCoder.encode([`tuple(${types.join(",")})`], [values]);
 };

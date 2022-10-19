@@ -4,8 +4,6 @@ pragma solidity ^0.8.15;
 import {Actor} from "../Actor.sol";
 import {ExampleContract} from "./ExampleContract.sol";
 
-import "hardhat/console.sol";
-
 contract ExampleActor is Actor {
     struct Payload {
         bool pass;
