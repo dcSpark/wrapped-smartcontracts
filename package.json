@@ -5,9 +5,9 @@
     "unit-test": "hardhat test test/unit/*",
     "integration-test": "bash ./test/integration/run.sh",
     "compile": "hardhat compile",
-    "dev": "ts-node-dev server/index.ts",
-    "build": "tsc server/*.ts --outDir build --resolveJsonModule --esModuleInterop",
-    "start": "node build/server/index.js",
+    "dev": "ts-node-dev oracle/index.ts",
+    "build": "tsc oracle/*.ts --outDir build --resolveJsonModule --esModuleInterop",
+    "start": "node build/oracle/index.js",
     "lint": "solhint 'contracts/**/*.sol' && eslint . --max-warnings=0",
     "format:check": "prettier --check 'contracts/**/*.sol' 'test/**/*.ts'",
     "format": "prettier --write 'contracts/**/*.sol' 'test/**/*.ts'"

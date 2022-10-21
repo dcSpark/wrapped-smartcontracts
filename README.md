@@ -74,9 +74,9 @@ The standard deployment method of the Actors could be a attack vector. The user 
 
 Since the `CREATE2` is an opcode, we need the `ActorFactory` smart contract to deploy the Actors. `ActorFactory` has 1 function `deploy` that takes two arguments `salt` and `initCode`. `initCode` is a transaction data to create the smart contract. It consists of the `Actor` bytecode and the constructor arguments.
 
-### Offchain Service
+### Oracle
 
-The offchain service is an API server intended to call the smart contracts functions. The user is able to communicate with the `Actor` or `ActorFactory` through the provided endpoints.
+The oracle is an offchain service API intended to call the smart contracts functions. The user is able to communicate with the `Actor` or `ActorFactory` through the provided endpoints.
 
 - POST `/deploy` - calls the factory and deploys the actor, expects 2 arguments `salt` and `initCode` in the body, consumes the gas
 

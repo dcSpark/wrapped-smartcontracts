@@ -5,7 +5,9 @@ import canWithdrawController from "./canWithdraw.controller";
 import deployController from "./deploy.controller";
 import emergencyWithdrawController from "./emergencyWithdraw.controller";
 import executeController from "./execute.controller";
+import factoryAddressController from "./factoryAddress.controller";
 import pingController from "./ping.controller";
+import signerAddressController from "./signerAddress.controller";
 import withdrawController from "./withdraw.controller";
 
 const app = express();
@@ -13,6 +15,8 @@ const app = express();
 app.use(express.json());
 
 app.get("/ping", pingController);
+app.get("/signerAddress", signerAddressController);
+app.get("/factoryAddress", factoryAddressController);
 
 app.post("/deploy", deployController);
 

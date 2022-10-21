@@ -10,7 +10,7 @@ COPY ./tasks ./tasks
 COPY ./contracts ./contracts
 RUN npm run compile
 
-COPY ./server ./server
+COPY ./oracle ./oracle
 ENV NODE_ENV=production
 RUN npm run build --ignore-scripts \
     && npm ci --omit=dev --ignore-scripts
@@ -25,4 +25,4 @@ WORKDIR ${APP}
 COPY --from=x-builder ${APP}/build ./build
 COPY --from=x-builder ${APP}/node_modules ./node_modules
 USER nonroot
-CMD ["build/server/index.js"]
+CMD ["build/oracle/index.js"]

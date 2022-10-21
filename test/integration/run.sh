@@ -24,20 +24,20 @@ result=$(npx hardhat prepare-chain-for-tests --network localhost)
 private_key=$(echo $result | cut -d " " -f 1)
 factory_address=$(echo $result | cut -d " " -f 2)
 
-echo "Building server"
+echo "Building oracle"
 npm run build
 
 PROVIDER_URL=http://localhost:8545 \
 PRIVATE_KEY=$private_key \
 FACTORY_ADDRESS=$factory_address \
 PORT=8080 \
-npm start > /dev/null & wait_for_service server http://localhost:8080/ping
-server_pid=$!
+npm start > /dev/null & wait_for_service oracle http://localhost:8080/ping
+oracle_pid=$!
 
 npx hardhat test --network localhost test/integration/**.test.ts
 return_code=$?
 
-kill $server_pid
+kill $oracle_pid
 kill $node_pid
 
 exit $return_code
