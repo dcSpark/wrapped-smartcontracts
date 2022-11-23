@@ -1,0 +1,21 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Codebase shared between other workspaces from the project.",
+  "license": "MIT",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build/"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "install": "tsc --build"
+  },
+  "dependencies": {
+    "@dcspark/cardano-multiplatform-lib-nodejs": "^3.1.1",
+    "@emurgo/cardano-message-signing-nodejs": "^1.0.1",
+    "typescript": "^4.9.3"
+  }
+}
