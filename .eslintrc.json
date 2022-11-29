@@ -18,6 +18,7 @@
   "rules": {},
   "ignorePatterns": [
     "node_modules",
-    "build"
+    "build",
+    "dist"
   ]
 }

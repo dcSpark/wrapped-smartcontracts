@@ -1,6 +1,5 @@
 {
   "name": "contracts",
-  "version": "1.0.0",
   "private": true,
   "description": "Milkomeda wrapped smart contracts related contracts",
   "license": "MIT",
@@ -9,8 +8,9 @@
     "test": "hardhat test --network dev"
   },
   "devDependencies": {
+    "@dcspark/cardano-multiplatform-lib-nodejs": "^3.1.1",
+    "@emurgo/cardano-message-signing-nodejs": "^1.0.1",
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "common": "*",
     "dotenv": "^16.0.3",
     "hardhat": "^2.12.2"
   }

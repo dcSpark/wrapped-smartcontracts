@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: "16"
 
+      - name: Preinstall
+        run: npm run prepare-artifacts
+
       - name: Install Dependencies
         run: npm install
 

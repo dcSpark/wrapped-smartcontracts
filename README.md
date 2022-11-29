@@ -13,6 +13,7 @@ You need to have installed `node` and `npm`.
 To install dependencies run:
 
 ```
+npm run prepare-artifacts
 npm install
 ```
 

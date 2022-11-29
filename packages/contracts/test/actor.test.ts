@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { cip8 } from "common";
+import cip8 from "../utils/cip8";
 import { Actor } from "../typechain-types";
 import { getActorAddress, getActorFactory } from "./fixtures";
 
