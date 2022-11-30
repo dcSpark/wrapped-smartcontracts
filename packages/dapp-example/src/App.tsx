@@ -3,7 +3,7 @@ import React from "react";
 const App = () => {
   const inject = async () => {
     const provider = await import("provider");
-    provider.inject("https://rpc-devnet-cardano-evm.c1.milkomeda.com");
+    provider.inject("http://localhost:3000");
 
     alert("Injected");
   };
@@ -26,6 +26,15 @@ const App = () => {
     alert(result);
   };
 
+  const eth_blockNumber = async () => {
+    const result = (await window.ethereum.request({
+      method: "eth_blockNumber",
+      params: [],
+    })) as string;
+
+    alert(result);
+  };
+
   return (
     <>
       <div>
@@ -36,6 +45,9 @@ const App = () => {
       </div>
       <div>
         <button onClick={eth_accounts}>eth_accounts</button>
+      </div>
+      <div>
+        <button onClick={eth_blockNumber}>eth_blockNumber</button>
       </div>
     </>
   );

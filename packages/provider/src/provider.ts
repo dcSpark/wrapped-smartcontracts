@@ -32,12 +32,15 @@ class Provider implements MilkomedaProvider {
         method: payload.method,
         params: payload.params,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     const { result, error } = await reponse.json();
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error(result);
     }
 
     return result;
