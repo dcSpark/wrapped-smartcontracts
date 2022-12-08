@@ -1,9 +1,9 @@
 import { Buffer } from "buffer";
-import { CustomMethod, MilkomedaProvider } from "../types";
+import type { CustomMethod, MilkomedaProvider } from "../types";
 import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
 import { getActorAddress } from "../utils";
 
-const method: CustomMethod = async ({
+const eth_requestAccounts: CustomMethod = async ({
   cardanoProvider,
   actorFactoryAddress,
 }: MilkomedaProvider) => {
@@ -16,4 +16,4 @@ const method: CustomMethod = async ({
   return [getActorAddress(actorFactoryAddress, bech32Address)];
 };
 
-export default method;
+export default eth_requestAccounts;

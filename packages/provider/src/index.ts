@@ -1,5 +1,5 @@
 import Provider from "./provider";
-import { CardanoProvider, MilkomedaProvider } from "./types";
+import type { CardanoProvider, MilkomedaProvider } from "./types";
 
 declare global {
   interface Window {
@@ -8,9 +8,8 @@ declare global {
   }
 }
 
-export const inject = (oracleUrl: string) => {
-  // will be fetched from the client
-  const actorFactoryAddress = "0x0000000000000000000000000000000000000000";
+export const inject = (oracleUrl: string, jsonRpcProviderUrl) => {
+  window.ethereum = new Provider(oracleUrl, jsonRpcProviderUrl);
 
-  window.ethereum = new Provider(oracleUrl, actorFactoryAddress);
+  return window.ethereum;
 };

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "compile": "hardhat compile",
+    "updateGensis": "hardhat update-actor-factory ../../besu_data/genesis.json",
     "test": "hardhat test --network dev"
   },
   "devDependencies": {

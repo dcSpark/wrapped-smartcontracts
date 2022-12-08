@@ -1,15 +1,18 @@
 import { Buffer } from "buffer";
-import { CustomMethod, MilkomedaProvider } from "../types";
+import type { CustomMethod, MilkomedaProvider } from "../types";
 import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
 import { getActorAddress } from "../utils";
 
-const method: CustomMethod = async ({
+const eth_accounts: CustomMethod = async ({
   cardanoProvider,
   actorFactoryAddress,
 }: MilkomedaProvider) => {
   if (!(await cardanoProvider.isEnabled())) {
     return [];
   }
+
+  // After the page refresh the object needs to be enabled again
+  await cardanoProvider.enable();
 
   const address = await cardanoProvider.getChangeAddress();
 
@@ -18,4 +21,4 @@ const method: CustomMethod = async ({
   return [getActorAddress(actorFactoryAddress, bech32Address)];
 };
 
-export default method;
+export default eth_accounts;

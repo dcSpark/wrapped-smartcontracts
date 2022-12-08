@@ -6,7 +6,10 @@
     "compile": "npm run compile -w ./packages/contracts",
     "lint": "solhint 'contracts/**/*.sol' && eslint . --max-warnings=0",
     "format:check": "prettier --check './**/*.{ts,sol}'",
-    "format": "prettier --write './**/*.{ts,sol}'"
+    "format": "prettier --write './**/*.{ts,sol}'",
+    "oracle:dev": "npm run dev -w ./packages/oracle",
+    "chain:start": "docker-compose up besu",
+    "chain:stop": "docker-compose down"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.38.0",
@@ -16,7 +19,8 @@
     "pre-push": "^0.1.4",
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
-    "solhint": "^3.3.7"
+    "solhint": "^3.3.7",
+    "wait-port": "^1.0.4"
   },
   "pre-commit": "format",
   "pre-push": [
@@ -24,6 +28,9 @@
     "format:check"
   ],
   "workspaces": [
-    "packages/*"
+    "packages/contracts",
+    "packages/dapp-example",
+    "packages/oracle",
+    "packages/provider"
   ]
 }

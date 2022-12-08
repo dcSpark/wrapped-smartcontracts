@@ -18,9 +18,15 @@ const loadConfig = () => {
 
   return Object.freeze({
     port: loadNum("PORT", 3000),
-    jsonRpcProviderUrl: loadStr(
-      "JSON_RPC_PROVIDER_URL",
-      "https://rpc-devnet-cardano-evm.c1.milkomeda.com"
+    actorFactoryAddress: loadStr(
+      "ACTOR_FACTORY_ADDRESS",
+      "0x0000000000000000000000000000000000111111"
+    ),
+    jsonRpcProviderUrl: loadStr("JSON_RPC_PROVIDER_URL", "http://localhost:8545"),
+    signerPrivateKey: loadStr(
+      "SIGNER_PRIVATE_KEY",
+      // private key corresponding to the funded account from testing genesis block
+      "0x35f9400884bdd60fdd1a769ebf39fa1c5b148072e68a5b2c8bc9ac2227c192b2"
     ),
   });
 };

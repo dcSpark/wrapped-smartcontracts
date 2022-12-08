@@ -1,19 +1,26 @@
 export interface RequestArguments {
   readonly method: string;
-  readonly params?: readonly unknown[] | object;
+  readonly params?: readonly unknown[];
 }
 
 export interface CardanoProvider {
   isEnabled(): Promise<boolean>;
   enable(): Promise<CardanoProvider>;
   getChangeAddress(): Promise<string>;
+  signData(addr: string, payload: string): Promise<{ key: string; signature: string }>;
 }
 
-export interface MilkomedaProvider {
+export interface EthereumProvider {
+  request(payload: RequestArguments): Promise<unknown>;
+}
+
+export interface MilkomedaProvider extends EthereumProvider {
   isMilkomeda: boolean;
   cardanoProvider: CardanoProvider | undefined;
   actorFactoryAddress: string;
-  request(payload: RequestArguments): Promise<unknown>;
+  setup(): Promise<void>;
+  oracleRequest<T>(payload: RequestArguments): Promise<T>;
+  providerRequest<T>(payload: RequestArguments): Promise<T>;
 }
 
 export type CustomMethod = (
