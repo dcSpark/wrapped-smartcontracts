@@ -45,7 +45,7 @@ const eth_sendTransaction: CustomMethod = async (
 
   return await provider.oracleRequest({
     method: "eth_sendActorTransaction",
-    params: [bech32Address, signedTransaction],
+    params: [signedTransaction],
   });
 };
 

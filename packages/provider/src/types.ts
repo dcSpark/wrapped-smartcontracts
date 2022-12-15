@@ -10,7 +10,7 @@ export interface CardanoProvider {
   signData(addr: string, payload: string): Promise<{ key: string; signature: string }>;
 }
 
-export interface EthereumProvider {
+export interface EthereumProvider extends NodeJS.EventEmitter {
   request(payload: RequestArguments): Promise<unknown>;
 }
 

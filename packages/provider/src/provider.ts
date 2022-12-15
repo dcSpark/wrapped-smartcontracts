@@ -1,7 +1,8 @@
 import type { CardanoProvider, MilkomedaProvider, RequestArguments } from "./types";
 import methods from "./methods/index";
+import EventEmitter from "events";
 
-class Provider implements MilkomedaProvider {
+class Provider extends EventEmitter implements MilkomedaProvider {
   public readonly isMilkomeda = true;
   public readonly cardanoProvider: CardanoProvider | undefined;
   public actorFactoryAddress: string;
@@ -9,6 +10,8 @@ class Provider implements MilkomedaProvider {
   private nextId = 1;
 
   constructor(private readonly oracleUrl: string, private readonly jsonRpcProviderUrl: string) {
+    super();
+
     if (!window.cardano) {
       throw new Error("Cardano provider not found");
     }
@@ -21,6 +24,8 @@ class Provider implements MilkomedaProvider {
       method: "eth_actorFactoryAddress",
       params: [],
     });
+
+    this.emit("connect");
   }
 
   async request(payload: RequestArguments): Promise<unknown> {
