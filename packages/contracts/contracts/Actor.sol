@@ -4,7 +4,7 @@ pragma solidity 0.8.15;
 import {ICardanoSigVerification} from "./ICardanoSigVerification.sol";
 
 contract Actor {
-    ICardanoSigVerification public immutable cardanoSigVerification =
+    ICardanoSigVerification public constant cardanoSigVerification =
         ICardanoSigVerification(address(0x66));
 
     string public mainchainAddress;
@@ -44,6 +44,8 @@ contract Actor {
         nonce++;
 
         (bool success, bytes memory responseData) = to.call{value: value}(payload);
+
+        require(success);
 
         emit Response(success, responseData);
 

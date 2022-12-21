@@ -17,7 +17,7 @@ const loadConfig = () => {
   dotenv.config();
 
   return Object.freeze({
-    port: loadNum("PORT", 3000),
+    port: loadNum("PORT", 8080),
     actorFactoryAddress: loadStr(
       "ACTOR_FACTORY_ADDRESS",
       "0x0000000000000000000000000000000000111111"

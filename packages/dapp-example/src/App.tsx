@@ -2,12 +2,12 @@ import { ethers } from "ethers";
 import React from "react";
 
 const RECEIVER_ADDRESS = "0x114bCceEC1A85be5eF46c903994B74DA2d41Ce53";
-const COUNTER_ADDRESS = "0xf1946044bc6784eaBDED2C6364980DEE89c819FB";
+const COUNTER_ADDRESS = "0xD1B76d20Dd685D783709810c5472f5C666cc881a";
 
 const App = () => {
   const inject = async () => {
     const provider = await import("provider");
-    await provider.inject("http://localhost:3000", "http://localhost:8545").setup();
+    await provider.inject("http://localhost:8080", "http://localhost:8545").setup();
 
     alert("Injected");
   };
@@ -53,8 +53,6 @@ const App = () => {
   const sendEther = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-
-    console.log(await provider.getBlockNumber());
 
     console.log(
       await signer.sendTransaction({

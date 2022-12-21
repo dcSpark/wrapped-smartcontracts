@@ -80,4 +80,4 @@ To run the dapp:
 npm start -w packages/dapp-example
 ```
 
-Dapp is running on [localhost:8080](http://localhost:8080).
+Dapp is running on [localhost:3000](http://localhost:3000).

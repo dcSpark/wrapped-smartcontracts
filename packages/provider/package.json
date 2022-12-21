@@ -1,6 +1,6 @@
 {
   "name": "provider",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A JavaScript Ethereum Provider API for milkomeda wrapped smart contracts.",
   "license": "MIT",
   "main": "build/index.js",

@@ -1,5 +1,10 @@
 import config from "../config";
-import { attachActor, getActorAddress } from "../services/actor.service";
+import {
+  actorFactory,
+  attachActor,
+  getActorAddress,
+  isActorDeployed,
+} from "../services/actor.service";
 import { wallet } from "../services/blockchain.service";
 import { getMainchainAddressFromSignature, verifySignature } from "../services/cardano.service";
 
@@ -20,11 +25,19 @@ const eth_sendActorTransaction = async ([signedTransaction]: [SignedTransaction]
 
   const actorAddress = getActorAddress(config.actorFactoryAddress, mainchainAddress.to_bech32());
 
-  const actor = attachActor(actorAddress);
+  if (await isActorDeployed(actorAddress)) {
+    const actor = attachActor(actorAddress);
 
-  const tx = await actor.connect(wallet).execute(rawSignature, rawKey);
+    const tx = await actor.connect(wallet).execute(rawSignature, rawKey);
 
-  return tx.hash;
+    return tx.hash;
+  } else {
+    const tx = await actorFactory
+      .connect(wallet)
+      .deployAndExecute(mainchainAddress.to_bech32(), `0x${"0".repeat(64)}`, rawSignature, rawKey);
+
+    return tx.hash;
+  }
 };
 
 export default eth_sendActorTransaction;
