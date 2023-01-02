@@ -16,5 +16,10 @@ describe("ActorFactory", () => {
     await expect(await factory.deploy(mainchainAddress, salt))
       .to.emit(factory, "Deployed")
       .withArgs(expectedActorAddress, mainchainAddress, salt);
+
+    const actor = await ethers.getContractAt("Actor", expectedActorAddress);
+
+    expect(await actor.mainchainAddress()).to.equal(mainchainAddress);
+    expect(await actor.nonce()).to.equal(0);
   });
 });

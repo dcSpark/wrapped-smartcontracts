@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("deploy:actor", "Deploy the Actor contract")
+task("actor:deploy", "Deploy the Actor contract")
   .addParam("actorFactory", "The address of the ActorFactory contract")
   .addParam("cardanoAddress", "The Cardano address of the actor")
   .setAction(async ({ actorFactory, cardanoAddress }, { ethers }) => {

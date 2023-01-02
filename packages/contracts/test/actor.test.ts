@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import cip8 from "../utils/cip8";
-import { Actor } from "../typechain-types";
+import { Actor, Counter } from "../typechain-types";
 import { getActorAddress, getActorFactory } from "./fixtures";
 
 describe("Actor", () => {
@@ -14,6 +14,7 @@ describe("Actor", () => {
 
   let actorAddress: string;
   let actor: Actor;
+  let counter: Counter;
 
   before(async () => {
     const factory = await getActorFactory();
@@ -23,6 +24,9 @@ describe("Actor", () => {
     await deployTx.wait();
 
     actor = await ethers.getContractAt("Actor", actorAddress);
+
+    const contractFactory = await ethers.getContractFactory("Counter");
+    counter = await contractFactory.deploy();
   });
 
   it("should send ether", async () => {
@@ -71,9 +75,8 @@ describe("Actor", () => {
 
   it("should call destination contract", async () => {
     // Arrange
-    const contractFactory = await ethers.getContractFactory("Counter");
-    const destination = await contractFactory.deploy();
-    const initialCount = await destination.count();
+    const destination = counter;
+    const initialCount = await counter.count();
 
     // Act
     const payload = ethers.utils.defaultAbiCoder
@@ -95,5 +98,130 @@ describe("Actor", () => {
 
     // Assert
     expect(await destination.count()).to.equal(initialCount.add(42));
+  });
+
+  it("should deploy and execute transaction", async () => {
+    // Arrange
+    const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
+    const factory = await getActorFactory();
+
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const payload = ethers.utils.defaultAbiCoder
+      .encode(
+        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
+        [0, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
+      )
+      .slice(2);
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload, "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    // Act
+    const deployTx = await factory.deployAndExecute(
+      mainchainAddress,
+      salt,
+      coseSign1.to_bytes(),
+      coseKey.to_bytes()
+    );
+
+    await deployTx.wait();
+
+    // Assert
+    const actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
+    const actor = await ethers.getContractAt("Actor", actorAddress);
+
+    expect(await destination.count()).to.equal(initialCount.add(42));
+    expect(await actor.nonce()).to.equal(1);
+  });
+
+  it("should revert if private key is invalid", async () => {
+    // Arrange
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const payload = ethers.utils.defaultAbiCoder
+      .encode(
+        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
+        [2, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
+      )
+      .slice(2);
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload, "hex"),
+      // bad private key,
+      "ed25519e_sk1tzvc2amgpuz9ryhgg37gcmk0280mu02ktfkzcx7a28qc68phe3dnppwe830teqt2wk3nflwhlyneexkn37vnkqlfv9wzk4hz62e6fkcyk83hj",
+      mainchainAddress
+    );
+
+    // Act
+    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should revert with not matching address", async () => {
+    // Arrange
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const payload = ethers.utils.defaultAbiCoder
+      .encode(
+        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
+        [2, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
+      )
+      .slice(2);
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload, "hex"),
+      privateKey,
+      // bad address
+      "addr_test1qpmh9svhrqxg7u6nqdxh44zlz0l2w22xc4zpwwfvj84cfwg2w3neh3dundxpwsr229yffepdec0z0yusftfn5teh6qwss2pt3j"
+    );
+
+    // Act
+    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should revert with incorrect nonce", async () => {
+    // Arrange
+    const destination = counter;
+    const initialCount = await counter.count();
+    const wrongNonce = 69;
+
+    const payload = ethers.utils.defaultAbiCoder
+      .encode(
+        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
+        [
+          wrongNonce,
+          destination.address,
+          0,
+          destination.interface.encodeFunctionData("increment", [42]),
+        ]
+      )
+      .slice(2);
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload, "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    // Act
+    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
   });
 });

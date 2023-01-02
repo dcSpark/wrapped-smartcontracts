@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-task("deploy:counter", "Deploy the testing counter contract").setAction(async (_, { ethers }) => {
+task("counter:deploy", "Deploy the testing counter contract").setAction(async (_, { ethers }) => {
   const factory = await ethers.getContractFactory("Counter");
 
   const contract = await factory.deploy();

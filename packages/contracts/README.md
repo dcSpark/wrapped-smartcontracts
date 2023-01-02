@@ -1,13 +1,19 @@
-# Sample Hardhat Project
+# Contracts
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Compiling
 
-Try running some of the following tasks:
+```bash
+npm run compile
+```
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+## Testing
+
+```bash
+npm run test
+```
+
+## Factory deploy
+
+```bash
+npx hardhat actor-factory:deploy
 ```

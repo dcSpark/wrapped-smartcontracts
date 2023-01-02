@@ -1,7 +1,10 @@
 import { task } from "hardhat/config";
 import fs from "fs";
 
-task("update-actor-factory", "Deploy the testing counter contract")
+task(
+  "actor-factory:update-genesis-block",
+  "Update the genesis block with the actor factory contract"
+)
   .addPositionalParam("genesisFile", "Genesis file")
   .setAction(async ({ genesisFile }, { ethers }) => {
     const genesis = JSON.parse(fs.readFileSync(genesisFile, "utf8"));
