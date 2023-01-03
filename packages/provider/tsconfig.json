@@ -10,7 +10,8 @@
     // Generate d.ts files
     "declaration": true,
     "outDir": "build",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "strict": true
   },
   "include": [
     "**/*.ts"

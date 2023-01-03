@@ -3,27 +3,31 @@ import { ethers } from "ethers";
 import type { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
 import { getActorAddress } from "../utils";
 import { Buffer } from "buffer";
+import { z } from "zod";
 
-interface SendTransactionPayload extends RequestArguments {
-  readonly params: readonly [
-    {
-      readonly from: string;
-      readonly to: string | undefined;
-      readonly gas: string | undefined;
-      readonly gasPrice: string | undefined;
-      readonly value: string | undefined;
-      readonly data: string;
-      readonly nonce: string | undefined;
-    }
-  ];
-}
+const InputSchema = z.tuple([
+  z.object({
+    from: z.string(),
+    to: z.string().optional(),
+    gas: z.string().optional(),
+    gasPrice: z.string().optional(),
+    value: z.string().optional(),
+    data: z.string().optional(),
+    nonce: z.string().optional(),
+  }),
+]);
 
 const eth_sendTransaction: CustomMethod = async (
   provider: MilkomedaProvider,
-  { params }: SendTransactionPayload
+  { params }: RequestArguments
 ) => {
+  if (provider.actorFactoryAddress === undefined) {
+    throw new Error("Actor factory address not set. Run setup() first.");
+  }
+
   const { cardanoProvider, actorFactoryAddress } = provider;
-  const [transaction] = params;
+
+  const [transaction] = InputSchema.parse(params);
 
   const { from, to, value, data, nonce } = transaction;
 

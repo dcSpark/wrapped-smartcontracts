@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-export const inject = (oracleUrl: string, jsonRpcProviderUrl) => {
+export const inject = (oracleUrl: string, jsonRpcProviderUrl: string) => {
   window.ethereum = new Provider(oracleUrl, jsonRpcProviderUrl);
 
   return window.ethereum;

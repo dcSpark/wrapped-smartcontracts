@@ -37,3 +37,23 @@ jobs:
 
       - name: Run tests
         run: docker run testing_image
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup NodeJS 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Preinstall
+        run: npm run prepare-artifacts
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build packages
+        run: npm run build

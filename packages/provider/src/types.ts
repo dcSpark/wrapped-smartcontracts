@@ -16,8 +16,8 @@ export interface EthereumProvider extends NodeJS.EventEmitter {
 
 export interface MilkomedaProvider extends EthereumProvider {
   isMilkomeda: boolean;
-  cardanoProvider: CardanoProvider | undefined;
-  actorFactoryAddress: string;
+  cardanoProvider: CardanoProvider;
+  actorFactoryAddress: string | undefined;
   setup(): Promise<void>;
   oracleRequest<T>(payload: RequestArguments): Promise<T>;
   providerRequest<T>(payload: RequestArguments): Promise<T>;

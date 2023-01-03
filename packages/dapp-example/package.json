@@ -3,8 +3,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build": "webpack --mode production"
+    "start": "webpack serve --mode development"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.190",

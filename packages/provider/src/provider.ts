@@ -4,15 +4,16 @@ import EventEmitter from "events";
 
 class Provider extends EventEmitter implements MilkomedaProvider {
   public readonly isMilkomeda = true;
-  public readonly cardanoProvider: CardanoProvider | undefined;
-  public actorFactoryAddress: string;
+  public readonly cardanoProvider: CardanoProvider;
+
+  public actorFactoryAddress: string | undefined = undefined;
 
   private nextId = 1;
 
   constructor(private readonly oracleUrl: string, private readonly jsonRpcProviderUrl: string) {
     super();
 
-    if (!window.cardano) {
+    if (window.cardano === undefined) {
       throw new Error("Cardano provider not found");
     }
 

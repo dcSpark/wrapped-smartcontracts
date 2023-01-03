@@ -7,6 +7,10 @@ const eth_requestAccounts: CustomMethod = async ({
   cardanoProvider,
   actorFactoryAddress,
 }: MilkomedaProvider) => {
+  if (actorFactoryAddress === undefined) {
+    throw new Error("Actor factory address not set. Run setup() first.");
+  }
+
   await cardanoProvider.enable();
 
   const address = await cardanoProvider.getChangeAddress();
