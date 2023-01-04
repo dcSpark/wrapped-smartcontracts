@@ -1,6 +1,7 @@
-import type { CardanoProvider, MilkomedaProvider, RequestArguments } from "./types";
+import { CardanoProvider, MilkomedaProvider, RequestArguments } from "./types";
 import methods from "./methods/index";
 import EventEmitter from "events";
+import { ProviderRpcError } from "./errors";
 
 class Provider extends EventEmitter implements MilkomedaProvider {
   public readonly isMilkomeda = true;
@@ -62,7 +63,7 @@ class Provider extends EventEmitter implements MilkomedaProvider {
     const { result, error } = await reponse.json();
 
     if (error) {
-      throw new Error(result);
+      throw new ProviderRpcError(error.message, error.code, error.data);
     }
 
     return result;

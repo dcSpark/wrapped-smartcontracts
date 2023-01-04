@@ -12,7 +12,7 @@ export const getActorAddress = (
 
   return ethers.utils.getCreate2Address(
     factoryAddress,
-    salt ? salt : `0x${"0".repeat(64)}`,
+    salt ? salt : ethers.constants.HashZero,
     initCodeHash
   );
 };

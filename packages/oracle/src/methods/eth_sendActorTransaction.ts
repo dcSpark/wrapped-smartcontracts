@@ -10,6 +10,8 @@ import { getMainchainAddressFromSignature, verifySignature } from "../services/c
 import { z } from "zod";
 import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
 import validationMiddleware from "./validationMiddleware";
+import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
+import { ethers } from "ethers";
 
 const InputSchema = z.tuple([
   z.object({
@@ -27,7 +29,7 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
   const mainchainAddress = getMainchainAddressFromSignature(coseSign1);
 
   if (!verifySignature(coseSign1, coseKey, mainchainAddress)) {
-    throw new Error("Invalid signature");
+    throw new JSONRPCErrorException("Invalid signature", JSONRPCErrorCode.InvalidRequest);
   }
 
   const actorAddress = getActorAddress(config.actorFactoryAddress, mainchainAddress.to_bech32());
@@ -41,7 +43,7 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
   } else {
     const tx = await actorFactory
       .connect(wallet)
-      .deployAndExecute(mainchainAddress.to_bech32(), `0x${"0".repeat(64)}`, signature, key);
+      .deployAndExecute(mainchainAddress.to_bech32(), ethers.constants.HashZero, signature, key);
 
     return tx.hash;
   }

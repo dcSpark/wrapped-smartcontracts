@@ -6,7 +6,7 @@ task("actor:deploy", "Deploy the Actor contract")
   .setAction(async ({ actorFactory, cardanoAddress }, { ethers }) => {
     const factory = await ethers.getContractAt("ActorFactory", actorFactory);
 
-    const tx = await factory.deploy(cardanoAddress, `0x${"0".repeat(64)}`);
+    const tx = await factory.deploy(cardanoAddress, ethers.constants.HashZero);
 
     const receipt = await tx.wait();
 
