@@ -43,7 +43,7 @@ const eth_sendTransaction: CustomMethod = async (
     const bech32Address = Address.from_bytes(Buffer.from(cardanoAddress, "hex")).to_bech32();
 
     if (from.toUpperCase() !== getActorAddress(actorFactoryAddress, bech32Address).toUpperCase()) {
-      throw new Error("Invalid from address");
+      throw new ProviderRpcError("Invalid from address", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 
     const payload = ethers.utils.defaultAbiCoder

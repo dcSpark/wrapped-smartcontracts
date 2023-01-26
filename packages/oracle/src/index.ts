@@ -47,8 +47,10 @@ const logMiddleware = async <ServerParams>(
 ) => {
   const response = await next(request, serverParams);
 
-  console.log(`Received ${JSON.stringify(request)}`);
-  console.log(`Responding ${JSON.stringify(response)}`);
+  if (config.env !== "test") {
+    console.log(`Received ${JSON.stringify(request)}`);
+    console.log(`Responding ${JSON.stringify(response)}`);
+  }
 
   return response;
 };
@@ -73,3 +75,5 @@ const exceptionMiddleware = async <ServerParams>(
 jsonRpcServer.applyMiddleware(logMiddleware, exceptionMiddleware);
 
 app.listen(config.port, () => console.log(`Server listening on port ${config.port}`));
+
+export default app;
