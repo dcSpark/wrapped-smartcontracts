@@ -3,7 +3,6 @@ import { abi as actorAbi } from "../artifacts/Actor.json";
 import { abi as actorFactoryAbi } from "../artifacts/ActorFactory.json";
 import type { Actor, ActorFactory } from "../typechain-types";
 import { provider } from "./blockchain.service";
-import actorArtifact from "../artifacts/Actor.json";
 import config from "../config";
 
 export const attachActor = (actorAddress: string) => {
@@ -21,18 +20,5 @@ export const isActorDeployed = async (actorAddress: string) => {
   return code !== "0x";
 };
 
-export const getActorAddress = (
-  factoryAddress: string,
-  mainchainAddress: string,
-  salt?: ethers.BytesLike
-) => {
-  const factory = ethers.ContractFactory.fromSolidity(actorArtifact);
-  const initCode = factory.getDeployTransaction(mainchainAddress).data ?? [];
-  const initCodeHash = ethers.utils.keccak256(initCode);
-
-  return ethers.utils.getCreate2Address(
-    factoryAddress,
-    salt ? salt : ethers.constants.HashZero,
-    initCodeHash
-  );
-};
+export const getActorAddress = async (mainchainAddress: string, salt?: ethers.BytesLike) =>
+  await actorFactory.getActorAddress(mainchainAddress, salt ?? ethers.constants.HashZero);

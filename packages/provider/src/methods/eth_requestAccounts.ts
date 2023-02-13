@@ -4,10 +4,9 @@ import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
 import { getActorAddress } from "../utils";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
 
-const eth_requestAccounts: CustomMethod = async ({
-  cardanoProvider,
-  actorFactoryAddress,
-}: MilkomedaProvider) => {
+const eth_requestAccounts: CustomMethod = async (provider: MilkomedaProvider) => {
+  const { cardanoProvider, actorFactoryAddress } = provider;
+
   if (actorFactoryAddress === undefined) {
     throw new ProviderRpcError(
       "Actor factory address not set. Run setup() first.",
@@ -22,7 +21,7 @@ const eth_requestAccounts: CustomMethod = async ({
 
     const bech32Address = Address.from_bytes(Buffer.from(address, "hex")).to_bech32();
 
-    return [getActorAddress(actorFactoryAddress, bech32Address)];
+    return [await getActorAddress(provider, bech32Address)];
   } catch (e) {
     throw new ProviderRpcError("Failed to get accounts", JSON_RPC_ERROR_CODES.INTERNAL_ERROR, e);
   }

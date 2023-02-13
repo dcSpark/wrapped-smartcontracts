@@ -22,7 +22,9 @@ const eth_sendTransaction: CustomMethod = async (
   provider: MilkomedaProvider,
   { params }: RequestArguments
 ) => {
-  if (provider.actorFactoryAddress === undefined) {
+  const { cardanoProvider, actorFactoryAddress } = provider;
+
+  if (actorFactoryAddress === undefined) {
     throw new ProviderRpcError(
       "Actor factory address not set. Run setup() first.",
       JSON_RPC_ERROR_CODES.DISCONNECTED
@@ -30,8 +32,6 @@ const eth_sendTransaction: CustomMethod = async (
   }
 
   try {
-    const { cardanoProvider, actorFactoryAddress } = provider;
-
     const [transaction] = InputSchema.parse(params);
 
     const { from, to, value, data, nonce } = transaction;
@@ -42,7 +42,7 @@ const eth_sendTransaction: CustomMethod = async (
     const cardanoAddress = await cardanoProvider.getChangeAddress();
     const bech32Address = Address.from_bytes(Buffer.from(cardanoAddress, "hex")).to_bech32();
 
-    if (from.toUpperCase() !== getActorAddress(actorFactoryAddress, bech32Address).toUpperCase()) {
+    if (from.toUpperCase() !== (await getActorAddress(provider, bech32Address)).toUpperCase()) {
       throw new ProviderRpcError("Invalid from address", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 

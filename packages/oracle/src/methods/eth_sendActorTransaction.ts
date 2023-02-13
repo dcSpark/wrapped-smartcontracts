@@ -1,4 +1,3 @@
-import config from "../config";
 import {
   actorFactory,
   attachActor,
@@ -32,7 +31,7 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
     throw new JSONRPCErrorException("Invalid signature", JSONRPCErrorCode.InvalidRequest);
   }
 
-  const actorAddress = getActorAddress(config.actorFactoryAddress, mainchainAddress.to_bech32());
+  const actorAddress = await getActorAddress(mainchainAddress.to_bech32());
 
   if (await isActorDeployed(actorAddress)) {
     const actor = attachActor(actorAddress);

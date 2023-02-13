@@ -12,9 +12,11 @@ describe("eth_getActorNonce", () => {
     "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
 
-  const actorAddress = getActorAddress(actorFactory.address, mainchainAddress, salt);
+  let actorAddress: string;
 
   before(async () => {
+    actorAddress = await getActorAddress(mainchainAddress, salt);
+
     const depositTx = await wallet.sendTransaction({
       to: actorAddress,
       value: ethers.utils.parseEther("1000"),

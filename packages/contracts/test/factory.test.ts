@@ -22,4 +22,16 @@ describe("ActorFactory", () => {
     expect(await actor.mainchainAddress()).to.equal(mainchainAddress);
     expect(await actor.nonce()).to.equal(0);
   });
+
+  it("should return correct address", async () => {
+    const mainchainAddress = "example_mainchain_address";
+    const salt = ethers.utils.hashMessage(Date.now().toString());
+
+    const factory = await getActorFactory();
+
+    const expectedActorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
+
+    // Act & Assert
+    expect(await factory.getActorAddress(mainchainAddress, salt)).to.equal(expectedActorAddress);
+  });
 });

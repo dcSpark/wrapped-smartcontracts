@@ -3,7 +3,7 @@ import chaiHttp from "chai-http";
 import { ethers } from "ethers";
 import server from "../../src";
 import eth_getActorNonce from "../../src/methods/eth_getActorNonce";
-import { actorFactory, getActorAddress } from "../../src/services/actor.service";
+import { getActorAddress } from "../../src/services/actor.service";
 import { provider, wallet } from "../../src/services/blockchain.service";
 import cip8 from "../cip8";
 
@@ -14,9 +14,12 @@ describe("eth_sendActorTransaction", () => {
     "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
   const privateKey =
     "ed25519e_sk1wzm7jmql8tnf3p4yx5seg389dhrg49z9j86a0hrwemehcx3he3dlvxcc663vxnl4anykugu9ttu94yfzuq5ulrxc6lckl647tm58jhqrr7at4";
-  const actorAddress = getActorAddress(actorFactory.address, mainchainAddress);
+
+  let actorAddress: string;
 
   before(async () => {
+    actorAddress = await getActorAddress(mainchainAddress);
+
     const depositTx = await wallet.sendTransaction({
       to: actorAddress,
       value: ethers.utils.parseEther("1000"),

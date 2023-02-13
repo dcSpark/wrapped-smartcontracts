@@ -24,4 +24,19 @@ contract ActorFactory {
 
         return actor.execute(signature, key);
     }
+
+    function getActorAddress(
+        string calldata mainchainAddress,
+        bytes32 salt
+    ) external view returns (address) {
+        bytes memory byteCode = type(Actor).creationCode;
+
+        bytes memory initCode = abi.encodePacked(byteCode, abi.encode(mainchainAddress));
+
+        bytes32 hash = keccak256(
+            abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(initCode))
+        );
+
+        return address(uint160(uint(hash)));
+    }
 }
