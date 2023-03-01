@@ -1,8 +1,9 @@
+import type { Actor, Counter, InfiniteLoop } from "../typechain-types";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import cip8 from "../utils/cip8";
-import { Actor, Counter } from "../typechain-types";
-import { getActorAddress, getActorFactory } from "./fixtures";
+import { encodePayload, getActorAddress, getActorFactory } from "./fixtures";
+import { ResponseEvent } from "../typechain-types/Actor";
 
 describe("Actor", () => {
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
@@ -15,22 +16,42 @@ describe("Actor", () => {
   let actorAddress: string;
   let actor: Actor;
   let counter: Counter;
+  let infiniteLoop: InfiniteLoop;
 
   before(async () => {
     const factory = await getActorFactory();
     actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
 
-    const deployTx = await factory.deploy(mainchainAddress, salt);
-    await deployTx.wait();
-
     actor = await ethers.getContractAt("Actor", actorAddress);
 
-    const contractFactory = await ethers.getContractFactory("Counter");
-    counter = await contractFactory.deploy();
+    const [signer] = await ethers.getSigners();
+
+    const depositGasTx = await signer.sendTransaction({
+      to: actorAddress,
+      value: ethers.utils.parseEther("2000000"),
+    });
+
+    const deployTx = await factory.deploy(mainchainAddress, salt);
+
+    const counterFactory = await ethers.getContractFactory("Counter");
+    counter = await counterFactory.deploy();
+
+    const infiniteLoopFactory = await ethers.getContractFactory("InfiniteLoop");
+    infiniteLoop = await infiniteLoopFactory.deploy();
+
+    await Promise.all([
+      depositGasTx.wait(),
+      deployTx.wait(),
+      counter.deployed(),
+      infiniteLoop.deployed(),
+    ]);
   });
 
   it("should send ether", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const gasBalance = await ethers.provider.getBalance(actorAddress);
+
     // Deposit 1000 ether to the actor
     const [signer] = await ethers.getSigners();
 
@@ -41,82 +62,134 @@ describe("Actor", () => {
 
     await depositTx.wait();
 
+    const originalSignerBalance = await ethers.provider.getBalance(signer.address);
+
     expect(await ethers.provider.getBalance(actorAddress)).to.equal(
-      ethers.utils.parseEther("1000")
+      ethers.utils.parseEther("1000").add(gasBalance)
     );
 
     const destination = ethers.Wallet.createRandom();
 
     // Act
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [0, destination.address, ethers.utils.parseEther("1000"), []]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: 0,
+      to: destination.address,
+      value: ethers.utils.parseEther("1000"),
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: [],
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
-    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes());
+    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
 
-    await executeTx.wait();
+    const receipt = await executeTx.wait();
+
+    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
 
     // Assert
     // should've send whole balance to the destination
-    expect(await ethers.provider.getBalance(actorAddress)).to.equal(0);
+    expect(await ethers.provider.getBalance(actorAddress)).to.equal(gasBalance.sub(paidForGas));
     expect(await ethers.provider.getBalance(destination.getAddress())).to.equal(
       ethers.utils.parseEther("1000")
     );
+
+    // Actor transaction should've succeeded
+    const responseEvent = receipt.events?.at(0) as ResponseEvent;
+    expect(responseEvent.args?.success).to.be.true;
+
+    // signer's balance should be left unchanged
+    expect(await ethers.provider.getBalance(signer.address)).to.equal(originalSignerBalance);
   });
 
   it("should call destination contract", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const [signer] = await ethers.getSigners();
+    const originalSignerBalance = await ethers.provider.getBalance(signer.address);
+
+    const gasBalance = await ethers.provider.getBalance(actorAddress);
+
     const destination = counter;
     const initialCount = await counter.count();
 
     // Act
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [1, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: 1,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
-    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes());
+    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
 
-    await executeTx.wait();
+    const receipt = await executeTx.wait();
+
+    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
 
     // Assert
+    expect(await ethers.provider.getBalance(actorAddress)).to.equal(gasBalance.sub(paidForGas));
     expect(await destination.count()).to.equal(initialCount.add(42));
+
+    // Actor transaction should've succeeded
+    const responseEvent = receipt.events?.at(0) as ResponseEvent;
+    expect(responseEvent.args?.success).to.be.true;
+
+    // signer's balance should be left unchanged
+    expect(await ethers.provider.getBalance(signer.address)).to.equal(originalSignerBalance);
   });
 
   it("should deploy and execute transaction", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const [signer] = await ethers.getSigners();
     const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
     const factory = await getActorFactory();
+
+    const actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
+
+    const gasBalance = ethers.utils.parseEther("2000000");
+
+    const depositGasTx = await signer.sendTransaction({
+      to: actorAddress,
+      value: gasBalance,
+    });
+
+    await depositGasTx.wait();
 
     const destination = counter;
     const initialCount = await counter.count();
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [0, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: 0,
+      to: destination.address,
+      value: 0,
+      gasLimit: 2_000_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
@@ -126,40 +199,118 @@ describe("Actor", () => {
       mainchainAddress,
       salt,
       coseSign1.to_bytes(),
-      coseKey.to_bytes()
+      coseKey.to_bytes(),
+      { gasLimit: 2_000_000, gasPrice }
     );
 
-    await deployTx.wait();
+    const receipt = await deployTx.wait();
+
+    console.log(receipt.gasUsed.mul(receipt.effectiveGasPrice));
+    console.log(gasBalance.sub(await ethers.provider.getBalance(actorAddress)));
 
     // Assert
-    const actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
     const actor = await ethers.getContractAt("Actor", actorAddress);
 
     expect(await destination.count()).to.equal(initialCount.add(42));
     expect(await actor.nonce()).to.equal(1);
   });
 
-  it("should revert if private key is invalid", async () => {
+  it("should revert if different gasLimit was provided", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
     const destination = counter;
     const initialCount = await counter.count();
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [2, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: 2,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    // Act
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 400_000,
+      gasPrice,
+    });
+
+    await expect(tx.wait()).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should revert if different gasPrice was provided", async () => {
+    // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const payload = encodePayload({
+      nonce: 2,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    // Act
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice: gasPrice.add(100),
+    });
+
+    await expect(tx.wait()).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should revert if private key is invalid", async () => {
+    // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const payload = encodePayload({
+      nonce: 2,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
       // bad private key,
       "ed25519e_sk1tzvc2amgpuz9ryhgg37gcmk0280mu02ktfkzcx7a28qc68phe3dnppwe830teqt2wk3nflwhlyneexkn37vnkqlfv9wzk4hz62e6fkcyk83hj",
       mainchainAddress
     );
 
-    // Act
-    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
+
+    await expect(tx.wait()).to.be.rejected;
 
     // Assert
     expect(await destination.count()).to.equal(initialCount);
@@ -168,25 +319,33 @@ describe("Actor", () => {
 
   it("should revert with not matching address", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
     const destination = counter;
     const initialCount = await counter.count();
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [2, destination.address, 0, destination.interface.encodeFunctionData("increment", [42])]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: 2,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       // bad address
       "addr_test1qpmh9svhrqxg7u6nqdxh44zlz0l2w22xc4zpwwfvj84cfwg2w3neh3dundxpwsr229yffepdec0z0yusftfn5teh6qwss2pt3j"
     );
 
     // Act
-    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
+
+    await expect(tx.wait()).to.be.rejected;
 
     // Assert
     expect(await destination.count()).to.equal(initialCount);
@@ -195,33 +354,82 @@ describe("Actor", () => {
 
   it("should revert with incorrect nonce", async () => {
     // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
     const destination = counter;
     const initialCount = await counter.count();
     const wrongNonce = 69;
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [
-          wrongNonce,
-          destination.address,
-          0,
-          destination.interface.encodeFunctionData("increment", [42]),
-        ]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce: wrongNonce,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
     // Act
-    await expect(actor.execute(coseSign1.to_bytes(), coseKey.to_bytes())).to.be.rejected;
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
+
+    await expect(tx.wait()).to.be.rejected;
 
     // Assert
     expect(await destination.count()).to.equal(initialCount);
     expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should call inifinite loop and finish refund", async () => {
+    // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const [signer] = await ethers.getSigners();
+    const originalSignerBalance = await ethers.provider.getBalance(signer.address);
+
+    const gasBalance = await ethers.provider.getBalance(actorAddress);
+
+    const destination = infiniteLoop;
+
+    // Act
+    const payload = encodePayload({
+      nonce: 2,
+      to: destination.address,
+      value: 0,
+      gasLimit: 1_000_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("loop"),
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 1_000_000,
+      gasPrice,
+    });
+
+    const receipt = await executeTx.wait();
+
+    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
+
+    // Assert
+    expect(await ethers.provider.getBalance(actorAddress)).to.equal(gasBalance.sub(paidForGas));
+
+    // Actor transaction should have failed
+    const responseEvent = receipt.events?.at(0) as ResponseEvent;
+    expect(responseEvent.args?.success).to.be.false;
+
+    // signer's balance should be left unchanged
+    expect(await ethers.provider.getBalance(signer.address)).to.equal(originalSignerBalance);
   });
 });

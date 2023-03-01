@@ -3,7 +3,7 @@ import chaiHttp from "chai-http";
 import { ethers } from "ethers";
 import server from "../../src";
 import eth_getActorNonce from "../../src/methods/eth_getActorNonce";
-import { getActorAddress } from "../../src/services/actor.service";
+import { encodePayload, getActorAddress } from "../../src/services/actor.service";
 import { provider, wallet } from "../../src/services/blockchain.service";
 import cip8 from "../cip8";
 
@@ -22,29 +22,32 @@ describe("eth_sendActorTransaction", () => {
 
     const depositTx = await wallet.sendTransaction({
       to: actorAddress,
-      value: ethers.utils.parseEther("1000"),
+      value: ethers.utils.parseEther("1500"),
     });
 
     await depositTx.wait();
   });
 
   it("should send transaction", async () => {
+    const gasPrice = await provider.getGasPrice();
+
     const nonce = +(await eth_getActorNonce([actorAddress]));
     const amount = ethers.utils.parseEther("500");
 
     const recipient = ethers.Wallet.createRandom();
     const recipientBeforeBalance = await provider.getBalance(recipient.address);
-    const actorBeforeBalance = await provider.getBalance(actorAddress);
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(
-        ["uint256", "address", "uint256", "bytes"], // nonce, to, value, calldata
-        [nonce, recipient.address, amount, []]
-      )
-      .slice(2);
+    const payload = encodePayload({
+      nonce,
+      to: recipient.address,
+      value: amount,
+      gasLimit: 1_000_000,
+      gasPrice: gasPrice,
+      calldata: [],
+    });
 
     const { coseSign1, coseKey } = cip8.signCIP8(
-      Buffer.from(payload, "hex"),
+      Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
@@ -73,8 +76,6 @@ describe("eth_sendActorTransaction", () => {
     expect(await provider.getBalance(recipient.address)).to.deep.equal(
       recipientBeforeBalance.add(amount)
     );
-
-    expect(await provider.getBalance(actorAddress)).to.deep.equal(actorBeforeBalance.sub(amount));
   });
 
   it("should detect invalid signature", async () => {
@@ -134,5 +135,136 @@ describe("eth_sendActorTransaction", () => {
 
       expect(body.error.code).to.equal(-32602);
     });
+  });
+
+  it("should return error if value exceeds balance", async () => {
+    const gasPrice = await provider.getGasPrice();
+
+    const nonce = +(await eth_getActorNonce([actorAddress]));
+    const amount = ethers.utils.parseEther("1000000");
+
+    const recipient = ethers.Wallet.createRandom();
+
+    const payload = encodePayload({
+      nonce,
+      to: recipient.address,
+      value: amount,
+      gasLimit: 1_000_000,
+      gasPrice: gasPrice,
+      calldata: [],
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const { body } = await chai
+      .request(server)
+      .post("/")
+      .send({
+        jsonrpc: "2.0",
+        method: "eth_sendActorTransaction",
+        params: [
+          {
+            key: Buffer.from(coseKey.to_bytes()).toString("hex"),
+            signature: Buffer.from(coseSign1.to_bytes()).toString("hex"),
+          },
+        ],
+        id: 1,
+      });
+
+    expect(body).to.have.property("error");
+    expect(body).to.not.have.property("result");
+
+    expect(body.error.code).to.equal(-32600);
+    expect(body.error.message).to.contain("Gas limit + txValue exceeds the actor balance");
+  });
+
+  it("should return error if gas fees exceed balance", async () => {
+    const nonce = +(await eth_getActorNonce([actorAddress]));
+
+    const recipient = ethers.Wallet.createRandom();
+
+    const payload = encodePayload({
+      nonce,
+      to: recipient.address,
+      value: 0,
+      gasLimit: ethers.utils.parseEther("1000000"),
+      gasPrice: ethers.utils.parseEther("1000000"),
+      calldata: [],
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const { body } = await chai
+      .request(server)
+      .post("/")
+      .send({
+        jsonrpc: "2.0",
+        method: "eth_sendActorTransaction",
+        params: [
+          {
+            key: Buffer.from(coseKey.to_bytes()).toString("hex"),
+            signature: Buffer.from(coseSign1.to_bytes()).toString("hex"),
+          },
+        ],
+        id: 1,
+      });
+
+    expect(body).to.have.property("error");
+    expect(body).to.not.have.property("result");
+
+    expect(body.error.code).to.equal(-32600);
+    expect(body.error.message).to.contain("Gas limit + txValue exceeds the actor balance");
+  });
+
+  it("should return error on invalid nonce", async () => {
+    const gasPrice = await provider.getGasPrice();
+
+    const nonce = +(await eth_getActorNonce([actorAddress]));
+
+    const recipient = ethers.Wallet.createRandom();
+
+    const payload = encodePayload({
+      nonce: nonce - 1,
+      to: recipient.address,
+      value: ethers.utils.parseEther("500"),
+      gasLimit: 1_000_000,
+      gasPrice: gasPrice,
+      calldata: [],
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const { body } = await chai
+      .request(server)
+      .post("/")
+      .send({
+        jsonrpc: "2.0",
+        method: "eth_sendActorTransaction",
+        params: [
+          {
+            key: Buffer.from(coseKey.to_bytes()).toString("hex"),
+            signature: Buffer.from(coseSign1.to_bytes()).toString("hex"),
+          },
+        ],
+        id: 1,
+      });
+
+    expect(body).to.have.property("error");
+    expect(body).to.not.have.property("result");
+
+    expect(body.error.code).to.equal(-32600);
+    expect(body.error.message).to.contain(`Invalid nonce, expected: ${nonce} got: ${nonce - 1}`);
   });
 });

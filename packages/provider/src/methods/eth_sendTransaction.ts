@@ -1,7 +1,6 @@
 import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
-import { ethers } from "ethers";
 import { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
-import { getActorAddress } from "../utils";
+import { encodePayload, getActorAddress } from "../utils";
 import { Buffer } from "buffer";
 import { z, ZodError } from "zod";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
@@ -10,7 +9,7 @@ const InputSchema = z.tuple([
   z.object({
     from: z.string(),
     to: z.string(),
-    gas: z.string().optional(),
+    gas: z.string(),
     gasPrice: z.string().optional(),
     value: z.string().optional(),
     data: z.string().optional(),
@@ -34,10 +33,20 @@ const eth_sendTransaction: CustomMethod = async (
   try {
     const [transaction] = InputSchema.parse(params);
 
-    const { from, to, value, data, nonce } = transaction;
+    const { from, to, value, data, nonce, gas: gasLimit, gasPrice: gasPriceArg } = transaction;
 
     const actorNonce =
       nonce ?? (await provider.oracleRequest({ method: "eth_getActorNonce", params: [from] }));
+
+    if (actorNonce === undefined) {
+      throw new ProviderRpcError("Invalid nonce", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
+    }
+
+    const gasPrice = gasPriceArg ?? (await provider.oracleRequest({ method: "eth_gasPrice" }));
+
+    if (gasPrice === undefined) {
+      throw new ProviderRpcError("Invalid gas price", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
+    }
 
     const cardanoAddress = await cardanoProvider.getChangeAddress();
     const bech32Address = Address.from_bytes(Buffer.from(cardanoAddress, "hex")).to_bech32();
@@ -46,11 +55,16 @@ const eth_sendTransaction: CustomMethod = async (
       throw new ProviderRpcError("Invalid from address", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 
-    const payload = ethers.utils.defaultAbiCoder
-      .encode(["uint256", "address", "uint256", "bytes"], [actorNonce, to, value ?? 0, data ?? []])
-      .slice(2);
+    const payload = encodePayload({
+      nonce: actorNonce,
+      to,
+      value: value ?? 0,
+      gasLimit,
+      gasPrice,
+      calldata: data ?? [],
+    });
 
-    const signedTransaction = await cardanoProvider.signData(bech32Address, payload);
+    const signedTransaction = await cardanoProvider.signData(bech32Address, payload.slice(2));
 
     return await provider.oracleRequest({
       method: "eth_sendActorTransaction",

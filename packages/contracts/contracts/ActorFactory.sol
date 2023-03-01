@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.15;
+pragma solidity 0.8.18;
 
 import {Actor} from "./Actor.sol";
 
@@ -19,10 +19,10 @@ contract ActorFactory {
         bytes32 salt,
         bytes calldata signature,
         bytes calldata key
-    ) external returns (bool, bytes memory) {
+    ) external {
         Actor actor = deploy(mainchainAddress, salt);
 
-        return actor.execute(signature, key);
+        actor.execute(signature, key);
     }
 
     function getActorAddress(

@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "scripts": {
-    "prepare-artifacts": "npm install -w packages/contracts && npm run compile -w packages/contracts",
+    "prepare-artifacts": "npm install -w packages/contracts && npm run prepare-artifacts -w packages/contracts",
     "test": "npm test -w ./packages --if-present",
     "build": "npm run build -w ./packages --if-present",
     "compile": "npm run compile -w ./packages/contracts",

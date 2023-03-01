@@ -2,14 +2,22 @@ import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { ethers } from "ethers";
 import server from "../../src";
-import { actorFactory, attachActor, getActorAddress } from "../../src/services/actor.service";
-import { wallet } from "../../src/services/blockchain.service";
+import {
+  actorFactory,
+  attachActor,
+  encodePayload,
+  getActorAddress,
+} from "../../src/services/actor.service";
+import { provider, wallet } from "../../src/services/blockchain.service";
+import cip8 from "../cip8";
 
 chai.use(chaiHttp);
 
 describe("eth_getActorNonce", () => {
   const mainchainAddress =
     "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
+  const privateKey =
+    "ed25519e_sk1wzm7jmql8tnf3p4yx5seg389dhrg49z9j86a0hrwemehcx3he3dlvxcc663vxnl4anykugu9ttu94yfzuq5ulrxc6lckl647tm58jhqrr7at4";
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
 
   let actorAddress: string;
@@ -66,14 +74,28 @@ describe("eth_getActorNonce", () => {
   });
 
   it("should return 1 after one transaction", async () => {
-    const sign1 =
-      "0x845846a201276761646472657373583900a8d915b73e36d33163acaf1b63a71c9cf64975ecc5e2dabdca6e57625266fac04a32bf256b4eb6088b623ca6bad75646b5f27309f82bb259a166686173686564f458a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e711d384de113c1de1a659043927c556fede6a6200000000000000000000000000000000000000000000003635c9adc5dea00000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000005840cc12e0fc8d40841c82b5015a9416395443d01cc8aa65b3f01e5b0f8085c79cef29a871fbf474110bafb40370599e6c7677b8c5ae39d0a62bc925c037fda46504";
-    const key =
-      "0xa4010103272006215820a0057bf300a1fafa83a429a725775db34370472376e27ab634c4032170a72324";
+    const gasPrice = await provider.getGasPrice();
+    const payload = encodePayload({
+      nonce: 0,
+      to: wallet.address,
+      value: ethers.utils.parseEther("100"),
+      gasLimit: 1_000_000,
+      gasPrice: gasPrice,
+      calldata: [],
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const sign1 = `0x${Buffer.from(coseSign1.to_bytes()).toString("hex")}`;
+    const key = `0x${Buffer.from(coseKey.to_bytes()).toString("hex")}`;
 
     const actor = attachActor(actorAddress);
 
-    const tx = await actor.connect(wallet).execute(sign1, key);
+    const tx = await actor.connect(wallet).execute(sign1, key, { gasLimit: 1_000_000, gasPrice });
 
     await tx.wait();
 

@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "compile": "hardhat compile",
+    "prepare-artifacts": "hardhat compile --no-gaslimit-altering",
     "updateGenesis": "hardhat actor-factory:update-genesis-block ../../besu_data/genesis.json",
     "test": "hardhat test --network dev"
   },

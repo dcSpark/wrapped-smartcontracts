@@ -6,15 +6,13 @@ task(
   "Update the genesis block with the actor factory contract"
 )
   .addPositionalParam("genesisFile", "Genesis file")
-  .setAction(async ({ genesisFile }, { ethers }) => {
+  .setAction(async ({ genesisFile }, { artifacts }) => {
     const genesis = JSON.parse(fs.readFileSync(genesisFile, "utf8"));
 
-    const actorFactory = await ethers.getContractFactory("ActorFactory");
-    const contract = await actorFactory.deploy();
+    const actorFactoryArtifact = await artifacts.readArtifact("ActorFactory");
 
-    genesis.alloc["0000000000000000000000000000000000111111"].code = await ethers.provider.getCode(
-      contract.address
-    );
+    genesis.alloc["0000000000000000000000000000000000111111"].code =
+      actorFactoryArtifact.deployedBytecode;
 
     fs.writeFileSync(genesisFile, JSON.stringify(genesis, null, 2) + "\n", "utf8");
   });
