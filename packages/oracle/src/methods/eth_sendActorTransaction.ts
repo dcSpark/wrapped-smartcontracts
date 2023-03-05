@@ -13,7 +13,7 @@ import validationMiddleware from "./validationMiddleware";
 import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
 import { ethers } from "ethers";
 import { Address } from "@dcspark/cardano-multiplatform-lib-nodejs";
-import { MINIMAL_GAS_LIMIT } from "../const";
+import { DEPLOYMENT_MINIMAL_GAS_LIMIT, EXECUTE_MINIMAL_GAS_LIMIT } from "../const";
 import eth_getActorNonce from "./eth_getActorNonce";
 
 const validateTransaction = async (
@@ -24,6 +24,7 @@ const validateTransaction = async (
   mainchainAddress: Address;
   gasLimit: ethers.BigNumberish;
   gasPrice: ethers.BigNumberish;
+  isDeployed: boolean;
 }> => {
   const mainchainAddress = getMainchainAddressFromSignature(coseSign1);
 
@@ -39,14 +40,23 @@ const validateTransaction = async (
 
   const { nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
-  if ((gasLimit as ethers.BigNumber).lte(MINIMAL_GAS_LIMIT)) {
+  const actorAddress = await getActorAddress(mainchainAddress.to_bech32());
+
+  const isDeployed = await isActorDeployed(actorAddress);
+
+  // With small gas limit, the transaction will probably fail
+  if (
+    (gasLimit as ethers.BigNumber).lt(
+      isDeployed ? EXECUTE_MINIMAL_GAS_LIMIT : DEPLOYMENT_MINIMAL_GAS_LIMIT
+    )
+  ) {
     throw new JSONRPCErrorException(
-      `Gas limit too low, minimal limit ${MINIMAL_GAS_LIMIT}`,
+      `Gas limit too low, minimal limit ${
+        isDeployed ? EXECUTE_MINIMAL_GAS_LIMIT : DEPLOYMENT_MINIMAL_GAS_LIMIT
+      }`,
       JSONRPCErrorCode.InvalidRequest
     );
   }
-
-  const actorAddress = await getActorAddress(mainchainAddress.to_bech32());
 
   const balance = await provider.getBalance(actorAddress);
 
@@ -70,7 +80,7 @@ const validateTransaction = async (
     );
   }
 
-  return { actorAddress, mainchainAddress, gasLimit, gasPrice };
+  return { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed };
 };
 
 const InputSchema = z.tuple([
@@ -86,12 +96,11 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
   const coseSign1 = COSESign1.from_bytes(signature);
   const coseKey = COSEKey.from_bytes(key);
 
-  const { actorAddress, mainchainAddress, gasLimit, gasPrice } = await validateTransaction(
-    coseSign1,
-    coseKey
-  );
+  // Pre-validate transaction to not waste gas on invalid transactions
+  const { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed } =
+    await validateTransaction(coseSign1, coseKey);
 
-  if (await isActorDeployed(actorAddress)) {
+  if (isDeployed) {
     const actor = attachActor(actorAddress);
 
     const tx = await actor.connect(wallet).execute(signature, key, { gasLimit, gasPrice });
@@ -104,6 +113,8 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
         gasLimit,
         gasPrice,
       });
+
+    console.log(await tx.wait());
 
     return tx.hash;
   }

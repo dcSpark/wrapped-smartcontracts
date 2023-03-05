@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   besu:
-    image: dcspark/besu:22.10.0-milkomeda-c1
+    image: dcspark/besu:22.10.1-milkomeda-c1
     container_name: besu
     command: "--config-file=/besu_data/config.toml"
     ports:

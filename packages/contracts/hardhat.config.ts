@@ -5,6 +5,7 @@ import "./tasks";
 
 dotenv();
 
+// Funded account from the testing genesis block
 const TestingPrivateKey = "0x35f9400884bdd60fdd1a769ebf39fa1c5b148072e68a5b2c8bc9ac2227c192b2";
 
 const config: HardhatUserConfig = {

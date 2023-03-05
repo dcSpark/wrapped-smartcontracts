@@ -17,6 +17,10 @@ const InputSchema = z.tuple([
   }),
 ]);
 
+/**
+ * @dev Wraps the eth transaction to the Actor transaction, signs using cardano provider
+ * and sends it to the oracle.
+ */
 const eth_sendTransaction: CustomMethod = async (
   provider: MilkomedaProvider,
   { params }: RequestArguments
@@ -42,7 +46,7 @@ const eth_sendTransaction: CustomMethod = async (
       throw new ProviderRpcError("Invalid nonce", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 
-    const gasPrice = gasPriceArg ?? (await provider.oracleRequest({ method: "eth_gasPrice" }));
+    const gasPrice = gasPriceArg ?? (await provider.providerRequest({ method: "eth_gasPrice" }));
 
     if (gasPrice === undefined) {
       throw new ProviderRpcError("Invalid gas price", JSON_RPC_ERROR_CODES.INVALID_PARAMS);

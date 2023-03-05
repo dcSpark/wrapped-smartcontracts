@@ -1,4 +1,4 @@
-FROM dcspark/besu:22.10.0-milkomeda-c1 AS besu
+FROM dcspark/besu:22.10.1-milkomeda-c1 AS besu
 FROM ethereum/solc:0.8.18 AS solc
 FROM node:16
 

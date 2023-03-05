@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import React from "react";
 
-const RECEIVER_ADDRESS = "0x114bCceEC1A85be5eF46c903994B74DA2d41Ce53";
-const COUNTER_ADDRESS = "0xD1B76d20Dd685D783709810c5472f5C666cc881a";
+// Deployed in testing genesis block, change for live chain
+const COUNTER_ADDRESS = "0000000000000000000000000000000000222222";
 
 const App = () => {
   const inject = async () => {
@@ -40,24 +40,17 @@ const App = () => {
     alert(balance);
   };
 
-  const eth_isActorDeployed = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const result = (await window.ethereum.request({
-      method: "eth_isActorDeployed",
-      params: await provider.listAccounts(),
-    })) as string[];
-
-    alert(result);
-  };
-
   const sendEther = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
+    const receiverAddress = prompt("Receiver address");
+
     console.log(
       await signer.sendTransaction({
-        to: RECEIVER_ADDRESS,
+        to: receiverAddress,
         value: ethers.utils.parseEther("1.0"),
+        gasLimit: 1_000_000,
       })
     );
   };
@@ -83,7 +76,7 @@ const App = () => {
 
     const signer = provider.getSigner();
 
-    console.log(await counter.connect(signer).increment(1));
+    console.log(await counter.connect(signer).increment(1, { gasLimit: 1_000_000 }));
   };
 
   return (
@@ -102,9 +95,6 @@ const App = () => {
       </div>
       <div>
         <button onClick={eth_getBalance}>eth_getBalance</button>
-      </div>
-      <div>
-        <button onClick={eth_isActorDeployed}>eth_isActorDeployed</button>
       </div>
       <div>
         <button onClick={sendEther}>sendEther</button>

@@ -1,6 +1,9 @@
 import { task } from "hardhat/config";
 import fs from "fs";
 
+/**
+ * @dev This code updates genesis block for the testing environment.
+ */
 task(
   "actor-factory:update-genesis-block",
   "Update the genesis block with the actor factory contract"

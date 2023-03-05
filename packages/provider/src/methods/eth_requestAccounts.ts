@@ -4,6 +4,9 @@ import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
 import { getActorAddress } from "../utils";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
 
+/**
+ * @dev Requests cardano address from injected cardano provider and transforms it to the Actor address
+ */
 const eth_requestAccounts: CustomMethod = async (provider: MilkomedaProvider) => {
   const { cardanoProvider, actorFactoryAddress } = provider;
 

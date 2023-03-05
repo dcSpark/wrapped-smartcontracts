@@ -11,6 +11,9 @@ import { readFile, writeFile } from "fs/promises";
 //   mstore(64, add(ptr, 32))
 // `;
 
+/**
+ * @dev This code is prepended to the deployed Actor bytecode to store the gas limit in storage.
+ */
 const codeToPrepend = `
   let gas_limit := gas()
           
@@ -21,6 +24,9 @@ const codeToPrepend = `
   sstore(storage_slot, gas_limit)
 `;
 
+/**
+ * @dev Finds the yul subobject and injects the code.
+ */
 const prependDeployedActorYulCode = async (path: string) => {
   const yulCode = await readFile(path, "utf8");
 
@@ -52,6 +58,9 @@ const compileYulToBytecode = async (yulCodePath: string) => {
   return bytecode;
 };
 
+/**
+ * @dev Used to extract the deployed bytecode from the yul code.
+ */
 const extractYulSubobject = async (
   yulCodePath: string,
   outputPath: string,
