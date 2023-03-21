@@ -9,6 +9,7 @@ To show old codebase see [legacy tag](https://github.com/dcSpark/wrapped-smartco
 ## Table of Contents
 
 - [Overview](#overview)
+- [For developers](#for-developers)
 - [Smart contracts](#smart-contracts)
   - [Actor](#actor)
   - [ActorFactory](#actorfactory)
@@ -24,6 +25,10 @@ To show old codebase see [legacy tag](https://github.com/dcSpark/wrapped-smartco
 ## Overview
 
 The protocol aims to create a seamless way to execute smart contracts on the milkomeda layer 2 right from the layer 1 mainchain.
+
+## For developers
+
+If you are interested in developing dapps on the milkomeda layer 2, see the [developers documentation](./docs/developers.md).
 
 ## Smart contracts
 
