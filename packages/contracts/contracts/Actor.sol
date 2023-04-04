@@ -28,6 +28,7 @@ contract Actor {
     event Response(bool success, bytes responseData);
 
     constructor(string memory _mainchainAddress) {
+        require(bytes(_mainchainAddress).length > 0, "Invalid mainchain address");
         mainchainAddress = _mainchainAddress;
     }
 
