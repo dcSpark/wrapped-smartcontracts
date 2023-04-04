@@ -21,6 +21,8 @@ contract Actor {
 
     IL1MsgVerify private constant l1MsgVerify = IL1MsgVerify(address(0x67));
 
+    address private actorFactory;
+
     string public mainchainAddress;
 
     uint256 public nonce;
@@ -30,6 +32,7 @@ contract Actor {
     constructor(string memory _mainchainAddress) {
         require(bytes(_mainchainAddress).length > 0, "Invalid mainchain address");
         mainchainAddress = _mainchainAddress;
+        actorFactory = msg.sender;
     }
 
     /**
@@ -54,7 +57,10 @@ contract Actor {
 
     function execute(bytes calldata signature, bytes calldata key) external {
         // First transaction can be executed by factory with `deployAndExecute`
-        require(nonce == 0 || msg.sender == tx.origin, "Only factory or EOA can execute");
+        require(
+            (nonce == 0 && msg.sender == actorFactory) || msg.sender == tx.origin,
+            "Only factory or EOA can execute"
+        );
 
         uint256 providedGasLimit = getGasLimit();
 
