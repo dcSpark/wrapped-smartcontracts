@@ -1,3 +1,9 @@
+import { Address } from "@dcspark/cardano-multiplatform-lib-nodejs";
+import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
+import { ethers } from "ethers";
+import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
+import { z } from "zod";
+import { MINIMAL_GAS_LIMIT } from "../const";
 import {
   actorFactory,
   attachActor,
@@ -7,14 +13,8 @@ import {
 } from "../services/actor.service";
 import { provider, wallet } from "../services/blockchain.service";
 import { getMainchainAddressFromSignature, verifySignature } from "../services/cardano.service";
-import { z } from "zod";
-import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
-import validationMiddleware from "./validationMiddleware";
-import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
-import { ethers } from "ethers";
-import { Address } from "@dcspark/cardano-multiplatform-lib-nodejs";
-import { DEPLOYMENT_MINIMAL_GAS_LIMIT, EXECUTE_MINIMAL_GAS_LIMIT } from "../const";
 import eth_getActorNonce from "./eth_getActorNonce";
+import validationMiddleware from "./validationMiddleware";
 
 const validateTransaction = async (
   coseSign1: COSESign1,
@@ -45,15 +45,9 @@ const validateTransaction = async (
   const isDeployed = await isActorDeployed(actorAddress);
 
   // With small gas limit, the transaction will probably fail
-  if (
-    (gasLimit as ethers.BigNumber).lt(
-      isDeployed ? EXECUTE_MINIMAL_GAS_LIMIT : DEPLOYMENT_MINIMAL_GAS_LIMIT
-    )
-  ) {
+  if ((gasLimit as ethers.BigNumber).lt(MINIMAL_GAS_LIMIT)) {
     throw new JSONRPCErrorException(
-      `Gas limit too low, minimal limit ${
-        isDeployed ? EXECUTE_MINIMAL_GAS_LIMIT : DEPLOYMENT_MINIMAL_GAS_LIMIT
-      }`,
+      `Gas limit too low, minimal limit ${MINIMAL_GAS_LIMIT}`,
       JSONRPCErrorCode.InvalidRequest
     );
   }
@@ -109,12 +103,17 @@ const eth_sendActorTransaction = async ([{ signature, key }]: [
   } else {
     const tx = await actorFactory
       .connect(wallet)
-      .deployAndExecute(mainchainAddress.to_bech32(), ethers.constants.HashZero, signature, key, {
+      .deployAndExecute(
+        mainchainAddress.to_bech32(),
+        ethers.constants.HashZero,
+        signature,
+        key,
         gasLimit,
-        gasPrice,
-      });
-
-    console.log(await tx.wait());
+        {
+          gasLimit: ethers.BigNumber.from(gasLimit).add(1_000_000),
+          gasPrice,
+        }
+      );
 
     return tx.hash;
   }

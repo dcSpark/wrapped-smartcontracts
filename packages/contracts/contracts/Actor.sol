@@ -16,7 +16,7 @@ contract Actor {
     uint256 private constant G_TX_DATA_ZERO = 4;
     uint256 private constant G_GAS_OPCODE = 2;
     uint256 private constant G_REFUND_CALL = 6800;
-    uint256 private constant G_REFUND_OVERHEAD = 836;
+    uint256 private constant G_REFUND_OVERHEAD = 848;
     uint256 private constant G_REFUND_RESERVE = 15_000;
 
     IL1MsgVerify private constant l1MsgVerify = IL1MsgVerify(address(0x67));
@@ -38,7 +38,7 @@ contract Actor {
     /**
      * @dev The logic to store tx.gasLimit is injected at the beginning of the contract bytecode mid compilation.
      */
-    function getGasLimit() internal view returns (uint256) {
+    function getProvidedGasLimit() internal view returns (uint256) {
         uint256 remainingGasLimit;
         bytes32 storageSlot = keccak256("tx.gasLimit");
 
@@ -46,13 +46,17 @@ contract Actor {
             remainingGasLimit := sload(storageSlot)
         }
 
-        uint256 intrinsicGas = G_TRANSACTION + G_GAS_OPCODE;
+        return remainingGasLimit + G_GAS_OPCODE;
+    }
+
+    function getIntrinsicGas() internal pure returns (uint256) {
+        uint256 intrinsicGas = G_TRANSACTION;
 
         for (uint256 i = 0; i < msg.data.length; i++) {
             intrinsicGas += msg.data[i] == 0 ? G_TX_DATA_ZERO : G_TX_DATA_NONZERO;
         }
 
-        return intrinsicGas + remainingGasLimit;
+        return intrinsicGas;
     }
 
     function execute(bytes calldata signature, bytes calldata key) external {
@@ -62,7 +66,10 @@ contract Actor {
             "Only factory or EOA can execute"
         );
 
-        uint256 providedGasLimit = getGasLimit();
+        uint256 providedGasLimit = getProvidedGasLimit();
+        uint256 intrinsicGas = getIntrinsicGas();
+
+        uint256 txGasLimit = providedGasLimit + intrinsicGas;
 
         (bool verified, bytes memory txData) = l1MsgVerify.verify(
             IL1MsgVerify.L1Type.Cardano,
@@ -77,12 +84,15 @@ contract Actor {
             uint256 txNonce,
             address to,
             uint256 value,
-            uint256 txGasLimit,
+            uint256 signedGasLimit,
             uint256 gasPrice,
             bytes memory payload
         ) = abi.decode(txData, (uint256, address, uint256, uint256, uint256, bytes));
 
-        require(txGasLimit == providedGasLimit || msg.sender != tx.origin, "Gas limit mismatch");
+        require(
+            signedGasLimit == txGasLimit || (nonce == 0 && signedGasLimit == providedGasLimit),
+            "Gas limit mismatch"
+        );
         require(gasPrice == tx.gasprice, "Gas price mismatch");
 
         require(txNonce == nonce, "Nonce mismatch");
@@ -98,7 +108,7 @@ contract Actor {
 
         // G_REFUND_OVERHEAD is an adhoc solution to calculate precise refund
         // should be changed in future to calculate precise gas usage of the transfer
-        uint256 gasUsed = providedGasLimit - gasleft() + G_REFUND_CALL + G_REFUND_OVERHEAD;
+        uint256 gasUsed = txGasLimit - gasleft() + G_REFUND_CALL + G_REFUND_OVERHEAD;
 
         (bool refundSuccess, ) = payable(tx.origin).call{value: gasUsed * tx.gasprice}("");
 

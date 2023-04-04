@@ -1,9 +1,9 @@
-import type { Actor, Counter, InfiniteLoop } from "../typechain-types";
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import type { Actor, Counter, InfiniteLoop } from "../typechain-types";
+import { ResponseEvent } from "../typechain-types/Actor";
 import cip8 from "../utils/cip8";
 import { encodePayload, getActorAddress, getActorFactory } from "./fixtures";
-import { ResponseEvent } from "../typechain-types/Actor";
 
 describe("Actor", () => {
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
@@ -183,7 +183,7 @@ describe("Actor", () => {
       nonce: 0,
       to: destination.address,
       value: 0,
-      gasLimit: 2_000_000,
+      gasLimit: 1_000_000,
       gasPrice,
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
@@ -200,6 +200,7 @@ describe("Actor", () => {
       salt,
       coseSign1.to_bytes(),
       coseKey.to_bytes(),
+      1_000_000,
       { gasLimit: 2_000_000, gasPrice }
     );
 

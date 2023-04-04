@@ -22,11 +22,12 @@ contract ActorFactory {
         string calldata mainchainAddress,
         bytes32 salt,
         bytes calldata signature,
-        bytes calldata key
+        bytes calldata key,
+        uint256 gasLimit
     ) external {
         Actor actor = deploy(mainchainAddress, salt);
 
-        actor.execute(signature, key);
+        actor.execute{gas: gasLimit}(signature, key);
     }
 
     /**
