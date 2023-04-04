@@ -1,5 +1,5 @@
-import express, { Request, Response } from "express";
 import cors from "cors";
+import express, { Request, Response } from "express";
 import {
   createJSONRPCErrorResponse,
   JSONRPCErrorCode,
@@ -8,12 +8,13 @@ import {
   JSONRPCServer,
   JSONRPCServerMiddlewareNext,
 } from "json-rpc-2.0";
-import methods from "./methods";
 import config from "./config";
+import methods from "./methods";
 
 const app = express();
 const jsonRpcServer = new JSONRPCServer();
 
+app.disable("x-powered-by");
 app.use(cors());
 app.use(express.json());
 
