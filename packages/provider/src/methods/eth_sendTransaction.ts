@@ -1,20 +1,27 @@
 import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
-import { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
-import { encodePayload, getActorAddress } from "../utils";
 import { Buffer } from "buffer";
+import { ethers } from "ethers";
 import { z, ZodError } from "zod";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
+import { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
+import { encodePayload, getActorAddress } from "../utils";
 
-const InputSchema = z.tuple([
-  z.object({
-    from: z.string(),
-    to: z.string(),
-    gas: z.string(),
-    gasPrice: z.string().optional(),
-    value: z.string().optional(),
-    data: z.string().optional(),
-    nonce: z.string().optional(),
-  }),
+const TransactionSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  gas: z.string(),
+  gasPrice: z.string().optional(),
+  value: z.string().optional(),
+  data: z.string().optional(),
+  nonce: z.string().optional(),
+});
+
+const InputSchema = z.union([
+  z.tuple([TransactionSchema]),
+  z.tuple([
+    TransactionSchema,
+    z.string().refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
+  ]),
 ]);
 
 /**
@@ -35,7 +42,7 @@ const eth_sendTransaction: CustomMethod = async (
   }
 
   try {
-    const [transaction] = InputSchema.parse(params);
+    const [transaction, salt] = InputSchema.parse(params);
 
     const { from, to, value, data, nonce, gas: gasLimit, gasPrice: gasPriceArg } = transaction;
 
@@ -55,11 +62,14 @@ const eth_sendTransaction: CustomMethod = async (
     const cardanoAddress = await cardanoProvider.getChangeAddress();
     const bech32Address = Address.from_bytes(Buffer.from(cardanoAddress, "hex")).to_bech32();
 
-    if (from.toUpperCase() !== (await getActorAddress(provider, bech32Address)).toUpperCase()) {
+    if (
+      from.toUpperCase() !== (await getActorAddress(provider, bech32Address, salt)).toUpperCase()
+    ) {
       throw new ProviderRpcError("Invalid from address", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 
     const payload = encodePayload({
+      from,
       nonce: actorNonce,
       to,
       value: value ?? 0,
@@ -72,7 +82,7 @@ const eth_sendTransaction: CustomMethod = async (
 
     return await provider.oracleRequest({
       method: "eth_sendActorTransaction",
-      params: [signedTransaction],
+      params: [signedTransaction, salt],
     });
   } catch (e) {
     if (e instanceof ProviderRpcError) {

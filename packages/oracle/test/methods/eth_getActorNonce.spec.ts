@@ -76,6 +76,7 @@ describe("eth_getActorNonce", () => {
   it("should return 1 after one transaction", async () => {
     const gasPrice = await provider.getGasPrice();
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 0,
       to: wallet.address,
       value: ethers.utils.parseEther("100"),

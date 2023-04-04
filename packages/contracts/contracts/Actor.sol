@@ -16,7 +16,7 @@ contract Actor {
     uint256 private constant G_TX_DATA_ZERO = 4;
     uint256 private constant G_GAS_OPCODE = 2;
     uint256 private constant G_REFUND_CALL = 6800;
-    uint256 private constant G_REFUND_OVERHEAD = 848;
+    uint256 private constant G_REFUND_OVERHEAD = 836;
     uint256 private constant G_REFUND_RESERVE = 15_000;
 
     IL1MsgVerify private constant l1MsgVerify = IL1MsgVerify(address(0x67));
@@ -81,14 +81,16 @@ contract Actor {
         require(verified, "Signature verification failed");
 
         (
+            address from,
             uint256 txNonce,
             address to,
             uint256 value,
             uint256 signedGasLimit,
             uint256 gasPrice,
             bytes memory payload
-        ) = abi.decode(txData, (uint256, address, uint256, uint256, uint256, bytes));
+        ) = abi.decode(txData, (address, uint256, address, uint256, uint256, uint256, bytes));
 
+        require(from == address(this), "From mismatch");
         require(
             signedGasLimit == txGasLimit || (nonce == 0 && signedGasLimit == providedGasLimit),
             "Gas limit mismatch"

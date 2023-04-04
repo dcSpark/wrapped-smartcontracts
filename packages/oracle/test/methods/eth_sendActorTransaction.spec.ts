@@ -38,6 +38,7 @@ describe("eth_sendActorTransaction", () => {
     const recipientBeforeBalance = await provider.getBalance(recipient.address);
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce,
       to: recipient.address,
       value: amount,
@@ -146,6 +147,7 @@ describe("eth_sendActorTransaction", () => {
     const recipient = ethers.Wallet.createRandom();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce,
       to: recipient.address,
       value: amount,
@@ -188,6 +190,7 @@ describe("eth_sendActorTransaction", () => {
     const recipient = ethers.Wallet.createRandom();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce,
       to: recipient.address,
       value: 0,
@@ -232,6 +235,7 @@ describe("eth_sendActorTransaction", () => {
     const recipient = ethers.Wallet.createRandom();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: nonce - 1,
       to: recipient.address,
       value: ethers.utils.parseEther("500"),
@@ -266,5 +270,53 @@ describe("eth_sendActorTransaction", () => {
 
     expect(body.error.code).to.equal(-32600);
     expect(body.error.message).to.contain(`Invalid nonce, expected: ${nonce} got: ${nonce - 1}`);
+  });
+
+  it("should return error on different salt", async () => {
+    const gasPrice = await provider.getGasPrice();
+
+    const nonce = +(await eth_getActorNonce([actorAddress]));
+
+    const recipient = ethers.Wallet.createRandom();
+
+    const salt = ethers.utils.randomBytes(32);
+
+    const payload = encodePayload({
+      from: actorAddress,
+      nonce: nonce,
+      to: recipient.address,
+      value: ethers.utils.parseEther("500"),
+      gasLimit: 1_000_000,
+      gasPrice: gasPrice,
+      calldata: [],
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    const { body } = await chai
+      .request(server)
+      .post("/")
+      .send({
+        jsonrpc: "2.0",
+        method: "eth_sendActorTransaction",
+        params: [
+          {
+            key: Buffer.from(coseKey.to_bytes()).toString("hex"),
+            signature: Buffer.from(coseSign1.to_bytes()).toString("hex"),
+          },
+          ethers.utils.hexlify(salt),
+        ],
+        id: 1,
+      });
+
+    expect(body).to.have.property("error");
+    expect(body).to.not.have.property("result");
+
+    expect(body.error.code).to.equal(-32600);
+    expect(body.error.message).to.contain("Invalid actor address or salt");
   });
 });

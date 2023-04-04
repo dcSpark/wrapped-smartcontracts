@@ -31,6 +31,7 @@ export const getActorAddress = async (
 };
 
 export interface ActorTransaction {
+  from: string;
   nonce: BigNumberish;
   to: string;
   value: BigNumberish;
@@ -40,6 +41,7 @@ export interface ActorTransaction {
 }
 
 export const encodePayload = ({
+  from,
   nonce,
   to,
   value,
@@ -48,7 +50,7 @@ export const encodePayload = ({
   calldata,
 }: ActorTransaction): string => {
   return ethers.utils.defaultAbiCoder.encode(
-    ["uint256", "address", "uint256", "uint256", "uint256", "bytes"],
-    [nonce, to, value, gasLimit, gasPrice, calldata]
+    ["address", "uint256", "address", "uint256", "uint256", "uint256", "bytes"],
+    [from, nonce, to, value, gasLimit, gasPrice, calldata]
   );
 };

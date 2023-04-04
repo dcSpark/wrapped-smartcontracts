@@ -18,7 +18,8 @@ import validationMiddleware from "./validationMiddleware";
 
 const validateTransaction = async (
   coseSign1: COSESign1,
-  coseKey: COSEKey
+  coseKey: COSEKey,
+  salt?: ethers.BytesLike
 ): Promise<{
   actorAddress: string;
   mainchainAddress: Address;
@@ -38,9 +39,16 @@ const validateTransaction = async (
     throw new JSONRPCErrorException("Invalid payload", JSONRPCErrorCode.InvalidRequest);
   }
 
-  const { nonce, value, gasLimit, gasPrice } = decodePayload(payload);
+  const { from, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
-  const actorAddress = await getActorAddress(mainchainAddress.to_bech32());
+  const actorAddress = await getActorAddress(mainchainAddress.to_bech32(), salt);
+
+  if (from !== actorAddress) {
+    throw new JSONRPCErrorException(
+      "Invalid actor address or salt",
+      JSONRPCErrorCode.InvalidRequest
+    );
+  }
 
   const isDeployed = await isActorDeployed(actorAddress);
 
@@ -77,22 +85,31 @@ const validateTransaction = async (
   return { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed };
 };
 
-const InputSchema = z.tuple([
-  z.object({
-    key: z.string().transform((key) => Buffer.from(key, "hex")),
-    signature: z.string().transform((signature) => Buffer.from(signature, "hex")),
-  }),
+const SignedTransactionSchema = z.object({
+  key: z.string().transform((key) => Buffer.from(key, "hex")),
+  signature: z.string().transform((signature) => Buffer.from(signature, "hex")),
+});
+
+const InputSchema = z.union([
+  z.tuple([SignedTransactionSchema]),
+  z.tuple([
+    SignedTransactionSchema,
+    z
+      .string()
+      .optional()
+      .refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
+  ]),
 ]);
 
-const eth_sendActorTransaction = async ([{ signature, key }]: [
-  { key: Buffer; signature: Buffer }
-]) => {
+const eth_sendActorTransaction = async ([{ signature, key }, salt]: z.infer<
+  typeof InputSchema
+>) => {
   const coseSign1 = COSESign1.from_bytes(signature);
   const coseKey = COSEKey.from_bytes(key);
 
   // Pre-validate transaction to not waste gas on invalid transactions
   const { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed } =
-    await validateTransaction(coseSign1, coseKey);
+    await validateTransaction(coseSign1, coseKey, salt);
 
   if (isDeployed) {
     const actor = attachActor(actorAddress);

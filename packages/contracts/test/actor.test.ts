@@ -72,6 +72,7 @@ describe("Actor", () => {
 
     // Act
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 0,
       to: destination.address,
       value: ethers.utils.parseEther("1000"),
@@ -123,6 +124,7 @@ describe("Actor", () => {
 
     // Act
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 1,
       to: destination.address,
       value: 0,
@@ -180,6 +182,7 @@ describe("Actor", () => {
     const initialCount = await counter.count();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 0,
       to: destination.address,
       value: 0,
@@ -223,6 +226,7 @@ describe("Actor", () => {
     const initialCount = await counter.count();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 2,
       to: destination.address,
       value: 0,
@@ -257,6 +261,7 @@ describe("Actor", () => {
     const initialCount = await counter.count();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 2,
       to: destination.address,
       value: 0,
@@ -291,6 +296,7 @@ describe("Actor", () => {
     const initialCount = await counter.count();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 2,
       to: destination.address,
       value: 0,
@@ -325,6 +331,7 @@ describe("Actor", () => {
     const initialCount = await counter.count();
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 2,
       to: destination.address,
       value: 0,
@@ -361,7 +368,45 @@ describe("Actor", () => {
     const wrongNonce = 69;
 
     const payload = encodePayload({
+      from: actorAddress,
       nonce: wrongNonce,
+      to: destination.address,
+      value: 0,
+      gasLimit: 500_000,
+      gasPrice,
+      calldata: destination.interface.encodeFunctionData("increment", [42]),
+    });
+
+    const { coseSign1, coseKey } = cip8.signCIP8(
+      Buffer.from(payload.slice(2), "hex"),
+      privateKey,
+      mainchainAddress
+    );
+
+    // Act
+    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+      gasLimit: 500_000,
+      gasPrice,
+    });
+
+    await expect(tx.wait()).to.be.rejected;
+
+    // Assert
+    expect(await destination.count()).to.equal(initialCount);
+    expect(await actor.nonce()).to.equal(2);
+  });
+
+  it("should revert with incorrect from address", async () => {
+    // Arrange
+    const gasPrice = await ethers.provider.getGasPrice();
+    const destination = counter;
+    const initialCount = await counter.count();
+
+    const wrongAddress = ethers.Wallet.createRandom().address;
+
+    const payload = encodePayload({
+      from: wrongAddress,
+      nonce: 2,
       to: destination.address,
       value: 0,
       gasLimit: 500_000,
@@ -400,6 +445,7 @@ describe("Actor", () => {
 
     // Act
     const payload = encodePayload({
+      from: actorAddress,
       nonce: 2,
       to: destination.address,
       value: 0,
