@@ -25,7 +25,7 @@ contract Actor {
 
     uint256 public nonce;
 
-    event Response(bool success, bytes responseData);
+    event Response(bool success);
 
     constructor(string memory _mainchainAddress) {
         require(bytes(_mainchainAddress).length > 0, "Invalid mainchain address");
@@ -84,12 +84,11 @@ contract Actor {
         nonce++;
 
         // Leave enough gas for refund
-        (bool destCallSuccess, bytes memory responseData) = to.call{
-            value: value,
-            gas: gasleft() - G_REFUND_RESERVE
-        }(payload);
+        (bool destCallSuccess, ) = to.call{value: value, gas: gasleft() - G_REFUND_RESERVE}(
+            payload
+        );
 
-        emit Response(destCallSuccess, responseData);
+        emit Response(destCallSuccess);
 
         // G_REFUND_OVERHEAD is an adhoc solution to calculate precise refund
         // should be changed in future to calculate precise gas usage of the transfer
