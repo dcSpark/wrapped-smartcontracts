@@ -16,7 +16,7 @@ contract Actor {
     uint256 private constant G_TX_DATA_ZERO = 4;
     uint256 private constant G_GAS_OPCODE = 2;
     uint256 private constant G_REFUND_CALL = 6800;
-    uint256 private constant G_REFUND_OVERHEAD = 812;
+    uint256 private constant G_REFUND_OVERHEAD = 836;
     uint256 private constant G_REFUND_RESERVE = 15_000;
 
     IL1MsgVerify private constant l1MsgVerify = IL1MsgVerify(address(0x67));
@@ -84,18 +84,20 @@ contract Actor {
         nonce++;
 
         // Leave enough gas for refund
-        (bool success, bytes memory responseData) = to.call{
+        (bool destCallSuccess, bytes memory responseData) = to.call{
             value: value,
             gas: gasleft() - G_REFUND_RESERVE
         }(payload);
 
-        emit Response(success, responseData);
+        emit Response(destCallSuccess, responseData);
 
         // G_REFUND_OVERHEAD is an adhoc solution to calculate precise refund
         // should be changed in future to calculate precise gas usage of the transfer
         uint256 gasUsed = providedGasLimit - gasleft() + G_REFUND_CALL + G_REFUND_OVERHEAD;
 
-        payable(tx.origin).transfer(gasUsed * tx.gasprice);
+        (bool refundSuccess, ) = payable(tx.origin).call{value: gasUsed * tx.gasprice}("");
+
+        require(refundSuccess);
     }
 
     receive() external payable {}
