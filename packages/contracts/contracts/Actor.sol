@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IL1MsgVerify} from "./IL1MsgVerify.sol";
+import {IL1MsgVerify, L1_MSG_VERIFY} from "./IL1MsgVerify.sol";
 
 /**
  * @dev This contract is an account abstraction tied to the specific l1 chain address 'mainchainAddress'.
@@ -18,8 +18,6 @@ contract Actor {
     uint256 private constant G_REFUND_CALL = 6800;
     uint256 private constant G_REFUND_OVERHEAD = 836;
     uint256 private constant G_REFUND_RESERVE = 15_000;
-
-    IL1MsgVerify private constant l1MsgVerify = IL1MsgVerify(address(0x67));
 
     address private actorFactory;
 
@@ -71,7 +69,7 @@ contract Actor {
 
         uint256 txGasLimit = providedGasLimit + intrinsicGas;
 
-        (bool verified, bytes memory txData) = l1MsgVerify.verify(
+        (bool verified, bytes memory txData) = L1_MSG_VERIFY.verify(
             IL1MsgVerify.L1Type.Cardano,
             signature,
             key,

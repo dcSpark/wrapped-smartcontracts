@@ -17,3 +17,6 @@ interface IL1MsgVerify {
         bytes calldata l1Address
     ) external view returns (bool, bytes memory);
 }
+
+address constant L1_MSG_VERIFY_ADDRESS = address(0x67);
+IL1MsgVerify constant L1_MSG_VERIFY = IL1MsgVerify(L1_MSG_VERIFY_ADDRESS);
