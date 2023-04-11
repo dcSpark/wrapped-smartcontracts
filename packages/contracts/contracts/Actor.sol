@@ -27,6 +27,9 @@ contract Actor {
 
     event Response(bool success);
 
+    /**
+     * @param _mainchainAddress Mainchain address of the user
+     */
     constructor(string memory _mainchainAddress) {
         require(bytes(_mainchainAddress).length > 0, "Invalid mainchain address");
         mainchainAddress = _mainchainAddress;
@@ -35,6 +38,13 @@ contract Actor {
 
     receive() external payable {}
 
+    /**
+     * @dev Execute a signed transaction on behalf of user on cardano.
+     * Transaction has to be signed with CIP-8 signature.
+     *
+     * @param signature CIP-8 signature
+     * @param key CIP-8 signature public key
+     */
     function execute(bytes calldata signature, bytes calldata key) external {
         // First transaction can be executed by factory with `deployAndExecute`
         require(
@@ -109,6 +119,9 @@ contract Actor {
         return remainingGasLimit + G_GAS_OPCODE;
     }
 
+    /**
+     * @dev Calculate intrinsic gas for the transaction.
+     */
     function getIntrinsicGas() internal pure returns (uint256) {
         uint256 intrinsicGas = G_TRANSACTION;
 

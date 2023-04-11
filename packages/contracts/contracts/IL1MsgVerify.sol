@@ -10,6 +10,14 @@ interface IL1MsgVerify {
         Cardano
     }
 
+    /**
+     * @dev Verifies a signed message from the L1 chain.
+     *
+     * @param l1Type Determines which L1 chain to verify the message for
+     * @param message Signed message to verify
+     * @param key Public key used to verify the message
+     * @param l1Address Address of the user on the L1 chain
+     */
     function verify(
         L1Type l1Type,
         bytes calldata message,

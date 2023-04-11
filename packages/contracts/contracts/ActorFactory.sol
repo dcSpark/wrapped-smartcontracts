@@ -9,6 +9,12 @@ import {Actor} from "./Actor.sol";
 contract ActorFactory {
     event Deployed(address indexed actorAddress, string indexed mainchainAddress, bytes32 salt);
 
+    /**
+     * @dev Deploys an Actor contract using CREATE2.
+     *
+     * @param mainchainAddress The mainchain address of the user
+     * @param salt The salt used to deploy the actor
+     */
     function deploy(string calldata mainchainAddress, bytes32 salt) public returns (Actor) {
         // Using CREATE2 to have deterministic actor address tied to the `mainchainAddress`
         Actor actor = new Actor{salt: salt}(mainchainAddress);
@@ -18,6 +24,15 @@ contract ActorFactory {
         return actor;
     }
 
+    /**
+     * @dev Deploys an Actor contract using CREATE2 and executes the first transaction.
+     *
+     * @param mainchainAddress The mainchain address of the user
+     * @param salt The salt used to deploy the actor
+     * @param signature The signature of the transaction
+     * @param key The public key used to verify the signature
+     * @param gasLimit The gas limit of the transaction
+     */
     function deployAndExecute(
         string calldata mainchainAddress,
         bytes32 salt,
@@ -32,6 +47,9 @@ contract ActorFactory {
 
     /**
      * @dev Returns the address of the actor contract that would be/was deployed using CREATE2.
+     *
+     * @param mainchainAddress The mainchain address of the user
+     * @param salt The salt used to deploy the actor
      */
     function getActorAddress(
         string calldata mainchainAddress,
