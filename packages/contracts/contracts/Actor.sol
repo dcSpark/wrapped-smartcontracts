@@ -97,6 +97,8 @@ contract Actor {
         );
         require(gasPrice == tx.gasprice, "Gas price mismatch");
 
+        require(to != address(0), "To address cannot be zero");
+
         require(txNonce == nonce, "Nonce mismatch");
 
         nonce++;

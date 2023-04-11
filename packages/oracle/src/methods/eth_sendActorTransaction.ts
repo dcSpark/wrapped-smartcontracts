@@ -39,7 +39,7 @@ const validateTransaction = async (
     throw new JSONRPCErrorException("Invalid payload", JSONRPCErrorCode.InvalidRequest);
   }
 
-  const { from, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
+  const { from, to, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
   const actorAddress = await getActorAddress(mainchainAddress.to_bech32(), salt);
 
@@ -48,6 +48,10 @@ const validateTransaction = async (
       "Invalid actor address or salt",
       JSONRPCErrorCode.InvalidRequest
     );
+  }
+
+  if (to === ethers.constants.AddressZero) {
+    throw new JSONRPCErrorException("Invalid recipient address", JSONRPCErrorCode.InvalidRequest);
   }
 
   const isDeployed = await isActorDeployed(actorAddress);
