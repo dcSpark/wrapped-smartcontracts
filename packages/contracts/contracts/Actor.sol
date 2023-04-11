@@ -33,29 +33,7 @@ contract Actor {
         actorFactory = msg.sender;
     }
 
-    /**
-     * @dev The logic to store tx.gasLimit is injected at the beginning of the contract bytecode mid compilation.
-     */
-    function getProvidedGasLimit() internal view returns (uint256) {
-        uint256 remainingGasLimit;
-        bytes32 storageSlot = keccak256("tx.gasLimit");
-
-        assembly {
-            remainingGasLimit := sload(storageSlot)
-        }
-
-        return remainingGasLimit + G_GAS_OPCODE;
-    }
-
-    function getIntrinsicGas() internal pure returns (uint256) {
-        uint256 intrinsicGas = G_TRANSACTION;
-
-        for (uint256 i = 0; i < msg.data.length; i++) {
-            intrinsicGas += msg.data[i] == 0 ? G_TX_DATA_ZERO : G_TX_DATA_NONZERO;
-        }
-
-        return intrinsicGas;
-    }
+    receive() external payable {}
 
     function execute(bytes calldata signature, bytes calldata key) external {
         // First transaction can be executed by factory with `deployAndExecute`
@@ -117,5 +95,27 @@ contract Actor {
         require(refundSuccess);
     }
 
-    receive() external payable {}
+    /**
+     * @dev The logic to store tx.gasLimit is injected at the beginning of the contract bytecode mid compilation.
+     */
+    function getProvidedGasLimit() internal view returns (uint256) {
+        uint256 remainingGasLimit;
+        bytes32 storageSlot = keccak256("tx.gasLimit");
+
+        assembly {
+            remainingGasLimit := sload(storageSlot)
+        }
+
+        return remainingGasLimit + G_GAS_OPCODE;
+    }
+
+    function getIntrinsicGas() internal pure returns (uint256) {
+        uint256 intrinsicGas = G_TRANSACTION;
+
+        for (uint256 i = 0; i < msg.data.length; i++) {
+            intrinsicGas += msg.data[i] == 0 ? G_TX_DATA_ZERO : G_TX_DATA_NONZERO;
+        }
+
+        return intrinsicGas;
+    }
 }
