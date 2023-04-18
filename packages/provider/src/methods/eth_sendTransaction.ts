@@ -82,7 +82,7 @@ const eth_sendTransaction: CustomMethod = async (
 
     return await provider.oracleRequest({
       method: "eth_sendActorTransaction",
-      params: [signedTransaction, salt],
+      params: [signedTransaction, salt].filter(Boolean),
     });
   } catch (e) {
     if (e instanceof ProviderRpcError) {

@@ -22,6 +22,7 @@ module.exports = {
   },
   experiments: {
     syncWebAssembly: true,
+    topLevelAwait: true,
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {

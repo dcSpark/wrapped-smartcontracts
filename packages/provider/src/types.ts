@@ -4,9 +4,18 @@ export interface RequestArguments {
 }
 
 export interface CardanoProvider {
+  getNetworkId(): Promise<number>;
+  getUtxos(): Promise<string[] | undefined>;
+  getBalance(): Promise<string>;
+  getUsedAddresses(): Promise<string[]>;
+  getUnusedAddresses(): Promise<string[]>;
+  getChangeAddress(): Promise<string>;
+  getRewardAddresses(): Promise<string[]>;
+  getCollateral(): Promise<string[]>;
+  signTx(tx: string, partialSign: boolean): Promise<string>;
+  submitTx(tx: string): Promise<string>;
   isEnabled(): Promise<boolean>;
   enable(): Promise<CardanoProvider>;
-  getChangeAddress(): Promise<string>;
   signData(addr: string, payload: string): Promise<{ key: string; signature: string }>;
 }
 

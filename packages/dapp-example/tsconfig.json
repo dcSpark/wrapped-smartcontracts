@@ -7,10 +7,12 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "ESNext",
-    "target": "es5",
+    "target": "es6",
     "jsx": "react",
     "allowJs": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   }
 }

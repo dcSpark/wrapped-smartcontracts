@@ -14,7 +14,7 @@ contract Actor {
     // Cost of transaction initiation
     uint256 private constant G_TRANSACTION = 21_000;
     // Pre-London fork constant cost of non-zero bytes in transaction data
-    uint256 private constant G_TX_DATA_NONZERO = 68;
+    uint256 private constant G_TX_DATA_NONZERO = 16;
     // Cost of zero bytes in transaction data
     uint256 private constant G_TX_DATA_ZERO = 4;
     // Cost of gas opcode
@@ -22,7 +22,7 @@ contract Actor {
     // Cost of call opcode
     uint256 private constant G_REFUND_CALL = 6_800;
     // Cost of other opcodes than call after calling las gasleft()
-    uint256 private constant G_REFUND_OVERHEAD = 836;
+    uint256 private constant G_REFUND_OVERHEAD = 236;
     // Gas reserve for refund
     uint256 private constant G_REFUND_RESERVE = 15_000;
 

@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import React from "react";
+import { Link } from "react-router-dom";
 
 // Deployed in testing genesis block, change for live chain
 const COUNTER_ADDRESS = "0000000000000000000000000000000000222222";
@@ -37,7 +38,7 @@ const App = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const balance = await provider.getBalance(signer.getAddress());
-    alert(balance);
+    alert(ethers.utils.formatEther(balance));
   };
 
   const sendEther = async () => {
@@ -81,6 +82,9 @@ const App = () => {
 
   return (
     <>
+      <Link to="/swap">
+        <h1>Swap page</h1>
+      </Link>
       <div>
         <button onClick={inject}>Inject</button>
       </div>
