@@ -124,7 +124,7 @@ const unwrap = async () => {
       to: cardanoDestination,
       amount: amountToUnwrap,
     },
-    { gasLimit: 1_000_000, value: ethers.utils.parseEther("10") }
+    { gasLimit: 1_000_000, value: ethers.utils.parseEther("4") }
   );
 
   console.log(tx.hash);
