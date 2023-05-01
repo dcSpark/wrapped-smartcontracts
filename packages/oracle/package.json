@@ -22,6 +22,7 @@
   "dependencies": {
     "@dcspark/cardano-multiplatform-lib-nodejs": "^3.1.1",
     "@emurgo/cardano-message-signing-nodejs": "^1.0.1",
+    "algosdk": "^2.2.0",
     "axios": "^1.2.0",
     "bech32": "^2.0.0",
     "cors": "^2.8.5",
@@ -29,6 +30,7 @@
     "ethers": "^5.7.2",
     "express": "^4.18.2",
     "json-rpc-2.0": "^1.4.1",
+    "tweetnacl": "^1.0.3",
     "zod": "^3.20.2"
   }
 }
