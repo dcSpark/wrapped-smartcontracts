@@ -1,3 +1,5 @@
+import { PeraWalletConnect } from "@perawallet/connect";
+
 export interface RequestArguments {
   readonly method: string;
   readonly params?: readonly unknown[];
@@ -25,8 +27,9 @@ export interface EthereumProvider extends NodeJS.EventEmitter {
 
 export interface MilkomedaProvider extends EthereumProvider {
   isMilkomeda: boolean;
-  cardanoProvider: CardanoProvider;
   actorFactoryAddress: string | undefined;
+  peraWallet: PeraWalletConnect | undefined;
+  algorandAccounts: string[];
   setup(): Promise<void>;
   oracleRequest<T>(payload: RequestArguments): Promise<T>;
   providerRequest<T>(payload: RequestArguments): Promise<T>;

@@ -6,9 +6,16 @@ import { Link } from "react-router-dom";
 const COUNTER_ADDRESS = "0000000000000000000000000000000000222222";
 
 const App = () => {
-  const inject = async () => {
+  const injectCardano = async () => {
     const provider = await import("provider");
-    await provider.inject("http://localhost:8080", "http://localhost:8545").setup();
+    await provider.injectCardano("http://localhost:8080", "http://localhost:8545").setup();
+
+    alert("Injected");
+  };
+
+  const injectAlgorand = async () => {
+    const provider = await import("provider");
+    await provider.injectAlgorand("http://localhost:8080", "http://localhost:8545").setup();
 
     alert("Injected");
   };
@@ -46,11 +53,12 @@ const App = () => {
     const signer = provider.getSigner();
 
     const receiverAddress = prompt("Receiver address");
+    const amount = prompt("Amount");
 
     console.log(
       await signer.sendTransaction({
         to: receiverAddress,
-        value: ethers.utils.parseEther("1.0"),
+        value: ethers.utils.parseEther(amount),
         gasLimit: 1_000_000,
       })
     );
@@ -86,7 +94,10 @@ const App = () => {
         <h1>Swap page</h1>
       </Link>
       <div>
-        <button onClick={inject}>Inject</button>
+        <button onClick={injectCardano}>Inject Cardano</button>
+      </div>
+      <div>
+        <button onClick={injectAlgorand}>Inject Algorand</button>
       </div>
       <div>
         <button onClick={eth_requestAccounts}>eth_requestAccounts</button>

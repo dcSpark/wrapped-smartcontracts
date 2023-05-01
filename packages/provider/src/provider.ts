@@ -1,24 +1,46 @@
-import { CardanoProvider, MilkomedaProvider, RequestArguments } from "./types";
-import methods from "./methods/index";
+import { PeraWalletConnect } from "@perawallet/connect";
 import EventEmitter from "events";
+import algorandMethods from "./algorandMethods/index";
+import cardanoMethods from "./cardanoMethods/index";
 import { ProviderRpcError } from "./errors";
+import { CustomMethod, MilkomedaProvider, RequestArguments } from "./types";
+
+export const PROVIDER_TYPES = {
+  CARDANO: "cardano",
+  ALGORAND: "algorand",
+} as const;
+export type ProviderType = typeof PROVIDER_TYPES[keyof typeof PROVIDER_TYPES];
 
 class Provider extends EventEmitter implements MilkomedaProvider {
+  private readonly methods: { [key: string]: CustomMethod };
+
+  public readonly peraWallet: PeraWalletConnect | undefined;
+  public algorandAccounts: string[] = [];
+
   public readonly isMilkomeda = true;
-  public readonly cardanoProvider: CardanoProvider;
 
   public actorFactoryAddress: string | undefined = undefined;
 
   private nextId = 1;
 
-  constructor(private readonly oracleUrl: string, private readonly jsonRpcProviderUrl: string) {
+  constructor(
+    private readonly oracleUrl: string,
+    private readonly jsonRpcProviderUrl: string,
+    type: ProviderType
+  ) {
     super();
 
-    if (window.cardano === undefined) {
-      throw new Error("Cardano provider not found");
+    switch (type) {
+      case PROVIDER_TYPES.CARDANO:
+        this.methods = cardanoMethods;
+        break;
+      case PROVIDER_TYPES.ALGORAND:
+        this.methods = algorandMethods;
+        this.peraWallet = new PeraWalletConnect();
+        break;
+      default:
+        throw new Error(`Unsupported provider type: ${type}`);
     }
-
-    this.cardanoProvider = window.cardano;
   }
 
   async setup(): Promise<void> {
@@ -31,8 +53,8 @@ class Provider extends EventEmitter implements MilkomedaProvider {
   }
 
   async request(payload: RequestArguments): Promise<unknown> {
-    if (payload.method in methods) {
-      return methods[payload.method](this, payload);
+    if (payload.method in this.methods) {
+      return this.methods[payload.method](this, payload);
     }
 
     return this.providerRequest(payload);

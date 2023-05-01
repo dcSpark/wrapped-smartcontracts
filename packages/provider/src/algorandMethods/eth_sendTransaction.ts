@@ -1,5 +1,4 @@
-import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
-import { Buffer } from "buffer";
+import algosdk from "algosdk";
 import { ethers } from "ethers";
 import { z, ZodError } from "zod";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
@@ -25,18 +24,25 @@ const InputSchema = z.union([
 ]);
 
 /**
- * @dev Wraps the eth transaction to the Actor transaction, signs using cardano provider
+ * @dev Wraps the eth transaction to the Actor transaction, signs using algorand wallet
  * and sends it to the oracle.
  */
 const eth_sendTransaction: CustomMethod = async (
   provider: MilkomedaProvider,
   { params }: RequestArguments
 ) => {
-  const { cardanoProvider, actorFactoryAddress } = provider;
+  const { actorFactoryAddress, peraWallet } = provider;
 
   if (actorFactoryAddress === undefined) {
     throw new ProviderRpcError(
       "Actor factory address not set. Run setup() first.",
+      JSON_RPC_ERROR_CODES.DISCONNECTED
+    );
+  }
+
+  if (peraWallet === undefined) {
+    throw new ProviderRpcError(
+      "PeraWalletConnect setup failed",
       JSON_RPC_ERROR_CODES.DISCONNECTED
     );
   }
@@ -59,11 +65,13 @@ const eth_sendTransaction: CustomMethod = async (
       throw new ProviderRpcError("Invalid gas price", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
 
-    const cardanoAddress = await cardanoProvider.getChangeAddress();
-    const bech32Address = Address.from_bytes(Buffer.from(cardanoAddress, "hex")).to_bech32();
+    const [algorandAddress] =
+      provider.algorandAccounts.length === 0
+        ? await peraWallet.connect()
+        : provider.algorandAccounts;
 
     if (
-      from.toUpperCase() !== (await getActorAddress(provider, bech32Address, salt)).toUpperCase()
+      from.toUpperCase() !== (await getActorAddress(provider, algorandAddress, salt)).toUpperCase()
     ) {
       throw new ProviderRpcError("Invalid from address", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
     }
@@ -78,11 +86,33 @@ const eth_sendTransaction: CustomMethod = async (
       calldata: data ?? [],
     });
 
-    const signedTransaction = await cardanoProvider.signData(bech32Address, payload.slice(2));
+    const algorandZeroTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: algorandAddress,
+      to: algorandAddress,
+      amount: 0,
+      note: new Uint8Array(Buffer.from(payload.slice(2), "hex")),
+      suggestedParams: {
+        fee: 0,
+        flatFee: true,
+        firstRound: 1,
+        lastRound: 1,
+        genesisID: "",
+        genesisHash: "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8",
+      },
+    });
+
+    const [signedTransaction] = await peraWallet.signTransaction([
+      [{ txn: algorandZeroTx, signers: [algorandAddress] }],
+    ]);
+
+    const l2TxPayload = {
+      signature: Buffer.from(signedTransaction).toString("hex"),
+      key: Buffer.from(algosdk.decodeAddress(algorandAddress).publicKey).toString("hex"),
+    };
 
     return await provider.oracleRequest({
-      method: "eth_sendAdaActorTransaction",
-      params: [signedTransaction, salt].filter(Boolean),
+      method: "eth_sendAlgActorTransaction",
+      params: [l2TxPayload, salt].filter(Boolean),
     });
   } catch (e) {
     if (e instanceof ProviderRpcError) {
