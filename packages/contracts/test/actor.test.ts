@@ -13,12 +13,6 @@ import {
 describe("Actor", () => {
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
 
-  // const privateKey = PrivateKey.from_bech32(
-  //   "ed25519e_sk1wzm7jmql8tnf3p4yx5seg389dhrg49z9j86a0hrwemehcx3he3dlvxcc663vxnl4anykugu9ttu94yfzuq5ulrxc6lckl647tm58jhqrr7at4"
-  // ).as_bytes();
-  // const mainchainAddress =
-  //   "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
-
   const { privateKey, badPrivateKey, mainchainAddress, badMainchainAddress } = getL1Credentials();
 
   let actorAddress: string;
@@ -28,6 +22,9 @@ describe("Actor", () => {
 
   before(async () => {
     const factory = await getActorFactory();
+
+    console.log(await ethers.provider.getCode(factory.address));
+
     actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
 
     actor = await ethers.getContractAt("Actor", actorAddress);
@@ -315,10 +312,6 @@ describe("Actor", () => {
 
     const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
-      // bad private key,
-      // PrivateKey.from_bech32(
-      //   "ed25519e_sk1tzvc2amgpuz9ryhgg37gcmk0280mu02ktfkzcx7a28qc68phe3dnppwe830teqt2wk3nflwhlyneexkn37vnkqlfv9wzk4hz62e6fkcyk83hj"
-      // ).as_bytes(),
       badPrivateKey,
       mainchainAddress
     );
@@ -354,8 +347,6 @@ describe("Actor", () => {
     const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
-      // bad address
-      // "addr_test1qpmh9svhrqxg7u6nqdxh44zlz0l2w22xc4zpwwfvj84cfwg2w3neh3dundxpwsr229yffepdec0z0yusftfn5teh6qwss2pt3j"
       badMainchainAddress
     );
 

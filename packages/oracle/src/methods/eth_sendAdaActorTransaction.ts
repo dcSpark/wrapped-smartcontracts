@@ -105,7 +105,7 @@ const InputSchema = z.union([
   ]),
 ]);
 
-const eth_sendActorTransaction = async ([{ signature, key }, salt]: z.infer<
+const eth_sendAdaActorTransaction = async ([{ signature, key }, salt]: z.infer<
   typeof InputSchema
 >) => {
   const coseSign1 = COSESign1.from_bytes(signature);
@@ -140,4 +140,4 @@ const eth_sendActorTransaction = async ([{ signature, key }, salt]: z.infer<
   }
 };
 
-export default validationMiddleware(InputSchema.parse, eth_sendActorTransaction);
+export default validationMiddleware(InputSchema.parse, eth_sendAdaActorTransaction);
