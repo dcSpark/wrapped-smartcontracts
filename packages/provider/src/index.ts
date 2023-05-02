@@ -19,3 +19,5 @@ export const injectAlgorand = (oracleUrl: string, jsonRpcProviderUrl: string) =>
 
   return window.ethereum;
 };
+
+export type { CardanoProvider, MilkomedaProvider };

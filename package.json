@@ -32,6 +32,7 @@
     "packages/contracts",
     "packages/dapp-example",
     "packages/oracle",
-    "packages/provider"
+    "packages/provider",
+    "packages/actor-webpage"
   ]
 }
