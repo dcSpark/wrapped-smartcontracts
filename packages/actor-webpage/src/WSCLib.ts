@@ -1,7 +1,7 @@
-// import type { MilkomedaProvider } from "provider";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
-import { milkomedaNetworks } from "@dcspark/milkomeda-js-sdk";
+import PendingManager from "./PendingManger";
 
 export interface TokenBalance {
   balance: string;
@@ -21,6 +21,11 @@ export interface TransactionResponse {
   txreceipt_status: string;
 }
 
+export interface PendingTx {
+  hash: string;
+  timestamp: number;
+}
+
 export enum MilkomedaNetwork {
   C1Mainnet = "Cardano C1 Mainnet",
   C1Devnet = "Cardano C1 Devnet",
@@ -32,24 +37,17 @@ export enum UserWallet {
   Flint = "Flint",
 }
 
-export interface StargateAsset {
-  idCardano: string;
-  idMilkomeda: string;
-  minCNTInt: string;
-  minGWei: string;
+export interface AddressAmount {
+  unit: string;
+  quantity: string;
 }
 
-export interface StargateADA {
-  minLovelace: string;
-  fromADAFeeLovelace: string;
-  toADAFeeGWei: string;
-}
-
-export interface StargateApiResponse {
-  current_address: string;
-  ttl_expiry: number;
-  ada: StargateADA;
-  assets: StargateAsset[];
+export interface AddressResponse {
+  address: string;
+  amount: AddressAmount[];
+  stake_address: string;
+  type: string;
+  script: boolean;
 }
 
 class WSCLib {
@@ -86,36 +84,6 @@ class WSCLib {
     }
   }
 
-  getExplorerUrl(): string {
-    switch (this.network) {
-      case MilkomedaNetwork.C1Mainnet:
-        return "https://explorer-mainnet-cardano-evm.c1.milkomeda.com";
-      case MilkomedaNetwork.C1Devnet:
-        return "https://explorer-devnet-cardano-evm.c1.milkomeda.com";
-      case MilkomedaNetwork.A1Mainnet:
-        return "https://explorer-mainnet-algorand-evm.a1.milkomeda.com";
-      case MilkomedaNetwork.A1Devnet:
-        return "https://explorer-devnet-algorand-evm.a1.milkomeda.com";
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
-  getMilkomedaStargateUrl(): string {
-    switch (this.network) {
-      case MilkomedaNetwork.C1Mainnet:
-        return "https://allowlist-mainnet.flint-wallet.com/v1/stargate";
-      case MilkomedaNetwork.C1Devnet:
-        return "https://allowlist.flint-wallet.com/v1/stargate";
-      case MilkomedaNetwork.A1Mainnet:
-        throw new Error("Algorand not supported yet");
-      case MilkomedaNetwork.A1Devnet:
-        throw new Error("Algorand not supported yet");
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
   // TODO: this eventually should also work with Algorand
   // TODO: add the other wallets or make it generic
   async getWalletProvider(): Promise<WalletApi> {
@@ -132,17 +100,14 @@ class WSCLib {
   }
 
   async loadLucid(): Promise<void> {
-    // TODO: key must be part of the ENV
-    // How can we hide this?
+    // TODO: We should never make the Blockfrost key public
+    // so we need to refactor and maybe add a proxy backend
     const key = "";
 
     const cardanoNetwork = this.network === MilkomedaNetwork.C1Mainnet ? "Mainnet" : "Preprod";
-    this.lucid = await Lucid.new(
-      new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key),
-      cardanoNetwork
-    );
+    this.blockfrost = new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key);
+    this.lucid = await Lucid.new(this.blockfrost, cardanoNetwork);
 
-    console.log("window.cardano: ", window.cardano);
     const walletProvider = await this.getWalletProvider();
     this.lucid.selectWallet(walletProvider);
   }
@@ -195,7 +160,7 @@ class WSCLib {
   ): Promise<TransactionResponse[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
-      this.getExplorerUrl() +
+    PendingManager.getExplorerUrl(this.network) +
       `/api?module=account&action=txlist&address=${targetAddress}&page=${page}&offset=${offset}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -213,7 +178,8 @@ class WSCLib {
   async getTokenBalances(address: string | undefined = undefined): Promise<TokenBalance[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
-      this.getExplorerUrl() + `/api?module=account&action=tokenlist&address=${targetAddress}`;
+      PendingManager.getExplorerUrl(this.network) +
+      `/api?module=account&action=tokenlist&address=${targetAddress}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -224,42 +190,49 @@ class WSCLib {
     }
   }
 
-  // Cardano specific
-  async getCardanoBalance(address: string | undefined = undefined): Promise<string> {
-    console.log("Cardano Balance");
-    return "";
+  // Pending
+  async getPendingTransactions(): Promise<PendingTx[]> {
+    const userL1Address = await this.origin_getAddress();
+    const evmAddress = await this.eth_getAccount();
+    const pendingMngr = new PendingManager(this.blockfrost, this.network, userL1Address, evmAddress);
+    const pendingTxs = await pendingMngr.getPendingTransactions();
+
+    return pendingTxs;
   }
 
-  async origin_getBalance(): Promise<string> {
-    if (!this.lucid) throw "Lucid not loaded";
-    return await this.lucid.wallet.address();
+  // Cardano specific
+  async fetchAddressInfo(url: string): Promise<AddressResponse> {
+    console.log("fetchAddressInfo", url);
+    const response = await fetch(url, {
+      headers: {
+        project_id: this.blockfrost.projectId,
+      },
+    });
+    const addressInfo: AddressResponse = await response.json();
+
+    return addressInfo;
+  }
+
+  async origin_getBalance(address: string | undefined = undefined): Promise<string> {
+    const targetAddress = address || (await this.origin_getAddress());
+    if (targetAddress == null) return "";
+    const url = this.blockfrost.url + "/addresses/" + targetAddress;
+    const addressInfo = await this.fetchAddressInfo(url);
+
+    const lovelaceAmount = addressInfo.amount.find((amount) => amount.unit === "lovelace");
+    if (!lovelaceAmount) {
+      throw new Error("Lovelace not found in address amounts");
+    }
+
+    const lovelaceQuantity = new BigNumber(lovelaceAmount.quantity);
+    const adaQuantity = lovelaceQuantity.dividedBy(new BigNumber(10).pow(6)).toString();
+
+    return adaQuantity;
   }
 
   async origin_getAddress(): Promise<string> {
     if (!this.lucid) throw "Lucid not loaded";
     return await this.lucid.wallet.address();
-  }
-
-  // Bridge
-  async fetchFromStargate(url: string): Promise<StargateApiResponse> {
-    try {
-      const response = await fetch(url);
-      const data: StargateApiResponse = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching data from URL:", error);
-      throw error;
-    }
-  }
-
-  // Pending Transactions
-  async getPendingTransactions(): Promise<TransactionResponse[]> {
-    // TODO: Check all the txs for the past 24 hrs to the bridge SC
-    // TODO: Filter the ones sent by the user
-    // TODO: Check the bridge API and make sure that they haven't been confirmed
-    // TODO: Same but from the other end
-
-    return [];
   }
 }
 
