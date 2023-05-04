@@ -1,10 +1,14 @@
 // import { milkomedaNetworks } from "@dcspark/milkomeda-js-sdk";
 import { Blockfrost } from "lucid-cardano";
-import { MilkomedaNetwork, PendingTx, TransactionResponse } from "./WSCLib";
+import { MilkomedaNetwork, PendingTx } from "./WSCLib";
 
 export interface CardanoAmount {
   unit: string;
   quantity: string;
+  decimals: number | null,
+  bridgeAllowed: boolean | undefined;
+  fingerprint: string | undefined;
+  assetName: string | undefined;
 }
 
 export interface CardanoInput {
@@ -45,6 +49,7 @@ export interface CardanoBlockfrostTransaction {
 export interface StargateAsset {
   idCardano: string;
   idMilkomeda: string;
+  fingerprint: string | undefined;
   minCNTInt: string;
   minGWei: string;
 }
@@ -190,10 +195,7 @@ class PendingManager {
     // this is a *very* inefficient way to do this, but it's the only way until we have a better API
     const bridgeRequests = await this.fetchBridgeRequests();
     const processedTxHashes = bridgeRequests.requests.map((request) => request.transaction_id);
-    console.log("processedTxHashes", processedTxHashes);
-
     const pendingTxs = txsToBridge.filter((tx) => !processedTxHashes.includes(tx.hash));
-
     const pendingTxs_normalized = pendingTxs.map((tx) => ({
       hash: tx.hash,
       timestamp: parseInt(tx.timeStamp),
@@ -226,7 +228,6 @@ class PendingManager {
     const data = await response.json();
 
     const filteredTransactionPromises = data.result.map(async (transaction: any) => {
-      if (transaction.hash=== "0x2b7e1895ec9872d7e1e7d2caaaf070247fbae5e75498fd2dd7e30ab56cd44405") console.log(transaction)
       const shouldIncludeTransaction = await this.filterTransaction(transaction, address, bridgeAddress);
       return shouldIncludeTransaction ? transaction : null;
     });

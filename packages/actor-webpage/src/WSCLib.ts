@@ -1,9 +1,11 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
-import PendingManager from "./PendingManger";
+import PendingManager, { CardanoAmount, StargateApiResponse } from "./PendingManger";
+import { adaFingerprint, assetNameFromBlockfrostId, getFingerprintFromBlockfrost, getFingerprintFromBridge } from "./utils";
+import BridgeActions from "./BridgeActions";
 
-export interface TokenBalance {
+export interface EVMTokenBalance {
   balance: string;
   contractAddress: string;
   decimals: string;
@@ -37,14 +39,9 @@ export enum UserWallet {
   Flint = "Flint",
 }
 
-export interface AddressAmount {
-  unit: string;
-  quantity: string;
-}
-
 export interface AddressResponse {
   address: string;
-  amount: AddressAmount[];
+  amount: CardanoAmount[];
   stake_address: string;
   type: string;
   script: boolean;
@@ -105,11 +102,14 @@ class WSCLib {
     const key = "";
 
     const cardanoNetwork = this.network === MilkomedaNetwork.C1Mainnet ? "Mainnet" : "Preprod";
+    // TODO: get blockfrost url from network
     this.blockfrost = new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key);
     this.lucid = await Lucid.new(this.blockfrost, cardanoNetwork);
 
     const walletProvider = await this.getWalletProvider();
     this.lucid.selectWallet(walletProvider);
+
+    console.log("loadLucid> Lucid: ", this.lucid);
   }
 
   async inject(): Promise<void> {
@@ -160,7 +160,7 @@ class WSCLib {
   ): Promise<TransactionResponse[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
-    PendingManager.getExplorerUrl(this.network) +
+      PendingManager.getExplorerUrl(this.network) +
       `/api?module=account&action=txlist&address=${targetAddress}&page=${page}&offset=${offset}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -175,7 +175,7 @@ class WSCLib {
     }));
   }
 
-  async getTokenBalances(address: string | undefined = undefined): Promise<TokenBalance[]> {
+  async getTokenBalances(address: string | undefined = undefined): Promise<EVMTokenBalance[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
       PendingManager.getExplorerUrl(this.network) +
@@ -194,7 +194,12 @@ class WSCLib {
   async getPendingTransactions(): Promise<PendingTx[]> {
     const userL1Address = await this.origin_getAddress();
     const evmAddress = await this.eth_getAccount();
-    const pendingMngr = new PendingManager(this.blockfrost, this.network, userL1Address, evmAddress);
+    const pendingMngr = new PendingManager(
+      this.blockfrost,
+      this.network,
+      userL1Address,
+      evmAddress
+    );
     const pendingTxs = await pendingMngr.getPendingTransactions();
 
     return pendingTxs;
@@ -202,7 +207,6 @@ class WSCLib {
 
   // Cardano specific
   async fetchAddressInfo(url: string): Promise<AddressResponse> {
-    console.log("fetchAddressInfo", url);
     const response = await fetch(url, {
       headers: {
         project_id: this.blockfrost.projectId,
@@ -213,7 +217,7 @@ class WSCLib {
     return addressInfo;
   }
 
-  async origin_getBalance(address: string | undefined = undefined): Promise<string> {
+  async origin_getADABalance(address: string | undefined = undefined): Promise<string> {
     const targetAddress = address || (await this.origin_getAddress());
     if (targetAddress == null) return "";
     const url = this.blockfrost.url + "/addresses/" + targetAddress;
@@ -226,13 +230,72 @@ class WSCLib {
 
     const lovelaceQuantity = new BigNumber(lovelaceAmount.quantity);
     const adaQuantity = lovelaceQuantity.dividedBy(new BigNumber(10).pow(6)).toString();
-
     return adaQuantity;
   }
 
   async origin_getAddress(): Promise<string> {
     if (!this.lucid) throw "Lucid not loaded";
     return await this.lucid.wallet.address();
+  }
+
+  async origin_getTokenBalances(
+    address: string | undefined = undefined
+  ): Promise<CardanoAmount[]> {
+    const targetAddress = address || (await this.origin_getAddress());
+    if (targetAddress == null) throw new Error("Address not found");
+    const url = this.blockfrost.url + "/addresses/" + targetAddress + "/extended";
+    const addressInfo = await this.fetchAddressInfo(url);
+
+    const updatedTokens = await this.updateAssetsWithBridegeInfo(addressInfo.amount);
+    return updatedTokens;
+  }
+
+  async updateAssetsWithBridegeInfo(tokens: CardanoAmount[]): Promise<CardanoAmount[]> {
+    const url = PendingManager.getMilkomedaStargateUrl(this.network);
+    const response = await fetch(url);
+    const stargateObj: StargateApiResponse = await response.json();
+    const assets = stargateObj.assets;
+
+    console.log("Assets: ", assets)
+    for (const asset of assets) {
+      asset.fingerprint = await getFingerprintFromBridge(asset.idCardano);
+    }
+
+    for (const token of tokens) {
+      if (token.unit === "lovelace") {
+        token.bridgeAllowed = true;
+        token.assetName = "ADA";
+        token.fingerprint = await adaFingerprint();
+        continue;
+      }
+      token.fingerprint = await getFingerprintFromBlockfrost(token.unit);
+      token.assetName = await assetNameFromBlockfrostId(token.unit);
+      token.bridgeAllowed = assets.some((asset) => token.fingerprint === asset.fingerprint);
+    }
+
+    return tokens;
+  }
+
+  // Bridge Actions
+  // TODO: add other token support
+  // the tricky part is the calculation of the fees
+  async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
+    const targetAddress = destination || (await this.eth_getAccount());
+    const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
+    const stargateAddress = stargate.current_address;
+    const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
+
+    // console.log all the arguments to make sure they are correct
+    console.log("targetAddress: ", targetAddress);
+    console.log("stargateAddress: ", stargateAddress);
+    console.log("bridgeAddress: ", bridgeAddress);
+    console.log("network: ", this.network);
+    console.log("assetId: ", assetId);
+    console.log("lucid: ", this.lucid);
+    console.log("provider: ", this.provider);
+
+    const bridgeActions = new BridgeActions(this.lucid, this.provider, stargateAddress, bridgeAddress, this.network);
+    await bridgeActions.wrap(targetAddress, amount);
   }
 }
 

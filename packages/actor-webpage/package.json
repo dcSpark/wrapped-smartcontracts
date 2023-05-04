@@ -18,7 +18,10 @@
   },
   "dependencies": {
     "@dcspark/milkomeda-js-sdk": "^0.5.3",
+    "@emurgo/cip14-js": "^3.0.1",
+    "bech32": "^2.0.0",
     "bignumber.js": "^9.1.1",
+    "buffer": "^6.0.3",
     "ethers": "^5.7.2",
     "lucid-cardano": "^0.10.1",
     "provider": "^0.1.0",
