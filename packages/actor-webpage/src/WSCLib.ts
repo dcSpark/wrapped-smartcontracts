@@ -295,6 +295,18 @@ class WSCLib {
     const bridgeActions = new BridgeActions(this.lucid, this.provider, stargateAddress, bridgeAddress, this.network);
     await bridgeActions.wrap(targetAddress, amount);
   }
+
+  async unwrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
+    const targetAddress = destination || (await this.origin_getAddress());
+    const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
+    const stargateAddress = stargate.current_address
+    const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
+    // TODO: rename this.provider to this.wscProvider
+    // TODO: maybe add this.provider like the one below
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const bridgeActions = new BridgeActions(this.lucid, provider, stargateAddress, bridgeAddress, this.network); 
+    bridgeActions.unwrap(targetAddress, assetId, amount);
+  }
 }
 
 export default WSCLib;

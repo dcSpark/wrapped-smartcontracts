@@ -33,6 +33,10 @@ const App: React.FC = () => {
     return wscLib2.wrap(destination, assetId, amount);
   };
 
+  const unwrapWrapper = async (destination: string | undefined, assetId: string, amount: number) => {
+    return wscLib2.unwrap(destination, assetId, amount);
+  };
+
   const useInterval = (callback: () => void, delay: number | null) => {
     const savedCallback = useRef<() => void | undefined>(undefined);
   
@@ -76,7 +80,7 @@ const App: React.FC = () => {
         setConnected(true);
         // this should be automatically detected from provider
         setNetwork(MilkomedaNetwork.C1Devnet);
-        
+
         const address = await wscLib.eth_getAccount();
         setAddress(address);
 
@@ -140,6 +144,7 @@ const App: React.FC = () => {
           originTokens={originTokens}
           moveAssetsToL1={moveAssetsToL1}
           wrap={wrapWrapper}
+          unwrap={unwrapWrapper}
           // wrap={(destination: string | undefined, assetId: string, amount: number) => {
           //   return wscLib.wrap(destination, assetId, amount);
           // }}

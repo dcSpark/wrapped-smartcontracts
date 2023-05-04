@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress, hexToBytes } from "./utils";
 import { MilkomedaNetwork } from "./WSCLib";
+import PendingManager from "./PendingManger";
 let cml: typeof import("@dcspark/cardano-multiplatform-lib-browser");
 
 class BridgeActions {
@@ -54,19 +55,17 @@ class BridgeActions {
     console.log(txHash);
   };
 
-  unwrap = async (destinationAddress: string, assetId: string) => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-
+  unwrap = async (destinationAddress: string, assetId: string, amountToUnwrap: number) => {
+    
     const tokenContract = new ethers.Contract(
-      "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F",
+      "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F", // this.bridgeAddress?
       ["function approve(address spender, uint256 amount) public returns (bool)"],
-      provider
+      this.provider
     );
-    const bridgeContract = new ethers.Contract(this.bridgeAddress, bridgeArtifact.abi, provider);
+    const bridgeContract = new ethers.Contract(this.bridgeAddress, bridgeArtifact.abi, this.provider);
+    const signer = this.provider.getSigner();
 
-    const signer = provider.getSigner();
-
-    const amountToUnwrap = ethers.utils.parseUnits(prompt("Amount to swap"), 6);
+    // const amountToUnwrap = ethers.utils.parseUnits(, 6);
 
     const approvalTx = await tokenContract
       .connect(signer)
@@ -77,7 +76,7 @@ class BridgeActions {
     await approvalTx.wait();
 
     const cardanoDestination = bech32ToHexAddress(
-      cml.Address.from_bytes(hexToBytes(destinationAddress)).to_bech32()
+        destinationAddress,
     );
 
     const shiftedAssetId = assetId + "000000000000000000000000";
