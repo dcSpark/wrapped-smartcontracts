@@ -30,7 +30,8 @@ const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
 
   const moveToken = async (token: CardanoAmount) => {
     console.log('Moving token', token.unit, 'with amount', tokenAmounts.get(token.unit));
-    wrap(undefined, token.unit, parseFloat(tokenAmounts.get(token.unit) || '0'));
+    await wrap(undefined, token.unit, parseFloat(tokenAmounts.get(token.unit) || '0'));
+    updateTokenAmount(token.unit, '');
   };
 
   const setMaxAmount = (token: CardanoAmount) => {

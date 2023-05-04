@@ -4,7 +4,7 @@ import WSCLib, {
   TransactionResponse,
   UserWallet,
 } from "./WSCLib";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import WrappedSmartContractWalletAssets from "./components/WSCWalletAssets";
 import Summary from "./components/Summary";
 import Header from "./components/Header";
@@ -30,37 +30,60 @@ const App: React.FC = () => {
   const wscLib = new WSCLib(MilkomedaNetwork.C1Devnet, oracleUrl, ethUrl, UserWallet.Flint);
 
   const wrapWrapper = async (destination: string | undefined, assetId: string, amount: number) => {
-    console.log("Lucid: ", wscLib.lucid);
-    return wscLib.wrap(destination, assetId, amount);
+    return wscLib2.wrap(destination, assetId, amount);
   };
+
+  const useInterval = (callback: () => void, delay: number | null) => {
+    const savedCallback = useRef<() => void | undefined>(undefined);
+  
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+  
+    useEffect(() => {
+      if (delay !== null) {
+        const id = setInterval(() => savedCallback.current(), delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  };
+ 
+  const updateWalletData = useCallback(async () => {
+    const destinationBalance = await wscLib.eth_getBalance();
+    setDestinationBalance(destinationBalance);
+
+    const originBalance = await wscLib.origin_getADABalance();
+    setOriginBalance(originBalance);
+
+    const pendingTxs = await wscLib.getPendingTransactions();
+    setPendingTxs(pendingTxs);
+
+    const originTokens = await wscLib.origin_getTokenBalances();
+    setOriginTokens(originTokens);
+  }, []);
+
+  useInterval(() => {
+    if (connected && window.ethereum !== undefined) {
+      updateWalletData();
+    }
+  }, 5000);
 
   // TODO: we should allow to connect Cardano or Algorand wallets
   const handleConnectWallet = async () => {
     if (!connected) {
-      await wscLib.inject();
+      wscLib2 = await wscLib.inject();
       if (window.ethereum !== undefined) {
         setConnected(true);
-
         // this should be automatically detected from provider
         setNetwork(MilkomedaNetwork.C1Devnet);
-
+        
         const address = await wscLib.eth_getAccount();
         setAddress(address);
-
-        const destinationBalance = await wscLib.eth_getBalance();
-        setDestinationBalance(destinationBalance);
-
-        const originBalance = await wscLib.origin_getADABalance();
-        setOriginBalance(originBalance);
 
         const originAddress = await wscLib.origin_getAddress();
         setOriginAddress(originAddress);
 
-        const pendingTxs = await wscLib.getPendingTransactions();
-        setPendingTxs(pendingTxs);
-
-        const originTokens = await wscLib.origin_getTokenBalances();
-        setOriginTokens(originTokens);
+        updateWalletData();
       }
     } else {
       // Handle disconnect logic here

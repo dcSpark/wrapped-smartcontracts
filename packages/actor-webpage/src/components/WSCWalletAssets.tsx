@@ -5,6 +5,7 @@ import WSCLib, { EVMTokenBalance, PendingTx, TransactionResponse } from "../WSCL
 import PendingManager, { CardanoAmount } from "../PendingManger";
 import BigNumber from "bignumber.js";
 import CardanoAssets from "./CardanoAssets";
+import { PendingTransactions } from "./Pending";
 
 interface WrappedSmartContractWalletAssetsProps {
   connected: boolean;
@@ -39,48 +40,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
           <div>Connected WSC Address: {address}</div>
           <div>Balance: {destinationBalance ? destinationBalance + " mADA" : "Loading..."}</div>
           <div>
-            <h2>Pending</h2>
-            <h4>
-              (Here we will show if there are any pending transactions between Cardano and
-              Milkomeda)
-            </h4>
-            <div>
-              Here we should show all the txs that are not confirmed yet and that they were sent to
-              the smart contract bridge from this address.
-            </div>
-            <div>
-              {pendingTxs.length != 0 && (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Hash</th>
-                      <th>Timestamp</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pendingTxs.map((tx: PendingTx, index) => {
-                      const localDateTime = new Date(tx.timestamp * 1000).toLocaleString();
-                      const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
-
-                      return (
-                        <tr key={index}>
-                          <td>
-                            <a
-                              href={`${PendingManager.getExplorerUrl(network)}/tx/${tx.hash}`}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {shortHash}
-                            </a>
-                          </td>
-                          <td>{localDateTime}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              )}
-            </div>
+            <PendingTransactions pendingTxs={pendingTxs} />
           </div>
           <div>
             <CardanoAssets tokens={originTokens} wrap={wrap}/>
@@ -107,7 +67,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
                     <td>{destinationBalance}</td>
                     <td>
                       <a
-                        href={`${PendingManager.getExplorerUrl(
+                        href={`${PendingManager.getEVMExplorerUrl(
                           network
                         )}/address/0x319f10d19e21188ecF58b9a146Ab0b2bfC894648`}
                         target="_blank"
@@ -145,7 +105,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
                       <td>{adjustedBalance.toString()}</td>
                       <td>
                         <a
-                          href={`${PendingManager.getExplorerUrl(network)}/address/${
+                          href={`${PendingManager.getEVMExplorerUrl(network)}/address/${
                             token.contractAddress
                           }`}
                           target="_blank"
@@ -191,7 +151,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
                     <tr key={index}>
                       <td>
                         <a
-                          href={`${PendingManager.getExplorerUrl(network)}/tx/${tx.hash}`}
+                          href={`${PendingManager.getEVMExplorerUrl(network)}/tx/${tx.hash}`}
                           target="_blank"
                           rel="noreferrer"
                         >

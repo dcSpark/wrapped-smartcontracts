@@ -1,6 +1,6 @@
 // import { milkomedaNetworks } from "@dcspark/milkomeda-js-sdk";
 import { Blockfrost } from "lucid-cardano";
-import { MilkomedaNetwork, PendingTx } from "./WSCLib";
+import { MilkomedaNetwork, PendingTx, PendingTxType } from "./WSCLib";
 
 export interface CardanoAmount {
   unit: string;
@@ -96,7 +96,7 @@ class PendingManager {
     this.evmAddress = evmAddress;
   }
 
-  static getExplorerUrl(network: string): string {
+  static getEVMExplorerUrl(network: string): string {
     switch (network) {
       case MilkomedaNetwork.C1Mainnet:
         return "https://explorer-mainnet-cardano-evm.c1.milkomeda.com";
@@ -106,6 +106,21 @@ class PendingManager {
         return "https://explorer-mainnet-algorand-evm.a1.milkomeda.com";
       case MilkomedaNetwork.A1Devnet:
         return "https://explorer-devnet-algorand-evm.a1.milkomeda.com";
+      default:
+        throw new Error("Invalid network");
+    }
+  }
+
+  static getCardanoExplorerUrl(network: string): string {
+    switch (network) {
+      case MilkomedaNetwork.C1Mainnet:
+        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
+      case MilkomedaNetwork.C1Devnet:
+        return "https://preprod.cardanoscan.io";
+      case MilkomedaNetwork.A1Mainnet:
+        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
+      case MilkomedaNetwork.A1Devnet:
+        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
       default:
         throw new Error("Invalid network");
     }
@@ -199,13 +214,15 @@ class PendingManager {
     const pendingTxs_normalized = pendingTxs.map((tx) => ({
       hash: tx.hash,
       timestamp: parseInt(tx.timeStamp),
+      explorer: PendingManager.getEVMExplorerUrl(this.network) + '/tx/' + tx.hash,
+      type: PendingTxType.Unwrap,
     }));
 
     return pendingTxs_normalized;
   }
 
   private async filterTransaction(transaction: any, address: string, bridgeAddress: string): Promise<boolean> {
-    const traceApiUrl = PendingManager.getExplorerUrl(this.network) + `/api?module=account&action=txlistinternal&txhash=${transaction.hash}`;
+    const traceApiUrl = PendingManager.getEVMExplorerUrl(this.network) + `/api?module=account&action=txlistinternal&txhash=${transaction.hash}`;
     const traceResponse = await fetch(traceApiUrl);
     const trace = await traceResponse.json();
   
@@ -223,7 +240,7 @@ class PendingManager {
 
   async getTransactionsToBridgeFromAddress(address: string, bridgeAddress: string): Promise<any[]> {
     const dayAgoTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
-    const apiUrl = PendingManager.getExplorerUrl(this.network) + `/api?module=account&action=txlist&address=${address}&starttimestamp=${dayAgoTimestamp}`;
+    const apiUrl = PendingManager.getEVMExplorerUrl(this.network) + `/api?module=account&action=txlist&address=${address}&starttimestamp=${dayAgoTimestamp}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
 
@@ -266,6 +283,8 @@ class PendingManager {
     const pendingTxs_normalized = pendingTxs.map((tx) => ({
       hash: tx.tx_hash,
       timestamp: tx.block_time,
+      explorer: PendingManager.getCardanoExplorerUrl(this.network) + '/transaction/' + tx.tx_hash,
+      type: PendingTxType.Wrap,
     }));
 
     return pendingTxs_normalized;

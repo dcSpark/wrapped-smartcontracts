@@ -23,9 +23,16 @@ export interface TransactionResponse {
   txreceipt_status: string;
 }
 
+export enum PendingTxType {
+  Wrap = "wrap",
+  Unwrap = "unwrap",
+}
+
 export interface PendingTx {
   hash: string;
   timestamp: number;
+  explorer: string | undefined;
+  type: PendingTxType;
 }
 
 export enum MilkomedaNetwork {
@@ -112,7 +119,7 @@ class WSCLib {
     console.log("loadLucid> Lucid: ", this.lucid);
   }
 
-  async inject(): Promise<void> {
+  async inject(): Promise<WSCLib> {
     if (!this.provider) {
       await this.loadProvider();
     }
@@ -123,6 +130,7 @@ class WSCLib {
     await this.loadLucid();
 
     // TODO: Make it work for Algorand
+    return this;
   }
 
   async eth_requestAccounts(): Promise<string> {
@@ -160,7 +168,7 @@ class WSCLib {
   ): Promise<TransactionResponse[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
-      PendingManager.getExplorerUrl(this.network) +
+      PendingManager.getEVMExplorerUrl(this.network) +
       `/api?module=account&action=txlist&address=${targetAddress}&page=${page}&offset=${offset}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -178,7 +186,7 @@ class WSCLib {
   async getTokenBalances(address: string | undefined = undefined): Promise<EVMTokenBalance[]> {
     const targetAddress = address || (await this.eth_getAccount());
     const url =
-      PendingManager.getExplorerUrl(this.network) +
+      PendingManager.getEVMExplorerUrl(this.network) +
       `/api?module=account&action=tokenlist&address=${targetAddress}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -284,16 +292,6 @@ class WSCLib {
     const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
     const stargateAddress = stargate.current_address;
     const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
-
-    // console.log all the arguments to make sure they are correct
-    console.log("targetAddress: ", targetAddress);
-    console.log("stargateAddress: ", stargateAddress);
-    console.log("bridgeAddress: ", bridgeAddress);
-    console.log("network: ", this.network);
-    console.log("assetId: ", assetId);
-    console.log("lucid: ", this.lucid);
-    console.log("provider: ", this.provider);
-
     const bridgeActions = new BridgeActions(this.lucid, this.provider, stargateAddress, bridgeAddress, this.network);
     await bridgeActions.wrap(targetAddress, amount);
   }
