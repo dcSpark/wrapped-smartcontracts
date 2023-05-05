@@ -1,19 +1,21 @@
 import { ethers } from "ethers";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
-import { bech32ToHexAddress, hexToBytes } from "./utils";
-import { MilkomedaNetwork } from "./WSCLib";
-import PendingManager from "./PendingManger";
-let cml: typeof import("@dcspark/cardano-multiplatform-lib-browser");
+import { bech32ToHexAddress } from "./utils";
+import { MilkomedaNetworkName } from "./WSCLib";
 
 class BridgeActions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lucid: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any;
-  startgateAddress: string;
+  stargateAddress: string;
   bridgeAddress: string;
   network: string;
 
   constructor(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     lucid: any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     provider: any,
     stargateAddress: string,
     bridgeAddress: string,
@@ -21,20 +23,20 @@ class BridgeActions {
   ) {
     this.provider = provider;
     this.lucid = lucid;
-    this.startgateAddress = stargateAddress;
+    this.stargateAddress = stargateAddress;
     this.bridgeAddress = bridgeAddress;
     this.network = network;
   }
 
   getBridgeMetadata(): string {
     switch (this.network) {
-      case MilkomedaNetwork.C1Mainnet:
+      case MilkomedaNetworkName.C1Mainnet:
         throw new Error("Need to add Bridge API URL for C1 Mainnet");
-      case MilkomedaNetwork.C1Devnet:
+      case MilkomedaNetworkName.C1Devnet:
         return "devnet.cardano-evm.c1";
-      case MilkomedaNetwork.A1Mainnet:
+      case MilkomedaNetworkName.A1Mainnet:
         throw new Error("Need to add Bridge API URL for A1 Mainnet");
-      case MilkomedaNetwork.A1Devnet:
+      case MilkomedaNetworkName.A1Devnet:
         throw new Error("Need to add Bridge API URL for A1 Devnet");
       default:
         throw new Error("Invalid network");
@@ -44,7 +46,7 @@ class BridgeActions {
   wrap = async (destination: string, amount: number) => {
     const tx = await this.lucid
       .newTx()
-      .payToAddress(this.startgateAddress, { lovelace: BigInt(amount) * BigInt(10 ** 6) })
+      .payToAddress(this.stargateAddress, { lovelace: BigInt(amount) * BigInt(10 ** 6) })
       .attachMetadata(87, this.getBridgeMetadata())
       .attachMetadata(88, destination)
       .complete();
@@ -56,13 +58,16 @@ class BridgeActions {
   };
 
   unwrap = async (destinationAddress: string, assetId: string, amountToUnwrap: number) => {
-    
     const tokenContract = new ethers.Contract(
       "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F", // this.bridgeAddress?
       ["function approve(address spender, uint256 amount) public returns (bool)"],
       this.provider
     );
-    const bridgeContract = new ethers.Contract(this.bridgeAddress, bridgeArtifact.abi, this.provider);
+    const bridgeContract = new ethers.Contract(
+      this.bridgeAddress,
+      bridgeArtifact.abi,
+      this.provider
+    );
     const signer = this.provider.getSigner();
 
     // const amountToUnwrap = ethers.utils.parseUnits(, 6);
@@ -75,9 +80,7 @@ class BridgeActions {
 
     await approvalTx.wait();
 
-    const cardanoDestination = bech32ToHexAddress(
-        destinationAddress,
-    );
+    const cardanoDestination = bech32ToHexAddress(destinationAddress);
 
     const shiftedAssetId = assetId + "000000000000000000000000";
 

@@ -1,5 +1,5 @@
 import WSCLib, {
-  MilkomedaNetwork,
+  MilkomedaNetworkName,
   PendingTx,
   TransactionResponse,
   UserWallet,
@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import WrappedSmartContractWalletAssets from "./components/WSCWalletAssets";
 import Summary from "./components/Summary";
 import Header from "./components/Header";
+import { Activity } from "./Activity";
 
 let wscLib2: any;
 
@@ -19,7 +20,7 @@ const App: React.FC = () => {
   const [originBalance, setOriginBalance] = useState<string | null>(null);
   const [originTokens, setOriginTokens] = useState<any[]>([]);
   const [tokens, setTokens] = useState<any[]>([]);
-  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
+  const [transactions, setTransactions] = useState<Activity[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
   const [network, setNetwork] = useState<string | null>(null);
 
@@ -27,7 +28,7 @@ const App: React.FC = () => {
   const oracleUrl = "http://localhost:8080";
   const ethUrl = "https://rpc-devnet-cardano-evm.c1.milkomeda.com";
 
-  const wscLib = new WSCLib(MilkomedaNetwork.C1Devnet, oracleUrl, ethUrl, UserWallet.Flint);
+  const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, oracleUrl, ethUrl, UserWallet.Flint);
 
   const wrapWrapper = async (destination: string | undefined, assetId: string, amount: number) => {
     return wscLib2.wrap(destination, assetId, amount);
@@ -79,7 +80,7 @@ const App: React.FC = () => {
       if (window.ethereum !== undefined) {
         setConnected(true);
         // this should be automatically detected from provider
-        setNetwork(MilkomedaNetwork.C1Devnet);
+        setNetwork(MilkomedaNetworkName.C1Devnet);
 
         const address = await wscLib.eth_getAccount();
         setAddress(address);
@@ -119,8 +120,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const getTransactions = async () => {
       if (connected) {
-        const transactionHistory = await wscLib.getTransactionList();
-        setTransactions(transactionHistory);
+        const latestActivity = await wscLib.latestActivity();
+        setTransactions(latestActivity);
       }
     };
 
@@ -145,9 +146,6 @@ const App: React.FC = () => {
           moveAssetsToL1={moveAssetsToL1}
           wrap={wrapWrapper}
           unwrap={unwrapWrapper}
-          // wrap={(destination: string | undefined, assetId: string, amount: number) => {
-          //   return wscLib.wrap(destination, assetId, amount);
-          // }}
           transactions={transactions}
         />
       </div>

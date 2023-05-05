@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { EVMTokenBalance } from "../WSCLib";
-import PendingManager from "../PendingManger";
+import { MilkomedaConstants } from "../MilkomedaConstants";
 
 interface WrappedSmartContractAssetsProps {
   destinationBalance: string | null;
@@ -40,7 +40,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
               <td>{destinationBalance}</td>
               <td>
                 <a
-                  href={`${PendingManager.getEVMExplorerUrl(
+                  href={`${MilkomedaConstants.getEVMExplorerUrl(
                     network
                   )}/address/0x319f10d19e21188ecF58b9a146Ab0b2bfC894648`}
                   target="_blank"
@@ -54,7 +54,6 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                   style={{ backgroundColor: "blue", color: "white" }}
                   onClick={() =>
                     unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", parseInt(destinationBalance))
-                    // moveAssetsToL1("0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", "ADA")
                   }
                 >
                   Move all to L1
@@ -79,7 +78,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                 <td>{adjustedBalance.toString()}</td>
                 <td>
                   <a
-                    href={`${PendingManager.getEVMExplorerUrl(network)}/address/${
+                    href={`${MilkomedaConstants.getEVMExplorerUrl(network)}/address/${
                       token.contractAddress
                     }`}
                     target="_blank"

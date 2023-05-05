@@ -2,8 +2,16 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
 import PendingManager, { CardanoAmount, StargateApiResponse } from "./PendingManger";
-import { adaFingerprint, assetNameFromBlockfrostId, getFingerprintFromBlockfrost, getFingerprintFromBridge } from "./utils";
+import { MilkomedaConstants } from "./MilkomedaConstants";
+import {
+  adaFingerprint,
+  assetNameFromBlockfrostId,
+  getFingerprintFromBlockfrost,
+  getFingerprintFromBridge,
+} from "./utils";
 import BridgeActions from "./BridgeActions";
+import { MilkomedaNetwork } from "./MilkomedaNetwork";
+import { Activity, ActivityManager, ActivityStatus } from "./Activity";
 
 export interface EVMTokenBalance {
   balance: string;
@@ -26,6 +34,7 @@ export interface TransactionResponse {
 export enum PendingTxType {
   Wrap = "wrap",
   Unwrap = "unwrap",
+  Normal = "normal",
 }
 
 export interface PendingTx {
@@ -33,9 +42,10 @@ export interface PendingTx {
   timestamp: number;
   explorer: string | undefined;
   type: PendingTxType;
+  destinationAddress: string;
 }
 
-export enum MilkomedaNetwork {
+export enum MilkomedaNetworkName {
   C1Mainnet = "Cardano C1 Mainnet",
   C1Devnet = "Cardano C1 Devnet",
   A1Mainnet = "Algorand A1 Mainnet",
@@ -56,10 +66,12 @@ export interface AddressResponse {
 
 class WSCLib {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  provider: any; // TODO: fix types. does it require to update provider?
+  wscProvider: any; // TODO: fix types. does it require to update provider?
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  evmProvider: any;
   oracleUrl: string;
   jsonRpcProviderUrl: string;
-  network: MilkomedaNetwork;
+  network: MilkomedaNetworkName;
 
   // Cardano
   wallet: UserWallet | undefined;
@@ -67,7 +79,7 @@ class WSCLib {
   lucid: any;
 
   constructor(
-    network: MilkomedaNetwork,
+    network: MilkomedaNetworkName,
     oracleUrl: string,
     jsonRpcProviderUrl: string,
     wallet: UserWallet
@@ -100,7 +112,7 @@ class WSCLib {
   }
 
   async loadProvider(): Promise<void> {
-    this.provider = await import("provider");
+    this.wscProvider = await import("provider");
   }
 
   async loadLucid(): Promise<void> {
@@ -108,26 +120,26 @@ class WSCLib {
     // so we need to refactor and maybe add a proxy backend
     const key = "";
 
-    const cardanoNetwork = this.network === MilkomedaNetwork.C1Mainnet ? "Mainnet" : "Preprod";
+    const cardanoNetwork = this.network === MilkomedaNetworkName.C1Mainnet ? "Mainnet" : "Preprod";
     // TODO: get blockfrost url from network
     this.blockfrost = new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key);
     this.lucid = await Lucid.new(this.blockfrost, cardanoNetwork);
 
     const walletProvider = await this.getWalletProvider();
     this.lucid.selectWallet(walletProvider);
-
-    console.log("loadLucid> Lucid: ", this.lucid);
   }
 
   async inject(): Promise<WSCLib> {
-    if (!this.provider) {
+    if (!this.wscProvider) {
       await this.loadProvider();
     }
-    await this.provider.inject(this.oracleUrl, this.jsonRpcProviderUrl).setup();
+    await this.wscProvider.inject(this.oracleUrl, this.jsonRpcProviderUrl).setup();
     await this.eth_requestAccounts();
 
     // TODO: Add specific Cardano wallet?
     await this.loadLucid();
+
+    this.evmProvider = await this.getEthersProvider();
 
     // TODO: Make it work for Algorand
     return this;
@@ -142,17 +154,15 @@ class WSCLib {
   }
 
   async eth_getAccount(): Promise<string> {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
+    const signer = (await this.getEthersProvider()).getSigner();
     return signer.getAddress();
   }
 
   async eth_getBalance(): Promise<string> {
-    if (!this.provider) throw "Provider not loaded";
+    if (!this.wscProvider) throw "Provider not loaded";
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const balance = await provider.getBalance(signer.getAddress());
+    const signer = (await this.getEthersProvider()).getSigner();
+    const balance = await this.evmProvider.getBalance(signer.getAddress());
     return ethers.utils.formatEther(balance);
   }
 
@@ -161,41 +171,9 @@ class WSCLib {
     return new ethers.providers.Web3Provider(window.ethereum);
   }
 
-  public async getTransactionList(
-    address: string | undefined = undefined,
-    page = 0,
-    offset = 10
-  ): Promise<TransactionResponse[]> {
-    const targetAddress = address || (await this.eth_getAccount());
-    const url =
-      PendingManager.getEVMExplorerUrl(this.network) +
-      `/api?module=account&action=txlist&address=${targetAddress}&page=${page}&offset=${offset}`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    return data.result.map((transaction: any) => ({
-      hash: transaction.hash,
-      timeStamp: transaction.timeStamp,
-      from: transaction.from,
-      to: transaction.to,
-      value: transaction.value,
-      txreceipt_status: transaction.txreceipt_status,
-    }));
-  }
-
   async getTokenBalances(address: string | undefined = undefined): Promise<EVMTokenBalance[]> {
     const targetAddress = address || (await this.eth_getAccount());
-    const url =
-      PendingManager.getEVMExplorerUrl(this.network) +
-      `/api?module=account&action=tokenlist&address=${targetAddress}`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.status === "1" && data.message === "OK") {
-      return data.result;
-    } else {
-      throw new Error("Failed to fetch token balances");
-    }
+    return await MilkomedaNetwork.destination_getTokenBalances(this.network, targetAddress);
   }
 
   // Pending
@@ -214,31 +192,15 @@ class WSCLib {
   }
 
   // Cardano specific
-  async fetchAddressInfo(url: string): Promise<AddressResponse> {
-    const response = await fetch(url, {
-      headers: {
-        project_id: this.blockfrost.projectId,
-      },
-    });
-    const addressInfo: AddressResponse = await response.json();
-
-    return addressInfo;
-  }
 
   async origin_getADABalance(address: string | undefined = undefined): Promise<string> {
     const targetAddress = address || (await this.origin_getAddress());
     if (targetAddress == null) return "";
-    const url = this.blockfrost.url + "/addresses/" + targetAddress;
-    const addressInfo = await this.fetchAddressInfo(url);
-
-    const lovelaceAmount = addressInfo.amount.find((amount) => amount.unit === "lovelace");
-    if (!lovelaceAmount) {
-      throw new Error("Lovelace not found in address amounts");
-    }
-
-    const lovelaceQuantity = new BigNumber(lovelaceAmount.quantity);
-    const adaQuantity = lovelaceQuantity.dividedBy(new BigNumber(10).pow(6)).toString();
-    return adaQuantity;
+    return await MilkomedaNetwork.getAdaBalance(
+      this.blockfrost.url,
+      this.blockfrost.projectId,
+      targetAddress
+    );
   }
 
   async origin_getAddress(): Promise<string> {
@@ -251,20 +213,21 @@ class WSCLib {
   ): Promise<CardanoAmount[]> {
     const targetAddress = address || (await this.origin_getAddress());
     if (targetAddress == null) throw new Error("Address not found");
-    const url = this.blockfrost.url + "/addresses/" + targetAddress + "/extended";
-    const addressInfo = await this.fetchAddressInfo(url);
-
-    const updatedTokens = await this.updateAssetsWithBridegeInfo(addressInfo.amount);
+    const addressInfo = await MilkomedaNetwork.origin_getTokenBalances(
+      targetAddress,
+      this.blockfrost.url,
+      this.blockfrost.projectId
+    );
+    const updatedTokens = await this.updateAssetsWithBridgeInfo(addressInfo.amount);
     return updatedTokens;
   }
 
-  async updateAssetsWithBridegeInfo(tokens: CardanoAmount[]): Promise<CardanoAmount[]> {
-    const url = PendingManager.getMilkomedaStargateUrl(this.network);
+  async updateAssetsWithBridgeInfo(tokens: CardanoAmount[]): Promise<CardanoAmount[]> {
+    const url = MilkomedaConstants.getMilkomedaStargateUrl(this.network);
     const response = await fetch(url);
     const stargateObj: StargateApiResponse = await response.json();
     const assets = stargateObj.assets;
 
-    console.log("Assets: ", assets)
     for (const asset of assets) {
       asset.fingerprint = await getFingerprintFromBridge(asset.idCardano);
     }
@@ -289,23 +252,83 @@ class WSCLib {
   // the tricky part is the calculation of the fees
   async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
     const targetAddress = destination || (await this.eth_getAccount());
-    const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
+    const stargate = await PendingManager.fetchFromStargate(
+      MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+    );
     const stargateAddress = stargate.current_address;
-    const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
-    const bridgeActions = new BridgeActions(this.lucid, this.provider, stargateAddress, bridgeAddress, this.network);
+    const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
+    const bridgeActions = new BridgeActions(
+      this.lucid,
+      this.wscProvider,
+      stargateAddress,
+      bridgeAddress,
+      this.network
+    );
     await bridgeActions.wrap(targetAddress, amount);
   }
 
   async unwrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
     const targetAddress = destination || (await this.origin_getAddress());
-    const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
-    const stargateAddress = stargate.current_address
-    const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
-    // TODO: rename this.provider to this.wscProvider
-    // TODO: maybe add this.provider like the one below
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const bridgeActions = new BridgeActions(this.lucid, provider, stargateAddress, bridgeAddress, this.network); 
+    const stargate = await PendingManager.fetchFromStargate(
+      MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+    );
+    const stargateAddress = stargate.current_address;
+    const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
+    const bridgeActions = new BridgeActions(
+      this.lucid,
+      this.evmProvider,
+      stargateAddress,
+      bridgeAddress,
+      this.network
+    );
     bridgeActions.unwrap(targetAddress, assetId, amount);
+  }
+
+  // Latest Activity
+  // Show the latest activity of the user: L2 -> L2, L2 -> L1 and L1 -> L2.
+  async latestActivity(): Promise<Activity[]> {
+    const targetAddress = await this.eth_getAccount();
+    const bridgeActivity = await ActivityManager.getBridgeActivity(this.network, targetAddress);
+    console.log("bridgeActivity", bridgeActivity);
+
+    const l2Activity = await this.getL2TransactionList();
+    const l2normalized: Activity[] = l2Activity.map((transaction) => {
+      return {
+        hash: transaction.hash,
+        timestamp: parseInt(transaction.timeStamp),
+        explorer: MilkomedaConstants.getEVMExplorerUrl(this.network) + "/tx/" + transaction.hash,
+        type: PendingTxType.Normal,
+        destinationAddress: transaction.to,
+        status: ActivityStatus.Completed,
+      };
+    });
+
+    const grouped = [...bridgeActivity, ...l2normalized];
+
+    console.log("grouped", grouped);
+    // Remove duplicates based on hash and prioritize non-normal types
+    const uniqueActivities = new Map<string, Activity>();
+    grouped.forEach((activity) => {
+      const existingActivity = uniqueActivities.get(activity.hash);
+
+      if (
+        !existingActivity ||
+        (existingActivity.type === PendingTxType.Normal && activity.type !== PendingTxType.Normal)
+      ) {
+        uniqueActivities.set(activity.hash, activity);
+      }
+    });
+
+    return Array.from(uniqueActivities.values()).sort((a, b) => b.timestamp - a.timestamp).slice(0, 20);
+  }
+
+  public async getL2TransactionList(
+    address: string | undefined = undefined,
+    page = 0,
+    offset = 10
+  ): Promise<TransactionResponse[]> {
+    const targetAddress = address || (await this.eth_getAccount());
+    return MilkomedaNetwork.getL2TransactionList(this.network, targetAddress, page, offset);
   }
 }
 

@@ -1,11 +1,13 @@
 // import { milkomedaNetworks } from "@dcspark/milkomeda-js-sdk";
 import { Blockfrost } from "lucid-cardano";
-import { MilkomedaNetwork, PendingTx, PendingTxType } from "./WSCLib";
+import { MilkomedaNetworkName, PendingTx, PendingTxType } from "./WSCLib";
+import { MilkomedaNetwork } from "./MilkomedaNetwork";
+import { MilkomedaConstants } from "./MilkomedaConstants";
 
 export interface CardanoAmount {
   unit: string;
   quantity: string;
-  decimals: number | null,
+  decimals: number | null;
   bridgeAllowed: boolean | undefined;
   fingerprint: string | undefined;
   assetName: string | undefined;
@@ -67,108 +69,43 @@ export interface StargateApiResponse {
   assets: StargateAsset[];
 }
 
-export interface BridgeRequest {
-  transaction_id: string;
-  mainchain_tx_id: string;
+export interface ExplorerTransaction {
+  blockHash: string;
+  blockNumber: string;
+  confirmations: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
   from: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  hash: string;
+  input: string;
+  isError: string;
+  nonce: string;
+  timeStamp: string;
   to: string;
-  block_number: number;
-  timestamp: number;
-  executed_timestamp: number;
-  invalidated: boolean;
-  assets: any[];
-}
-
-export interface BridgeRequestsResponse {
-  requests: BridgeRequest[];
+  transactionIndex: string;
+  txreceipt_status: string;
+  value: string;
 }
 
 class PendingManager {
   blockfrost: any;
-  network: MilkomedaNetwork;
+  network: MilkomedaNetworkName;
   userL1Address: string;
   evmAddress: string;
 
-  constructor(blockfrost: Blockfrost, network: MilkomedaNetwork, userL1Address: string, evmAddress: string) {
+  constructor(
+    blockfrost: Blockfrost,
+    network: MilkomedaNetworkName,
+    userL1Address: string,
+    evmAddress: string
+  ) {
     this.blockfrost = blockfrost;
     this.network = network;
     this.userL1Address = userL1Address;
     this.evmAddress = evmAddress;
-  }
-
-  static getEVMExplorerUrl(network: string): string {
-    switch (network) {
-      case MilkomedaNetwork.C1Mainnet:
-        return "https://explorer-mainnet-cardano-evm.c1.milkomeda.com";
-      case MilkomedaNetwork.C1Devnet:
-        return "https://explorer-devnet-cardano-evm.c1.milkomeda.com";
-      case MilkomedaNetwork.A1Mainnet:
-        return "https://explorer-mainnet-algorand-evm.a1.milkomeda.com";
-      case MilkomedaNetwork.A1Devnet:
-        return "https://explorer-devnet-algorand-evm.a1.milkomeda.com";
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
-  static getCardanoExplorerUrl(network: string): string {
-    switch (network) {
-      case MilkomedaNetwork.C1Mainnet:
-        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
-      case MilkomedaNetwork.C1Devnet:
-        return "https://preprod.cardanoscan.io";
-      case MilkomedaNetwork.A1Mainnet:
-        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
-      case MilkomedaNetwork.A1Devnet:
-        throw new Error("Need to add Cardano Explorer URL for C1 Mainnet");
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
-  static getMilkomedaStargateUrl(network: string): string {
-    switch (network) {
-      case MilkomedaNetwork.C1Mainnet:
-        return "https://allowlist-mainnet.flint-wallet.com/v1/stargate";
-      case MilkomedaNetwork.C1Devnet:
-        return "https://allowlist.flint-wallet.com/v1/stargate";
-      case MilkomedaNetwork.A1Mainnet:
-        throw new Error("Algorand not supported yet");
-      case MilkomedaNetwork.A1Devnet:
-        throw new Error("Algorand not supported yet");
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
-  static getBridgeAPIUrl(network: string): string {
-    switch (network) {
-      case MilkomedaNetwork.C1Mainnet:
-        throw new Error("Need to add Bridge API URL for C1 Mainnet");
-      case MilkomedaNetwork.C1Devnet:
-        return "https://ada-bridge-devnet-cardano-evm.c1.milkomeda.com/api/v1";
-      case MilkomedaNetwork.A1Mainnet:
-        throw new Error("Need to add Bridge API URL for A1 Mainnet");
-      case MilkomedaNetwork.A1Devnet:
-        throw new Error("Need to add Bridge API URL for A1 Devnet");
-      default:
-        throw new Error("Invalid network");
-    }
-  }
-
-  static getBridgeEVMAddress(network: string): string {
-    switch (network) {
-      case MilkomedaNetwork.C1Mainnet:
-        throw new Error("Need to add Bridge API URL for C1 Mainnet");
-      case MilkomedaNetwork.C1Devnet:
-        return "0x319f10d19e21188ecf58b9a146ab0b2bfc894648";
-      case MilkomedaNetwork.A1Mainnet:
-        throw new Error("Need to add Bridge API URL for A1 Mainnet");
-      case MilkomedaNetwork.A1Devnet:
-        throw new Error("Need to add Bridge API URL for A1 Devnet");
-      default:
-        throw new Error("Invalid network");
-    }
   }
 
   //
@@ -179,13 +116,13 @@ class PendingManager {
     const evmPendingTxs = await this.getEVMPEndingTxs();
     return [...cardanoPendingTxs, ...evmPendingTxs];
   }
-  
+
   async fetchRecentTransactions(address: string): Promise<CardanoBlockfrostTransaction[]> {
     const url = this.blockfrost.url + `/addresses/${address}/transactions`;
     const response = await fetch(url, {
       headers: {
-        'project_id': this.blockfrost.projectId
-      }
+        project_id: this.blockfrost.projectId,
+      },
     });
     const transactions: CardanoBlockfrostTransaction[] = await response.json();
 
@@ -202,33 +139,61 @@ class PendingManager {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed
 
-    const bridgeAddress = PendingManager.getBridgeEVMAddress(this.network);
-    const txsToBridge = await this.getTransactionsToBridgeFromAddress(this.evmAddress, bridgeAddress);
+    const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
+    const txsToBridge = await this.getTransactionsToBridgeFromAddress(
+      this.evmAddress,
+      bridgeAddress
+    );
     if (txsToBridge.length === 0) return [];
-   
+
     // check if bridgeTxs exist in the bridge API (if they don't it means that they are pending)
     // this is a *very* inefficient way to do this, but it's the only way until we have a better API
-    const bridgeRequests = await this.fetchBridgeRequests();
-    const processedTxHashes = bridgeRequests.requests.map((request) => request.transaction_id);
+    const bridgeRequests = await MilkomedaNetwork.fetchBridgeRequests(this.network);
+    const processedTxHashes = bridgeRequests.map((request) => request.transaction_id);
     const pendingTxs = txsToBridge.filter((tx) => !processedTxHashes.includes(tx.hash));
     const pendingTxs_normalized = pendingTxs.map((tx) => ({
       hash: tx.hash,
       timestamp: parseInt(tx.timeStamp),
-      explorer: PendingManager.getEVMExplorerUrl(this.network) + '/tx/' + tx.hash,
+      explorer: MilkomedaConstants.getEVMExplorerUrl(this.network) + "/tx/" + tx.hash,
       type: PendingTxType.Unwrap,
+      destinationAddress: "Cardano Address", // TODO: eventually find the address in the input data
     }));
 
-    return pendingTxs_normalized;
+    // this code check for pending txs detected by the bridge that are being unwrapped
+    const bridgePendingTxs = bridgeRequests.filter(
+      (request) =>
+        !request.executed_timestamp && request.from.toLowerCase() === this.evmAddress.toLowerCase()
+    );
+    const bridgePendingTxs_normalized = bridgePendingTxs.map((tx) => ({
+      hash: tx.transaction_id,
+      timestamp: tx.timestamp,
+      explorer: MilkomedaConstants.getEVMExplorerUrl(this.network) + "/tx/" + tx.transaction_id,
+      type: PendingTxType.Unwrap,
+      destinationAddress: tx.to,
+    }));
+
+    return [...pendingTxs_normalized, ...bridgePendingTxs_normalized].sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
   }
 
-  private async filterTransaction(transaction: any, address: string, bridgeAddress: string): Promise<boolean> {
-    const traceApiUrl = PendingManager.getEVMExplorerUrl(this.network) + `/api?module=account&action=txlistinternal&txhash=${transaction.hash}`;
+  private async filterTransaction(
+    transaction: any,
+    address: string,
+    bridgeAddress: string
+  ): Promise<boolean> {
+    const traceApiUrl =
+      MilkomedaConstants.getEVMExplorerUrl(this.network) +
+      `/api?module=account&action=txlistinternal&txhash=${transaction.hash}`;
     const traceResponse = await fetch(traceApiUrl);
     const trace = await traceResponse.json();
-  
-    let goingToBridge = false;   
+
+    let goingToBridge = false;
     for (const traceItem of trace.result) {
-      if (traceItem.from.toLowerCase() === address.toLowerCase() && traceItem.to.toLowerCase() === bridgeAddress.toLowerCase()) {
+      if (
+        traceItem.from.toLowerCase() === address.toLowerCase() &&
+        traceItem.to.toLowerCase() === bridgeAddress.toLowerCase()
+      ) {
         goingToBridge = true;
       }
       if (traceItem.isError === "1") {
@@ -238,19 +203,32 @@ class PendingManager {
     return goingToBridge;
   }
 
-  async getTransactionsToBridgeFromAddress(address: string, bridgeAddress: string): Promise<any[]> {
+  async getTransactionsToBridgeFromAddress(
+    address: string,
+    bridgeAddress: string
+  ): Promise<ExplorerTransaction[]> {
     const dayAgoTimestamp = Math.floor((Date.now() - 24 * 60 * 60 * 1000) / 1000);
-    const apiUrl = PendingManager.getEVMExplorerUrl(this.network) + `/api?module=account&action=txlist&address=${address}&starttimestamp=${dayAgoTimestamp}`;
+    const apiUrl =
+      MilkomedaConstants.getEVMExplorerUrl(this.network) +
+      `/api?module=account&action=txlist&address=${address}&starttimestamp=${dayAgoTimestamp}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
 
-    const filteredTransactionPromises = data.result.map(async (transaction: any) => {
-      const shouldIncludeTransaction = await this.filterTransaction(transaction, address, bridgeAddress);
-      return shouldIncludeTransaction ? transaction : null;
-    });
-    
+    const filteredTransactionPromises = data.result.map(
+      async (transaction: ExplorerTransaction) => {
+        const shouldIncludeTransaction = await this.filterTransaction(
+          transaction,
+          address,
+          bridgeAddress
+        );
+        return shouldIncludeTransaction ? transaction : null;
+      }
+    );
+
     const filteredTransactionsWithNulls = await Promise.all(filteredTransactionPromises);
-    const filteredTransactions = filteredTransactionsWithNulls.filter(transaction => transaction !== null);
+    const filteredTransactions = filteredTransactionsWithNulls.filter(
+      (transaction) => transaction !== null
+    );
     return filteredTransactions;
   }
 
@@ -263,7 +241,9 @@ class PendingManager {
     const txs = await this.fetchRecentTransactions(this.userL1Address);
     if (txs.length === 0) return [];
 
-    const stargate = await PendingManager.fetchFromStargate(PendingManager.getMilkomedaStargateUrl(this.network));
+    const stargate = await PendingManager.fetchFromStargate(
+      MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+    );
 
     // check if txs are from the user to the bridge address.
     const txsToBridge = await txs.filter(async (tx) => {
@@ -276,18 +256,35 @@ class PendingManager {
 
     // check if bridgeTxs exist in the bridge API (if they don't it means that they are pending)
     // this is a *very* inefficient way to do this, but it's the only way until we have a better API
-    const bridgeRequests = await this.fetchBridgeRequests();
-    const processedTxHashes = bridgeRequests.requests.map((request) => request.mainchain_tx_id);
+    const bridgeRequests = await MilkomedaNetwork.fetchBridgeRequests(this.network);
+    const processedTxHashes = bridgeRequests.map((request) => request.mainchain_tx_id);
     const pendingTxs = txsToBridge.filter((tx) => !processedTxHashes.includes(tx.tx_hash));
 
     const pendingTxs_normalized = pendingTxs.map((tx) => ({
       hash: tx.tx_hash,
       timestamp: tx.block_time,
-      explorer: PendingManager.getCardanoExplorerUrl(this.network) + '/transaction/' + tx.tx_hash,
+      explorer:
+        MilkomedaConstants.getCardanoExplorerUrl(this.network) + "/transaction/" + tx.tx_hash,
       type: PendingTxType.Wrap,
+      destinationAddress: "EVM Address", // TODO: eventually find the address in the metadata
     }));
 
-    return pendingTxs_normalized;
+    // this code check for pending txs detected by the bridge that are being unwrapped
+    const bridgePendingTxs = bridgeRequests.filter(
+      (request) =>
+        !request.executed_timestamp && request.to.toLowerCase() === this.evmAddress.toLowerCase()
+    );
+    const bridgePendingTxs_normalized = bridgePendingTxs.map((tx) => ({
+      hash: tx.transaction_id,
+      timestamp: tx.timestamp,
+      explorer: MilkomedaConstants.getCardanoExplorerUrl(this.network) + "/transaction/" + tx.transaction_id,
+      type: PendingTxType.Wrap,
+      destinationAddress: tx.from,
+    }));
+
+    return [...pendingTxs_normalized, ...bridgePendingTxs_normalized].sort(
+      (a, b) => b.timestamp - a.timestamp
+    );
   }
 
   async fetchUTXOForTx(txHash: string): Promise<CardanoUTXOResponse> {
@@ -300,14 +297,6 @@ class PendingManager {
     const utxoDetails: CardanoUTXOResponse = await response.json();
 
     return utxoDetails;
-  }
-
-  async fetchBridgeRequests(): Promise<BridgeRequestsResponse> {
-    const url = PendingManager.getBridgeAPIUrl(this.network) + `/requests?sort=Desc&count=100`;
-    const response = await fetch(url);
-    const bridgeRequests: BridgeRequestsResponse = await response.json();
-
-    return bridgeRequests;
   }
 
   static async fetchFromStargate(url: string): Promise<StargateApiResponse> {
