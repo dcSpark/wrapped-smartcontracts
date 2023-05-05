@@ -87,7 +87,7 @@ class BridgeActions {
     );
     const signer = this.provider.getSigner();
 
-    const amount = ethers.utils.formatUnits(amountToUnwrap.toString());
+    const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 6);
 
     // TODO: is this required?
     // const amountToUnwrap = ethers.utils.parseUnits(, 6);
@@ -111,7 +111,7 @@ class BridgeActions {
           assetId: shiftedAssetId,
           from: await signer.getAddress(),
           to: cardanoDestination,
-          amount: amountToUnwrap.toFixed(0),
+          amount: amount.toString(),
         },
         { gasLimit: 1_000_000, value: adaAmount.toFixed(0) }
       );
@@ -125,7 +125,7 @@ class BridgeActions {
           assetId: shiftedAssetId,
           from: await signer.getAddress(),
           to: cardanoDestination,
-          amount: amount,
+          amount: amount.toString(),
         },
         { gasLimit: 1_000_000, value: ethers.utils.parseEther("4") } // TODO: Update this
       );

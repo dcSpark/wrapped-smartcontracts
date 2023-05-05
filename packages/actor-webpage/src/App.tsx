@@ -100,7 +100,7 @@ const App: React.FC = () => {
 
   const moveAssetsToL1 = async (tokenId: string, tokenName: string, amount: BigNumber) => {
     console.log(`Moving ${tokenName} to L1...`);
-    await wscLib.unwrap(tokenId, tokenName, amount);
+    await wscLib2.unwrap(undefined, tokenId, amount);
   };
 
   useEffect(() => {
