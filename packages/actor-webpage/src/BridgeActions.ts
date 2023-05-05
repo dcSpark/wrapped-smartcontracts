@@ -1,8 +1,8 @@
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import { MilkomedaNetworkName } from "./WSCLib";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress } from "./utils";
-import { MilkomedaNetworkName } from "./WSCLib";
-import BigNumber from "bignumber.js";
 
 class BridgeActions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,10 +73,10 @@ class BridgeActions {
     console.log(txHash);
   };
 
-  unwrap = async (destinationAddress: string, assetId: string, amountToUnwrap: BigNumber) => {
-    console.log("assetId: ", assetId);
+  unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber) => {
+    console.log("ERC20 address: ", erc20address);
     const tokenContract = new ethers.Contract(
-      assetId, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
+      erc20address, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
       ["function approve(address spender, uint256 amount) public returns (bool)"],
       this.provider
     );
@@ -89,26 +89,22 @@ class BridgeActions {
 
     const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 6);
 
+    const assetId = await bridgeContract.findAssetIdByAddress(erc20address);
+
+    console.log("assetId: ", assetId);
+
     // TODO: is this required?
     // const amountToUnwrap = ethers.utils.parseUnits(, 6);
     console.log("Amount: ", amountToUnwrap.toFixed(0));
 
-    const approvalTx = await tokenContract
-      .connect(signer)
-      .approve(this.bridgeAddress, amountToUnwrap.toFixed(0), { gasLimit: 1_000_000 });
-
-    await approvalTx.wait();
-    console.log(approvalTx.hash);
-
     const cardanoDestination = bech32ToHexAddress(destinationAddress);
-    const shiftedAssetId = assetId + "000000000000000000000000";
 
     // TODO: get this from cpnstasnts this is mADA or add a new function
-    if (assetId === "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648") {
+    if (erc20address === "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648") {
       const adaAmount = amountToUnwrap.plus(4_000_000);
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
-          assetId: shiftedAssetId,
+          assetId: ethers.constants.HashZero,
           from: await signer.getAddress(),
           to: cardanoDestination,
           amount: amount.toString(),
@@ -120,12 +116,19 @@ class BridgeActions {
       await tx.wait();
       console.log("Unwrapped ADA");
     } else {
+      const approvalTx = await tokenContract
+        .connect(signer)
+        .approve(this.bridgeAddress, amountToUnwrap.toFixed(0), { gasLimit: 1_000_000 });
+
+      await approvalTx.wait();
+      console.log(approvalTx.hash);
+
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
-          assetId: shiftedAssetId,
+          assetId: assetId,
           from: await signer.getAddress(),
           to: cardanoDestination,
-          amount: amount.toString(),
+          amount: amountToUnwrap.toFixed(0),
         },
         { gasLimit: 1_000_000, value: ethers.utils.parseEther("4") } // TODO: Update this
       );
