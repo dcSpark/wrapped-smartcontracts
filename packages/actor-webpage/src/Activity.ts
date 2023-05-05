@@ -46,7 +46,7 @@ export class ActivityManager {
         hash: request.transaction_id,
         timestamp: request.timestamp,
         explorer: MilkomedaConstants.getEVMExplorerUrl(network) + "/tx/" + request.transaction_id,
-        type: request.to === evmAddress ? PendingTxType.Unwrap : PendingTxType.Wrap,
+        type: request.to === evmAddress ? PendingTxType.Wrap : PendingTxType.Unwrap,
         destinationAddress: request.to,
         status,
       };

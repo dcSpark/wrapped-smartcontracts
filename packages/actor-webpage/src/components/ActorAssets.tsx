@@ -7,8 +7,8 @@ interface WrappedSmartContractAssetsProps {
   destinationBalance: string | null;
   network: string | null;
   tokens: EVMTokenBalance[];
-  unwrap: (destination: string | undefined, assetId: string, amount: number) => Promise<void>;
-  moveAssetsToL1: (tokenId: string, tokenName: string) => void;
+  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  moveAssetsToL1: (tokenId: string, tokenName: string, amount: BigNumber) => void;
 }
 
 const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
@@ -18,6 +18,17 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
   unwrap,
   moveAssetsToL1,
 }) => {
+  const normalizeAda = (amount: string): string => {
+    const maxDecimalPlaces = 6;
+    const decimalIndex = amount.indexOf(".");
+    const truncatedDestinationBalance =
+      decimalIndex === -1
+        ? destinationBalance
+        : destinationBalance.slice(0, decimalIndex + maxDecimalPlaces + 1);
+
+    return truncatedDestinationBalance;
+  };
+
   return (
     <div>
       <h2>Assets in Your Wrapped Smart Contract Wallet</h2>
@@ -52,9 +63,14 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
               <td>
                 <button
                   style={{ backgroundColor: "blue", color: "white" }}
-                  onClick={() =>
-                    unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", parseInt(destinationBalance))
-                  }
+                  onClick={() => {
+                    const normalizedAda = normalizeAda(destinationBalance);
+                    console.log("normalizedAda", normalizedAda)
+                    const lovelace = new BigNumber(normalizedAda).multipliedBy(
+                      new BigNumber(10).pow(6)
+                    );
+                    unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", lovelace);
+                  }}
                 >
                   Move all to L1
                 </button>
@@ -90,7 +106,13 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                 <td>
                   <button
                     style={{ backgroundColor: "blue", color: "white" }}
-                    onClick={() => moveAssetsToL1(token.contractAddress, token.name)}
+                    onClick={() =>
+                      moveAssetsToL1(
+                        token.contractAddress,
+                        token.name,
+                        new BigNumber(token.balance)
+                      )
+                    }
                   >
                     Move all to L1
                   </button>

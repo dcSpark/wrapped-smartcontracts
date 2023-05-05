@@ -8,6 +8,7 @@ import { PendingTransactions } from "./Pending";
 import ActorAssets from "./ActorAssets";
 import LatestActivity from "./LastestActivity";
 import { Activity } from "../Activity";
+import BigNumber from "bignumber.js";
 
 interface WrappedSmartContractWalletAssetsProps {
   connected: boolean;
@@ -17,9 +18,9 @@ interface WrappedSmartContractWalletAssetsProps {
   network: string;
   tokens: EVMTokenBalance[];
   originTokens: CardanoAmount[];
-  moveAssetsToL1: (contractAddress: string, name: string) => void;
-  wrap: (destination: string | undefined, assetId: string, amount: number) => Promise<void>;
-  unwrap: (destination: string | undefined, assetId: string, amount: number) => Promise<void>;
+  moveAssetsToL1: (contractAddress: string, name: string, amount: BigNumber) => void;
+  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
   transactions: Activity[];
 }
 

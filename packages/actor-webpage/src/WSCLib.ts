@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
 import PendingManager, { CardanoAmount, StargateApiResponse } from "./PendingManger";
@@ -12,6 +11,7 @@ import {
 import BridgeActions from "./BridgeActions";
 import { MilkomedaNetwork } from "./MilkomedaNetwork";
 import { Activity, ActivityManager, ActivityStatus } from "./Activity";
+import BigNumber from "bignumber.js";
 
 export interface EVMTokenBalance {
   balance: string;
@@ -32,9 +32,10 @@ export interface TransactionResponse {
 }
 
 export enum PendingTxType {
-  Wrap = "wrap",
-  Unwrap = "unwrap",
-  Normal = "normal",
+  Wrap = "Wrap",
+  WrapPermission = "WrapPermission",
+  Unwrap = "Unwrap",
+  Normal = "Normal",
 }
 
 export interface PendingTx {
@@ -264,10 +265,10 @@ class WSCLib {
       bridgeAddress,
       this.network
     );
-    await bridgeActions.wrap(targetAddress, amount);
+    await bridgeActions.wrap(assetId, targetAddress, amount);
   }
 
-  async unwrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
+  async unwrap(destination: string | undefined, assetId: string, amount: BigNumber): Promise<void> {
     const targetAddress = destination || (await this.origin_getAddress());
     const stargate = await PendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
@@ -289,8 +290,6 @@ class WSCLib {
   async latestActivity(): Promise<Activity[]> {
     const targetAddress = await this.eth_getAccount();
     const bridgeActivity = await ActivityManager.getBridgeActivity(this.network, targetAddress);
-    console.log("bridgeActivity", bridgeActivity);
-
     const l2Activity = await this.getL2TransactionList();
     const l2normalized: Activity[] = l2Activity.map((transaction) => {
       return {
@@ -304,8 +303,6 @@ class WSCLib {
     });
 
     const grouped = [...bridgeActivity, ...l2normalized];
-
-    console.log("grouped", grouped);
     // Remove duplicates based on hash and prioritize non-normal types
     const uniqueActivities = new Map<string, Activity>();
     grouped.forEach((activity) => {

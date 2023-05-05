@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 
 interface CardanoAssetsProps {
     tokens: CardanoAmount[];
-    wrap: (destination: string | undefined, assetId: string, amount: number) => Promise<void>;
+    wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
   }
 
 const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
@@ -30,7 +30,7 @@ const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
 
   const moveToken = async (token: CardanoAmount) => {
     console.log('Moving token', token.unit, 'with amount', tokenAmounts.get(token.unit));
-    await wrap(undefined, token.unit, parseFloat(tokenAmounts.get(token.unit) || '0'));
+    await wrap(undefined, token.unit, new BigNumber(tokenAmounts.get(token.unit) || '0'));
     updateTokenAmount(token.unit, '');
   };
 

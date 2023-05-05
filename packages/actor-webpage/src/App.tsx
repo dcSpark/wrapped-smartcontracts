@@ -1,7 +1,6 @@
 import WSCLib, {
   MilkomedaNetworkName,
   PendingTx,
-  TransactionResponse,
   UserWallet,
 } from "./WSCLib";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -9,6 +8,8 @@ import WrappedSmartContractWalletAssets from "./components/WSCWalletAssets";
 import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "./Activity";
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
 
 let wscLib2: any;
 
@@ -30,11 +31,11 @@ const App: React.FC = () => {
 
   const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, oracleUrl, ethUrl, UserWallet.Flint);
 
-  const wrapWrapper = async (destination: string | undefined, assetId: string, amount: number) => {
+  const wrapWrapper = async (destination: string | undefined, assetId: string, amount: BigNumber) => {
     return wscLib2.wrap(destination, assetId, amount);
   };
 
-  const unwrapWrapper = async (destination: string | undefined, assetId: string, amount: number) => {
+  const unwrapWrapper = async (destination: string | undefined, assetId: string, amount: BigNumber) => {
     return wscLib2.unwrap(destination, assetId, amount);
   };
 
@@ -97,8 +98,9 @@ const App: React.FC = () => {
     }
   };
 
-  const moveAssetsToL1 = async (tokenId: string, tokenName: string) => {
+  const moveAssetsToL1 = async (tokenId: string, tokenName: string, amount: BigNumber) => {
     console.log(`Moving ${tokenName} to L1...`);
+    await wscLib.unwrap(tokenId, tokenName, amount);
   };
 
   useEffect(() => {

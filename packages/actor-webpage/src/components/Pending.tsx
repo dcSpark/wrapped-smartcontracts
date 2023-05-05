@@ -43,7 +43,7 @@ export const PendingTransactions: React.FC<PendingTransactionsProps> = ({ pendin
                       </a>
                     </td>
                     <td>{localDateTime}</td>
-                    <td>{tx.type === 'wrap' ? 'Moving to Milkomeda' : 'Moving to L1'}</td>
+                    <td>{tx.type === 'Wrap' ? 'Moving to Milkomeda' : 'Moving to L1'}</td>
                   </tr>
                 );
               })}
