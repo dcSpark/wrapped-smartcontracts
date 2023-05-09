@@ -249,40 +249,48 @@ class WSCLib {
   }
 
   // Bridge Actions
-  // TODO: add other token support
-  // the tricky part is the calculation of the fees
   async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
     const targetAddress = destination || (await this.eth_getAccount());
     const stargate = await PendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
     );
-    const stargateAddress = stargate.current_address;
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
       this.lucid,
       this.wscProvider,
-      stargateAddress,
+      stargate,
       bridgeAddress,
       this.network
     );
     await bridgeActions.wrap(assetId, targetAddress, amount);
   }
 
-  async unwrap(destination: string | undefined, assetId: string, amount: BigNumber): Promise<void> {
+  async unwrap(
+    destination: string | undefined,
+    assetId: string,
+    amount: BigNumber
+  ): Promise<void> {
     const targetAddress = destination || (await this.origin_getAddress());
     const stargate = await PendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
     );
-    const stargateAddress = stargate.current_address;
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
       this.lucid,
       this.evmProvider,
-      stargateAddress,
+      stargate,
       bridgeAddress,
       this.network
     );
-    bridgeActions.unwrap(targetAddress, assetId, amount);
+    // In order to maintain the unwrap function agnostic to send all, we need to
+    // discount some fees from the total amount so it can be used for the transaction
+    let amountToUnwrap = amount;
+    if (assetId === MilkomedaConstants.AdaERC20Address(this.network)) {
+      const Adafees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
+      const LovelaceFees = new BigNumber(Adafees).multipliedBy(new BigNumber(10**6));
+      amountToUnwrap = amount.minus(LovelaceFees);
+    }
+    bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
   }
 
   // Latest Activity
@@ -316,7 +324,9 @@ class WSCLib {
       }
     });
 
-    return Array.from(uniqueActivities.values()).sort((a, b) => b.timestamp - a.timestamp).slice(0, 20);
+    return Array.from(uniqueActivities.values())
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, 20);
   }
 
   public async getL2TransactionList(

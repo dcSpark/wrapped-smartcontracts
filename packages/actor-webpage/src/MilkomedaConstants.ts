@@ -75,4 +75,34 @@ export class MilkomedaConstants {
         throw new Error("Invalid network");
     }
   }
+
+  static AdaERC20Address(network: string): string {
+    switch (network) {
+      case MilkomedaNetworkName.C1Mainnet:
+        throw new Error("Need to add Bridge API URL for C1 Mainnet");
+      case MilkomedaNetworkName.C1Devnet:
+        return "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
+      case MilkomedaNetworkName.A1Mainnet:
+        throw new Error("Need to add Bridge API URL for A1 Mainnet");
+      case MilkomedaNetworkName.A1Devnet:
+        throw new Error("Need to add Bridge API URL for A1 Devnet");
+      default:
+        throw new Error("Invalid network");
+    }
+  }
+
+  static getAdaAssetId(network: string): string {
+    switch (network) {
+      case MilkomedaNetworkName.C1Mainnet:
+        return "0".toString().repeat(64);
+      case MilkomedaNetworkName.C1Devnet:
+        return "0".toString().repeat(64);
+      case MilkomedaNetworkName.A1Mainnet:
+        return "0".toString().repeat(64);
+      case MilkomedaNetworkName.A1Devnet:
+        return "0".toString().repeat(64);
+      default:
+        throw new Error("Invalid network");
+    }
+  }
 }
