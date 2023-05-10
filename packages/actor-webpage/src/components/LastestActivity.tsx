@@ -1,5 +1,5 @@
-import React from 'react';
-import { Activity } from '../Activity';
+import React from "react";
+import { Activity } from "../Activity";
 
 interface LatestActivityProps {
   network: string | null;
@@ -32,33 +32,46 @@ const LatestActivity: React.FC<LatestActivityProps> = ({ network, transactions }
           </tr>
         </thead>
         <tbody>
-        {transactions.map((tx: Activity, index) => {
-                  const localDateTime = new Date(tx.timestamp * 1000).toLocaleString();
-                  const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
+          {transactions.map((tx: Activity, index) => {
+            const localDateTime = new Date(tx.timestamp * 1000).toLocaleString();
+            const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
+            const addressDisplay =
+            tx.destinationAddress.length > 50
+              ? `${tx.destinationAddress.slice(0, 39)}...${tx.destinationAddress.slice(-8)}`
+              : tx.destinationAddress;
 
-                  return (
-                    <tr key={index}>
-                      <td>
-                        <a
-                        // {`${MilkomedaConstants.getEVMExplorerUrl(network)}/tx/${tx.hash}`}
-                          href={tx.explorer}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {shortHash}
-                        </a>
-                      </td>
-                      <td>Missing value </td> 
-                      {/* {tx.value} */}
-                      <td>
-                        <div>{tx.destinationAddress}</div>
-                      </td>
-                      <td>{tx.status}</td>
-                      <td>{tx.type}</td>
-                      <td>{localDateTime}</td>
-                    </tr>
-                  )
-                })}
+            return (
+              <tr key={index}>
+                <td>
+                  <a
+                    // {`${MilkomedaConstants.getEVMExplorerUrl(network)}/tx/${tx.hash}`}
+                    href={tx.explorer}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {shortHash}
+                  </a>
+                </td>
+                <td>
+                  {" "}
+                  {tx.values
+                    .map(
+                      (value) =>
+                        `${(Number(value.amount) / Math.pow(10, value.decimals)).toFixed(
+                          value.decimals
+                        )} ${value.token}`
+                    )
+                    .join(", ")}
+                </td>
+                <td>
+                  <div>{addressDisplay}</div>
+                </td>
+                <td>{tx.status}</td>
+                <td>{tx.type}</td>
+                <td>{localDateTime}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

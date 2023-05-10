@@ -35,7 +35,7 @@ class BridgeActions {
     return (
       parseInt(this.stargateResponse.ada.fromADAFeeLovelace) +
       parseInt(this.stargateResponse.ada.minLovelace)
-    );
+    ) / 10**6;
   }
 
   stargateMinAdaToCardano(): number {
@@ -75,7 +75,6 @@ class BridgeActions {
 
     let payload = {};
     const stargateMin = this.stargateMinAdaFromCardano();
-    console.log("stargateMin: ", stargateMin);
     if (tokenId === "lovelace") {
       if (amount < stargateMin) throw new Error("Amount is less than the minimum required");
       const amountLovelace = BigInt(amount) * BigInt(10 ** 6);
@@ -121,8 +120,8 @@ class BridgeActions {
       if (amountToUnwrap.lt(minRequired))
         throw new Error("Amount is less than the minimum required");
 
-      const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 6);
-      const adaFee = new BigNumber((this.stargateAdaFeeToCardano()) * 10**6);
+      const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 18);
+      const adaFee = new BigNumber(this.stargateAdaFeeToCardano());
       const adaAmount = amountToUnwrap.plus(adaFee);
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
@@ -131,7 +130,7 @@ class BridgeActions {
           to: cardanoDestination,
           amount: amount.toString(),
         },
-        { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 6)}
+        { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18)}
       );
 
       console.log(tx.hash);

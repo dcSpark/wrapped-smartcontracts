@@ -90,7 +90,7 @@ export class MilkomedaNetwork {
       `/api?module=account&action=txlist&address=${address}&page=${page}&offset=${offset}`;
     const response = await fetch(url);
     const data = await response.json();
-
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.result.map((transaction: any) => ({
       hash: transaction.hash,

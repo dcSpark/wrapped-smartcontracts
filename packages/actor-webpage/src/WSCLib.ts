@@ -287,8 +287,7 @@ class WSCLib {
     let amountToUnwrap = amount;
     if (assetId === MilkomedaConstants.AdaERC20Address(this.network)) {
       const Adafees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
-      const LovelaceFees = new BigNumber(Adafees).multipliedBy(new BigNumber(10**6));
-      amountToUnwrap = amount.minus(LovelaceFees);
+      amountToUnwrap = amount.dividedBy(10**6).minus(new BigNumber(Adafees));
     }
     bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
   }
@@ -307,6 +306,7 @@ class WSCLib {
         type: PendingTxType.Normal,
         destinationAddress: transaction.to,
         status: ActivityStatus.Completed,
+        values: [],
       };
     });
 
