@@ -76,7 +76,9 @@ class WSCLib {
 
   // Cardano
   wallet: UserWallet | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   blockfrost: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lucid: any;
 
   constructor(

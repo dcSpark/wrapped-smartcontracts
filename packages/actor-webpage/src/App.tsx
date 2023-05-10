@@ -1,4 +1,5 @@
 import WSCLib, {
+  EVMTokenBalance,
   MilkomedaNetworkName,
   PendingTx,
   UserWallet,
@@ -8,9 +9,10 @@ import WrappedSmartContractWalletAssets from "./components/WSCWalletAssets";
 import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "./Activity";
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { CardanoAmount } from "./PendingManger";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let wscLib2: any;
 
 const App: React.FC = () => {
@@ -19,8 +21,8 @@ const App: React.FC = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [destinationBalance, setDestinationBalance] = useState<string | null>(null);
   const [originBalance, setOriginBalance] = useState<string | null>(null);
-  const [originTokens, setOriginTokens] = useState<any[]>([]);
-  const [tokens, setTokens] = useState<any[]>([]);
+  const [originTokens, setOriginTokens] = useState<CardanoAmount[]>([]);
+  const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [transactions, setTransactions] = useState<Activity[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
   const [network, setNetwork] = useState<string | null>(null);

@@ -91,6 +91,7 @@ export interface ExplorerTransaction {
 }
 
 class PendingManager {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   blockfrost: any;
   network: MilkomedaNetworkName;
   userL1Address: string;
@@ -178,6 +179,7 @@ class PendingManager {
   }
 
   private async filterTransaction(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transaction: any,
     address: string,
     bridgeAddress: string

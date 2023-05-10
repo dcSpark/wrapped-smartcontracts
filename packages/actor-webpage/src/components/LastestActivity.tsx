@@ -15,7 +15,7 @@ Game plan:
   - L1 -> L2
 */
 
-const LatestActivity: React.FC<LatestActivityProps> = ({ network, transactions }) => {
+const LatestActivity: React.FC<LatestActivityProps> = ({ transactions }) => {
   return (
     <div>
       <h2>Latest 10 Transactions</h2>
