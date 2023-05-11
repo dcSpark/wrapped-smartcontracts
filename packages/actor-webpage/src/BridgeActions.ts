@@ -33,24 +33,24 @@ class BridgeActions {
 
   stargateMinAdaFromCardano(): number {
     return (
-      parseInt(this.stargateResponse.ada.fromADAFeeLovelace) +
-      parseInt(this.stargateResponse.ada.minLovelace)
-    ) / 10**6;
+      (parseInt(this.stargateResponse.ada.fromADAFeeLovelace) +
+        parseInt(this.stargateResponse.ada.minLovelace)) /
+      10 ** 6
+    );
   }
 
   stargateMinAdaToCardano(): number {
     const toAdaFee = this.stargateAdaFeeToCardano();
-    const minAda = parseInt(this.stargateResponse.ada.minLovelace) / 10**6;
-    return (
-       toAdaFee + minAda
-    );
+    const minAda = parseInt(this.stargateResponse.ada.minLovelace) / 10 ** 6;
+    return toAdaFee + minAda;
   }
 
   stargateAdaFeeToCardano(): number {
-    const toAda = ethers.utils.parseUnits(this.stargateResponse.ada.toADAFeeGWei, 9).div(10**9).div(10**9);
-    return (
-       toAda.toNumber()
-    );
+    const toAda = ethers.utils
+      .parseUnits(this.stargateResponse.ada.toADAFeeGWei, 9)
+      .div(10 ** 9)
+      .div(10 ** 9);
+    return toAda.toNumber();
   }
 
   getBridgeMetadata(): string {
@@ -130,7 +130,7 @@ class BridgeActions {
           to: cardanoDestination,
           amount: amount.toString(),
         },
-        { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18)}
+        { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
       );
 
       console.log(tx.hash);
@@ -153,7 +153,10 @@ class BridgeActions {
           to: cardanoDestination,
           amount: amountToUnwrap.toFixed(0),
         },
-        { gasLimit: 1_000_000, value: ethers.utils.parseEther(this.stargateMinAdaToCardano().toString()) }
+        {
+          gasLimit: 1_000_000,
+          value: ethers.utils.parseEther(this.stargateMinAdaToCardano().toString()),
+        }
       );
 
       console.log(tx.hash);

@@ -6,7 +6,7 @@ export async function getFingerprintFromBlockfrost(blockfrostId: string): Promis
   return AssetFingerprint.fromParts(
     Buffer.Buffer.from(blockfrostId.substring(0, 56), "hex"),
     Buffer.Buffer.from(blockfrostId.slice(56), "hex")
-  ).fingerprint()
+  ).fingerprint();
 }
 
 export async function assetNameFromBlockfrostId(blockfrostId: string): Promise<string> {
@@ -22,14 +22,14 @@ export async function getFingerprintFromBridge(idCardano: string): Promise<strin
   const idCardanoHash = Buffer.Buffer.from(idCardanoHashString, "hex");
   return bech32.encode("asset", bech32.toWords(idCardanoHash));
 }
- export async function adaFingerprint(): Promise<string> {
+export async function adaFingerprint(): Promise<string> {
   return AssetFingerprint.fromParts(
     Buffer.Buffer.from("", "hex"),
     Buffer.Buffer.from("", "hex")
   ).fingerprint();
- }
+}
 
- export const hexToBytes = (hex: string) => {
+export const hexToBytes = (hex: string) => {
   const bytes = [];
   for (let c = 0; c < hex.length; c += 2) bytes.push(parseInt(hex.substr(c, 2), 16));
   return new Uint8Array(bytes);

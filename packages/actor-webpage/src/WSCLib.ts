@@ -289,7 +289,7 @@ class WSCLib {
     let amountToUnwrap = amount;
     if (assetId === MilkomedaConstants.AdaERC20Address(this.network)) {
       const Adafees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
-      amountToUnwrap = amount.dividedBy(10**6).minus(new BigNumber(Adafees));
+      amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(Adafees));
     }
     bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
   }

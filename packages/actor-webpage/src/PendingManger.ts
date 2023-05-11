@@ -279,7 +279,10 @@ class PendingManager {
     const bridgePendingTxs_normalized = bridgePendingTxs.map((tx) => ({
       hash: tx.transaction_id,
       timestamp: tx.timestamp,
-      explorer: MilkomedaConstants.getCardanoExplorerUrl(this.network) + "/transaction/" + tx.transaction_id,
+      explorer:
+        MilkomedaConstants.getCardanoExplorerUrl(this.network) +
+        "/transaction/" +
+        tx.transaction_id,
       type: PendingTxType.Wrap,
       destinationAddress: tx.from,
     }));
