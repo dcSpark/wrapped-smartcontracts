@@ -9,7 +9,7 @@ export const PROVIDER_TYPES = {
   CARDANO: "cardano",
   ALGORAND: "algorand",
 } as const;
-export type ProviderType = typeof PROVIDER_TYPES[keyof typeof PROVIDER_TYPES];
+export type ProviderType = (typeof PROVIDER_TYPES)[keyof typeof PROVIDER_TYPES];
 
 class Provider extends EventEmitter implements MilkomedaProvider {
   private readonly methods: { [key: string]: CustomMethod };
