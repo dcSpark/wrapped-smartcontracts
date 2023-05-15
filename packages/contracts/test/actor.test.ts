@@ -2,16 +2,18 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import type { Actor, Counter, InfiniteLoop } from "../typechain-types";
 import { ResponseEvent } from "../typechain-types/Actor";
-import cip8 from "../utils/cip8";
-import { encodePayload, getActorAddress, getActorFactory } from "./fixtures";
+import {
+  encodePayload,
+  getActorAddress,
+  getActorFactory,
+  getL1Credentials,
+  l1Sign,
+} from "./fixtures";
 
 describe("Actor", () => {
   const salt = ethers.utils.hexlify(ethers.utils.randomBytes(32));
 
-  const privateKey =
-    "ed25519e_sk1wzm7jmql8tnf3p4yx5seg389dhrg49z9j86a0hrwemehcx3he3dlvxcc663vxnl4anykugu9ttu94yfzuq5ulrxc6lckl647tm58jhqrr7at4";
-  const mainchainAddress =
-    "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
+  const { privateKey, badPrivateKey, mainchainAddress, badMainchainAddress } = getL1Credentials();
 
   let actorAddress: string;
   let actor: Actor;
@@ -20,6 +22,9 @@ describe("Actor", () => {
 
   before(async () => {
     const factory = await getActorFactory();
+
+    console.log(await ethers.provider.getCode(factory.address));
+
     actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
 
     actor = await ethers.getContractAt("Actor", actorAddress);
@@ -28,7 +33,7 @@ describe("Actor", () => {
 
     const depositGasTx = await signer.sendTransaction({
       to: actorAddress,
-      value: ethers.utils.parseEther("2000000"),
+      value: ethers.utils.parseEther("1000"),
     });
 
     const deployTx = await factory.deploy(mainchainAddress, salt);
@@ -81,20 +86,20 @@ describe("Actor", () => {
       calldata: [],
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
-    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const executeTx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
 
     const receipt = await executeTx.wait();
 
-    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
+    const paidForGas = receipt.gasUsed.mul(gasPrice);
 
     // Assert
     // should've send whole balance to the destination
@@ -133,20 +138,20 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
-    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const executeTx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
 
     const receipt = await executeTx.wait();
 
-    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
+    const paidForGas = receipt.gasUsed.mul(gasPrice);
 
     // Assert
     expect(await ethers.provider.getBalance(actorAddress)).to.equal(gasBalance.sub(paidForGas));
@@ -191,7 +196,7 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
@@ -201,15 +206,15 @@ describe("Actor", () => {
     const deployTx = await factory.deployAndExecute(
       mainchainAddress,
       salt,
-      coseSign1.to_bytes(),
-      coseKey.to_bytes(),
+      signature,
+      key,
       1_000_000,
       { gasLimit: 2_000_000, gasPrice }
     );
 
     const receipt = await deployTx.wait();
 
-    console.log(receipt.gasUsed.mul(receipt.effectiveGasPrice));
+    console.log(receipt.gasUsed.mul(gasPrice));
     console.log(gasBalance.sub(await ethers.provider.getBalance(actorAddress)));
 
     // Assert
@@ -235,14 +240,14 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
     // Act
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 400_000,
       gasPrice,
     });
@@ -270,14 +275,14 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
     // Act
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice: gasPrice.add(100),
     });
@@ -305,14 +310,13 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
-      // bad private key,
-      "ed25519e_sk1tzvc2amgpuz9ryhgg37gcmk0280mu02ktfkzcx7a28qc68phe3dnppwe830teqt2wk3nflwhlyneexkn37vnkqlfv9wzk4hz62e6fkcyk83hj",
+      badPrivateKey,
       mainchainAddress
     );
 
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
@@ -340,15 +344,14 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
-      // bad address
-      "addr_test1qpmh9svhrqxg7u6nqdxh44zlz0l2w22xc4zpwwfvj84cfwg2w3neh3dundxpwsr229yffepdec0z0yusftfn5teh6qwss2pt3j"
+      badMainchainAddress
     );
 
     // Act
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
@@ -377,14 +380,14 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
     // Act
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
@@ -414,14 +417,14 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("increment", [42]),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
     // Act
-    const tx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const tx = await actor.execute(signature, key, {
       gasLimit: 500_000,
       gasPrice,
     });
@@ -454,20 +457,20 @@ describe("Actor", () => {
       calldata: destination.interface.encodeFunctionData("loop"),
     });
 
-    const { coseSign1, coseKey } = cip8.signCIP8(
+    const { signature, key } = l1Sign(
       Buffer.from(payload.slice(2), "hex"),
       privateKey,
       mainchainAddress
     );
 
-    const executeTx = await actor.execute(coseSign1.to_bytes(), coseKey.to_bytes(), {
+    const executeTx = await actor.execute(signature, key, {
       gasLimit: 1_000_000,
       gasPrice,
     });
 
     const receipt = await executeTx.wait();
 
-    const paidForGas = receipt.gasUsed.mul(receipt.effectiveGasPrice);
+    const paidForGas = receipt.gasUsed.mul(gasPrice);
 
     // Assert
     expect(await ethers.provider.getBalance(actorAddress)).to.equal(gasBalance.sub(paidForGas));

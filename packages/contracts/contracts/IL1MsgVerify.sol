@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
+enum L1Type {
+    Algorand,
+    Cardano
+}
+
 /**
  * @dev This is the interface of precompile contract that verifies L1 messages.
  */
 interface IL1MsgVerify {
-    enum L1Type {
-        Algorand,
-        Cardano
-    }
-
     /**
      * @dev Verifies a signed message from the L1 chain.
      *

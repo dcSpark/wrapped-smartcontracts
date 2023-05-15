@@ -1,5 +1,4 @@
-import { Address } from "@dcspark/cardano-multiplatform-lib-nodejs";
-import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
+import algosdk from "algosdk";
 import { ethers } from "ethers";
 import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
 import { z } from "zod";
@@ -11,29 +10,31 @@ import {
   getActorAddress,
   isActorDeployed,
 } from "../services/actor.service";
+import { verifySignature } from "../services/algorand.service";
 import { provider, wallet } from "../services/blockchain.service";
-import { getMainchainAddressFromSignature, verifySignature } from "../services/cardano.service";
 import eth_getActorNonce from "./eth_getActorNonce";
 import validationMiddleware from "./validationMiddleware";
 
 const validateTransaction = async (
-  coseSign1: COSESign1,
-  coseKey: COSEKey,
+  signature: Buffer,
+  key: Buffer,
   salt?: ethers.BytesLike
 ): Promise<{
   actorAddress: string;
-  mainchainAddress: Address;
+  mainchainAddress: string;
   gasLimit: ethers.BigNumberish;
   gasPrice: ethers.BigNumberish;
   isDeployed: boolean;
 }> => {
-  const mainchainAddress = getMainchainAddressFromSignature(coseSign1);
+  const mainchainAddress = algosdk.encodeAddress(new Uint8Array(key));
 
-  if (!verifySignature(coseSign1, coseKey, mainchainAddress)) {
+  const signedTx = algosdk.decodeSignedTransaction(new Uint8Array(signature));
+
+  if (!verifySignature(signedTx, key, mainchainAddress)) {
     throw new JSONRPCErrorException("Invalid signature", JSONRPCErrorCode.InvalidRequest);
   }
 
-  const payload = coseSign1.payload();
+  const payload = signedTx.txn.note;
 
   if (payload === undefined) {
     throw new JSONRPCErrorException("Invalid payload", JSONRPCErrorCode.InvalidRequest);
@@ -41,7 +42,7 @@ const validateTransaction = async (
 
   const { from, to, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
-  const actorAddress = await getActorAddress(mainchainAddress.to_bech32(), salt);
+  const actorAddress = await getActorAddress(mainchainAddress, salt);
 
   if (from !== actorAddress) {
     throw new JSONRPCErrorException(
@@ -105,15 +106,12 @@ const InputSchema = z.union([
   ]),
 ]);
 
-const eth_sendActorTransaction = async ([{ signature, key }, salt]: z.infer<
+const eth_sendAlgActorTransaction = async ([{ signature, key }, salt]: z.infer<
   typeof InputSchema
 >) => {
-  const coseSign1 = COSESign1.from_bytes(signature);
-  const coseKey = COSEKey.from_bytes(key);
-
   // Pre-validate transaction to not waste gas on invalid transactions
   const { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed } =
-    await validateTransaction(coseSign1, coseKey, salt);
+    await validateTransaction(signature, key, salt);
 
   if (isDeployed) {
     const actor = attachActor(actorAddress);
@@ -124,20 +122,13 @@ const eth_sendActorTransaction = async ([{ signature, key }, salt]: z.infer<
   } else {
     const tx = await actorFactory
       .connect(wallet)
-      .deployAndExecute(
-        mainchainAddress.to_bech32(),
-        ethers.constants.HashZero,
-        signature,
-        key,
-        gasLimit,
-        {
-          gasLimit: ethers.BigNumber.from(gasLimit).add(1_000_000),
-          gasPrice,
-        }
-      );
+      .deployAndExecute(mainchainAddress, ethers.constants.HashZero, signature, key, gasLimit, {
+        gasLimit: ethers.BigNumber.from(gasLimit).add(1_000_000),
+        gasPrice,
+      });
 
     return tx.hash;
   }
 };
 
-export default validationMiddleware(InputSchema.parse, eth_sendActorTransaction);
+export default validationMiddleware(InputSchema.parse, eth_sendAlgActorTransaction);

@@ -1,4 +1,4 @@
-import Provider from "./provider";
+import Provider, { PROVIDER_TYPES } from "./provider";
 import type { CardanoProvider, MilkomedaProvider } from "./types";
 
 declare global {
@@ -8,8 +8,14 @@ declare global {
   }
 }
 
-export const inject = (oracleUrl: string, jsonRpcProviderUrl: string) => {
-  window.ethereum = new Provider(oracleUrl, jsonRpcProviderUrl);
+export const injectCardano = (oracleUrl: string, jsonRpcProviderUrl: string) => {
+  window.ethereum = new Provider(oracleUrl, jsonRpcProviderUrl, PROVIDER_TYPES.CARDANO);
+
+  return window.ethereum;
+};
+
+export const injectAlgorand = (oracleUrl: string, jsonRpcProviderUrl: string) => {
+  window.ethereum = new Provider(oracleUrl, jsonRpcProviderUrl, PROVIDER_TYPES.ALGORAND);
 
   return window.ethereum;
 };

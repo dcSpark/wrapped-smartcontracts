@@ -1,3 +1,4 @@
 node_modules
 .env
 besu_data/data/
+quorum_data/geth*

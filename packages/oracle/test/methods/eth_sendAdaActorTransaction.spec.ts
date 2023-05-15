@@ -9,7 +9,7 @@ import cip8 from "../cip8";
 
 chai.use(chaiHttp);
 
-describe("eth_sendActorTransaction", () => {
+describe("eth_sendAdaActorTransaction", () => {
   const mainchainAddress =
     "addr_test1qz5dj9dh8cmdxvtr4jh3kca8rjw0vjt4anz79k4aefh9wcjjvmavqj3jhujkkn4kpz9ky09xhtt4v3447fesn7ptkfvsa0ymyn";
   const privateKey =
@@ -58,7 +58,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [
           {
             key: Buffer.from(coseKey.to_bytes()).toString("hex"),
@@ -90,7 +90,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [{ key, signature }],
         id: 1,
       });
@@ -123,7 +123,7 @@ describe("eth_sendActorTransaction", () => {
       params.map(async (param) =>
         chai.request(server).post("/").send({
           jsonrpc: "2.0",
-          method: "eth_sendActorTransaction",
+          method: "eth_sendAdaActorTransaction",
           params: param,
           id: 1,
         })
@@ -167,7 +167,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [
           {
             key: Buffer.from(coseKey.to_bytes()).toString("hex"),
@@ -210,7 +210,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [
           {
             key: Buffer.from(coseKey.to_bytes()).toString("hex"),
@@ -255,7 +255,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [
           {
             key: Buffer.from(coseKey.to_bytes()).toString("hex"),
@@ -302,7 +302,7 @@ describe("eth_sendActorTransaction", () => {
       .post("/")
       .send({
         jsonrpc: "2.0",
-        method: "eth_sendActorTransaction",
+        method: "eth_sendAdaActorTransaction",
         params: [
           {
             key: Buffer.from(coseKey.to_bytes()).toString("hex"),

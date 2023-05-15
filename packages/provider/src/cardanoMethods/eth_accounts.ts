@@ -20,7 +20,7 @@ const eth_accounts: CustomMethod = async (
   provider: MilkomedaProvider,
   { params }: RequestArguments
 ) => {
-  const { cardanoProvider, actorFactoryAddress } = provider;
+  const { actorFactoryAddress } = provider;
 
   if (actorFactoryAddress === undefined) {
     throw new ProviderRpcError(
@@ -29,17 +29,21 @@ const eth_accounts: CustomMethod = async (
     );
   }
 
+  if (window.cardano === undefined) {
+    throw new Error("Cardano provider not found");
+  }
+
   try {
-    if (!(await cardanoProvider.isEnabled())) {
+    if (!(await window.cardano.isEnabled())) {
       return [];
     }
 
     const [salt] = InputSchema.parse(params);
 
     // After the page refresh the object needs to be enabled again
-    await cardanoProvider.enable();
+    await window.cardano.enable();
 
-    const address = await cardanoProvider.getChangeAddress();
+    const address = await window.cardano.getChangeAddress();
 
     const bech32Address = Address.from_bytes(Buffer.from(address, "hex")).to_bech32();
 

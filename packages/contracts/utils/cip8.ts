@@ -1,17 +1,17 @@
 import { Address, PrivateKey, PublicKey } from "@dcspark/cardano-multiplatform-lib-nodejs";
 import {
-  COSESign1,
-  HeaderMap,
-  Label,
   AlgorithmId,
-  CBORValue,
-  ProtectedHeaderMap,
   CBORSpecial,
-  Headers,
-  COSESign1Builder,
-  Int,
+  CBORValue,
   COSEKey,
+  COSESign1,
+  COSESign1Builder,
+  HeaderMap,
+  Headers,
+  Int,
   KeyType,
+  Label,
+  ProtectedHeaderMap,
 } from "@emurgo/cardano-message-signing-nodejs";
 
 export const buildSign1 = (
@@ -57,10 +57,10 @@ export const buildKey = (pk: PublicKey): COSEKey => {
 
 export const signCIP8 = (
   payload: Uint8Array,
-  privateKeyBech32: string,
+  privateKey: Uint8Array,
   adaAddressBech32: string
 ): { coseSign1: COSESign1; coseKey: COSEKey } => {
-  const sk = PrivateKey.from_bech32(privateKeyBech32);
+  const sk = PrivateKey.from_extended_bytes(privateKey);
 
   return {
     coseSign1: buildSign1(payload, sk, adaAddressBech32),

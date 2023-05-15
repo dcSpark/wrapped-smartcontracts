@@ -16,7 +16,7 @@ const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const inject = async () => {
   const provider = await import("provider");
-  await provider.inject(ORACLE_URL, JSON_RPC_URL).setup();
+  await provider.injectCardano(ORACLE_URL, JSON_RPC_URL).setup();
 
   cml = await import("@dcspark/cardano-multiplatform-lib-browser");
 };

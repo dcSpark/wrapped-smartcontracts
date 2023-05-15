@@ -15,5 +15,5 @@ npm run test
 ## Factory deploy
 
 ```bash
-npx hardhat actor-factory:deploy
+PRIVATE_KEY=... npx hardhat actor-factory:deploy --network a1-dev --l1-type Algorand
 ```

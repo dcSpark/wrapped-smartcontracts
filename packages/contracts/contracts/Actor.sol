@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-import {IL1MsgVerify, L1_MSG_VERIFY} from "./IL1MsgVerify.sol";
+import {IL1MsgVerify, L1_MSG_VERIFY, L1Type} from "./IL1MsgVerify.sol";
 
 /**
  * @dev This contract is an account abstraction tied to the specific l1 chain address 'mainchainAddress'.
@@ -32,14 +32,17 @@ contract Actor {
 
     uint256 public nonce;
 
+    L1Type private l1Type;
+
     event Response(bool success);
 
     /**
      * @param _mainchainAddress Mainchain address of the user
      */
-    constructor(string memory _mainchainAddress) {
+    constructor(string memory _mainchainAddress, L1Type _l1Type) {
         require(bytes(_mainchainAddress).length > 0, "Invalid mainchain address");
         mainchainAddress = _mainchainAddress;
+        l1Type = _l1Type;
         actorFactory = msg.sender;
     }
 
@@ -65,7 +68,7 @@ contract Actor {
         uint256 txGasLimit = providedGasLimit + intrinsicGas;
 
         (bool verified, bytes memory txData) = L1_MSG_VERIFY.verify(
-            IL1MsgVerify.L1Type.Cardano,
+            l1Type,
             signature,
             key,
             bytes(mainchainAddress)

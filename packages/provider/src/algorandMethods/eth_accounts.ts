@@ -1,5 +1,3 @@
-import { Address } from "@dcspark/cardano-multiplatform-lib-browser";
-import { Buffer } from "buffer";
 import { ethers } from "ethers";
 import { z, ZodError } from "zod";
 import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
@@ -14,13 +12,13 @@ const InputSchema = z.union([
 ]);
 
 /**
- * @dev Requests cardano address from injected cardano provider and transforms it to the Actor address
+ * @dev Requests cardano address from the algorand wallet and transforms it to the Actor address
  */
-const eth_requestAccounts: CustomMethod = async (
+const eth_accounts: CustomMethod = async (
   provider: MilkomedaProvider,
   { params }: RequestArguments
 ) => {
-  const { cardanoProvider, actorFactoryAddress } = provider;
+  const { actorFactoryAddress, peraWallet, algorandAccounts } = provider;
 
   if (actorFactoryAddress === undefined) {
     throw new ProviderRpcError(
@@ -29,17 +27,23 @@ const eth_requestAccounts: CustomMethod = async (
     );
   }
 
+  if (peraWallet === undefined) {
+    throw new ProviderRpcError(
+      "PeraWalletConnect setup failed",
+      JSON_RPC_ERROR_CODES.DISCONNECTED
+    );
+  }
+
   try {
+    if (!peraWallet.isConnected || algorandAccounts.length === 0) return [];
+
     const [salt] = InputSchema.parse(params);
 
-    await cardanoProvider.enable();
+    const [address] = algorandAccounts;
 
-    const address = await cardanoProvider.getChangeAddress();
-
-    const bech32Address = Address.from_bytes(Buffer.from(address, "hex")).to_bech32();
-
-    return [await getActorAddress(provider, bech32Address, salt)];
+    return [await getActorAddress(provider, address, salt)];
   } catch (e) {
+    console.log(e);
     if (e instanceof ZodError) {
       throw new ProviderRpcError("Invalid input", JSON_RPC_ERROR_CODES.INVALID_PARAMS, e);
     }
@@ -48,4 +52,4 @@ const eth_requestAccounts: CustomMethod = async (
   }
 };
 
-export default eth_requestAccounts;
+export default eth_accounts;
