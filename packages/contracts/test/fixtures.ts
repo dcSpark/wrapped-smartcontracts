@@ -10,7 +10,7 @@ const SUPPORTED_L1_CHAINS = {
   ALGORAND: "algorand",
 } as const;
 
-type SupportedL1Chain = typeof SUPPORTED_L1_CHAINS[keyof typeof SUPPORTED_L1_CHAINS];
+type SupportedL1Chain = (typeof SUPPORTED_L1_CHAINS)[keyof typeof SUPPORTED_L1_CHAINS];
 
 let l1Chain: SupportedL1Chain;
 

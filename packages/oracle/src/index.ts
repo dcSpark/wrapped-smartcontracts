@@ -44,7 +44,7 @@ app.post("/", async (req: Request, res: Response) => {
 const logMiddleware = async <ServerParams>(
   next: JSONRPCServerMiddlewareNext<ServerParams>,
   request: JSONRPCRequest,
-  serverParams: ServerParams | undefined
+  serverParams: ServerParams
 ) => {
   const response = await next(request, serverParams);
 
@@ -59,7 +59,7 @@ const logMiddleware = async <ServerParams>(
 const exceptionMiddleware = async <ServerParams>(
   next: JSONRPCServerMiddlewareNext<ServerParams>,
   request: JSONRPCRequest,
-  serverParams: ServerParams | undefined
+  serverParams: ServerParams
 ) => {
   try {
     return await next(request, serverParams);
