@@ -1,14 +1,15 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { MilkomedaNetworkName } from "./WSCLib";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress } from "./utils";
-import { StargateApiResponse } from "./PendingManger";
+import { StargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
+import { Lucid } from "lucid-cardano";
+import { MilkomedaProvider } from "milkomeda-wsc-provider";
+import { MilkomedaNetworkName } from "./WSCLibTypes";
 
 class BridgeActions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lucid: any;
+  lucid: Lucid;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any;
   stargateResponse: StargateApiResponse;
@@ -16,10 +17,8 @@ class BridgeActions {
   network: string;
 
   constructor(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    lucid: any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    provider: any,
+    lucid: Lucid,
+    provider: MilkomedaProvider,
     stargateApiResponse: StargateApiResponse,
     bridgeAddress: string,
     network: string
@@ -69,10 +68,6 @@ class BridgeActions {
   }
 
   wrap = async (tokenId: string, destination: string, amount: number) => {
-    // console.log("tokenId: ", tokenId);
-    // console.log("destination: ", destination);
-    // console.log("amount: ", amount);
-
     let payload = {};
     const stargateMin = this.stargateMinAdaFromCardano();
     if (tokenId === "lovelace") {
@@ -115,7 +110,8 @@ class BridgeActions {
     const signer = this.provider.getSigner();
     const cardanoDestination = bech32ToHexAddress(destinationAddress);
 
-    if (erc20address === MilkomedaConstants.AdaERC20Address(this.network)) {
+    // TODO: check this line
+    if (erc20address === MilkomedaConstants.getBridgeEVMAddress(this.network)) {
       const minRequired = new BigNumber(this.stargateMinAdaToCardano());
       if (amountToUnwrap.lt(minRequired))
         throw new Error("Amount is less than the minimum required");

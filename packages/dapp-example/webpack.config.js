@@ -26,7 +26,7 @@ module.exports = {
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {
-    port: 3000,
+    port: 4000,
     static: {
       directory: path.join(__dirname, "dist"),
     },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CardanoAmount } from '../PendingManger';
 import BigNumber from 'bignumber.js';
+import { CardanoAmount } from 'milkomeda-wsc/build/CardanoPendingManger';
 
 interface CardanoAssetsProps {
     tokens: CardanoAmount[];

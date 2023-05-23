@@ -1,14 +1,12 @@
-// Add the required imports here
-
 import React from "react";
-import { EVMTokenBalance, PendingTx } from "../WSCLib";
-import { CardanoAmount } from "../PendingManger";
 import CardanoAssets from "./CardanoAssets";
 import { PendingTransactions } from "./Pending";
 import ActorAssets from "./ActorAssets";
-import LatestActivity from "./LastestActivity";
-import { Activity } from "../Activity";
+import LatestActivity from "./LatestActivity";
+import { Activity } from "milkomeda-wsc/build/Activity";
 import BigNumber from "bignumber.js";
+import { EVMTokenBalance, PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
+import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
 interface WrappedSmartContractWalletAssetsProps {
   connected: boolean;

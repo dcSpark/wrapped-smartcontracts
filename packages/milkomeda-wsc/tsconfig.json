@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "ES2022",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    // Generate d.ts files
+    "declaration": true,
+    "outDir": "build",
+    "resolveJsonModule": true,
+    "strict": true 
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

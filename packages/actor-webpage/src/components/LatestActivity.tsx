@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity } from "../Activity";
+import { Activity } from "milkomeda-wsc/build/Activity";
 
 interface LatestActivityProps {
   network: string | null;

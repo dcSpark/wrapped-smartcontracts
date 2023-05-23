@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { MilkomedaConstants } from "./MilkomedaConstants";
-import { AddressResponse, EVMTokenBalance, TransactionResponse } from "./WSCLib";
+import { AddressResponse, EVMTokenBalance, TransactionResponse } from "./WSCLibTypes";
 
 export interface BridgeRequest {
   transaction_id: string;
@@ -100,6 +100,13 @@ export class MilkomedaNetwork {
       value: transaction.value,
       txreceipt_status: transaction.txreceipt_status,
     }));
+  }
+
+  //
+  // Algod
+  //
+  static async getAlgoBalance(): Promise<string> {
+    return "";
   }
 
   //

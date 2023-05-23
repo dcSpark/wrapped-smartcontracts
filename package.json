@@ -32,7 +32,8 @@
     "packages/contracts",
     "packages/dapp-example",
     "packages/oracle",
-    "packages/provider",
-    "packages/actor-webpage"
+    "packages/milkomeda-wsc-provider",
+    "packages/actor-webpage",
+    "packages/milkomeda-wsc"
   ]
 }

@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
-import PendingManager, { CardanoAmount, StargateApiResponse } from "./PendingManger";
+import CardanoPendingManager, { CardanoAmount, StargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
+import type { MilkomedaProvider } from "milkomeda-wsc-provider";
 import {
   adaFingerprint,
   assetNameFromBlockfrostId,
@@ -12,62 +13,18 @@ import BridgeActions from "./BridgeActions";
 import { MilkomedaNetwork } from "./MilkomedaNetwork";
 import { Activity, ActivityManager, ActivityStatus } from "./Activity";
 import BigNumber from "bignumber.js";
+import algosdk from "algosdk";
+import {
+  EVMTokenBalance,
+  MilkomedaNetworkName,
+  PendingTx,
+  PendingTxType,
+  TransactionResponse,
+  UserWallet,
+} from "./WSCLibTypes";
 
-export interface EVMTokenBalance {
-  balance: string;
-  contractAddress: string;
-  decimals: string;
-  name: string;
-  symbol: string;
-  type: string;
-}
-
-export interface TransactionResponse {
-  hash: string;
-  timeStamp: string;
-  from: string;
-  to: string;
-  value: string;
-  txreceipt_status: string;
-}
-
-export enum PendingTxType {
-  Wrap = "Wrap",
-  WrapPermission = "WrapPermission",
-  Unwrap = "Unwrap",
-  Normal = "Normal",
-}
-
-export interface PendingTx {
-  hash: string;
-  timestamp: number;
-  explorer: string | undefined;
-  type: PendingTxType;
-  destinationAddress: string;
-}
-
-export enum MilkomedaNetworkName {
-  C1Mainnet = "Cardano C1 Mainnet",
-  C1Devnet = "Cardano C1 Devnet",
-  A1Mainnet = "Algorand A1 Mainnet",
-  A1Devnet = "Algorand A1 Devnet",
-}
-
-export enum UserWallet {
-  Flint = "Flint",
-}
-
-export interface AddressResponse {
-  address: string;
-  amount: CardanoAmount[];
-  stake_address: string;
-  type: string;
-  script: boolean;
-}
-
-class WSCLib {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  wscProvider: any; // TODO: fix types. does it require to update provider?
+export class WSCLib {
+  wscProvider!: MilkomedaProvider;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   evmProvider: any;
   oracleUrl: string;
@@ -83,20 +40,52 @@ class WSCLib {
 
   constructor(
     network: MilkomedaNetworkName,
-    oracleUrl: string,
-    jsonRpcProviderUrl: string,
-    wallet: UserWallet
+    wallet: UserWallet,
+    customSettings:
+      | {
+          oracleUrl: string | undefined;
+          jsonRpcProviderUrl: string | undefined;
+          blockfrostKey: string | undefined;
+        }
+      | undefined = undefined
   ) {
-    // TODO: OracleURL and jsonRpc should be optional bc they can be derived from network
-    this.oracleUrl = oracleUrl;
-    this.jsonRpcProviderUrl = jsonRpcProviderUrl;
+    this.oracleUrl =
+      customSettings == null || customSettings.oracleUrl == null
+        ? MilkomedaConstants.getOracle(network)
+        : customSettings.oracleUrl;
+    this.jsonRpcProviderUrl =
+      customSettings == null || customSettings.jsonRpcProviderUrl == null
+        ? MilkomedaConstants.getEVMRPC(network)
+        : customSettings.jsonRpcProviderUrl;
     this.network = network;
     this.wallet = wallet;
+
+    if (this.isCardano()) {
+      if (customSettings == null || customSettings.blockfrostKey == null)
+        throw new Error("Missing blockfrost key");
+      this.blockfrost = new Blockfrost(
+        MilkomedaConstants.blockfrost(this.network),
+        customSettings.blockfrostKey
+      );
+    } else {
+      throw new Error("Algorand not supported yet. Coming very soon!");
+    }
   }
 
-  isCardanoWallet(wallet: string): boolean {
-    switch (wallet) {
-      case UserWallet.Flint:
+  isCardano(): boolean {
+    switch (this.network) {
+      case MilkomedaNetworkName.C1Devnet:
+      case MilkomedaNetworkName.C1Mainnet:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  isAlgorand(): boolean {
+    switch (this.network) {
+      case MilkomedaNetworkName.A1Devnet:
+      case MilkomedaNetworkName.A1Mainnet:
         return true;
       default:
         return false;
@@ -108,24 +97,30 @@ class WSCLib {
   async getWalletProvider(): Promise<WalletApi> {
     switch (this.wallet) {
       case UserWallet.Flint:
-        return await window.cardano.flint.enable();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return await (window.cardano as any).flint.enable();
       default:
         throw new Error("Invalid wallet");
     }
   }
 
-  async loadProvider(): Promise<void> {
-    this.wscProvider = await import("provider");
+  async loadAlgod(): Promise<void> {
+    // https://algonode.io/api/
+    // https://developer.algorand.org/docs/reference/rest-apis/algod/v2/
+
+    const token = "";
+    const server = "https://testnet-api.algonode.cloud";
+    const client = new algosdk.Algodv2(token, server);
+
+    (async () => {
+      console.log(await client.status().do());
+    })().catch((e) => {
+      console.log(e);
+    });
   }
 
   async loadLucid(): Promise<void> {
-    // TODO: We should never make the Blockfrost key public
-    // so we need to refactor and maybe add a proxy backend
-    const key = "";
-
     const cardanoNetwork = this.network === MilkomedaNetworkName.C1Mainnet ? "Mainnet" : "Preprod";
-    // TODO: get blockfrost url from network
-    this.blockfrost = new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key);
     this.lucid = await Lucid.new(this.blockfrost, cardanoNetwork);
 
     const walletProvider = await this.getWalletProvider();
@@ -133,23 +128,37 @@ class WSCLib {
   }
 
   async inject(): Promise<WSCLib> {
+    let injector: typeof import("milkomeda-wsc-provider");
     if (!this.wscProvider) {
-      await this.loadProvider();
+      injector = await import("milkomeda-wsc-provider");
     }
-    await this.wscProvider.inject(this.oracleUrl, this.jsonRpcProviderUrl).setup();
-    await this.eth_requestAccounts();
 
-    // TODO: Add specific Cardano wallet?
-    await this.loadLucid();
+    if (this.isCardano()) {
+      console.log("injecting cardano");
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.wscProvider = injector!.injectCardano(this.oracleUrl, this.jsonRpcProviderUrl);
+    } else if (this.isAlgorand()) {
+      console.log("injecting algorand");
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.wscProvider = injector!.injectAlgorand(this.oracleUrl, this.jsonRpcProviderUrl);
+    } else {
+      throw new Error("Invalid wallet");
+    }
+    await this.wscProvider.setup();
+
+    if (this.isCardano()) {
+      await this.loadLucid();
+    } else {
+      await this.loadAlgod();
+    }
 
     this.evmProvider = await this.getEthersProvider();
-
-    // TODO: Make it work for Algorand
+    await this.eth_requestAccounts();
     return this;
   }
 
   async eth_requestAccounts(): Promise<string> {
-    const result = (await window.ethereum.request({
+    const result = (await window.ethereum?.request({
       method: "eth_requestAccounts",
       params: [],
     })) as string[];
@@ -183,7 +192,7 @@ class WSCLib {
   async getPendingTransactions(): Promise<PendingTx[]> {
     const userL1Address = await this.origin_getAddress();
     const evmAddress = await this.eth_getAccount();
-    const pendingMngr = new PendingManager(
+    const pendingMngr = new CardanoPendingManager(
       this.blockfrost,
       this.network,
       userL1Address,
@@ -194,8 +203,33 @@ class WSCLib {
     return pendingTxs;
   }
 
-  // Cardano specific
+  async origin_getNativeBalance(address: string | undefined = undefined): Promise<string> {
+    if (this.isCardano()) {
+      return await this.origin_getADABalance(address);
+    } else {
+      return await this.origin_getAlgoBalance(address);
+    }
+  }
 
+  //
+  // Algorand specific
+  //
+  async origin_getAlgoBalance(address: string | undefined = undefined): Promise<string> {
+    const targetAddress = address || (await this.origin_getAddress());
+    if (targetAddress == null) return "";
+    const algoAccount = this.wscProvider.algorandAccounts[0];
+    console.log("algoAccount", algoAccount);
+    return "";
+    // return await MilkomedaNetwork.getAlgoBalance(
+    //   this.blockfrost.url,
+    //   this.blockfrost.projectId,
+    //   targetAddress
+    // );
+  }
+
+  //
+  // Cardano specific
+  //
   async origin_getADABalance(address: string | undefined = undefined): Promise<string> {
     const targetAddress = address || (await this.origin_getAddress());
     if (targetAddress == null) return "";
@@ -207,8 +241,13 @@ class WSCLib {
   }
 
   async origin_getAddress(): Promise<string> {
-    if (!this.lucid) throw "Lucid not loaded";
-    return await this.lucid.wallet.address();
+    if (this.isCardano()) {
+      if (!this.lucid) throw "Lucid not loaded";
+      return await this.lucid.wallet.address();
+    } else {
+      const algoAccount = this.wscProvider.algorandAccounts[0];
+      return algoAccount;
+    }
   }
 
   async origin_getTokenBalances(
@@ -250,10 +289,12 @@ class WSCLib {
     return tokens;
   }
 
+  //
   // Bridge Actions
+  //
   async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
     const targetAddress = destination || (await this.eth_getAccount());
-    const stargate = await PendingManager.fetchFromStargate(
+    const stargate = await CardanoPendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
     );
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
@@ -273,7 +314,7 @@ class WSCLib {
     amount: BigNumber
   ): Promise<void> {
     const targetAddress = destination || (await this.origin_getAddress());
-    const stargate = await PendingManager.fetchFromStargate(
+    const stargate = await CardanoPendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
     );
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
@@ -287,7 +328,8 @@ class WSCLib {
     // In order to maintain the unwrap function agnostic to send all, we need to
     // discount some fees from the total amount so it can be used for the transaction
     let amountToUnwrap = amount;
-    if (assetId === MilkomedaConstants.AdaERC20Address(this.network)) {
+    // TODO: check this line
+    if (assetId === MilkomedaConstants.getBridgeEVMAddress(this.network)) {
       const Adafees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
       amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(Adafees));
     }

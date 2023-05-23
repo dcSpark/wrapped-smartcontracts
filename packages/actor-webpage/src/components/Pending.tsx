@@ -1,5 +1,5 @@
 import React from 'react';
-import { PendingTx } from '../WSCLib';
+import { PendingTx } from 'milkomeda-wsc/build/WSCLibTypes';
 
 interface PendingTransactionsProps {
   pendingTxs: PendingTx[];

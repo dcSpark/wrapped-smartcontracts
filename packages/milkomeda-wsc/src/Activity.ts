@@ -1,6 +1,6 @@
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import { MilkomedaNetwork } from "./MilkomedaNetwork";
-import { MilkomedaNetworkName, PendingTx, PendingTxType } from "./WSCLib";
+import { MilkomedaNetworkName, PendingTx, PendingTxType } from "./WSCLibTypes";
 
 export enum ActivityStatus {
   Pending = "Pending",

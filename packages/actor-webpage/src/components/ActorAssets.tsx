@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { EVMTokenBalance } from "../WSCLib";
-import { MilkomedaConstants } from "../MilkomedaConstants";
+import { EVMTokenBalance } from "milkomeda-wsc/build/WSCLibTypes";
+import { MilkomedaConstants } from "milkomeda-wsc/src/MilkomedaConstants";
 
 interface WrappedSmartContractAssetsProps {
   destinationBalance: string | null;
