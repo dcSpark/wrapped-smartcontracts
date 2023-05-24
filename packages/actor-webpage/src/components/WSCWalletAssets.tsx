@@ -7,6 +7,7 @@ import { Activity } from "milkomeda-wsc/build/Activity";
 import BigNumber from "bignumber.js";
 import { EVMTokenBalance, PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
 import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
+import LabelWithValue from "./LabelWithValue";
 
 interface WrappedSmartContractWalletAssetsProps {
   connected: boolean;
@@ -38,16 +39,21 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
   return (
     <>
       {connected && (
-        <div>
-          <div>Connected WSC Address: {address}</div>
-          <div>Balance: {destinationBalance ? destinationBalance + " mADA" : "Loading..."}</div>
-          <div>
+        <div className="flex flex-col">
+          <div className="section">
+            <LabelWithValue label="Connected WSC Address:" value={address} />
+            <LabelWithValue
+              label="Balance"
+              value={destinationBalance ? destinationBalance + " mADA" : "Loading..."}
+            />
+          </div>
+          <div className="section">
             <PendingTransactions pendingTxs={pendingTxs} />
           </div>
-          <div>
+          <div className="section">
             <CardanoAssets tokens={originTokens} wrap={wrap} />
           </div>
-          <div>
+          <div className="section">
             <ActorAssets
               destinationBalance={destinationBalance}
               network={network}
@@ -56,12 +62,11 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
               unwrap={unwrap}
             />
           </div>
-          <div>
+          <div className="section">
             <LatestActivity network={network} transactions={transactions} />
           </div>
         </div>
       )}
-      ;
     </>
   );
 };

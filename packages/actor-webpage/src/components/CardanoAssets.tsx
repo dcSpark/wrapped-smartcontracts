@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import BigNumber from 'bignumber.js';
-import { CardanoAmount } from 'milkomeda-wsc/build/CardanoPendingManger';
+import React, { useState, useEffect } from "react";
+import BigNumber from "bignumber.js";
+import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
 interface CardanoAssetsProps {
-    tokens: CardanoAmount[];
-    wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
-  }
+  tokens: CardanoAmount[];
+  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+}
 
 const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
   const [tokenAmounts, setTokenAmounts] = useState<Map<string, string>>(new Map());
   const [amounts, setAmounts] = useState<string[]>([]);
- 
+
   useEffect(() => {
-    setAmounts(tokens.map((token) => {
-      if (token.decimals) {
-        const quantity = new BigNumber(token.quantity);
-        const divisor = new BigNumber(10).pow(token.decimals);
-        return quantity.dividedBy(divisor).toString();
-      }
-      return token.quantity;
-    }));
+    setAmounts(
+      tokens.map((token) => {
+        if (token.decimals) {
+          const quantity = new BigNumber(token.quantity);
+          const divisor = new BigNumber(10).pow(token.decimals);
+          return quantity.dividedBy(divisor).toString();
+        }
+        return token.quantity;
+      }),
+    );
   }, [tokens]);
 
   const updateTokenAmount = (tokenUnit: string, amount: string) => {
@@ -29,9 +31,9 @@ const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
   };
 
   const moveToken = async (token: CardanoAmount) => {
-    console.log('Moving token', token.unit, 'with amount', tokenAmounts.get(token.unit));
-    await wrap(undefined, token.unit, new BigNumber(tokenAmounts.get(token.unit) || '0'));
-    updateTokenAmount(token.unit, '');
+    console.log("Moving token", token.unit, "with amount", tokenAmounts.get(token.unit));
+    await wrap(undefined, token.unit, new BigNumber(tokenAmounts.get(token.unit) || "0"));
+    updateTokenAmount(token.unit, "");
   };
 
   const setMaxAmount = (token: CardanoAmount) => {
@@ -43,7 +45,7 @@ const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
 
   return (
     <div>
-      <h2>Assets in Your Cardano Wallet</h2>
+      <h2 className="subtitle">Assets in Your Cardano Wallet</h2>
       <h4>(We only show the ones that can be moved)</h4>
       <table>
         <thead>
@@ -68,13 +70,19 @@ const CardanoAssets: React.FC<CardanoAssetsProps> = ({ tokens, wrap }) => {
                   <td>
                     <input
                       type="text"
-                      value={tokenAmounts.get(token.unit) || ''}
+                      value={tokenAmounts.get(token.unit) || ""}
                       onChange={(e) => updateTokenAmount(token.unit, e.target.value)}
                     />
                   </td>
                   <td>
-                    <button onClick={() => moveToken(token)}>Move to L2</button>
-                    <button onClick={() => setMaxAmount(token)}>All</button>
+                    <div className="flex space-x-4">
+                      <button className="button-primary-small" onClick={() => moveToken(token)}>
+                        Move to L2
+                      </button>
+                      <button className="button-primary-small" onClick={() => setMaxAmount(token)}>
+                        All
+                      </button>
+                    </div>
                   </td>
                 </>
               )}
