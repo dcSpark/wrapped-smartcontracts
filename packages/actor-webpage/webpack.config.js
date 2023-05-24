@@ -1,6 +1,6 @@
 const path = require("path"); // eslint-disable-line @typescript-eslint/no-var-requires
 const webpack = require("webpack"); // eslint-disable-line @typescript-eslint/no-var-requires
-const tailwindcss = require("tailwindcss");
+const tailwindcss = require("tailwindcss"); // eslint-disable-line @typescript-eslint/no-var-requires
 
 module.exports = {
   entry: "./src/index.tsx",
