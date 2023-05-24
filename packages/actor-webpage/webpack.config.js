@@ -1,5 +1,6 @@
 const path = require("path"); // eslint-disable-line @typescript-eslint/no-var-requires
 const webpack = require("webpack"); // eslint-disable-line @typescript-eslint/no-var-requires
+const tailwindcss = require("tailwindcss");
 
 module.exports = {
   entry: "./src/index.tsx",
@@ -10,6 +11,10 @@ module.exports = {
         test: /\.tsx?$/,
         use: "ts-loader",
         exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
     ],
   },
@@ -24,7 +29,7 @@ module.exports = {
     syncWebAssembly: true,
     topLevelAwait: true,
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [tailwindcss, new webpack.HotModuleReplacementPlugin()],
   devServer: {
     port: 3000,
     static: {
