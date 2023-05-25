@@ -51,8 +51,3 @@ export enum MilkomedaNetworkName {
   A1Mainnet = "Algorand A1 Mainnet",
   A1Devnet = "Algorand A1 Devnet",
 }
-
-export enum UserWallet {
-  Flint = "Flint",
-  PeraWallet = "PeraWallet",
-}

@@ -20,7 +20,6 @@ import {
   PendingTx,
   PendingTxType,
   TransactionResponse,
-  UserWallet,
 } from "./WSCLibTypes";
 
 export class WSCLib {
@@ -32,7 +31,7 @@ export class WSCLib {
   network: MilkomedaNetworkName;
 
   // Cardano
-  wallet: UserWallet | undefined;
+  wallet: string | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   blockfrost: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,7 +39,7 @@ export class WSCLib {
 
   constructor(
     network: MilkomedaNetworkName,
-    wallet: UserWallet,
+    wallet: string,
     customSettings:
       | {
           oracleUrl: string | undefined;
@@ -92,18 +91,6 @@ export class WSCLib {
     }
   }
 
-  // TODO: this eventually should also work with Algorand
-  // TODO: add the other wallets or make it generic
-  async getWalletProvider(): Promise<WalletApi> {
-    switch (this.wallet) {
-      case UserWallet.Flint:
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return await (window.cardano as any).flint.enable();
-      default:
-        throw new Error("Invalid wallet");
-    }
-  }
-
   async loadAlgod(): Promise<void> {
     // https://algonode.io/api/
     // https://developer.algorand.org/docs/reference/rest-apis/algod/v2/
@@ -119,12 +106,26 @@ export class WSCLib {
     });
   }
 
+  // TODO: this eventually should also work with Algorand
+  async getWalletProvider(): Promise<WalletApi> {
+    if (this.isCardano() && this.wallet != null) {
+      const walletApi = await window.cardano[this.wallet].enable();
+      return walletApi;
+    }
+    throw new Error("Invalid wallet");
+  }
+
   async loadLucid(): Promise<void> {
     const cardanoNetwork = this.network === MilkomedaNetworkName.C1Mainnet ? "Mainnet" : "Preprod";
     this.lucid = await Lucid.new(this.blockfrost, cardanoNetwork);
 
     const walletProvider = await this.getWalletProvider();
     this.lucid.selectWallet(walletProvider);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const walletName = this.wallet as string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window.cardano as any) = { ...walletProvider, ...window.cardano[walletName] };
   }
 
   async inject(): Promise<WSCLib> {
@@ -134,11 +135,9 @@ export class WSCLib {
     }
 
     if (this.isCardano()) {
-      console.log("injecting cardano");
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.wscProvider = injector!.injectCardano(this.oracleUrl, this.jsonRpcProviderUrl);
     } else if (this.isAlgorand()) {
-      console.log("injecting algorand");
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.wscProvider = injector!.injectAlgorand(this.oracleUrl, this.jsonRpcProviderUrl);
     } else {
@@ -158,7 +157,8 @@ export class WSCLib {
   }
 
   async eth_requestAccounts(): Promise<string> {
-    const result = (await window.ethereum?.request({
+    if (window.ethereum == null) throw new Error("Provider not loaded");
+    const result = (await window.ethereum.request({
       method: "eth_requestAccounts",
       params: [],
     })) as string[];

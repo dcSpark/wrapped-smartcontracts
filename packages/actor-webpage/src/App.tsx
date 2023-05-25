@@ -9,7 +9,6 @@ import {
   EVMTokenBalance,
   MilkomedaNetworkName,
   PendingTx,
-  UserWallet,
 } from "milkomeda-wsc/build/WSCLibTypes";
 import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import "./App.css";
@@ -84,7 +83,7 @@ const App: React.FC = () => {
   const handleConnectWalletAlgorand = async () => {
     if (!algorandConnected) {
       const network = MilkomedaNetworkName.A1Devnet;
-      const wscLib = new WSCLib(network, UserWallet.PeraWallet);
+      const wscLib = new WSCLib(network, "PeraWallet");
       wscLib2 = await wscLib.inject();
       if (window.ethereum !== undefined) {
         setAlgorandConnected(true);
@@ -99,7 +98,7 @@ const App: React.FC = () => {
   const handleConnectWalletCardano = async () => {
     if (!cardanoConnected) {
       const network = MilkomedaNetworkName.C1Devnet;
-      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, UserWallet.Flint, {
+      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, "eternl", {
         oracleUrl: null,
         blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: null,

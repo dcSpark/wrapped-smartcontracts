@@ -32,8 +32,7 @@
     "buffer": "^6.0.3",
     "ethers": "^5.7.2",
     "lucid-cardano": "^0.10.1",
-    "milkomeda-wsc": "^0.1.0",
-    "milkomeda-wsc-provider": "^0.1.0",
+    "milkomeda-wsc": "../milkomeda-wsc",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0"
