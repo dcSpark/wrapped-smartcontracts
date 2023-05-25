@@ -12,6 +12,7 @@ import {
   UserWallet,
 } from "milkomeda-wsc/build/WSCLibTypes";
 import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
+import "./App.css";
 
 let wscLib2: InstanceType<typeof WSCLib>;
 
@@ -31,7 +32,7 @@ const App: React.FC = () => {
   const wrapWrapper = async (
     destination: string | undefined,
     assetId: string,
-    amount: BigNumber
+    amount: BigNumber,
   ) => {
     // TODO: check that amount.toNumber() is correct
     return wscLib2.wrap(destination, assetId, amount.toNumber());
@@ -40,7 +41,7 @@ const App: React.FC = () => {
   const unwrapWrapper = async (
     destination: string | undefined,
     assetId: string,
-    amount: BigNumber
+    amount: BigNumber,
   ) => {
     return wscLib2.unwrap(destination, assetId, amount);
   };
@@ -101,7 +102,7 @@ const App: React.FC = () => {
       const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, UserWallet.Flint, {
         oracleUrl: null,
         blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
-        jsonRpcProviderUrl: null
+        jsonRpcProviderUrl: null,
       });
       wscLib2 = await wscLib.inject();
       if (window.ethereum !== undefined) {
@@ -157,14 +158,13 @@ const App: React.FC = () => {
   }, [address]);
 
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8">
       <Header
         algorandConnected={algorandConnected}
         cardanoConnected={cardanoConnected}
         handleConnectWalletCardano={handleConnectWalletCardano}
         handleConnectWalletAlgorand={handleConnectWalletAlgorand}
       />
-      <br />
       {(algorandConnected || cardanoConnected) && (
         <div>
           <Summary originAddress={originAddress} originBalance={originBalance} />

@@ -1,5 +1,5 @@
-import React from 'react';
-import { PendingTx } from 'milkomeda-wsc/build/WSCLibTypes';
+import React from "react";
+import { PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
 
 interface PendingTransactionsProps {
   pendingTxs: PendingTx[];
@@ -8,7 +8,7 @@ interface PendingTransactionsProps {
 export const PendingTransactions: React.FC<PendingTransactionsProps> = ({ pendingTxs }) => {
   return (
     <div>
-      <h2>Pending</h2>
+      <h2 className="subtitle">Pending</h2>
       <h4>
         (Here we will show if there are any pending transactions between Cardano and Milkomeda)
       </h4>
@@ -34,16 +34,12 @@ export const PendingTransactions: React.FC<PendingTransactionsProps> = ({ pendin
                 return (
                   <tr key={index}>
                     <td>
-                      <a
-                        href={tx.explorer}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
+                      <a href={tx.explorer} target="_blank" rel="noreferrer">
                         {shortHash}
                       </a>
                     </td>
                     <td>{localDateTime}</td>
-                    <td>{tx.type === 'Wrap' ? 'Moving to Milkomeda' : 'Moving to L1'}</td>
+                    <td>{tx.type === "Wrap" ? "Moving to Milkomeda" : "Moving to L1"}</td>
                   </tr>
                 );
               })}

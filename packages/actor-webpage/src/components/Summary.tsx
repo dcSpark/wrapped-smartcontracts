@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import LabelWithValue from "./LabelWithValue";
 
 interface CardanoWalletAssetsProps {
   originAddress: string;
@@ -7,9 +8,12 @@ interface CardanoWalletAssetsProps {
 
 const Summary: React.FC<CardanoWalletAssetsProps> = ({ originAddress, originBalance }) => {
   return (
-    <div>
-      <div>Origin Address: {originAddress}</div>
-      <div>Balance: {originBalance ? originBalance + " ADA" : "Loading..."}</div>
+    <div className="section">
+      <LabelWithValue label="Origin Address:" value={originAddress} />
+      <LabelWithValue
+        label="Balance:"
+        value={originBalance ? originBalance + " ADA" : "Loading..."}
+      />
     </div>
   );
 };

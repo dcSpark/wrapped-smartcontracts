@@ -31,7 +31,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
 
   return (
     <div>
-      <h2>Assets in Your Wrapped Smart Contract Wallet</h2>
+      <h2 className="subtitle">Assets in Your Wrapped Smart Contract Wallet</h2>
       <h4>
         (These are the assets held on Milkomeda. You can move them back to your Cardano wallet)
       </h4>
@@ -52,7 +52,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
               <td>
                 <a
                   href={`${MilkomedaConstants.getEVMExplorerUrl(
-                    network
+                    network,
                   )}/address/0x319f10d19e21188ecF58b9a146Ab0b2bfC894648`}
                   target="_blank"
                   rel="noreferrer"
@@ -62,12 +62,12 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
               </td>
               <td>
                 <button
-                  style={{ backgroundColor: "blue", color: "white" }}
+                  className="button-primary-small"
                   onClick={() => {
                     const normalizedAda = normalizeAda(destinationBalance);
-                    console.log("normalizedAda", normalizedAda)
+                    console.log("normalizedAda", normalizedAda);
                     const lovelace = new BigNumber(normalizedAda).multipliedBy(
-                      new BigNumber(10).pow(6)
+                      new BigNumber(10).pow(6),
                     );
                     unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", lovelace);
                   }}
@@ -83,7 +83,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
             const adjustedBalance = balance.dividedBy(new BigNumber(10).pow(decimals));
             const shortAddress = `${token.contractAddress.slice(
               0,
-              6
+              6,
             )}...${token.contractAddress.slice(-4)}`;
 
             return (
@@ -110,7 +110,7 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                       moveAssetsToL1(
                         token.contractAddress,
                         token.name,
-                        new BigNumber(token.balance)
+                        new BigNumber(token.balance),
                       )
                     }
                   >

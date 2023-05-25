@@ -18,7 +18,7 @@ Game plan:
 const LatestActivity: React.FC<LatestActivityProps> = ({ transactions }) => {
   return (
     <div>
-      <h2>Latest 10 Transactions</h2>
+      <h2 className="subtitle">Latest 10 Transactions</h2>
       <h4>Here we show you a history of your interactions with Milkomeda and WSC</h4>
       <table>
         <thead>
@@ -36,9 +36,9 @@ const LatestActivity: React.FC<LatestActivityProps> = ({ transactions }) => {
             const localDateTime = new Date(tx.timestamp * 1000).toLocaleString();
             const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
             const addressDisplay =
-            tx.destinationAddress.length > 50
-              ? `${tx.destinationAddress.slice(0, 39)}...${tx.destinationAddress.slice(-8)}`
-              : tx.destinationAddress;
+              tx.destinationAddress.length > 50
+                ? `${tx.destinationAddress.slice(0, 39)}...${tx.destinationAddress.slice(-8)}`
+                : tx.destinationAddress;
 
             return (
               <tr key={index}>
@@ -58,8 +58,8 @@ const LatestActivity: React.FC<LatestActivityProps> = ({ transactions }) => {
                     .map(
                       (value) =>
                         `${(Number(value.amount) / Math.pow(10, value.decimals)).toFixed(
-                          value.decimals
-                        )} ${value.token}`
+                          value.decimals,
+                        )} ${value.token}`,
                     )
                     .join(", ")}
                 </td>
