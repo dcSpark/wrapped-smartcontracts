@@ -5,11 +5,7 @@ import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "../../milkomeda-wsc/src/Activity";
 import BigNumber from "bignumber.js";
-import {
-  EVMTokenBalance,
-  MilkomedaNetworkName,
-  PendingTx,
-} from "milkomeda-wsc/build/WSCLibTypes";
+import { EVMTokenBalance, MilkomedaNetworkName, PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
 import { CardanoAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import "./App.css";
 
@@ -95,10 +91,10 @@ const App: React.FC = () => {
     }
   };
 
-  const handleConnectWalletCardano = async () => {
+  const handleConnectWalletCardano = async (option: string) => {
     if (!cardanoConnected) {
       const network = MilkomedaNetworkName.C1Devnet;
-      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, "eternl", {
+      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, option, {
         oracleUrl: null,
         blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: null,
@@ -125,6 +121,10 @@ const App: React.FC = () => {
 
   const moveAssetsToL1 = async (tokenId: string, tokenName: string, amount: BigNumber) => {
     await wscLib2.unwrap(undefined, tokenId, amount);
+  };
+
+  const areTokensAllowed = async (assetIds: string[]) => {
+    return await wscLib2.areTokensAllowed(assetIds);
   };
 
   useEffect(() => {
@@ -179,6 +179,7 @@ const App: React.FC = () => {
             wrap={wrapWrapper}
             unwrap={unwrapWrapper}
             transactions={transactions}
+            areTokensAllowed={areTokensAllowed}
           />
         </div>
       )}

@@ -20,6 +20,7 @@ interface WrappedSmartContractWalletAssetsProps {
   moveAssetsToL1: (contractAddress: string, name: string, amount: BigNumber) => void;
   wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
   unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  areTokensAllowed: (assetIds: string[]) => Promise<{ [key: string]: boolean }>;
   transactions: Activity[];
 }
 
@@ -34,6 +35,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
   moveAssetsToL1,
   wrap,
   unwrap,
+  areTokensAllowed,
   transactions,
 }) => {
   return (
@@ -60,6 +62,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
               tokens={tokens}
               moveAssetsToL1={moveAssetsToL1}
               unwrap={unwrap}
+              areTokensAllowed={areTokensAllowed}
             />
           </div>
           <div className="section">

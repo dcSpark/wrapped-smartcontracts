@@ -96,9 +96,10 @@ class BridgeActions {
   };
 
   unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber) => {
-    console.log("ERC20 address: ", erc20address);
+    console.log("ERC20 address: ", erc20address); // MilkomedaConstants.getBridgeEVMAddress(this.network)
+    const contractAddress = erc20address || MilkomedaConstants.getBridgeEVMAddress(this.network);
     const tokenContract = new ethers.Contract(
-      erc20address, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
+      contractAddress, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
       ["function approve(address spender, uint256 amount) public returns (bool)"],
       this.provider
     );
@@ -110,10 +111,10 @@ class BridgeActions {
     const signer = this.provider.getSigner();
     const cardanoDestination = bech32ToHexAddress(destinationAddress);
 
-    // TODO: check this line
-    if (erc20address === MilkomedaConstants.getBridgeEVMAddress(this.network)) {
+    if (erc20address == null) {
       const minRequired = new BigNumber(this.stargateMinAdaToCardano());
       if (amountToUnwrap.lt(minRequired))
+        // TODO: add info about the minimum required in ADA and token
         throw new Error("Amount is less than the minimum required");
 
       const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 18);
@@ -135,7 +136,6 @@ class BridgeActions {
     } else {
       const assetId = await bridgeContract.findAssetIdByAddress(erc20address);
       console.log("assetId: ", assetId);
-
       const approvalTx = await tokenContract
         .connect(signer)
         .approve(this.bridgeAddress, amountToUnwrap.toFixed(0), { gasLimit: 1_000_000 });

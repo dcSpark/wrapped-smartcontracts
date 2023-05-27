@@ -292,6 +292,29 @@ export class WSCLib {
   //
   // Bridge Actions
   //
+  async areTokensAllowed(assetIds: string[]): Promise<{ [key: string]: boolean }> {
+    const url = MilkomedaConstants.getMilkomedaStargateUrl(this.network);
+    const response = await fetch(url);
+    const stargateObj: StargateApiResponse = await response.json();
+
+    // Initialize the hashmap
+    const resultMap: { [key: string]: boolean } = {};
+
+    // Normalize input assetIds to lowercase
+    const normalizedAssetIds = assetIds.map((assetId) => assetId.toLowerCase());
+
+    // Search through the assets array for each assetId
+    for (const assetId of normalizedAssetIds) {
+      resultMap[assetId] = stargateObj.assets.some((asset) => {
+        return (
+          asset.fingerprint?.toLowerCase() === assetId ||
+          ("0x" + asset.idMilkomeda).toLowerCase() === assetId
+        );
+      });
+    }
+    return resultMap;
+  }
+
   async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
     const targetAddress = destination || (await this.eth_getAccount());
     const stargate = await CardanoPendingManager.fetchFromStargate(
@@ -313,6 +336,7 @@ export class WSCLib {
     assetId: string,
     amount: BigNumber
   ): Promise<void> {
+    console.log("unwrap", destination, assetId, amount);
     const targetAddress = destination || (await this.origin_getAddress());
     const stargate = await CardanoPendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
@@ -328,10 +352,9 @@ export class WSCLib {
     // In order to maintain the unwrap function agnostic to send all, we need to
     // discount some fees from the total amount so it can be used for the transaction
     let amountToUnwrap = amount;
-    // TODO: check this line
-    if (assetId === MilkomedaConstants.getBridgeEVMAddress(this.network)) {
-      const Adafees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
-      amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(Adafees));
+    if (assetId == null) {
+      const AdaFees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
+      amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(AdaFees));
     }
     bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
   }

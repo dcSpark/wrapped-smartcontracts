@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { EVMTokenBalance } from "milkomeda-wsc/build/WSCLibTypes";
 import { MilkomedaConstants } from "milkomeda-wsc/src/MilkomedaConstants";
@@ -9,6 +9,7 @@ interface WrappedSmartContractAssetsProps {
   tokens: EVMTokenBalance[];
   unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
   moveAssetsToL1: (tokenId: string, tokenName: string, amount: BigNumber) => void;
+  areTokensAllowed: (assetIds: string[]) => Promise<{ [key: string]: boolean }>;
 }
 
 const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
@@ -17,7 +18,15 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
   tokens,
   unwrap,
   moveAssetsToL1,
+  areTokensAllowed,
 }) => {
+  const [allowedTokensMap, setAllowedTokensMap] = useState<{ [key: string]: boolean }>({});
+
+  useEffect(() => {
+    const assetIds = tokens.map((token) => token.contractAddress);
+    areTokensAllowed(assetIds).then(setAllowedTokensMap);
+  }, [tokens, areTokensAllowed]);
+  
   const normalizeAda = (amount: string): string => {
     const maxDecimalPlaces = 6;
     const decimalIndex = amount.indexOf(".");
@@ -65,11 +74,10 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                   className="button-primary-small"
                   onClick={() => {
                     const normalizedAda = normalizeAda(destinationBalance);
-                    console.log("normalizedAda", normalizedAda);
                     const lovelace = new BigNumber(normalizedAda).multipliedBy(
                       new BigNumber(10).pow(6),
                     );
-                    unwrap(undefined, "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648", lovelace);
+                    unwrap(undefined, undefined, lovelace);
                   }}
                 >
                   Move all to L1
@@ -104,18 +112,22 @@ const WrappedSmartContractAssets: React.FC<WrappedSmartContractAssetsProps> = ({
                   </a>
                 </td>
                 <td>
-                  <button
-                    style={{ backgroundColor: "blue", color: "white" }}
-                    onClick={() =>
-                      moveAssetsToL1(
-                        token.contractAddress,
-                        token.name,
-                        new BigNumber(token.balance),
-                      )
-                    }
-                  >
-                    Move all to L1
-                  </button>
+                  {allowedTokensMap[token.contractAddress] ? (
+                    <button
+                      style={{ backgroundColor: "blue", color: "white" }}
+                      onClick={() =>
+                        moveAssetsToL1(
+                          token.contractAddress,
+                          token.name,
+                          new BigNumber(token.balance),
+                        )
+                      }
+                    >
+                      Move all to L1
+                    </button>
+                  ) : (
+                    "Not Allowed in Bridge"
+                  )}
                 </td>
               </tr>
             );
