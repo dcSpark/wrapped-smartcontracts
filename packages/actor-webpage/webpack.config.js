@@ -29,7 +29,14 @@ module.exports = {
     syncWebAssembly: true,
     topLevelAwait: true,
   },
-  plugins: [tailwindcss, new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    tailwindcss, new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'WSC_ORACLE': JSON.stringify(process.env.REACT_APP_WSC_ORACLE),
+      },
+    }),
+  ],
   devServer: {
     port: 3000,
     static: {

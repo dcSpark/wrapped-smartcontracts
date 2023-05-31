@@ -119,6 +119,9 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
         project_id: this.blockfrost.projectId,
       },
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const transactions: CardanoBlockfrostTransaction[] = await response.json();
 
     const twentyFourHoursAgo = Date.now() / 1000 - 24 * 60 * 60;
@@ -133,8 +136,16 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   async getCardanoPendingTxs(): Promise<PendingTx[]> {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed
-    const txs = await this.fetchRecentTransactions(this.userL1Address);
-    if (txs.length === 0) return [];
+    let txs: CardanoBlockfrostTransaction[];
+    try {
+      txs = await this.fetchRecentTransactions(this.userL1Address);
+      if (txs.length === 0) return [];
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
+        return [];
+      }
+      throw error;
+    }
 
     const stargate = await CardanoPendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)

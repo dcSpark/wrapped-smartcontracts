@@ -74,6 +74,8 @@ export class MilkomedaNetwork {
 
     if (data.status === "1" && data.message === "OK") {
       return data.result;
+    } else if (data.message === "No tokens found") {
+      return [];
     } else {
       throw new Error("Failed to fetch token balances");
     }
@@ -118,8 +120,10 @@ export class MilkomedaNetwork {
         project_id: blockfrostId,
       },
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const addressInfo: AddressResponse = await response.json();
-
     return addressInfo;
   }
 
@@ -128,26 +132,40 @@ export class MilkomedaNetwork {
     blockfrostId: string,
     address: string
   ): Promise<string> {
-    const url = blockfrostUrl + "/addresses/" + address;
-    const addressInfo = await MilkomedaNetwork.fetchAddressInfo(url, blockfrostId);
+    try {
+      const url = blockfrostUrl + "/addresses/" + address;
+      const addressInfo = await MilkomedaNetwork.fetchAddressInfo(url, blockfrostId);
 
-    const lovelaceAmount = addressInfo.amount.find((amount) => amount.unit === "lovelace");
-    if (!lovelaceAmount) {
-      throw new Error("Lovelace not found in address amounts");
+      const lovelaceAmount = addressInfo.amount.find((amount) => amount.unit === "lovelace");
+      if (!lovelaceAmount) {
+        throw new Error("Lovelace not found in address amounts");
+      }
+
+      const lovelaceQuantity = new BigNumber(lovelaceAmount.quantity);
+      const adaQuantity = lovelaceQuantity.dividedBy(new BigNumber(10).pow(6)).toString();
+      return adaQuantity;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
+        return "0";
+      }
+      throw error;
     }
-
-    const lovelaceQuantity = new BigNumber(lovelaceAmount.quantity);
-    const adaQuantity = lovelaceQuantity.dividedBy(new BigNumber(10).pow(6)).toString();
-    return adaQuantity;
   }
 
   static async origin_getTokenBalances(
     address: string,
     blockfrostUrl: string,
     blockfrostId: string
-  ): Promise<AddressResponse> {
-    const url = blockfrostUrl + "/addresses/" + address + "/extended";
-    const addressInfo = await MilkomedaNetwork.fetchAddressInfo(url, blockfrostId);
-    return addressInfo;
+  ): Promise<AddressResponse | null> {
+    try {
+      const url = blockfrostUrl + "/addresses/" + address + "/extended";
+      const addressInfo = await MilkomedaNetwork.fetchAddressInfo(url, blockfrostId);
+      return addressInfo;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
+        return null;
+      }
+      throw error;
+    }
   }
 }
