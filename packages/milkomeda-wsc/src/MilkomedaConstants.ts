@@ -16,6 +16,19 @@ export class MilkomedaConstants {
     }
   }
 
+  static algoNode(network: string): string {
+    switch (network) {
+      case MilkomedaNetworkName.A1Mainnet:
+        return "";
+      case MilkomedaNetworkName.A1Devnet:
+        return "https://testnet-api.algonode.clou";
+      case MilkomedaNetworkName.C1Mainnet:
+      case MilkomedaNetworkName.C1Devnet:
+      default:
+        throw new Error("Invalid network");
+    }
+  }
+
   static blockfrost(network: string): string {
     switch (network) {
       case MilkomedaNetworkName.C1Mainnet:

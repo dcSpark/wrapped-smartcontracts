@@ -95,7 +95,7 @@ const App: React.FC = () => {
     if (!cardanoConnected) {
       const network = MilkomedaNetworkName.C1Devnet;
       const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, option, {
-        oracleUrl: null,
+        oracleUrl: process.env.REACT_APP_WSC_ORACLE,
         blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: null,
       });

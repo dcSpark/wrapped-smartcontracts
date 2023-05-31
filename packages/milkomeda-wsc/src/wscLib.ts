@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
+import { PeraWalletConnect } from "@perawallet/connect";
 import CardanoPendingManager, { CardanoAmount, StargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import type { MilkomedaProvider } from "milkomeda-wsc-provider";
@@ -30,12 +31,12 @@ export class WSCLib {
   jsonRpcProviderUrl: string;
   network: MilkomedaNetworkName;
 
+  // Algorand
+  peraWallet: PeraWalletConnect | undefined;
   // Cardano
   wallet: string | undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  blockfrost: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lucid: any;
+  blockfrost: Blockfrost | undefined;
+  lucid: Lucid | undefined;
 
   constructor(
     network: MilkomedaNetworkName,
@@ -67,7 +68,10 @@ export class WSCLib {
         customSettings.blockfrostKey
       );
     } else {
-      throw new Error("Algorand not supported yet. Coming very soon!");
+      this.peraWallet = new PeraWalletConnect({
+        chainId: MilkomedaNetworkName.A1Mainnet === this.network ? 416001 : 416002,
+        // shouldShowSignTxnToast: false
+      });
     }
   }
 
@@ -96,7 +100,7 @@ export class WSCLib {
     // https://developer.algorand.org/docs/reference/rest-apis/algod/v2/
 
     const token = "";
-    const server = "https://testnet-api.algonode.cloud";
+    const server = MilkomedaConstants.algoNode(this.network);
     const client = new algosdk.Algodv2(token, server);
 
     (async () => {
@@ -111,8 +115,12 @@ export class WSCLib {
     if (this.isCardano() && this.wallet != null) {
       const walletApi = await window.cardano[this.wallet].enable();
       return walletApi;
+    } else if (this.isAlgorand()) {
+      // nothing required
+      return {} as WalletApi;
+    } else {
+      throw new Error("Invalid wallet");
     }
-    throw new Error("Invalid wallet");
   }
 
   async loadLucid(): Promise<void> {
@@ -190,17 +198,22 @@ export class WSCLib {
 
   // Pending
   async getPendingTransactions(): Promise<PendingTx[]> {
-    const userL1Address = await this.origin_getAddress();
-    const evmAddress = await this.eth_getAccount();
-    const pendingMngr = new CardanoPendingManager(
-      this.blockfrost,
-      this.network,
-      userL1Address,
-      evmAddress
-    );
-    const pendingTxs = await pendingMngr.getPendingTransactions();
+    if (this.isCardano()) {
+      const userL1Address = await this.origin_getAddress();
+      const evmAddress = await this.eth_getAccount();
+      const pendingMngr = new CardanoPendingManager(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.blockfrost!,
+        this.network,
+        userL1Address,
+        evmAddress
+      );
+      const pendingTxs = await pendingMngr.getPendingTransactions();
 
-    return pendingTxs;
+      return pendingTxs;
+    } else {
+      throw new Error("Not implemented");
+    }
   }
 
   async origin_getNativeBalance(address: string | undefined = undefined): Promise<string> {
@@ -227,6 +240,11 @@ export class WSCLib {
     // );
   }
 
+  handleDisconnectWalletClick() {
+    this.peraWallet?.disconnect();
+    // setAccountAddress(null);
+  }
+
   //
   // Cardano specific
   //
@@ -234,8 +252,10 @@ export class WSCLib {
     const targetAddress = address || (await this.origin_getAddress());
     if (targetAddress == null) return "";
     return await MilkomedaNetwork.getAdaBalance(
-      this.blockfrost.url,
-      this.blockfrost.projectId,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.blockfrost!.url,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.blockfrost!.projectId,
       targetAddress
     );
   }
@@ -257,9 +277,12 @@ export class WSCLib {
     if (targetAddress == null) throw new Error("Address not found");
     const addressInfo = await MilkomedaNetwork.origin_getTokenBalances(
       targetAddress,
-      this.blockfrost.url,
-      this.blockfrost.projectId
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.blockfrost!.url,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.blockfrost!.projectId
     );
+    if (addressInfo == null) return [];
     const updatedTokens = await this.updateAssetsWithBridgeInfo(addressInfo.amount);
     return updatedTokens;
   }
@@ -322,7 +345,8 @@ export class WSCLib {
     );
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
-      this.lucid,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.lucid!,
       this.wscProvider,
       stargate,
       bridgeAddress,
@@ -343,7 +367,8 @@ export class WSCLib {
     );
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
-      this.lucid,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.lucid!,
       this.evmProvider,
       stargate,
       bridgeAddress,
