@@ -123,3 +123,7 @@ npm start -w packages/dapp-example
 ```
 
 Dapp is running on [localhost:3000](http://localhost:3000).
+
+Licensing
+
+The primary license for Wrapped Smart-Contracts is the Starting Gate Public License 1.0 (SGPL-1.0), see LICENSE. However, some packages are licensed under a MIT License: `actor-webpage` and `dapp-example`.
