@@ -1,0 +1,39 @@
+{
+  "license": "SGPL-1.0",
+  "scripts": {
+    "prepare-artifacts": "npm install -w packages/contracts && npm run prepare-artifacts -w packages/contracts",
+    "test": "npm test -w ./packages --if-present",
+    "build": "npm run build -w ./packages --if-present",
+    "compile": "npm run compile -w ./packages/contracts",
+    "lint": "solhint 'contracts/**/*.sol' && eslint . --max-warnings=0",
+    "format:check": "prettier --check './**/*.{ts,sol}'",
+    "format": "prettier --write './**/*.{ts,sol}'",
+    "oracle:dev": "npm run dev -w ./packages/oracle",
+    "besu:start": "docker-compose up besu",
+    "quorum:start": "FORCE_ALLOW_SEND_RAW_TRANSACTION=true quorum --http --datadir quorum_data --dev --rpccorsdomain '*'"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.38.0",
+    "@typescript-eslint/parser": "^5.38.0",
+    "eslint": "^8.23.1",
+    "pre-commit": "^1.2.2",
+    "pre-push": "^0.1.4",
+    "prettier": "^2.7.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.24",
+    "solhint": "^3.3.7",
+    "wait-port": "^1.0.4"
+  },
+  "pre-commit": "format",
+  "pre-push": [
+    "lint",
+    "format:check"
+  ],
+  "workspaces": [
+    "packages/contracts",
+    "packages/dapp-example",
+    "packages/oracle",
+    "packages/milkomeda-wsc-provider",
+    "packages/milkomeda-wsc",
+    "packages/actor-webpage"
+  ]
+}

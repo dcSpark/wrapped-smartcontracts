@@ -1,0 +1,20 @@
+{
+  "name": "contracts",
+  "private": true,
+  "description": "Milkomeda wrapped smart contracts related contracts",
+  "license": "SGPL-1.0",
+  "scripts": {
+    "compile": "hardhat compile",
+    "prepare-artifacts": "hardhat compile --no-gaslimit-altering",
+    "updateGenesis": "hardhat actor-factory:update-genesis-block ../../besu_data/genesis.json",
+    "test": "hardhat test --network dev"
+  },
+  "devDependencies": {
+    "@dcspark/cardano-multiplatform-lib-nodejs": "^3.1.1",
+    "@emurgo/cardano-message-signing-nodejs": "^1.0.1",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "algosdk": "^2.2.0",
+    "dotenv": "^16.0.3",
+    "hardhat": "^2.12.2"
+  }
+}

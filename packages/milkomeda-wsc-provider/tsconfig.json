@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    // Generate d.ts files
+    "declaration": true,
+    "outDir": "build",
+    "resolveJsonModule": true,
+    "strict": true,
+    "sourceMap": true
+  },
+  "include": [
+    "**/*.ts"
+  ]
+}

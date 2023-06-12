@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+:root {
+  --toastify-color-light: #fff;
+  --toastify-color-info: #3498db;
+  --toastify-color-success: #07bc0c;
+  --toastify-color-warning: #f1c40f;
+  --toastify-color-error: #e74c3c;
+  --toastify-color-transparent: rgba(255, 255, 255, 0.7);
+
+  --toastify-icon-color-info: var(--toastify-color-info);
+  --toastify-icon-color-success: var(--toastify-color-success);
+  --toastify-icon-color-warning: var(--toastify-color-warning);
+  --toastify-icon-color-error: var(--toastify-color-error);
+
+  --toastify-toast-width: 320px;
+  --toastify-toast-background: #fff;
+  --toastify-toast-min-height: 64px;
+  --toastify-toast-max-height: 800px;
+  --toastify-font-family: sans-serif;
+  --toastify-z-index: 9999;
+
+  --toastify-text-color-light: #757575;
+
+  --toastify-text-color-info: #fff;
+  --toastify-text-color-success: #fff;
+  --toastify-text-color-warning: #fff;
+  --toastify-text-color-error: #fff;
+
+  --toastify-spinner-color: #616161;
+  --toastify-spinner-color-empty-area: #e0e0e0;
+
+  --toastify-color-progress-light: linear-gradient(to right, #e48c2e, #f07d00);
+
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+}
+
+body {
+  @apply font-inter bg-gray-50;
+}
+
+.button-primary {
+  @apply bg-[#f07d00] text-white min-w-[200px] text-sm h-[50px] flex items-center justify-center rounded-full font-medium leading-5 px-4;
+  @apply hover:bg-[#cc6a00];
+}
+.button-primary-small {
+  @apply bg-[#f07d00] text-white min-w-[100px] text-sm h-[40px] flex items-center justify-center rounded-full font-medium px-3;
+  @apply hover:bg-[#cc6a00];
+}
+
+.button-secondary {
+  @apply bg-transparent border-2 border-gray-600 text-gray-600 min-w-[200px] text-sm h-[50px] flex items-center justify-center rounded-full font-medium leading-5 px-4;
+  @apply hover:bg-gray-100/50;
+}
+.section {
+  @apply px-4 py-6;
+}
+.subtitle {
+  @apply text-lg font-semibold mb-3;
+}
+.label {
+  @apply text-gray-700;
+}
+
+.value {
+  @apply text-gray-900  break-all;
+}
+
+/* Table */
+table {
+  @apply my-4;
+}
+table :where(th, td) {
+  @apply whitespace-nowrap py-2 px-6 text-center align-middle;
+}
+table :where(thead, tfoot) :where(th, td) {
+  @apply whitespace-normal text-center text-xs font-bold uppercase text-gray-700 border-b-[1px] border-[#383534];
+}
+table :where(thead, tfoot) :where(th, td).left {
+  @apply text-left;
+}
+table :where(tbody th, tbody td) {
+  @apply break-words text-sm text-gray-600;
+}
+table :where(tbody th, tbody td).left {
+  @apply text-left;
+}
+table :where(thead, tbody, tfoot) :where(tr:not(:last-child) :where(th, td)) {
+}
+:where(table *:first-child) :where(*:first-child) :where(th, td):first-child {
+  border-top-left-radius: 6px;
+}
+:where(table *:first-child) :where(*:first-child) :where(th, td):last-child {
+  border-top-right-radius: 6px;
+}
+:where(table *:last-child) :where(*:last-child) :where(th, td):last-child {
+  border-bottom-right-radius: 6px;
+}
+:where(table *:last-child) :where(*:last-child) :where(th, td):first-child {
+  border-bottom-left-radius: 6px;
+}

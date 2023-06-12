@@ -1,0 +1,8 @@
+genesis-file="/besu_data/genesis.json"
+miner-enabled=true
+miner-coinbase="0x3b68dF27d71cb505B96447e268c80bdb3eC49f64"
+rpc-http-cors-origins=["all"]
+host-allowlist=["*"]
+rpc-ws-enabled=true
+rpc-http-enabled=true
+data-path="/besu_data/data"
