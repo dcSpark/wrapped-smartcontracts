@@ -1,6 +1,7 @@
 import AssetFingerprint from "@emurgo/cip14-js";
 import { bech32 } from "bech32";
 import Buffer from "buffer/";
+import { BridgeRequest } from "./MilkomedaNetwork";
 
 export async function getFingerprintFromBlockfrost(blockfrostId: string): Promise<string> {
   return AssetFingerprint.fromParts(
@@ -54,4 +55,16 @@ export const bech32ToHexAddress = (input: string): string => {
     .join("");
 
   return "0x" + hexAddress;
+};
+
+export const isCardanoAddressUnsafeFast = (address: string): boolean => {
+  return address.startsWith("addr");
+};
+
+export const isMilkomedaAddressUnsafeFast = (address: string): boolean => {
+  return address.startsWith("0x");
+};
+
+export const isBridgeRequestFromCardano = (request: BridgeRequest): boolean => {
+  return request.from === "" && isMilkomedaAddressUnsafeFast(request.to);
 };
