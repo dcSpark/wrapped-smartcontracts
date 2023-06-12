@@ -1,11 +1,5 @@
 # Milkomeda Wrapped Smart Contracts
 
-[Shortcut Epic](https://app.shortcut.com/dcspark/epic/7930)
-
-[Proposal](https://docs.google.com/document/d/1tbhMmctw6RQKW_UUox0qOnqhOfBe7uHRO0sMx7Isaac)
-
-To show old codebase see [legacy tag](https://github.com/dcSpark/wrapped-smartcontracts/tree/legacy).
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -24,11 +18,21 @@ To show old codebase see [legacy tag](https://github.com/dcSpark/wrapped-smartco
 
 ## Overview
 
-The protocol aims to create a seamless way to execute smart contracts on the milkomeda layer 2 right from the layer 1 mainchain.
+Wrapped Smart Contracts (WSC) are a new concept aimed at facilitating interaction with smart contracts on sidechains or Layer 2 (L2) solutions without the need for users to directly migrate to these new ecosystems.
+
+The Layer 1 (L1) blockchain acts as a robust coordination layer, allowing users to execute smart contracts on sidechains or L2 while remaining on the L1 blockchain. This provides a user-friendly experience, as users can interact with various systems without changing wallets or needing a deep understanding of the underlying processes.
+
+### How it works (simplified)
+
+Every single step requires user interaction in the form of a transaction.
+
+- User Action: The user initiates an action on a dApp while on the main blockchain. This request is translated into specific parameters for a proxy smart contract.
+- Proxy Deployment and Execution: A proxy smart contract, reflecting the user's intent, is deployed on the sidechain. The proxy contract then interacts with the appropriate smart contract on the sidechain to execute the desired action.
+- Result Processing: The outcome from the sidechain smart contract execution is relayed back to the user on the main blockchain. The user's state is updated, and they see the results of their action on the dApp, all while staying on the main blockchain.
 
 ## For developers
 
-If you are interested in developing dapps on the milkomeda layer 2, see the [developers documentation](./docs/developers.md).
+If you are interested in developing dapps on the milkomeda layer 2, see the [developers documentation](./docs/developers.md). Also, there is a library under `packages/milkomeda-wsc` that help the development of DApp using WSC. It's also available in [npm](https://www.npmjs.com/package/milkomeda-wsc).
 
 ## Smart contracts
 
