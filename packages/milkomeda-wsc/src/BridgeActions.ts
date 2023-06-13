@@ -99,7 +99,11 @@ class BridgeActions {
     return txHash;
   };
 
-  unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber): Promise<string> => {
+  unwrap = async (
+    destinationAddress: string,
+    erc20address: string,
+    amountToUnwrap: BigNumber
+  ): Promise<string> => {
     console.log("ERC20 address: ", erc20address); // MilkomedaConstants.getBridgeEVMAddress(this.network)
     const contractAddress = erc20address || MilkomedaConstants.getBridgeEVMAddress(this.network);
     const tokenContract = new ethers.Contract(

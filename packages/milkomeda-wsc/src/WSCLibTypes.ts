@@ -67,7 +67,7 @@ export enum TxPendingStatus {
   WaitingL1Confirmation = "WaitingL1Confirmation",
   WaitingBridgeConfirmation = "WaitingBridgeConfirmation",
   WaitingL2Confirmation = "WaitingL2Confirmation",
-  Confirmed = "Confirmed",  
+  Confirmed = "Confirmed",
 }
 
 // Algorand

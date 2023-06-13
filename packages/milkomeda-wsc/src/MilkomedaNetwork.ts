@@ -81,8 +81,12 @@ export class MilkomedaNetwork {
     return results;
   }
 
-  static async searchMainchainTxInBridge(network: string, hash: string): Promise<BridgeRequest | null> {
-    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?mainchain_tx_id=${hash}&count=75`;
+  static async searchMainchainTxInBridge(
+    network: string,
+    hash: string
+  ): Promise<BridgeRequest | null> {
+    const url =
+      MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?mainchain_tx_id=${hash}&count=75`;
     const response = await fetch(url);
     const data: BridgeRequestsResponse = await response.json();
 
@@ -93,7 +97,10 @@ export class MilkomedaNetwork {
     }
   }
 
-  static async searchMilkomedaTxInBridge(network: string, hash: string): Promise<BridgeRequest | null> {
+  static async searchMilkomedaTxInBridge(
+    network: string,
+    hash: string
+  ): Promise<BridgeRequest | null> {
     const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?tx_id=${hash}&count=75`;
     const response = await fetch(url);
     const data: BridgeRequestsResponse = await response.json();

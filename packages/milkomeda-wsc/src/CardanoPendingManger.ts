@@ -165,7 +165,7 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   }
 
   async fetchRecentTransactions(address: string): Promise<CardanoBlockfrostTransaction[]> {
-    const url = this.blockfrost.url + `/addresses/${address}/transactions`;
+    const url = this.blockfrost.url + `/addresses/${address}/transactions?order=desc`;
     const response = await fetch(url, {
       headers: {
         project_id: this.blockfrost.projectId,

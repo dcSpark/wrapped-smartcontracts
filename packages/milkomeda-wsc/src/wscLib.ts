@@ -466,7 +466,7 @@ export class WSCLib {
   }
 
   // TODO: Implement cache
-  async getTxStatus(txHash: string, source: TxOriginSource): Promise<TxPendingStatus> {
+  async getTxStatus(txHash: string): Promise<TxPendingStatus> {
     if (this.isCardano()) {
       const userL1Address = await this.origin_getAddress();
       const evmAddress = await this.eth_getAccount();
@@ -480,7 +480,7 @@ export class WSCLib {
       );
 
       // If the tx originated from Cardano
-      if (source === TxOriginSource.Cardano) {
+      if (!txHash.includes("0x")) {
         const cardanoMempoolTxs = await pendingMngr.getCardanoMempoolTxsToBridge();
         if (cardanoMempoolTxs.some((tx) => tx.hash === txHash)) {
           return TxPendingStatus.WaitingL1Confirmation;
@@ -498,7 +498,7 @@ export class WSCLib {
 
         throw new Error("Not found");
         // If the tx originated from Milkomeda
-      } else if (source === TxOriginSource.Milkomeda) {
+      } else if (txHash.includes("0x")) {
         const cardanoMempoolTxs = await pendingMngr.getCardanoMempoolTxsFromBridge();
         if (cardanoMempoolTxs.some((tx) => tx.hash === txHash)) {
           return TxPendingStatus.WaitingL1Confirmation;
