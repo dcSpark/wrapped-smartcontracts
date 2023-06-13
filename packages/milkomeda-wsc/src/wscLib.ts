@@ -21,6 +21,8 @@ import {
   PendingTx,
   PendingTxType,
   TransactionResponse,
+  TxOriginSource,
+  TxPendingStatus,
 } from "./WSCLibTypes";
 
 export class WSCLib {
@@ -30,6 +32,10 @@ export class WSCLib {
   oracleUrl: string;
   jsonRpcProviderUrl: string;
   network: MilkomedaNetworkName;
+
+  // Cache
+  // TODO: Update type
+  txCache: any = {};
 
   // Algorand
   peraWallet: PeraWalletConnect | undefined;
@@ -390,15 +396,19 @@ export class WSCLib {
     });
   }
 
-  async wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
+  async wrap(destination: string | undefined, assetId: string, amount: number): Promise<string> {
     if (this.isCardano()) {
-      await this.ada_wrap(destination, assetId, amount);
+      return await this.ada_wrap(destination, assetId, amount);
     } else {
-      await this.algo_wrap(destination, assetId, amount);
+      return await this.algo_wrap(destination, assetId, amount);
     }
   }
 
-  async ada_wrap(destination: string | undefined, assetId: string, amount: number): Promise<void> {
+  async ada_wrap(
+    destination: string | undefined,
+    assetId: string,
+    amount: number
+  ): Promise<string> {
     const targetAddress = destination || (await this.eth_getAccount());
     const stargate = await CardanoPendingManager.fetchFromStargate(
       MilkomedaConstants.getMilkomedaStargateUrl(this.network)
@@ -412,7 +422,7 @@ export class WSCLib {
       bridgeAddress,
       this.network
     );
-    await bridgeActions.wrap(assetId, targetAddress, amount);
+    return await bridgeActions.wrap(assetId, targetAddress, amount);
   }
 
   async algo_wrap(
@@ -422,7 +432,7 @@ export class WSCLib {
     assetId: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     amount: number
-  ): Promise<void> {
+  ): Promise<string> {
     throw new Error("Not implemented");
   }
 
@@ -430,7 +440,7 @@ export class WSCLib {
     destination: string | undefined,
     assetId: string,
     amount: BigNumber
-  ): Promise<void> {
+  ): Promise<string> {
     console.log("unwrap", destination, assetId, amount);
     const targetAddress = destination || (await this.origin_getAddress());
     const stargate = await CardanoPendingManager.fetchFromStargate(
@@ -452,7 +462,67 @@ export class WSCLib {
       const AdaFees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
       amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(AdaFees));
     }
-    bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
+    return bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);
+  }
+
+  // TODO: Implement cache
+  async getTxStatus(txHash: string, source: TxOriginSource): Promise<TxPendingStatus> {
+    if (this.isCardano()) {
+      const userL1Address = await this.origin_getAddress();
+      const evmAddress = await this.eth_getAccount();
+
+      const pendingMngr = new CardanoPendingManager(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.blockfrost!,
+        this.network,
+        userL1Address,
+        evmAddress
+      );
+
+      // If the tx originated from Cardano
+      if (source === TxOriginSource.Cardano) {
+        const cardanoMempoolTxs = await pendingMngr.getCardanoMempoolTxsToBridge();
+        if (cardanoMempoolTxs.some((tx) => tx.hash === txHash)) {
+          return TxPendingStatus.WaitingL1Confirmation;
+        }
+
+        const cardanoPendingTxs = await pendingMngr.getCardanoPendingTxs();
+        if (cardanoPendingTxs.some((tx) => tx.hash === txHash)) {
+          return TxPendingStatus.WaitingBridgeConfirmation;
+        }
+
+        const isConfirmed = await pendingMngr.isMainchainTxBridgeConfirmed(txHash);
+        if (isConfirmed) {
+          return TxPendingStatus.Confirmed;
+        }
+
+        throw new Error("Not found");
+        // If the tx originated from Milkomeda
+      } else if (source === TxOriginSource.Milkomeda) {
+        const cardanoMempoolTxs = await pendingMngr.getCardanoMempoolTxsFromBridge();
+        if (cardanoMempoolTxs.some((tx) => tx.hash === txHash)) {
+          return TxPendingStatus.WaitingL1Confirmation;
+        }
+
+        const evmPending = await pendingMngr.getEVMPendingTxs();
+        if (evmPending.some((tx) => tx.hash === txHash)) {
+          return TxPendingStatus.WaitingBridgeConfirmation;
+        }
+
+        const isConfirmed = await pendingMngr.isMilkomedaTxBridgeConfirmed(txHash);
+        if (isConfirmed) {
+          return TxPendingStatus.Confirmed;
+        }
+        throw new Error("Not found");
+      } else {
+        throw new Error("Invalid address / Not found");
+      }
+    } else if (this.isAlgorand()) {
+      // TODO: Add Algorand support
+      throw new Error("Algorand support not implemented yet.");
+    } else {
+      throw new Error("Not Cardano neither Algorand. Error.");
+    }
   }
 
   // Latest Activity

@@ -57,6 +57,19 @@ export enum MilkomedaNetworkName {
   A1Devnet = "Algorand A1 Devnet",
 }
 
+export enum TxOriginSource {
+  Cardano = "Cardano",
+  Algorand = "Algorand",
+  Milkomeda = "Milkomeda",
+}
+
+export enum TxPendingStatus {
+  WaitingL1Confirmation = "WaitingL1Confirmation",
+  WaitingBridgeConfirmation = "WaitingBridgeConfirmation",
+  WaitingL2Confirmation = "WaitingL2Confirmation",
+  Confirmed = "Confirmed",  
+}
+
 // Algorand
 export interface AlgoSchema {
   "num-byte-slice": number;

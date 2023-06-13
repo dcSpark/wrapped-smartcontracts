@@ -71,7 +71,7 @@ class BridgeActions {
     }
   }
 
-  wrap = async (tokenId: string, destination: string, amount: number) => {
+  wrap = async (tokenId: string, destination: string, amount: number): Promise<string> => {
     let payload = {};
     const stargateMin = this.stargateMinAdaFromCardano();
     if (tokenId === "lovelace") {
@@ -95,11 +95,11 @@ class BridgeActions {
 
     const signedTx = await tx.sign().complete();
     const txHash = await signedTx.submit();
-
     console.log(txHash);
+    return txHash;
   };
 
-  unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber) => {
+  unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber): Promise<string> => {
     console.log("ERC20 address: ", erc20address); // MilkomedaConstants.getBridgeEVMAddress(this.network)
     const contractAddress = erc20address || MilkomedaConstants.getBridgeEVMAddress(this.network);
     const tokenContract = new ethers.Contract(
@@ -134,9 +134,10 @@ class BridgeActions {
         { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
       );
 
+      console.log("Unwrapping ADA");
       console.log(tx.hash);
       await tx.wait();
-      console.log("Unwrapped ADA");
+      return tx.hash;
     } else {
       const assetId = await bridgeContract.findAssetIdByAddress(erc20address);
       console.log("assetId: ", assetId);
@@ -159,9 +160,10 @@ class BridgeActions {
         }
       );
 
+      console.log("Unwrapping Asset");
       console.log(tx.hash);
       await tx.wait();
-      console.log("Unwrapped");
+      return tx.hash;
     }
   };
 }

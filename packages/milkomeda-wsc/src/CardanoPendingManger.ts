@@ -160,7 +160,7 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   async getPendingTransactions(): Promise<PendingTx[]> {
     const cardanoPendingTxs = await this.getCardanoPendingTxs();
     const evmPendingTxs = await this.getEVMPendingTxs();
-    const cardanoMempoolTxs = await this.getCardanoMempoolTxs();
+    const cardanoMempoolTxs = await this.getCardanoMempoolTxsToBridge();
     return [...cardanoMempoolTxs, ...cardanoPendingTxs, ...evmPendingTxs];
   }
 
@@ -185,7 +185,23 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   //
   // Cardano
   //
-  async getCardanoMempoolTxs(): Promise<PendingTx[]> {
+  async getCardanoMempoolTxsToBridge(): Promise<PendingTx[]> {
+    return this.getCardanoMempoolTxs(PendingTxType.Wrap, (tx) =>
+      tx.inputs.some((input: { address: string }) => input.address === this.userL1Address)
+    );
+  }
+
+  async getCardanoMempoolTxsFromBridge(): Promise<PendingTx[]> {
+    return this.getCardanoMempoolTxs(PendingTxType.Unwrap, (tx) =>
+      tx.outputs.some((output: { address: string }) => output.address === this.userL1Address)
+    );
+  }
+
+  async getCardanoMempoolTxs(
+    type: PendingTxType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filterFunc: (tx: any) => boolean
+  ): Promise<PendingTx[]> {
     let mempoolTxs: string[];
     try {
       mempoolTxs = await this.fetchTxsInMempoolForAddress(this.userL1Address);
@@ -199,17 +215,15 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
 
     const fetchPromises = mempoolTxs.map((tx) => this.fetchMempoolTx(tx));
     const allTxs = await Promise.all(fetchPromises);
-    const myInputTxs = allTxs.filter((tx) =>
-      tx.inputs.some((input) => input.address === this.userL1Address)
-    );
+    const myInputTxs = allTxs.filter(filterFunc);
 
     const timeNow = Date.now();
     return myInputTxs.map((tx) => ({
       hash: tx.tx.hash,
       timestamp: timeNow,
       explorer: undefined,
-      type: PendingTxType.Wrap,
-      destinationAddress: "",
+      type: type,
+      destinationAddress: type === PendingTxType.Wrap ? "" : this.userL1Address,
     }));
   }
 

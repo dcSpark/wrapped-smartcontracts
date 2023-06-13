@@ -18,8 +18,8 @@ interface WrappedSmartContractWalletAssetsProps {
   tokens: EVMTokenBalance[];
   originTokens: OriginAmount[];
   moveAssetsToL1: (contractAddress: string, name: string, amount: BigNumber) => void;
-  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
-  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
+  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
   areTokensAllowed: (assetIds: string[]) => Promise<{ [key: string]: boolean }>;
   transactions: Activity[];
   isCardano: boolean;

@@ -4,7 +4,7 @@ import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import { toast } from "react-toastify";
 interface L1AssetsProps {
   tokens: OriginAmount[];
-  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
   isCardano: boolean;
 }
 

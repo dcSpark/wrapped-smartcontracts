@@ -14,6 +14,18 @@ export class PendingManager {
     this.evmAddress = evmAddress;
   }
 
+  async isMainchainTxBridgeConfirmed(txHash: string): Promise<boolean | null> {
+    const txRequest = await MilkomedaNetwork.searchMainchainTxInBridge(this.network, txHash);
+    if (!txRequest) return null;
+    return txRequest.executed_timestamp != null && !txRequest.invalidated;
+  }
+
+  async isMilkomedaTxBridgeConfirmed(txHash: string): Promise<boolean | null> {
+    const txRequest = await MilkomedaNetwork.searchMilkomedaTxInBridge(this.network, txHash);
+    if (!txRequest) return null;
+    return txRequest.executed_timestamp != null && !txRequest.invalidated;
+  }
+
   async getEVMPendingTxs(): Promise<PendingTx[]> {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed

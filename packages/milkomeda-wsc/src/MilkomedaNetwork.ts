@@ -81,6 +81,30 @@ export class MilkomedaNetwork {
     return results;
   }
 
+  static async searchMainchainTxInBridge(network: string, hash: string): Promise<BridgeRequest | null> {
+    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?mainchain_tx_id=${hash}&count=75`;
+    const response = await fetch(url);
+    const data: BridgeRequestsResponse = await response.json();
+
+    if (data.requests.length === 0) {
+      return null;
+    } else {
+      return data.requests[0];
+    }
+  }
+
+  static async searchMilkomedaTxInBridge(network: string, hash: string): Promise<BridgeRequest | null> {
+    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?tx_id=${hash}&count=75`;
+    const response = await fetch(url);
+    const data: BridgeRequestsResponse = await response.json();
+
+    if (data.requests.length === 0) {
+      return null;
+    } else {
+      return data.requests[0];
+    }
+  }
+
   static async fetchBridgeAssets(network: string): Promise<BridgeAsset[]> {
     const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/assets?active=true`;
     const response = await fetch(url);
