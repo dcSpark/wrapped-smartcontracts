@@ -5,7 +5,7 @@ import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "../../milkomeda-wsc/src/Activity";
 import BigNumber from "bignumber.js";
-import { EVMTokenBalance, MilkomedaNetworkName, PendingTx, TxOriginSource, TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
+import { EVMTokenBalance, MilkomedaNetworkName, PendingTx, TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import "./App.css";
 

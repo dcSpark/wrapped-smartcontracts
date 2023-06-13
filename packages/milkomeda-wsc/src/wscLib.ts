@@ -21,7 +21,6 @@ import {
   PendingTx,
   PendingTxType,
   TransactionResponse,
-  TxOriginSource,
   TxPendingStatus,
 } from "./WSCLibTypes";
 
@@ -32,10 +31,6 @@ export class WSCLib {
   oracleUrl: string;
   jsonRpcProviderUrl: string;
   network: MilkomedaNetworkName;
-
-  // Cache
-  // TODO: Update type
-  txCache: any = {};
 
   // Algorand
   peraWallet: PeraWalletConnect | undefined;

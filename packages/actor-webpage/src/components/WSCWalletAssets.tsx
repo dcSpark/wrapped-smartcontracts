@@ -8,7 +8,6 @@ import BigNumber from "bignumber.js";
 import {
   EVMTokenBalance,
   PendingTx,
-  TxOriginSource,
   TxPendingStatus,
 } from "milkomeda-wsc/build/WSCLibTypes";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";

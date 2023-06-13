@@ -53,8 +53,8 @@ export class PendingManager {
     // this code check for pending txs detected by the bridge that are being unwrapped
     const bridgePendingTxs = bridgeRequests.filter(
       (request) =>
-      // TODO: eventually we want to use [unwrapping_transaction].mainchain_tx_id instead
-      // and then check for the tx in the mainchain mempool
+        // TODO: eventually we want to use [unwrapping_transaction].mainchain_tx_id instead
+        // and then check for the tx in the mainchain mempool
         !request.executed_timestamp && request.from.toLowerCase() === this.evmAddress.toLowerCase()
     );
     const bridgePendingTxs_normalized = bridgePendingTxs.map((tx) => ({
