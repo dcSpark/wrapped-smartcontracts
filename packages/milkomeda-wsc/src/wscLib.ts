@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
 import { PeraWalletConnect } from "@perawallet/connect";
-import CardanoPendingManager, { OriginAmount, StargateApiResponse } from "./CardanoPendingManger";
+import CardanoPendingManager, { OriginAmount, ADAStargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import type { MilkomedaProvider } from "milkomeda-wsc-provider";
 import {
@@ -314,7 +314,7 @@ export class WSCLib {
   async ada_updateAssetsWithBridgeInfo(tokens: OriginAmount[]): Promise<OriginAmount[]> {
     const url = MilkomedaConstants.getMilkomedaStargateUrl(this.network);
     const response = await fetch(url);
-    const stargateObj: StargateApiResponse = await response.json();
+    const stargateObj: ADAStargateApiResponse = await response.json();
     const assets = stargateObj.assets;
 
     for (const asset of assets) {
@@ -365,7 +365,7 @@ export class WSCLib {
   async cardano_areTokensAllowed(assetIds: string[]): Promise<{ [key: string]: boolean }> {
     const url = MilkomedaConstants.getMilkomedaStargateUrl(this.network);
     const response = await fetch(url);
-    const stargateObj: StargateApiResponse = await response.json();
+    const stargateObj: ADAStargateApiResponse = await response.json();
 
     const normalizedAssetIds = assetIds.map((assetId) => assetId.toLowerCase());
 
@@ -454,7 +454,7 @@ export class WSCLib {
     // discount some fees from the total amount so it can be used for the transaction
     let amountToUnwrap = amount;
     if (assetId == null) {
-      const AdaFees = bridgeActions.stargateAdaFeeToCardano() + 0.05;
+      const AdaFees = bridgeActions.stargateGeneric.stargateNativeTokenFeeToL1() + 0.05;
       amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(AdaFees));
     }
     return bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);

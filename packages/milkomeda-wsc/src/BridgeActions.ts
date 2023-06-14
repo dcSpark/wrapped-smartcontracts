@@ -2,58 +2,33 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress } from "./utils";
-import { StargateApiResponse } from "./CardanoPendingManger";
+import { ADAStargateApiResponse, AlgoStargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import { Lucid } from "lucid-cardano";
 import { MilkomedaProvider } from "milkomeda-wsc-provider";
 import { MilkomedaNetworkName } from "./WSCLibTypes";
+import { GenericStargate } from "./GenericStargate";
 
 class BridgeActions {
   lucid: Lucid;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any;
-  stargateResponse: StargateApiResponse;
+  stargateGeneric: GenericStargate;
   bridgeAddress: string;
   network: string;
 
   constructor(
     lucid: Lucid,
     provider: MilkomedaProvider,
-    stargateApiResponse: StargateApiResponse,
+    stargateApiResponse: ADAStargateApiResponse | AlgoStargateApiResponse,
     bridgeAddress: string,
     network: string
   ) {
     this.provider = provider;
     this.lucid = lucid;
-    this.stargateResponse = stargateApiResponse;
+    this.stargateGeneric = new GenericStargate(stargateApiResponse);
     this.bridgeAddress = bridgeAddress;
     this.network = network;
-  }
-
-  stargateMinAdaFromCardano(): number {
-    return (
-      (parseInt(this.stargateResponse.ada.fromADAFeeLovelace) +
-        parseInt(this.stargateResponse.ada.minLovelace)) /
-      10 ** 6
-    );
-  }
-
-  adaToLovelace(ada: number): number {
-    return ada * 10 ** 6;
-  }
-
-  stargateMinAdaToCardano(): number {
-    const toAdaFee = this.stargateAdaFeeToCardano();
-    const minAda = parseInt(this.stargateResponse.ada.minLovelace) / 10 ** 6;
-    return toAdaFee + minAda;
-  }
-
-  stargateAdaFeeToCardano(): number {
-    const toAda = ethers.utils
-      .parseUnits(this.stargateResponse.ada.toADAFeeGWei, 9)
-      .div(10 ** 9)
-      .div(10 ** 9);
-    return toAda.toNumber();
   }
 
   getBridgeMetadata(): string {
@@ -73,22 +48,22 @@ class BridgeActions {
 
   wrap = async (tokenId: string, destination: string, amount: number): Promise<string> => {
     let payload = {};
-    const stargateMin = this.stargateMinAdaFromCardano();
+    const stargateMin = this.stargateGeneric.stargateMinNativeTokenFromL1();
     if (tokenId === "lovelace") {
       if (amount < stargateMin) throw new Error("Amount is less than the minimum required");
       const amountLovelace = BigInt(amount) * BigInt(10 ** 6);
-      const amountWithFees = amountLovelace + BigInt(this.stargateResponse.ada.fromADAFeeLovelace);
+      const amountWithFees = amountLovelace + BigInt(this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo());
       payload = { lovelace: amountWithFees };
     } else {
       payload = {
-        lovelace: BigInt(this.adaToLovelace(stargateMin)),
+        lovelace: BigInt(this.stargateGeneric.nativeTokenToLovelaceOrMicroAlgo(stargateMin)),
         [tokenId]: BigInt(amount),
       };
     }
 
     const tx = await this.lucid
       .newTx()
-      .payToAddress(this.stargateResponse.current_address, payload)
+      .payToAddress(this.stargateGeneric.stargateResponse.current_address, payload)
       .attachMetadata(87, this.getBridgeMetadata())
       .attachMetadata(88, destination)
       .complete();
@@ -104,7 +79,7 @@ class BridgeActions {
     erc20address: string,
     amountToUnwrap: BigNumber
   ): Promise<string> => {
-    console.log("ERC20 address: ", erc20address); // MilkomedaConstants.getBridgeEVMAddress(this.network)
+    console.log("ERC20 address: ", erc20address); 
     const contractAddress = erc20address || MilkomedaConstants.getBridgeEVMAddress(this.network);
     const tokenContract = new ethers.Contract(
       contractAddress, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
@@ -120,13 +95,13 @@ class BridgeActions {
     const cardanoDestination = bech32ToHexAddress(destinationAddress);
 
     if (erc20address == null) {
-      const minRequired = new BigNumber(this.stargateMinAdaToCardano());
+      const minRequired = new BigNumber(this.stargateGeneric.stargateMinNativeTokenToL1());
       if (amountToUnwrap.lt(minRequired))
         // TODO: add info about the minimum required in ADA and token
         throw new Error("Amount is less than the minimum required");
 
       const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 18);
-      const adaFee = new BigNumber(this.stargateAdaFeeToCardano());
+      const adaFee = new BigNumber(this.stargateGeneric.stargateNativeTokenFeeToL1());
       const adaAmount = amountToUnwrap.plus(adaFee);
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
@@ -160,7 +135,7 @@ class BridgeActions {
         },
         {
           gasLimit: 1_000_000,
-          value: ethers.utils.parseEther(this.stargateMinAdaToCardano().toString()),
+          value: ethers.utils.parseEther(this.stargateGeneric.stargateMinNativeTokenToL1().toString()),
         }
       );
 

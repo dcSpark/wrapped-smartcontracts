@@ -47,29 +47,47 @@ export interface CardanoBlockfrostTransaction {
   block_time: number;
 }
 
-export interface StargateAsset {
-  idCardano: string;
-  idMilkomeda: string;
-  fingerprint: string | undefined;
-  minCNTInt: string;
-  minGWei: string;
-  milkomedaDecimals: number;
-  tokenSymbol: string;
-}
-
 export interface StargateADA {
   minLovelace: string;
   fromADAFeeLovelace: string;
   toADAFeeGWei: string;
 }
-
+export interface StargateAlgo {
+  minMicroAlgo: string;
+  wrappingFee: string;
+  unwrappedFee: string;
+  algorandDecimals: number;
+  milkomedaDecimals: number;
+}
 export interface StargateApiResponse {
   current_address: string;
   ttl_expiry: number;
-  ada: StargateADA;
   assets: StargateAsset[];
 }
-
+export interface ADAStargateApiResponse extends StargateApiResponse {
+  ada: StargateADA;
+  assets: ADAStargateAsset[];
+}
+export interface AlgoStargateApiResponse extends StargateApiResponse {
+  algo: StargateAlgo;
+  assets: AlgoStargateAsset[];
+}
+export interface StargateAsset {
+  idMilkomeda: string;
+  milkomedaDecimals: number;
+  tokenSymbol: string;
+}
+export interface AlgoStargateAsset extends StargateAsset {
+  idAlgorand: string;
+  algorandAssetId: string;
+  algorandDecimals: number;
+}
+export interface ADAStargateAsset extends StargateAsset {
+  idCardano: string;
+  fingerprint: string | undefined;
+  minCNTInt: string;
+  minGWei: string;
+}
 export interface ExplorerTransaction {
   blockHash: string;
   blockNumber: string;
@@ -302,10 +320,10 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     return utxoDetails;
   }
 
-  static async fetchFromStargate(url: string): Promise<StargateApiResponse> {
+  static async fetchFromStargate(url: string): Promise<ADAStargateApiResponse> {
     try {
       const response = await fetch(url);
-      const data: StargateApiResponse = await response.json();
+      const data: ADAStargateApiResponse = await response.json();
       return data;
     } catch (error) {
       console.error("Error fetching data from URL:", error);
