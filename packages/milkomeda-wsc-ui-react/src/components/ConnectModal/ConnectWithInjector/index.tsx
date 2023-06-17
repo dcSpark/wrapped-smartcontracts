@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { AnimatePresence, Variants } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, Variants } from "framer-motion";
 import {
   Container,
   ConnectingContainer,
@@ -7,9 +7,9 @@ import {
   RetryButton,
   RetryIconContainer,
   Content,
-} from './styles';
+} from "./styles";
 
-import supportedConnectors from '../../../constants/supportedConnectors';
+import supportedConnectors from "../../../constants/supportedConnectors";
 
 import {
   PageContent,
@@ -18,40 +18,40 @@ import {
   ModalH1,
   ModalContentContainer,
   ModalContent,
-} from '../../Common/Modal/styles';
-import { OrDivider } from '../../Common/Modal';
-import Button from '../../Common/Button';
-import Tooltip from '../../Common/Tooltip';
-import Alert from '../../Common/Alert';
+} from "../../Common/Modal/styles";
+import { OrDivider } from "../../Common/Modal";
+import Button from "../../Common/Button";
+import Tooltip from "../../Common/Tooltip";
+import Alert from "../../Common/Alert";
 
-import CircleSpinner from './CircleSpinner';
+import CircleSpinner from "./CircleSpinner";
 
-import { RetryIconCircle, Scan } from '../../../assets/icons';
-import BrowserIcon from '../../Common/BrowserIcon';
-import { AlertIcon, TickIcon } from '../../../assets/icons';
-import { detectBrowser } from '../../../utils';
-import useLocales from '../../../hooks/useLocales';
-import { useConnect } from '../../../hooks/useConnect';
+import { RetryIconCircle, Scan } from "../../../assets/icons";
+import BrowserIcon from "../../Common/BrowserIcon";
+import { AlertIcon, TickIcon } from "../../../assets/icons";
+import { detectBrowser } from "../../../utils";
+import useLocales from "../../../hooks/useLocales";
+import { useConnect } from "../../../hooks/useConnect";
 
 export const states = {
-  CONNECTED: 'connected',
-  CONNECTING: 'connecting',
-  EXPIRING: 'expiring',
-  FAILED: 'failed',
-  REJECTED: 'rejected',
-  NOTCONNECTED: 'notconnected',
-  UNAVAILABLE: 'unavailable',
+  CONNECTED: "connected",
+  CONNECTING: "connecting",
+  EXPIRING: "expiring",
+  FAILED: "failed",
+  REJECTED: "rejected",
+  NOTCONNECTED: "notconnected",
+  UNAVAILABLE: "unavailable",
 };
 
 const contentVariants: Variants = {
   initial: {
-    willChange: 'transform,opacity',
-    position: 'relative',
+    willChange: "transform,opacity",
+    position: "relative",
     opacity: 0,
     scale: 0.95,
   },
   animate: {
-    position: 'relative',
+    position: "relative",
     opacity: 1,
     scale: 1,
     transition: {
@@ -62,7 +62,7 @@ const contentVariants: Variants = {
     },
   },
   exit: {
-    position: 'absolute',
+    position: "absolute",
     opacity: 0,
     scale: 0.95,
     transition: {
@@ -109,7 +109,7 @@ const ConnectWithInjector: React.FC<{
           // Sometimes the error doesn't respond with a code
           if (error.message) {
             switch (error.message) {
-              case 'User rejected request':
+              case "User rejected request":
                 setStatus(states.REJECTED);
                 break;
               default:
@@ -119,6 +119,7 @@ const ConnectWithInjector: React.FC<{
           }
         }
       } else if (data) {
+        /* empty */
       }
     },
   });
@@ -130,13 +131,10 @@ const ConnectWithInjector: React.FC<{
   const expiryDefault = 9; // Starting at 10 causes layout shifting, better to start at 9
   const [expiryTimer, setExpiryTimer] = useState<number>(expiryDefault);
 
-  const hasExtensionInstalled =
-    connector.extensionIsInstalled && connector.extensionIsInstalled();
+  const hasExtensionInstalled = connector.extensionIsInstalled && connector.extensionIsInstalled();
 
   const browser = detectBrowser();
-  const extensionUrl = connector.extensions
-    ? connector.extensions[browser]
-    : undefined;
+  const extensionUrl = connector.extensions ? connector.extensions[browser] : undefined;
 
   const suggestedExtension = connector.extensions
     ? {
@@ -149,17 +147,13 @@ const ConnectWithInjector: React.FC<{
     : undefined;
 
   const [status, setStatus] = useState(
-    forceState
-      ? forceState
-      : !hasExtensionInstalled
-      ? states.UNAVAILABLE
-      : states.CONNECTING
+    forceState ? forceState : !hasExtensionInstalled ? states.UNAVAILABLE : states.CONNECTING
   );
 
   const locales = useLocales({
     CONNECTORNAME: connector.name,
     CONNECTORSHORTNAME: connector.shortName ?? connector.name,
-    SUGGESTEDEXTENSIONBROWSER: suggestedExtension?.label ?? 'your browser',
+    SUGGESTEDEXTENSIONBROWSER: suggestedExtension?.label ?? "your browser",
   });
 
   const runConnect = () => {
@@ -212,9 +206,7 @@ const ConnectWithInjector: React.FC<{
         <Container>
           <ModalHeading>Invalid State</ModalHeading>
           <ModalContent>
-            <Alert>
-              No connectors match the id given. This state should never happen.
-            </Alert>
+            <Alert>No connectors match the id given. This state should never happen.</Alert>
           </ModalContent>
         </Container>
       </PageContent>
@@ -320,9 +312,9 @@ const ConnectWithInjector: React.FC<{
                 status === states.UNAVAILABLE ? (
                   <div
                     style={{
-                      transform: 'scale(1.14)',
-                      position: 'relative',
-                      width: '100%',
+                      transform: "scale(1.14)",
+                      position: "relative",
+                      width: "100%",
                     }}
                   >
                     {connector.logos.transparent ?? connector.logos.default}
@@ -331,7 +323,7 @@ const ConnectWithInjector: React.FC<{
                   <>{connector.logos.transparent ?? connector.logos.default}</>
                 )
               }
-              smallLogo={connector.id === 'injected'}
+              smallLogo={connector.id === "injected"}
               connecting={status === states.CONNECTING}
               unavailable={status === states.UNAVAILABLE}
               countdown={status === states.EXPIRING}
@@ -344,9 +336,9 @@ const ConnectWithInjector: React.FC<{
             {status === states.FAILED && (
               <Content
                 key={states.FAILED}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 <ModalContent>
@@ -357,13 +349,10 @@ const ConnectWithInjector: React.FC<{
                   <ModalBody>{locales.injectionScreen_failed_p}</ModalBody>
                 </ModalContent>
                 {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
-                {connector.scannable && connector.id !== 'coinbaseWallet' && (
+                {connector.scannable && connector.id !== "coinbaseWallet" && (
                   <>
                     <OrDivider />
-                    <Button
-                      icon={<Scan />}
-                      onClick={() => switchConnectMethod(id)}
-                    >
+                    <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
                       {locales.scanTheQRCode}
                     </Button>
                   </>
@@ -373,9 +362,9 @@ const ConnectWithInjector: React.FC<{
             {status === states.REJECTED && (
               <Content
                 key={states.REJECTED}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 <ModalContent style={{ paddingBottom: 28 }}>
@@ -384,13 +373,10 @@ const ConnectWithInjector: React.FC<{
                 </ModalContent>
 
                 {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
-                {connector.scannable && connector.id !== 'coinbaseWallet' && (
+                {connector.scannable && connector.id !== "coinbaseWallet" && (
                   <>
                     <OrDivider />
-                    <Button
-                      icon={<Scan />}
-                      onClick={() => switchConnectMethod(id)}
-                    >
+                    <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
                       {locales.scanTheQRCode}
                     </Button>
                   </>
@@ -400,19 +386,19 @@ const ConnectWithInjector: React.FC<{
             {(status === states.CONNECTING || status === states.EXPIRING) && (
               <Content
                 key={states.CONNECTING}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 <ModalContent style={{ paddingBottom: 28 }}>
                   <ModalH1>
-                    {connector.id === 'injected'
+                    {connector.id === "injected"
                       ? locales.injectionScreen_connecting_injected_h1
                       : locales.injectionScreen_connecting_h1}
                   </ModalH1>
                   <ModalBody>
-                    {connector.id === 'injected'
+                    {connector.id === "injected"
                       ? locales.injectionScreen_connecting_injected_p
                       : locales.injectionScreen_connecting_p}
                   </ModalBody>
@@ -422,9 +408,9 @@ const ConnectWithInjector: React.FC<{
             {status === states.CONNECTED && (
               <Content
                 key={states.CONNECTED}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 <ModalContent>
@@ -438,44 +424,36 @@ const ConnectWithInjector: React.FC<{
             {status === states.NOTCONNECTED && (
               <Content
                 key={states.NOTCONNECTED}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 <ModalContent>
                   <ModalH1>{locales.injectionScreen_notconnected_h1}</ModalH1>
-                  <ModalBody>
-                    {locales.injectionScreen_notconnected_p}
-                  </ModalBody>
+                  <ModalBody>{locales.injectionScreen_notconnected_p}</ModalBody>
                 </ModalContent>
               </Content>
             )}
             {status === states.UNAVAILABLE && (
               <Content
                 key={states.UNAVAILABLE}
-                initial={'initial'}
-                animate={'animate'}
-                exit={'exit'}
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
                 variants={contentVariants}
               >
                 {!extensionUrl ? (
                   <>
                     <ModalContent style={{ paddingBottom: 12 }}>
-                      <ModalH1>
-                        {locales.injectionScreen_unavailable_h1}
-                      </ModalH1>
-                      <ModalBody>
-                        {locales.injectionScreen_unavailable_p}
-                      </ModalBody>
+                      <ModalH1>{locales.injectionScreen_unavailable_h1}</ModalH1>
+                      <ModalBody>{locales.injectionScreen_unavailable_p}</ModalBody>
                     </ModalContent>
 
                     {!hasExtensionInstalled && suggestedExtension && (
                       <Button
                         href={suggestedExtension?.url}
-                        icon={
-                          <BrowserIcon browser={suggestedExtension?.name} />
-                        }
+                        icon={<BrowserIcon browser={suggestedExtension?.name} />}
                       >
                         Install on {suggestedExtension?.label}
                       </Button>
