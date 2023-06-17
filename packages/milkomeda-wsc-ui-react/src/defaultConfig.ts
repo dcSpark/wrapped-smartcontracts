@@ -1,50 +1,50 @@
-import { Connector, configureChains, ChainProviderFn } from 'wagmi';
-import { Chain } from 'wagmi/chains';
+import { Connector, configureChains, ChainProviderFn } from "wagmi";
+import { Chain } from "wagmi/chains";
 
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
-import { CardanoWSCConnector } from '@dcspark/cardano-wsc-wagmi/dist';
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { publicProvider } from "wagmi/providers/public";
+import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi/dist";
 
 export const milkomedaChains = [
   {
     id: 200101,
-    name: 'Milkomeda C1 Testnet',
-    network: 'Milkomeda C1 Testnet',
+    name: "Milkomeda C1 Testnet",
+    network: "Milkomeda C1 Testnet",
     nativeCurrency: {
-      name: 'mTADA',
-      symbol: 'mTADA',
+      name: "mTADA",
+      symbol: "mTADA",
       decimals: 18,
     },
     rpcUrls: {
-      public: { http: ['https://rpc-devnet-cardano-evm.c1.milkomeda.com'] },
-      default: { http: ['https://rpc-devnet-cardano-evm.c1.milkomeda.com'] },
+      public: { http: ["https://rpc-devnet-cardano-evm.c1.milkomeda.com"] },
+      default: { http: ["https://rpc-devnet-cardano-evm.c1.milkomeda.com"] },
     },
     blockExplorers: {
-      etherscan: { name: '', url: '' },
+      etherscan: { name: "", url: "" },
       default: {
-        name: '',
-        url: 'https://explorer-devnet-cardano-evm.c1.milkomeda.com',
+        name: "",
+        url: "https://explorer-devnet-cardano-evm.c1.milkomeda.com",
       },
     },
   },
   {
     id: 2001,
-    name: 'Milkomeda C1 Mainnet',
-    network: 'Milkomeda C1 Mainnet',
+    name: "Milkomeda C1 Mainnet",
+    network: "Milkomeda C1 Mainnet",
     nativeCurrency: {
-      name: 'mADA',
-      symbol: 'mADA',
+      name: "mADA",
+      symbol: "mADA",
       decimals: 18,
     },
     rpcUrls: {
-      public: { http: ['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'] },
-      default: { http: ['https://rpc-mainnet-cardano-evm.c1.milkomeda.com'] },
+      public: { http: ["https://rpc-mainnet-cardano-evm.c1.milkomeda.com"] },
+      default: { http: ["https://rpc-mainnet-cardano-evm.c1.milkomeda.com"] },
     },
     blockExplorers: {
-      etherscan: { name: '', url: '' },
+      etherscan: { name: "", url: "" },
       default: {
-        name: '',
-        url: 'https://explorer-mainnet-cardano-evm.c1.milkomeda.com',
+        name: "",
+        url: "https://explorer-mainnet-cardano-evm.c1.milkomeda.com",
       },
     },
   },
@@ -82,18 +82,18 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
     new CardanoWSCConnector({
       chains,
       options: {
-        name: 'flint',
+        name: "flint",
         oracleUrl: undefined,
-        blockfrostKey: 'preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb',
+        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: undefined,
       },
     }),
     new CardanoWSCConnector({
       chains,
       options: {
-        name: 'etrnal',
+        name: "etrnal",
         oracleUrl: undefined,
-        blockfrostKey: 'preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb',
+        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: undefined,
       },
     }),

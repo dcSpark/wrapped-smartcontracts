@@ -1,8 +1,8 @@
-import styled from '../../../styles/styled';
-import { css, keyframes } from 'styled-components';
-import { motion } from 'framer-motion';
+import styled from "../../../styles/styled";
+import { css, keyframes } from "styled-components";
+import { motion } from "framer-motion";
 
-import { ModalContent } from '../../Common/Modal/styles';
+import { ModalContent } from "../../Common/Modal/styles";
 
 export const Content = styled(motion.div)`
   display: flex;
@@ -52,7 +52,7 @@ export const ConnectingAnimation = styled(motion.div)<{
   position: relative;
   --spinner-error-opacity: 0;
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     inset: -5px;
     opacity: 0;
@@ -98,7 +98,7 @@ export const RetryButton = styled(motion.button)`
 
   &:before {
     z-index: 3;
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -116,15 +116,11 @@ export const RetryIconContainer = styled(motion.div)`
 
   &:before {
     z-index: 1;
-    content: '';
+    content: "";
     position: absolute;
     inset: 3px;
     border-radius: 16px;
-    background: conic-gradient(
-      from 90deg,
-      currentColor 10%,
-      var(--ck-body-color) 80%
-    );
+    background: conic-gradient(from 90deg, currentColor 10%, var(--ck-body-color) 80%);
   }
 
   svg {

@@ -1,4 +1,4 @@
-import { useLocalStorage } from './useLocalStorage';
+import { useLocalStorage } from "./useLocalStorage";
 
 export const useLastConnector = () => {
   const {
@@ -6,7 +6,7 @@ export const useLastConnector = () => {
     add,
     update,
     clear,
-  } = useLocalStorage('connectKit.lastConnectorId');
+  } = useLocalStorage("connectKit.lastConnectorId");
 
   const updateLastConnectorId = (id: string) => {
     if (lastConnectorId) {

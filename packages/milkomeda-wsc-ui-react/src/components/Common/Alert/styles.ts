@@ -1,6 +1,6 @@
-import styled from '../../../styles/styled';
-import { motion } from 'framer-motion';
-import defaultTheme from '../../../constants/defaultTheme';
+import styled from "../../../styles/styled";
+import { motion } from "framer-motion";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const AlertContainer = styled(motion.div)`
   display: flex;

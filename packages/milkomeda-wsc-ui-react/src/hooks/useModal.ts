@@ -1,9 +1,6 @@
-import { useAccount } from 'wagmi';
-import { routes, useContext } from '../components/ConnectWSC';
-import {
-  useConnectCallback,
-  useConnectCallbackProps,
-} from './useConnectCallback';
+import { useAccount } from "wagmi";
+import { routes, useContext } from "../components/ConnectWSC";
+import { useConnectCallback, useConnectCallbackProps } from "./useConnectCallback";
 
 type ModalRoutes = (typeof routes)[keyof typeof routes];
 
@@ -11,18 +8,10 @@ const safeRoutes: {
   connected: ModalRoutes[];
   disconnected: ModalRoutes[];
 } = {
-  disconnected: [
-    routes.CONNECTORS,
-    routes.ONBOARDING,
-    routes.MOBILECONNECTORS,
-    routes.ONBOARDING,
-  ],
+  disconnected: [routes.CONNECTORS, routes.ONBOARDING, routes.MOBILECONNECTORS, routes.ONBOARDING],
   connected: [routes.PROFILE],
 };
-const allRoutes: ModalRoutes[] = [
-  ...safeRoutes.connected,
-  ...safeRoutes.disconnected,
-];
+const allRoutes: ModalRoutes[] = [...safeRoutes.connected, ...safeRoutes.disconnected];
 
 type ValidRoutes = ModalRoutes;
 
@@ -50,9 +39,7 @@ export const useModal = ({ onConnect, onDisconnect }: UseModalProps = {}) => {
 
     if (!allRoutes.includes(route)) {
       validRoute = isConnected ? routes.PROFILE : routes.CONNECTORS;
-      context.log(
-        `Route ${route} is not a valid route, navigating to ${validRoute} instead.`
-      );
+      context.log(`Route ${route} is not a valid route, navigating to ${validRoute} instead.`);
     } else {
       if (isConnected) {
         if (!safeRoutes.connected.includes(route)) {

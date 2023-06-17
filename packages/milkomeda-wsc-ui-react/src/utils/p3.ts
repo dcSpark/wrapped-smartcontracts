@@ -1,4 +1,4 @@
-import { css } from 'styled-components';
+import { css } from "styled-components";
 
 export const hexToP3 = (hex: string) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -8,9 +8,7 @@ export const hexToP3 = (hex: string) => {
     g: parseInt(result[2], 16),
     b: parseInt(result[3], 16),
   };
-  return `color(display-p3 ${values.r / 255} ${values.g / 255} ${
-    values.b / 255
-  })`;
+  return `color(display-p3 ${values.r / 255} ${values.g / 255} ${values.b / 255})`;
 };
 
 export const p3Hex = (hex: string, property: string) => {

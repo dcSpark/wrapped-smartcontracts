@@ -1,8 +1,8 @@
-import styled from '../../../styles/styled';
-import { keyframes } from 'styled-components';
+import styled from "../../../styles/styled";
+import { keyframes } from "styled-components";
 
-import { motion } from 'framer-motion';
-import { ModalBody } from '../../Common/Modal/styles';
+import { motion } from "framer-motion";
+import { ModalBody } from "../../Common/Modal/styles";
 
 const Shimmer = keyframes`
   0%{ transform: translate(-100%) rotate(-45deg); }
@@ -115,34 +115,16 @@ export const ConnectorButton = styled(motion.button)`
   --color: var(--ck-primary-button-color, var(--fallback-color));
   --background: var(--ck-primary-button-background, var(--fallback-background));
   --box-shadow: var(--ck-primary-button-box-shadow, var(--fallback-box-shadow));
-  --border-radius: var(
-    --ck-primary-button-border-radius,
-    var(--fallback-border-radius)
-  );
+  --border-radius: var(--ck-primary-button-border-radius, var(--fallback-border-radius));
 
   --hover-color: var(--ck-primary-button-hover-color, var(--color));
-  --hover-background: var(
-    --ck-primary-button-hover-background,
-    var(--background)
-  );
-  --hover-box-shadow: var(
-    --ck-primary-button-hover-box-shadow,
-    var(--box-shadow)
-  );
-  --hover-border-radius: var(
-    --ck-primary-button-hover-border-radius,
-    var(--border-radius)
-  );
+  --hover-background: var(--ck-primary-button-hover-background, var(--background));
+  --hover-box-shadow: var(--ck-primary-button-hover-box-shadow, var(--box-shadow));
+  --hover-border-radius: var(--ck-primary-button-hover-border-radius, var(--border-radius));
 
   --active-color: var(--ck-primary-button-active-color, var(--hover-color));
-  --active-background: var(
-    --ck-primary-button-active-background,
-    var(--hover-background)
-  );
-  --active-box-shadow: var(
-    --ck-primary-button-active-box-shadow,
-    var(--hover-box-shadow)
-  );
+  --active-background: var(--ck-primary-button-active-background, var(--hover-background));
+  --active-box-shadow: var(--ck-primary-button-active-box-shadow, var(--hover-box-shadow));
   --active-border-radius: var(
     --ck-primary-button-active-border-radius,
     var(--hover-border-radius)
@@ -204,7 +186,7 @@ export const ConnectorRecentlyUsed = styled(motion.span)`
   }
   &:before {
     z-index: 1;
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     opacity: 0.4;
@@ -213,7 +195,7 @@ export const ConnectorRecentlyUsed = styled(motion.span)`
   }
   &:after {
     z-index: 2;
-    content: '';
+    content: "";
     position: absolute;
     inset: -10%;
     top: -110%;

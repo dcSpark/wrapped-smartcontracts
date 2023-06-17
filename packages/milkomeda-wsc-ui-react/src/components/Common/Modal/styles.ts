@@ -1,7 +1,7 @@
-import styled from '../../../styles/styled';
-import { keyframes } from 'styled-components';
-import { motion } from 'framer-motion';
-import defaultTheme from '../../../constants/defaultTheme';
+import styled from "../../../styles/styled";
+import { keyframes } from "styled-components";
+import { motion } from "framer-motion";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const ErrorMessage = styled(motion.div)`
   z-index: -1;
@@ -92,7 +92,7 @@ export const TextWithHr = styled(motion.div)`
   }
   &:before {
     z-index: 2;
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 0;
@@ -154,9 +154,9 @@ export const ModalH1 = styled(motion.h1)<{
   font-size: ${(props) => (props.$small ? 17 : 19)}px;
   font-weight: var(--ck-modal-h1-font-weight, 600);
   color: ${(props) => {
-    if (props.$error) return 'var(--ck-body-color-danger)';
-    if (props.$valid) return 'var(--ck-body-color-valid)';
-    return 'var(--ck-body-color)';
+    if (props.$error) return "var(--ck-body-color-danger)";
+    if (props.$valid) return "var(--ck-body-color-valid)";
+    return "var(--ck-body-color)";
   }};
   > svg {
     position: relative;
@@ -206,12 +206,9 @@ export const BackgroundOverlay = styled(motion.div)<{
   bottom: 0;
   background: var(--ck-overlay-background, rgba(71, 88, 107, 0.24));
   backdrop-filter: ${(props) =>
-    props.$blur
-      ? `blur(${props.$blur}px)`
-      : 'var(--ck-overlay-backdrop-filter, none)'};
+    props.$blur ? `blur(${props.$blur}px)` : "var(--ck-overlay-backdrop-filter, none)"};
   opacity: 0;
-  animation: ${(props) => (props.$active ? FadeIn : FadeOut)} 150ms ease-out
-    both;
+  animation: ${(props) => (props.$active ? FadeIn : FadeOut)} 150ms ease-out both;
 `;
 
 const BoxIn = keyframes`
@@ -245,7 +242,7 @@ export const BoxContainer = styled(motion.div)`
   }
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
@@ -506,8 +503,7 @@ export const InfoButton = styled(motion.button)`
 export const Container = styled(motion.div)`
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --duration: 200ms;
-  --transition: height var(--duration) var(--ease),
-    width var(--duration) var(--ease);
+  --transition: height var(--duration) var(--ease), width var(--duration) var(--ease);
   z-index: 3;
   display: block;
   pointer-events: none;
@@ -528,8 +524,7 @@ export const Container = styled(motion.div)`
       margin: 0 auto;
       &:before {
         width: 100%;
-        border-radius: var(--ck-border-radius, 30px)
-          var(--ck-border-radius, 30px) 0 0;
+        border-radius: var(--ck-border-radius, 30px) var(--ck-border-radius, 30px) 0 0;
       }
     }
     ${PageContainer} {
@@ -633,10 +628,7 @@ export const DisclaimerBackground = styled(motion.div)`
   border-top-right-radius: 0;
   transition: width 200ms ease;
 
-  background: var(
-    --ck-body-disclaimer-background,
-    var(--ck-body-background-secondary)
-  );
+  background: var(--ck-body-disclaimer-background, var(--ck-body-background-secondary));
   box-shadow: var(--ck-body-disclaimer-box-shadow);
 
   ${Disclaimer} {
@@ -663,7 +655,7 @@ export const SignInTooltip = styled(motion.div)`
   transform: translateY(8px) translateX(-48px);
   box-shadow: var(--ck-modal-box-shadow);
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     box-shadow: var(--shadow);
     width: 18px;

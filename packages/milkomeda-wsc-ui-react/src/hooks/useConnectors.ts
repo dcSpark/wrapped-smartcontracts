@@ -1,4 +1,4 @@
-import { Connector, useConnect } from 'wagmi';
+import { Connector, useConnect } from "wagmi";
 
 export function useConnectors() {
   const { connectors } = useConnect();
@@ -24,7 +24,7 @@ export function useInjectedConnector() {
       })`,
   }
   */
-  return useConnector('injected');
+  return useConnector("injected");
 }
 export function useWalletConnectConnector() {
   /*
@@ -34,7 +34,7 @@ export function useWalletConnectConnector() {
     showQrModal: false,
   }
   */
-  return useConnector('walletConnect') ?? useConnector('walletConnectLegacy');
+  return useConnector("walletConnect") ?? useConnector("walletConnectLegacy");
 }
 export function useCoinbaseWalletConnector() {
   /*
@@ -42,7 +42,7 @@ export function useCoinbaseWalletConnector() {
     headlessMode: true,
   }
   */
-  return useConnector('coinbaseWallet');
+  return useConnector("coinbaseWallet");
 }
 export function useMetaMaskConnector() {
   /*
@@ -52,5 +52,5 @@ export function useMetaMaskConnector() {
     UNSTABLE_shimOnConnectSelectAccount: true,
   }
   */
-  return useConnector('metaMask');
+  return useConnector("metaMask");
 }

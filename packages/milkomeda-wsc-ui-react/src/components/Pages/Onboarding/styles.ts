@@ -1,7 +1,7 @@
-import { keyframes } from 'styled-components';
-import styled from '../../../styles/styled';
-import { motion } from 'framer-motion';
-import defaultTheme from '../../../constants/defaultTheme';
+import { keyframes } from "styled-components";
+import styled from "../../../styles/styled";
+import { motion } from "framer-motion";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const Graphic = styled(motion.div)`
   position: relative;
@@ -38,7 +38,7 @@ export const GraphicBackground = styled(motion.div)`
   top: -2px;
   overflow: hidden;
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: var(--ck-body-background);

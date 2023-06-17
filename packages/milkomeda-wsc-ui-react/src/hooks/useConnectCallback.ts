@@ -1,20 +1,11 @@
-import { useAccount } from 'wagmi';
+import { useAccount } from "wagmi";
 
 export type useConnectCallbackProps = {
-  onConnect?: ({
-    address,
-    connectorId,
-  }: {
-    address?: string;
-    connectorId?: string;
-  }) => void;
+  onConnect?: ({ address, connectorId }: { address?: string; connectorId?: string }) => void;
   onDisconnect?: () => void;
 };
 
-export const useConnectCallback = ({
-  onConnect,
-  onDisconnect,
-}: useConnectCallbackProps) => {
+export const useConnectCallback = ({ onConnect, onDisconnect }: useConnectCallbackProps) => {
   useAccount({
     onConnect: ({ address, connector, isReconnected }) => {
       if (!isReconnected) {
