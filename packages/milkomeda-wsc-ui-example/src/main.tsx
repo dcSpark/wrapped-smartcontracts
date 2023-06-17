@@ -8,7 +8,7 @@ import App from "./App";
 
 import { WagmiConfig, createClient } from "wagmi";
 import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
-import { ConnectWSCProvider, getDefaultConfig } from "milkomeda-wsc-ui";
+import { ConnectWSCProvider, getDefaultConfig } from "milkomeda-wsc-UI";
 
 const client = createClient(
   getDefaultConfig({

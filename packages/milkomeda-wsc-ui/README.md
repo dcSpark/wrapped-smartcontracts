@@ -47,14 +47,14 @@ Clone the ConnectKit project and install the necessary dependencies:
 
 ```sh
 $ git clone git@github.com:
-$ cd milkomeda-wsc-ui-react
+$ cd milkomeda-wsc-ui
 $ npm install
 ```
 
 and start the code bundler:
 
 ```sh
-$ npm run dev:milkomeda-wsc-ui-react
+$ npm run dev:milkomeda-wsc-ui
 ```
 
 and then simply select the example you'd like to run:

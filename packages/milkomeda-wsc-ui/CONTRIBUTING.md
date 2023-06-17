@@ -13,15 +13,15 @@ Before jumping into any code, make sure you have the following installed:
 Then simply clone the repository to your computer like following:
 
 ```sh
-$ git clone git@github.com:dcspark/milkomeda-wsc-ui-react.git
-$ cd milkomeda-wsc-ui-react
+$ git clone git@github.com:dcspark/milkomeda-wsc-ui.git
+$ cd milkomeda-wsc-ui
 ```
 
 and install the dependencies and run the bundler:
 
 ```sh
 $ npm install
-$ npm run dev:milkomeda-wsc-ui-react # Start the bundler
+$ npm run dev:milkomeda-wsc-ui # Start the bundler
 ```
 
 Depending on how you'd like to develop and test ConnectKit there are a couple of different environments you can fire up (you can see them in `package.json`). These environments double as simple code examples of how to get ConnectKit set up.
