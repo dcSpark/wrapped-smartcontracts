@@ -55,7 +55,7 @@ export interface StargateADA {
 export interface StargateAlgo {
   minMicroAlgo: string;
   wrappingFee: string;
-  unwrappedFee: string;
+  unwrappingFee: string;
   algorandDecimals: number;
   milkomedaDecimals: number;
 }
@@ -194,8 +194,8 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     }
     const transactions: CardanoBlockfrostTransaction[] = await response.json();
 
-    const twentyFourHoursAgo = Date.now() / 1000 - 24 * 60 * 60;
-    const recentTransactions = transactions.filter((tx) => tx.block_time > twentyFourHoursAgo);
+    const OneHourAgo = Date.now() / 1000 - 1 * 60 * 60;
+    const recentTransactions = transactions.filter((tx) => tx.block_time > OneHourAgo);
 
     return recentTransactions;
   }

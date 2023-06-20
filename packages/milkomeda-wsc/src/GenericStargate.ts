@@ -52,7 +52,7 @@ export class GenericStargate {
     if (this.isADAStargateApiResponse(this.stargateResponse)) {
       toSmallL1Fee = this.stargateResponse.ada.toADAFeeGWei;
     } else {
-      toSmallL1Fee = this.stargateResponse.algo.unwrappedFee;
+      toSmallL1Fee = this.stargateResponse.algo.unwrappingFee;
     }
     const toToken = ethers.utils
       .parseUnits(toSmallL1Fee, 9)

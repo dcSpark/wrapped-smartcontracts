@@ -79,6 +79,8 @@ export interface AlgoSchema {
 export interface AlgoAsset {
   amount: number;
   "asset-id": number;
+  decimals: number;
+  "unit-name": string;
   "is-frozen": boolean;
 }
 

@@ -204,27 +204,27 @@ export class MilkomedaNetwork {
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const accountInfo: AlgoAccountInfo = await response.json();
+    const accountInfo: AlgoAccountInfo = (await response.json()).account;
     // "amount": 12000000, "assets":[{"amount":12300000,"asset-id":12400859,"is-frozen":false}]
 
     const assetOriginAmounts: OriginAmount[] = accountInfo.assets.map(
       (asset: AlgoAsset): OriginAmount => ({
         unit: asset["asset-id"].toString(),
         quantity: asset.amount.toString(),
-        decimals: null,
+        decimals: asset["decimals"],
         bridgeAllowed: undefined,
         fingerprint: undefined,
-        assetName: undefined,
+        assetName: asset["unit-name"],
       })
     );
 
     const amountOriginAmount: OriginAmount = {
-      unit: "microAlgo",
-      quantity: accountInfo.amount.toString(),
+      unit: MilkomedaConstants.getNativeAssetId(network),
+      quantity: (accountInfo.amount / 1e6).toString(),
       decimals: null,
-      bridgeAllowed: undefined,
+      bridgeAllowed: true,
       fingerprint: undefined,
-      assetName: undefined,
+      assetName: "ALGO",
     };
 
     return [...assetOriginAmounts, amountOriginAmount];

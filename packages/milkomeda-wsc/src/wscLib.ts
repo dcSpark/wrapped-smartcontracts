@@ -1,7 +1,10 @@
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
 import { PeraWalletConnect } from "@perawallet/connect";
-import CardanoPendingManager, { OriginAmount, ADAStargateApiResponse } from "./CardanoPendingManger";
+import CardanoPendingManager, {
+  OriginAmount,
+  ADAStargateApiResponse,
+} from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import type { MilkomedaProvider } from "milkomeda-wsc-provider";
 import {
@@ -23,6 +26,7 @@ import {
   TransactionResponse,
   TxPendingStatus,
 } from "./WSCLibTypes";
+import { AlgoPendingManager } from "./AlgoPendingManager";
 
 export class WSCLib {
   wscProvider!: MilkomedaProvider;
@@ -296,15 +300,27 @@ export class WSCLib {
 
   async algo_updateAssetsWithBridgeInfo(tokens: OriginAmount[]): Promise<OriginAmount[]> {
     const assets = await MilkomedaNetwork.fetchBridgeAssets(this.network);
+    console.log("Bridge assets: ", assets);
+
+    const stargate = await AlgoPendingManager.fetchFromStargate(
+      MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+    );
+    console.log("Stargate: ", stargate);
 
     for (const token of tokens) {
-      console.log("token: ", token);
-      if (token.unit === "microAlgo") {
+      if (token.unit === MilkomedaConstants.getNativeAssetId(this.network)) {
         token.bridgeAllowed = true;
         token.assetName = "ALGO";
         continue;
       }
-      token.assetName = assets.find((asset) => token.unit === asset.algo_asset_id)?.symbol;
+      if (token.assetName == null) {
+        token.assetName = assets.find((asset) => token.unit === asset.algo_asset_id)?.symbol;
+      }
+      if (token.decimals == null) {
+        token.decimals =
+          stargate.assets.find((asset) => token.unit === asset.algorandAssetId)
+            ?.algorandDecimals || null;
+      }
       token.bridgeAllowed = assets.some((asset) => token.unit === asset.algo_asset_id);
     }
 
@@ -411,7 +427,8 @@ export class WSCLib {
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.lucid!,
+      this.lucid,
+      this.peraWallet,
       this.wscProvider,
       stargate,
       bridgeAddress,
@@ -428,7 +445,21 @@ export class WSCLib {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     amount: number
   ): Promise<string> {
-    throw new Error("Not implemented");
+    const targetAddress = destination || (await this.eth_getAccount());
+    const stargate = await AlgoPendingManager.fetchFromStargate(
+      MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+    );
+    const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
+    const bridgeActions = new BridgeActions(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.lucid,
+      this.peraWallet,
+      this.wscProvider,
+      stargate,
+      bridgeAddress,
+      this.network
+    );
+    return await bridgeActions.wrap(assetId, targetAddress, amount);
   }
 
   async unwrap(
@@ -444,7 +475,8 @@ export class WSCLib {
     const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
     const bridgeActions = new BridgeActions(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.lucid!,
+      this.lucid,
+      this.peraWallet,
       this.evmProvider,
       stargate,
       bridgeAddress,

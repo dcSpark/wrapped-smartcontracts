@@ -95,10 +95,12 @@ export class MilkomedaConstants {
       case MilkomedaNetworkName.C1Devnet:
         throw new Error("Not Algorand Compatible");
       case MilkomedaNetworkName.A1Mainnet:
-        return "https://mainnet-api.algonode.cloud";
+        return "https://indexer.algoexplorerapi.io";
+      // return "https://mainnet-api.algonode.cloud";
       // return "https://explorer.perawallet.app";
       case MilkomedaNetworkName.A1Devnet:
-        return "https://testnet-api.algonode.cloud";
+        return "https://indexer.testnet.algoexplorerapi.io";
+      // return "https://testnet-api.algonode.cloud";
       // return "https://testnet.explorer.perawallet.app";
       default:
         throw new Error("Invalid network");
@@ -112,9 +114,9 @@ export class MilkomedaConstants {
       case MilkomedaNetworkName.C1Devnet:
         return "https://allowlist.flint-wallet.com/v1/stargate";
       case MilkomedaNetworkName.A1Mainnet:
-        throw new Error("Algorand not supported yet");
+        return "https://stargate-a1-mainnet.milkomeda.com/v1/stargate";
       case MilkomedaNetworkName.A1Devnet:
-        throw new Error("Algorand not supported yet");
+        return "https://stargate-a1-devnet.milkomeda.com/v1/stargate";
       default:
         throw new Error("Invalid network");
     }

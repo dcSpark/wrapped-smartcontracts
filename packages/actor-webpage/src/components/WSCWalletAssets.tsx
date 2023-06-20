@@ -68,7 +68,7 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
               label="Balance"
               value={
                 destinationBalance
-                  ? destinationBalance + (isCardano ? " mADA" : " microALGO")
+                  ? destinationBalance + (isCardano ? " mADA" : " mALGO")
                   : "Loading..."
               }
             />

@@ -170,7 +170,7 @@ const App: React.FC = () => {
       />
       {(algorandConnected || cardanoConnected) && (
         <div>
-          <Summary originAddress={originAddress} originBalance={originBalance} />
+          <Summary originAddress={originAddress} originBalance={originBalance} isCardano={cardanoConnected}/>
           <WrappedSmartContractWalletAssets
             connected={algorandConnected || cardanoConnected}
             address={address}
