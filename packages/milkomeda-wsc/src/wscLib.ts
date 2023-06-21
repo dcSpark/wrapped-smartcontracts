@@ -192,7 +192,12 @@ export class WSCLib {
 
   async getEthersProvider(): Promise<ethers.providers.Web3Provider> {
     if (!window.ethereum) throw "Provider not loaded";
-    return new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (this.isAlgorand()) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (provider.provider as any).peraWallet.chainId = this.peraWallet?.chainId;
+    }
+    return provider;
   }
 
   async getTokenBalances(address: string | undefined = undefined): Promise<EVMTokenBalance[]> {
@@ -402,7 +407,7 @@ export class WSCLib {
 
     return await this.constructAllowedTokensMap(normalizedAssetIds, (assetId) => {
       return bridgeAllowedAssets.some((asset) => {
-        return asset.algo_asset_id?.toLowerCase() === assetId;
+        return asset.token_contract.toLowerCase() === assetId;
       });
     });
   }
@@ -486,7 +491,8 @@ export class WSCLib {
     // discount some fees from the total amount so it can be used for the transaction
     let amountToUnwrap = amount;
     if (assetId == null) {
-      const AdaFees = bridgeActions.stargateGeneric.stargateNativeTokenFeeToL1() + 0.05;
+      const gasFees = this.isCardano() ? 0.05 : 0.5;
+      const AdaFees = bridgeActions.stargateGeneric.stargateNativeTokenFeeToL1() + gasFees;
       amountToUnwrap = amount.dividedBy(10 ** 6).minus(new BigNumber(AdaFees));
     }
     return bridgeActions.unwrap(targetAddress, assetId, amountToUnwrap);

@@ -10,6 +10,7 @@ import { MilkomedaNetworkName } from "./WSCLibTypes";
 import { GenericStargate } from "./GenericStargate";
 import { PeraWalletConnect } from "@perawallet/connect";
 import algosdk from "algosdk";
+import { hexlify, toUtf8Bytes } from "ethers/lib/utils";
 
 /// PREFIX description (milkomeda/a1:u)
 /// milkomeda/a1 - prefix
@@ -40,6 +41,10 @@ class BridgeActions {
     this.stargateGeneric = new GenericStargate(stargateApiResponse);
     this.bridgeAddress = bridgeAddress;
     this.network = network;
+  }
+
+  isCardano(): boolean {
+    return this.network === MilkomedaNetworkName.C1Mainnet || this.network === MilkomedaNetworkName.C1Devnet;
   }
 
   getBridgeMetadata(): string {
@@ -135,6 +140,14 @@ class BridgeActions {
     }
   };
 
+  convertNativeAddressToHex = (address: string): string => {
+    if (this.isCardano()) {
+      return bech32ToHexAddress(address);
+    } else {
+      return hexlify(toUtf8Bytes(address));
+    }
+  };
+
   unwrap = async (
     destinationAddress: string,
     erc20address: string,
@@ -153,7 +166,7 @@ class BridgeActions {
       this.provider
     );
     const signer = this.provider.getSigner();
-    const cardanoDestination = bech32ToHexAddress(destinationAddress);
+    const l1Destination = this.convertNativeAddressToHex(destinationAddress);
 
     if (erc20address == null) {
       const minRequired = new BigNumber(this.stargateGeneric.stargateMinNativeTokenToL1());
@@ -168,7 +181,7 @@ class BridgeActions {
         {
           assetId: ethers.constants.HashZero,
           from: await signer.getAddress(),
-          to: cardanoDestination,
+          to: l1Destination,
           amount: amount.toString(),
         },
         { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
@@ -191,7 +204,7 @@ class BridgeActions {
         {
           assetId: assetId,
           from: await signer.getAddress(),
-          to: cardanoDestination,
+          to: l1Destination,
           amount: amountToUnwrap.toFixed(0),
         },
         {

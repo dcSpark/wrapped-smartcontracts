@@ -51,14 +51,19 @@ export class GenericStargate {
     let toSmallL1Fee: string;
     if (this.isADAStargateApiResponse(this.stargateResponse)) {
       toSmallL1Fee = this.stargateResponse.ada.toADAFeeGWei;
+      const toToken = ethers.utils
+        .parseUnits(toSmallL1Fee, 9)
+        .div(10 ** 9)
+        .div(10 ** 9);
+      return toToken.toNumber();
     } else {
       toSmallL1Fee = this.stargateResponse.algo.unwrappingFee;
+      const toToken = ethers.utils
+        .parseUnits(toSmallL1Fee, 6)
+        .div(10 ** 6)
+        .div(10 ** 6);
+      return toToken.toNumber();
     }
-    const toToken = ethers.utils
-      .parseUnits(toSmallL1Fee, 9)
-      .div(10 ** 9)
-      .div(10 ** 9);
-    return toToken.toNumber();
   }
 
   stargateMinNativeTokenToL1(): number {
