@@ -8,7 +8,7 @@ interface WrappedSmartContractAssetsProps {
   destinationBalance: string | null;
   network: string | null;
   tokens: EVMTokenBalance[];
-  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
   moveAssetsToL1: (tokenId: string, tokenName: string, amount: BigNumber) => void;
   areTokensAllowed: (assetIds: string[]) => Promise<{ [key: string]: boolean }>;
   isCardano: boolean;

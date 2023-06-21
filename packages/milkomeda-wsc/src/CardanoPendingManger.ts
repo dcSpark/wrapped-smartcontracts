@@ -47,29 +47,47 @@ export interface CardanoBlockfrostTransaction {
   block_time: number;
 }
 
-export interface StargateAsset {
-  idCardano: string;
-  idMilkomeda: string;
-  fingerprint: string | undefined;
-  minCNTInt: string;
-  minGWei: string;
-  milkomedaDecimals: number;
-  tokenSymbol: string;
-}
-
 export interface StargateADA {
   minLovelace: string;
   fromADAFeeLovelace: string;
   toADAFeeGWei: string;
 }
-
+export interface StargateAlgo {
+  minMicroAlgo: string;
+  wrappingFee: string;
+  unwrappingFee: string;
+  algorandDecimals: number;
+  milkomedaDecimals: number;
+}
 export interface StargateApiResponse {
   current_address: string;
   ttl_expiry: number;
-  ada: StargateADA;
   assets: StargateAsset[];
 }
-
+export interface ADAStargateApiResponse extends StargateApiResponse {
+  ada: StargateADA;
+  assets: ADAStargateAsset[];
+}
+export interface AlgoStargateApiResponse extends StargateApiResponse {
+  algo: StargateAlgo;
+  assets: AlgoStargateAsset[];
+}
+export interface StargateAsset {
+  idMilkomeda: string;
+  milkomedaDecimals: number;
+  tokenSymbol: string;
+}
+export interface AlgoStargateAsset extends StargateAsset {
+  idAlgorand: string;
+  algorandAssetId: string;
+  algorandDecimals: number;
+}
+export interface ADAStargateAsset extends StargateAsset {
+  idCardano: string;
+  fingerprint: string | undefined;
+  minCNTInt: string;
+  minGWei: string;
+}
 export interface ExplorerTransaction {
   blockHash: string;
   blockNumber: string;
@@ -160,12 +178,12 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   async getPendingTransactions(): Promise<PendingTx[]> {
     const cardanoPendingTxs = await this.getCardanoPendingTxs();
     const evmPendingTxs = await this.getEVMPendingTxs();
-    const cardanoMempoolTxs = await this.getCardanoMempoolTxs();
+    const cardanoMempoolTxs = await this.getCardanoMempoolTxsToBridge();
     return [...cardanoMempoolTxs, ...cardanoPendingTxs, ...evmPendingTxs];
   }
 
   async fetchRecentTransactions(address: string): Promise<CardanoBlockfrostTransaction[]> {
-    const url = this.blockfrost.url + `/addresses/${address}/transactions`;
+    const url = this.blockfrost.url + `/addresses/${address}/transactions?order=desc`;
     const response = await fetch(url, {
       headers: {
         project_id: this.blockfrost.projectId,
@@ -176,8 +194,8 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     }
     const transactions: CardanoBlockfrostTransaction[] = await response.json();
 
-    const twentyFourHoursAgo = Date.now() / 1000 - 24 * 60 * 60;
-    const recentTransactions = transactions.filter((tx) => tx.block_time > twentyFourHoursAgo);
+    const OneHourAgo = Date.now() / 1000 - 1 * 60 * 60;
+    const recentTransactions = transactions.filter((tx) => tx.block_time > OneHourAgo);
 
     return recentTransactions;
   }
@@ -185,7 +203,23 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   //
   // Cardano
   //
-  async getCardanoMempoolTxs(): Promise<PendingTx[]> {
+  async getCardanoMempoolTxsToBridge(): Promise<PendingTx[]> {
+    return this.getCardanoMempoolTxs(PendingTxType.Wrap, (tx) =>
+      tx.inputs.some((input: { address: string }) => input.address === this.userL1Address)
+    );
+  }
+
+  async getCardanoMempoolTxsFromBridge(): Promise<PendingTx[]> {
+    return this.getCardanoMempoolTxs(PendingTxType.Unwrap, (tx) =>
+      tx.outputs.some((output: { address: string }) => output.address === this.userL1Address)
+    );
+  }
+
+  async getCardanoMempoolTxs(
+    type: PendingTxType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filterFunc: (tx: any) => boolean
+  ): Promise<PendingTx[]> {
     let mempoolTxs: string[];
     try {
       mempoolTxs = await this.fetchTxsInMempoolForAddress(this.userL1Address);
@@ -199,17 +233,15 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
 
     const fetchPromises = mempoolTxs.map((tx) => this.fetchMempoolTx(tx));
     const allTxs = await Promise.all(fetchPromises);
-    const myInputTxs = allTxs.filter((tx) =>
-      tx.inputs.some((input) => input.address === this.userL1Address)
-    );
+    const myInputTxs = allTxs.filter(filterFunc);
 
     const timeNow = Date.now();
     return myInputTxs.map((tx) => ({
       hash: tx.tx.hash,
       timestamp: timeNow,
       explorer: undefined,
-      type: PendingTxType.Wrap,
-      destinationAddress: "",
+      type: type,
+      destinationAddress: type === PendingTxType.Wrap ? "" : this.userL1Address,
     }));
   }
 
@@ -288,10 +320,10 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     return utxoDetails;
   }
 
-  static async fetchFromStargate(url: string): Promise<StargateApiResponse> {
+  static async fetchFromStargate(url: string): Promise<ADAStargateApiResponse> {
     try {
       const response = await fetch(url);
-      const data: StargateApiResponse = await response.json();
+      const data: ADAStargateApiResponse = await response.json();
       return data;
     } catch (error) {
       console.error("Error fetching data from URL:", error);

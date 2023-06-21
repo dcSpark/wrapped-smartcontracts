@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import L1Assets from "./L1Assets";
 import { PendingTransactions } from "./Pending";
 import ActorAssets from "./ActorAssets";
 import LatestActivity from "./LatestActivity";
 import { Activity } from "milkomeda-wsc/build/Activity";
 import BigNumber from "bignumber.js";
-import { EVMTokenBalance, PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
+import {
+  EVMTokenBalance,
+  PendingTx,
+  TxPendingStatus,
+} from "milkomeda-wsc/build/WSCLibTypes";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import LabelWithValue from "./LabelWithValue";
 
@@ -18,9 +22,10 @@ interface WrappedSmartContractWalletAssetsProps {
   tokens: EVMTokenBalance[];
   originTokens: OriginAmount[];
   moveAssetsToL1: (contractAddress: string, name: string, amount: BigNumber) => void;
-  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
-  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<void>;
+  wrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
+  unwrap: (destination: string | undefined, assetId: string, amount: BigNumber) => Promise<string>;
   areTokensAllowed: (assetIds: string[]) => Promise<{ [key: string]: boolean }>;
+  getTxStatus: (txHash: string) => Promise<TxPendingStatus>;
   transactions: Activity[];
   isCardano: boolean;
 }
@@ -37,9 +42,22 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
   wrap,
   unwrap,
   areTokensAllowed,
+  getTxStatus,
   transactions,
   isCardano,
 }) => {
+  const [txHash, setTxHash] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleGetTxStatus = async () => {
+    try {
+      const status = await getTxStatus(txHash);
+      setStatusMessage(status);
+    } catch (error) {
+      setStatusMessage(`Error: ${error.message}`);
+    }
+  };
+
   return (
     <>
       {connected && (
@@ -48,8 +66,23 @@ const WrappedSmartContractWalletAssets: React.FC<WrappedSmartContractWalletAsset
             <LabelWithValue label="Connected WSC Address:" value={address} />
             <LabelWithValue
               label="Balance"
-              value={destinationBalance ? destinationBalance + (isCardano ? " mADA" : " microALGO") : "Loading..."}
+              value={
+                destinationBalance
+                  ? destinationBalance + (isCardano ? " mADA" : " mALGO")
+                  : "Loading..."
+              }
             />
+          </div>
+          <div className="section">
+            <h2>Tx Status</h2>
+            <input
+              type="text"
+              value={txHash}
+              onChange={(e) => setTxHash(e.target.value)}
+              placeholder="Enter tx hash"
+            />
+            <button onClick={handleGetTxStatus}>Check Status</button>
+            {statusMessage && <p>{statusMessage}</p>}
           </div>
           <div className="section">
             <PendingTransactions pendingTxs={pendingTxs} />

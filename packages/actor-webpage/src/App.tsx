@@ -5,7 +5,7 @@ import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "../../milkomeda-wsc/src/Activity";
 import BigNumber from "bignumber.js";
-import { EVMTokenBalance, MilkomedaNetworkName, PendingTx } from "milkomeda-wsc/build/WSCLibTypes";
+import { EVMTokenBalance, MilkomedaNetworkName, PendingTx, TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import "./App.css";
 
@@ -123,6 +123,10 @@ const App: React.FC = () => {
     await wscLib2.unwrap(undefined, tokenId, amount);
   };
 
+  const getTxStatus = async (hash: string): Promise<TxPendingStatus> => {
+    return await wscLib2.getTxStatus(hash);
+  };
+
   const areTokensAllowed = async (assetIds: string[]) => {
     return await wscLib2.areTokensAllowed(assetIds);
   };
@@ -166,7 +170,7 @@ const App: React.FC = () => {
       />
       {(algorandConnected || cardanoConnected) && (
         <div>
-          <Summary originAddress={originAddress} originBalance={originBalance} />
+          <Summary originAddress={originAddress} originBalance={originBalance} isCardano={cardanoConnected}/>
           <WrappedSmartContractWalletAssets
             connected={algorandConnected || cardanoConnected}
             address={address}
@@ -179,6 +183,7 @@ const App: React.FC = () => {
             wrap={wrapWrapper}
             unwrap={unwrapWrapper}
             transactions={transactions}
+            getTxStatus={getTxStatus}
             areTokensAllowed={areTokensAllowed}
             isCardano={cardanoConnected}
           />

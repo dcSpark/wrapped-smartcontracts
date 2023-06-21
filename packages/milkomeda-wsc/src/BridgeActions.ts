@@ -2,105 +2,161 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress } from "./utils";
-import { StargateApiResponse } from "./CardanoPendingManger";
+import { ADAStargateApiResponse, AlgoStargateApiResponse } from "./CardanoPendingManger";
 import { MilkomedaConstants } from "./MilkomedaConstants";
 import { Lucid } from "lucid-cardano";
 import { MilkomedaProvider } from "milkomeda-wsc-provider";
 import { MilkomedaNetworkName } from "./WSCLibTypes";
+import { GenericStargate } from "./GenericStargate";
+import { PeraWalletConnect } from "@perawallet/connect";
+import algosdk from "algosdk";
+import { hexlify, toUtf8Bytes } from "ethers/lib/utils";
+
+/// PREFIX description (milkomeda/a1:u)
+/// milkomeda/a1 - prefix
+/// u - means unicode string data
+const NOTE_PREFIX = "milkomeda/a1:u";
+const prepareNoteForEncoding = (note: string): string => `${NOTE_PREFIX}${note}`;
 
 class BridgeActions {
-  lucid: Lucid;
+  lucid: Lucid | undefined;
+  pera: PeraWalletConnect | undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   provider: any;
-  stargateResponse: StargateApiResponse;
+  stargateGeneric: GenericStargate;
   bridgeAddress: string;
   network: string;
 
   constructor(
-    lucid: Lucid,
+    lucid: Lucid | undefined,
+    pera: PeraWalletConnect | undefined,
     provider: MilkomedaProvider,
-    stargateApiResponse: StargateApiResponse,
+    stargateApiResponse: ADAStargateApiResponse | AlgoStargateApiResponse,
     bridgeAddress: string,
     network: string
   ) {
     this.provider = provider;
     this.lucid = lucid;
-    this.stargateResponse = stargateApiResponse;
+    this.pera = pera;
+    this.stargateGeneric = new GenericStargate(stargateApiResponse);
     this.bridgeAddress = bridgeAddress;
     this.network = network;
   }
 
-  stargateMinAdaFromCardano(): number {
+  isCardano(): boolean {
     return (
-      (parseInt(this.stargateResponse.ada.fromADAFeeLovelace) +
-        parseInt(this.stargateResponse.ada.minLovelace)) /
-      10 ** 6
+      this.network === MilkomedaNetworkName.C1Mainnet ||
+      this.network === MilkomedaNetworkName.C1Devnet
     );
-  }
-
-  adaToLovelace(ada: number): number {
-    return ada * 10 ** 6;
-  }
-
-  stargateMinAdaToCardano(): number {
-    const toAdaFee = this.stargateAdaFeeToCardano();
-    const minAda = parseInt(this.stargateResponse.ada.minLovelace) / 10 ** 6;
-    return toAdaFee + minAda;
-  }
-
-  stargateAdaFeeToCardano(): number {
-    const toAda = ethers.utils
-      .parseUnits(this.stargateResponse.ada.toADAFeeGWei, 9)
-      .div(10 ** 9)
-      .div(10 ** 9);
-    return toAda.toNumber();
   }
 
   getBridgeMetadata(): string {
     switch (this.network) {
       case MilkomedaNetworkName.C1Mainnet:
-        throw new Error("Need to add Bridge API URL for C1 Mainnet");
+        return "mainnet.cardano-evm.c1";
       case MilkomedaNetworkName.C1Devnet:
         return "devnet.cardano-evm.c1";
       case MilkomedaNetworkName.A1Mainnet:
-        throw new Error("Need to add Bridge API URL for A1 Mainnet");
+        return "milkomeda/a1";
       case MilkomedaNetworkName.A1Devnet:
-        throw new Error("Need to add Bridge API URL for A1 Devnet");
+        return "milkomeda/a1";
       default:
         throw new Error("Invalid network");
     }
   }
 
-  wrap = async (tokenId: string, destination: string, amount: number) => {
-    let payload = {};
-    const stargateMin = this.stargateMinAdaFromCardano();
-    if (tokenId === "lovelace") {
-      if (amount < stargateMin) throw new Error("Amount is less than the minimum required");
-      const amountLovelace = BigInt(amount) * BigInt(10 ** 6);
-      const amountWithFees = amountLovelace + BigInt(this.stargateResponse.ada.fromADAFeeLovelace);
-      payload = { lovelace: amountWithFees };
+  wrap = async (tokenId: string, destination: string, amount: number): Promise<string> => {
+    if (
+      this.network === MilkomedaNetworkName.C1Mainnet ||
+      this.network === MilkomedaNetworkName.C1Devnet
+    ) {
+      if (!this.lucid) throw new Error("Lucid is not initialized");
+
+      let payload = {};
+      const stargateMin = this.stargateGeneric.stargateMinNativeTokenFromL1();
+      if (tokenId === "lovelace") {
+        if (amount < stargateMin) throw new Error("Amount is less than the minimum required");
+        const amountLovelace = BigInt(amount) * BigInt(10 ** 6);
+        const amountWithFees =
+          amountLovelace + BigInt(this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo());
+        payload = { lovelace: amountWithFees };
+      } else {
+        payload = {
+          lovelace: BigInt(this.stargateGeneric.nativeTokenToLovelaceOrMicroAlgo(stargateMin)),
+          [tokenId]: BigInt(amount),
+        };
+      }
+
+      const tx = await this.lucid
+        .newTx()
+        .payToAddress(this.stargateGeneric.stargateResponse.current_address, payload)
+        .attachMetadata(87, this.getBridgeMetadata())
+        .attachMetadata(88, destination)
+        .complete();
+
+      const signedTx = await tx.sign().complete();
+      const txHash = await signedTx.submit();
+      console.log(txHash);
+      return txHash;
     } else {
-      payload = {
-        lovelace: BigInt(this.adaToLovelace(stargateMin)),
-        [tokenId]: BigInt(amount),
-      };
+      if (!this.pera) throw new Error("Pera is not initialized");
+
+      const stargateMin = this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo();
+      const algod = new algosdk.Algodv2("", MilkomedaConstants.algoNode(this.network));
+      const params = await algod.getTransactionParams().do();
+      const originAccount = this.provider.algorandAccounts[0];
+
+      let unsignedTx: algosdk.Transaction | null = null;
+      if (tokenId === MilkomedaConstants.getNativeAssetId(this.network)) {
+        const amountMicroAlgo = BigInt(amount) * BigInt(10 ** 6);
+        const amountPlusFees = new BigNumber(amountMicroAlgo.toString())
+          .plus(new BigNumber(stargateMin))
+          .toString();
+        unsignedTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+          suggestedParams: {
+            ...params,
+          },
+          from: originAccount,
+          to: this.stargateGeneric.stargateResponse.current_address,
+          amount: parseInt(amountPlusFees),
+          note: this.encodeNote(prepareNoteForEncoding(destination)),
+        });
+      } else {
+        unsignedTx = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+          suggestedParams: {
+            ...params,
+          },
+          from: originAccount,
+          to: this.stargateGeneric.stargateResponse.current_address,
+          amount,
+          note: this.encodeNote(prepareNoteForEncoding(destination)),
+          assetIndex: Number(tokenId),
+        });
+      }
+
+      if (!unsignedTx) throw new Error("Unsigned transaction is null");
+      const singleTxnGroups = [{ txn: unsignedTx, signers: [originAccount.address] }];
+      const signedTxn = await this.pera.signTransaction([singleTxnGroups]);
+      const { txId } = await algod.sendRawTransaction(signedTxn).do();
+      console.log(txId);
+      return txId as string;
     }
-
-    const tx = await this.lucid
-      .newTx()
-      .payToAddress(this.stargateResponse.current_address, payload)
-      .attachMetadata(87, this.getBridgeMetadata())
-      .attachMetadata(88, destination)
-      .complete();
-
-    const signedTx = await tx.sign().complete();
-    const txHash = await signedTx.submit();
-
-    console.log(txHash);
   };
 
-  unwrap = async (destinationAddress: string, erc20address: string, amountToUnwrap: BigNumber) => {
-    console.log("ERC20 address: ", erc20address); // MilkomedaConstants.getBridgeEVMAddress(this.network)
+  convertNativeAddressToHex = (address: string): string => {
+    if (this.isCardano()) {
+      return bech32ToHexAddress(address);
+    } else {
+      return hexlify(toUtf8Bytes(address));
+    }
+  };
+
+  unwrap = async (
+    destinationAddress: string,
+    erc20address: string,
+    amountToUnwrap: BigNumber
+  ): Promise<string> => {
+    console.log("ERC20 address: ", erc20address);
     const contractAddress = erc20address || MilkomedaConstants.getBridgeEVMAddress(this.network);
     const tokenContract = new ethers.Contract(
       contractAddress, // token id e.g. "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F"
@@ -113,30 +169,31 @@ class BridgeActions {
       this.provider
     );
     const signer = this.provider.getSigner();
-    const cardanoDestination = bech32ToHexAddress(destinationAddress);
+    const l1Destination = this.convertNativeAddressToHex(destinationAddress);
 
     if (erc20address == null) {
-      const minRequired = new BigNumber(this.stargateMinAdaToCardano());
+      const minRequired = new BigNumber(this.stargateGeneric.stargateMinNativeTokenToL1());
       if (amountToUnwrap.lt(minRequired))
         // TODO: add info about the minimum required in ADA and token
         throw new Error("Amount is less than the minimum required");
 
       const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 18);
-      const adaFee = new BigNumber(this.stargateAdaFeeToCardano());
+      const adaFee = new BigNumber(this.stargateGeneric.stargateNativeTokenFeeToL1());
       const adaAmount = amountToUnwrap.plus(adaFee);
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
           assetId: ethers.constants.HashZero,
           from: await signer.getAddress(),
-          to: cardanoDestination,
+          to: l1Destination,
           amount: amount.toString(),
         },
         { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
       );
 
+      console.log("Unwrapping ADA");
       console.log(tx.hash);
       await tx.wait();
-      console.log("Unwrapped ADA");
+      return tx.hash;
     } else {
       const assetId = await bridgeContract.findAssetIdByAddress(erc20address);
       console.log("assetId: ", assetId);
@@ -150,19 +207,40 @@ class BridgeActions {
         {
           assetId: assetId,
           from: await signer.getAddress(),
-          to: cardanoDestination,
+          to: l1Destination,
           amount: amountToUnwrap.toFixed(0),
         },
         {
           gasLimit: 1_000_000,
-          value: ethers.utils.parseEther(this.stargateMinAdaToCardano().toString()),
+          value: ethers.utils.parseEther(
+            this.stargateGeneric.stargateMinNativeTokenToL1().toString()
+          ),
         }
       );
 
+      console.log("Unwrapping Asset");
       console.log(tx.hash);
       await tx.wait();
-      console.log("Unwrapped");
+      return tx.hash;
     }
+  };
+
+  // algorand note helpers
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  decodeNote = (encodedNote: any): string => {
+    return Buffer.from(encodedNote, "base64").toString();
+  };
+
+  encodeNote = (note: string): Uint8Array => {
+    return new TextEncoder().encode(note);
+  };
+
+  algoToMicro = (value: string): string => {
+    return new BigNumber(value).multipliedBy(new BigNumber(1_000_000)).toString();
+  };
+
+  microToAlgo = (value: string): string => {
+    return new BigNumber(value).div(new BigNumber(1_000_000)).toString();
   };
 }
 

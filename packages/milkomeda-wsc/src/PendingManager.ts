@@ -14,6 +14,18 @@ export class PendingManager {
     this.evmAddress = evmAddress;
   }
 
+  async isMainchainTxBridgeConfirmed(txHash: string): Promise<boolean | null> {
+    const txRequest = await MilkomedaNetwork.searchMainchainTxInBridge(this.network, txHash);
+    if (!txRequest) return null;
+    return txRequest.executed_timestamp != null && !txRequest.invalidated;
+  }
+
+  async isMilkomedaTxBridgeConfirmed(txHash: string): Promise<boolean | null> {
+    const txRequest = await MilkomedaNetwork.searchMilkomedaTxInBridge(this.network, txHash);
+    if (!txRequest) return null;
+    return txRequest.executed_timestamp != null && !txRequest.invalidated;
+  }
+
   async getEVMPendingTxs(): Promise<PendingTx[]> {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed
@@ -41,6 +53,8 @@ export class PendingManager {
     // this code check for pending txs detected by the bridge that are being unwrapped
     const bridgePendingTxs = bridgeRequests.filter(
       (request) =>
+        // TODO: eventually we want to use [unwrapping_transaction].mainchain_tx_id instead
+        // and then check for the tx in the mainchain mempool
         !request.executed_timestamp && request.from.toLowerCase() === this.evmAddress.toLowerCase()
     );
     const bridgePendingTxs_normalized = bridgePendingTxs.map((tx) => ({
