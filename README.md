@@ -128,6 +128,6 @@ npm start -w packages/dapp-example
 
 Dapp is running on [localhost:3000](http://localhost:3000).
 
-Licensing
+## Licensing
 
 The primary license for Wrapped Smart-Contracts is the Starting Gate Public License 1.0 (SGPL-1.0), see [LICENSE](./LICENSE.md). If you are a building with educational or even commercial purposes on Milkomeda C1 or A1, the entire repo is considered under MIT. The License applies to usages outside Milkomeda. However, some packages are licensed under a MIT License even outside Milkomeda: `actor-webpage`, `milkomeda-wsc` and `dapp-example`.
