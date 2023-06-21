@@ -38,10 +38,15 @@ export interface PendingTx {
   destinationAddress: string;
 }
 
+export interface MempoolPendingTx {
+  hash: string;
+  type: PendingTxType;
+}
+
 export enum PendingTxType {
   Wrap = "Wrap",
-  WrapPermission = "WrapPermission",
   Unwrap = "Unwrap",
+  UnwrapPermission = "UnwrapPermission",
   Normal = "Normal",
 }
 

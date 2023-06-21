@@ -91,6 +91,56 @@ export interface ExplorerTransaction {
   value: string;
 }
 
+export interface MempoolTx {
+  tx: {
+    hash: string;
+    output_amount: Array<{
+      unit: string;
+      quantity: string;
+    }>;
+    fees: string;
+    deposit: string;
+    size: number;
+    invalid_before: null | string;
+    invalid_hereafter: string;
+    utxo_count: number;
+    withdrawal_count: number;
+    mir_cert_count: number;
+    delegation_count: number;
+    stake_cert_count: number;
+    pool_update_count: number;
+    pool_retire_count: number;
+    asset_mint_or_burn_count: number;
+    redeemer_count: number;
+    valid_contract: boolean;
+  };
+  inputs: Array<{
+    address: string;
+    tx_hash: string;
+    output_index: number;
+    collateral: boolean;
+    reference: boolean;
+  }>;
+  outputs: Array<{
+    address: string;
+    amount: Array<{
+      unit: string;
+      quantity: string;
+    }>;
+    output_index: number;
+    data_hash: string;
+    inline_datum: string;
+    collateral: boolean;
+    reference_script_hash: string;
+  }>;
+  redeemers: Array<{
+    tx_index: number;
+    purpose: string;
+    unit_mem: string;
+    unit_steps: string;
+  }>;
+}
+
 class CardanoPendingManager extends PendingManager implements IPendingManager {
   blockfrost: Blockfrost;
 
@@ -110,7 +160,8 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   async getPendingTransactions(): Promise<PendingTx[]> {
     const cardanoPendingTxs = await this.getCardanoPendingTxs();
     const evmPendingTxs = await this.getEVMPendingTxs();
-    return [...cardanoPendingTxs, ...evmPendingTxs];
+    const cardanoMempoolTxs = await this.getCardanoMempoolTxs();
+    return [...cardanoMempoolTxs, ...cardanoPendingTxs, ...evmPendingTxs];
   }
 
   async fetchRecentTransactions(address: string): Promise<CardanoBlockfrostTransaction[]> {
@@ -134,6 +185,34 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
   //
   // Cardano
   //
+  async getCardanoMempoolTxs(): Promise<PendingTx[]> {
+    let mempoolTxs: string[];
+    try {
+      mempoolTxs = await this.fetchTxsInMempoolForAddress(this.userL1Address);
+      if (mempoolTxs.length === 0) return [];
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
+        return [];
+      }
+      throw error;
+    }
+
+    const fetchPromises = mempoolTxs.map((tx) => this.fetchMempoolTx(tx));
+    const allTxs = await Promise.all(fetchPromises);
+    const myInputTxs = allTxs.filter((tx) =>
+      tx.inputs.some((input) => input.address === this.userL1Address)
+    );
+
+    const timeNow = Date.now();
+    return myInputTxs.map((tx) => ({
+      hash: tx.tx.hash,
+      timestamp: timeNow,
+      explorer: undefined,
+      type: PendingTxType.Wrap,
+      destinationAddress: "",
+    }));
+  }
+
   async getCardanoPendingTxs(): Promise<PendingTx[]> {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed
@@ -162,7 +241,7 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     });
 
     // check if bridgeTxs exist in the bridge API (if they don't it means that they are pending)
-    // this is a *very* inefficient way to do this, but it's the only way until we have a better API
+    // this is a *very* inefficient way to do this, but it's the only way until we get a better API
     const bridgeRequests = await MilkomedaNetwork.fetchBridgeRequests(this.network);
     const processedTxHashes = bridgeRequests.map((request) => request.mainchain_tx_id);
     const pendingTxs = txsToBridge.filter((tx) => !processedTxHashes.includes(tx.tx_hash));
@@ -218,6 +297,35 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
       console.error("Error fetching data from URL:", error);
       throw error;
     }
+  }
+
+  async fetchTxsInMempoolForAddress(address: string): Promise<string[]> {
+    const url = this.blockfrost.url + "/mempool/addresses/" + address;
+    const response = await fetch(url, {
+      headers: {
+        project_id: this.blockfrost.projectId,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const txHashes: string[] = (await response.json()).map((tx: any) => tx.tx_hash);
+    return txHashes;
+  }
+
+  async fetchMempoolTx(txHash: string): Promise<MempoolTx> {
+    const url = this.blockfrost.url + "/mempool/" + txHash;
+    const response = await fetch(url, {
+      headers: {
+        project_id: this.blockfrost.projectId,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const tx: MempoolTx = await response.json();
+    return tx;
   }
 }
 
