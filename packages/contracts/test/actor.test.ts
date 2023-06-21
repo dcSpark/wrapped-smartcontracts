@@ -23,8 +23,6 @@ describe("Actor", () => {
   before(async () => {
     const factory = await getActorFactory();
 
-    console.log(await ethers.provider.getCode(factory.address));
-
     actorAddress = await getActorAddress(factory.address, mainchainAddress, salt);
 
     actor = await ethers.getContractAt("Actor", actorAddress);
