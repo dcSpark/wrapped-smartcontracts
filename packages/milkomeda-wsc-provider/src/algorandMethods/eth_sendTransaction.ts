@@ -86,7 +86,10 @@ const eth_sendTransaction: CustomMethod = async (
       calldata: data ?? [],
     });
 
-    const genesisHash = peraWallet.chainId === 416001 ? "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=" : "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=";
+    const genesisHash =
+      peraWallet.chainId === 416001
+        ? "wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8="
+        : "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=";
 
     const algorandZeroTx = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       from: algorandAddress,

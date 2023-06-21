@@ -44,7 +44,10 @@ class BridgeActions {
   }
 
   isCardano(): boolean {
-    return this.network === MilkomedaNetworkName.C1Mainnet || this.network === MilkomedaNetworkName.C1Devnet;
+    return (
+      this.network === MilkomedaNetworkName.C1Mainnet ||
+      this.network === MilkomedaNetworkName.C1Devnet
+    );
   }
 
   getBridgeMetadata(): string {
