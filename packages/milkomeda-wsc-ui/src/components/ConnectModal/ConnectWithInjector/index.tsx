@@ -30,7 +30,6 @@ import { RetryIconCircle, Scan } from "../../../assets/icons";
 import BrowserIcon from "../../Common/BrowserIcon";
 import { AlertIcon, TickIcon } from "../../../assets/icons";
 import { detectBrowser } from "../../../utils";
-import useLocales from "../../../hooks/useLocales";
 import { useConnect } from "../../../hooks/useConnect";
 
 export const states = {
@@ -150,12 +149,6 @@ const ConnectWithInjector: React.FC<{
     forceState ? forceState : !hasExtensionInstalled ? states.UNAVAILABLE : states.CONNECTING
   );
 
-  const locales = useLocales({
-    CONNECTORNAME: connector.name,
-    CONNECTORSHORTNAME: connector.shortName ?? connector.name,
-    SUGGESTEDEXTENSIONBROWSER: suggestedExtension?.label ?? "your browser",
-  });
-
   const runConnect = () => {
     if (!hasExtensionInstalled) return;
 
@@ -238,7 +231,7 @@ const ConnectWithInjector: React.FC<{
                         showTryAgainTooltip &&
                         (status === states.FAILED || status === states.REJECTED)
                       }
-                      message={locales.tryAgainQuestion}
+                      message={"try again"}
                       xOffset={-6}
                     >
                       <RetryIconCircle />
@@ -344,16 +337,16 @@ const ConnectWithInjector: React.FC<{
                 <ModalContent>
                   <ModalH1 $error>
                     <AlertIcon />
-                    {locales.injectionScreen_failed_h1}
+                    Fail!
                   </ModalH1>
-                  <ModalBody>{locales.injectionScreen_failed_p}</ModalBody>
+                  <ModalBody>Failed!</ModalBody>
                 </ModalContent>
                 {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
                 {connector.scannable && connector.id !== "coinbaseWallet" && (
                   <>
                     <OrDivider />
                     <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
-                      {locales.scanTheQRCode}
+                      scan QR code
                     </Button>
                   </>
                 )}
@@ -368,8 +361,8 @@ const ConnectWithInjector: React.FC<{
                 variants={contentVariants}
               >
                 <ModalContent style={{ paddingBottom: 28 }}>
-                  <ModalH1>{locales.injectionScreen_rejected_h1}</ModalH1>
-                  <ModalBody>{locales.injectionScreen_rejected_p}</ModalBody>
+                  <ModalH1>Rejected</ModalH1>
+                  <ModalBody>rejected description</ModalBody>
                 </ModalContent>
 
                 {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
@@ -377,7 +370,7 @@ const ConnectWithInjector: React.FC<{
                   <>
                     <OrDivider />
                     <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
-                      {locales.scanTheQRCode}
+                      scan qr code
                     </Button>
                   </>
                 )}
@@ -393,14 +386,10 @@ const ConnectWithInjector: React.FC<{
               >
                 <ModalContent style={{ paddingBottom: 28 }}>
                   <ModalH1>
-                    {connector.id === "injected"
-                      ? locales.injectionScreen_connecting_injected_h1
-                      : locales.injectionScreen_connecting_h1}
+                    {connector.id === "injected" ? "injected" : "connecting injected"}
                   </ModalH1>
                   <ModalBody>
-                    {connector.id === "injected"
-                      ? locales.injectionScreen_connecting_injected_p
-                      : locales.injectionScreen_connecting_p}
+                    {connector.id === "injected" ? "injected d" : "connecting injected ddd"}
                   </ModalBody>
                 </ModalContent>
               </Content>
@@ -415,9 +404,9 @@ const ConnectWithInjector: React.FC<{
               >
                 <ModalContent>
                   <ModalH1 $valid>
-                    <TickIcon /> {locales.injectionScreen_connected_h1}
+                    <TickIcon /> aaab
                   </ModalH1>
-                  <ModalBody>{locales.injectionScreen_connected_p}</ModalBody>
+                  <ModalBody>description</ModalBody>
                 </ModalContent>
               </Content>
             )}
@@ -430,8 +419,8 @@ const ConnectWithInjector: React.FC<{
                 variants={contentVariants}
               >
                 <ModalContent>
-                  <ModalH1>{locales.injectionScreen_notconnected_h1}</ModalH1>
-                  <ModalBody>{locales.injectionScreen_notconnected_p}</ModalBody>
+                  <ModalH1>not connected</ModalH1>
+                  <ModalBody>not connected description</ModalBody>
                 </ModalContent>
               </Content>
             )}
@@ -446,8 +435,8 @@ const ConnectWithInjector: React.FC<{
                 {!extensionUrl ? (
                   <>
                     <ModalContent style={{ paddingBottom: 12 }}>
-                      <ModalH1>{locales.injectionScreen_unavailable_h1}</ModalH1>
-                      <ModalBody>{locales.injectionScreen_unavailable_p}</ModalBody>
+                      <ModalH1>injectionScreen_unavailable_h1</ModalH1>
+                      <ModalBody>injectionScreen_unavailable_p</ModalBody>
                     </ModalContent>
 
                     {!hasExtensionInstalled && suggestedExtension && (
@@ -462,8 +451,8 @@ const ConnectWithInjector: React.FC<{
                 ) : (
                   <>
                     <ModalContent style={{ paddingBottom: 18 }}>
-                      <ModalH1>{locales.injectionScreen_install_h1}</ModalH1>
-                      <ModalBody>{locales.injectionScreen_install_p}</ModalBody>
+                      <ModalH1>injectionScreen_install_h1</ModalH1>
+                      <ModalBody>injectionScreen_install_p</ModalBody>
                     </ModalContent>
                     {/**
                   {(connector.scannable &&|
@@ -477,7 +466,7 @@ const ConnectWithInjector: React.FC<{
                   */}
                     {!hasExtensionInstalled && extensionUrl && (
                       <Button href={extensionUrl} icon={<BrowserIcon />}>
-                        {locales.installTheExtension}
+                        Install extension
                       </Button>
                     )}
                   </>

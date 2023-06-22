@@ -24,12 +24,12 @@ import { isMobile } from "../../../utils";
 import Button from "../../Common/Button";
 import useDefaultWallets from "../../../wallets/useDefaultWallets";
 import { Connector } from "wagmi";
-import useLocales from "../../../hooks/useLocales";
+
 import { useLastConnector } from "../../../hooks/useLastConnector";
 
 const Wallets: React.FC = () => {
   const context = useContext();
-  const locales = useLocales({});
+
   const mobile = isMobile();
 
   const { connectAsync, connectors } = useConnect();
@@ -103,12 +103,12 @@ const Wallets: React.FC = () => {
           </MobileConnectorsContainer>
           <InfoBox>
             <ModalContent style={{ padding: 0, textAlign: "left" }}>
-              <ModalH1 $small>{locales.connectorsScreen_h1}</ModalH1>
-              <ModalBody>{locales.connectorsScreen_p}</ModalBody>
+              <ModalH1 $small>connectorsScreen_h1</ModalH1>
+              <ModalBody>connectorsScreen_p</ModalBody>
             </ModalContent>
             <InfoBoxButtons>
               <Button variant={"tertiary"} onClick={() => context.setRoute(routes.ONBOARDING)}>
-                {locales.getWallet}
+                getWallet
               </Button>
             </InfoBoxButtons>
           </InfoBox>

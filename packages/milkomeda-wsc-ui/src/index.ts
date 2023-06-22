@@ -8,7 +8,6 @@ export { ConnectWSCButton } from "./components/ConnectButton";
 
 //export { default as NetworkButton } from './components/NetworkButton';
 //export { default as BalanceButton, Balance } from './components/BalanceButton';
-export { default as Avatar } from "./components/Common/Avatar";
 
 // Hooks
 export { default as useIsMounted } from "./hooks/useIsMounted"; // Useful for apps that use SSR

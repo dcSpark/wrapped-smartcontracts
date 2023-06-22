@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Graphic,
   LogoGroup,
@@ -9,26 +9,18 @@ import {
   LogoGraphic,
   GraphicBackground,
   RotateWrapper,
-} from './styles';
+} from "./styles";
 
-import {
-  PageContent,
-  ModalBody,
-  ModalContent,
-  ModalH1,
-} from '../../Common/Modal/styles';
-import Logos from '../../../assets/logos';
-import wave from '../../../assets/wave';
+import { PageContent, ModalBody, ModalContent, ModalH1 } from "../../Common/Modal/styles";
+import Logos from "../../../assets/logos";
+import wave from "../../../assets/wave";
 
-import Button from '../../Common/Button';
-import useLocales from '../../../hooks/useLocales';
-import { useContext } from '../../ConnectWSC';
+import Button from "../../Common/Button";
+import { useContext } from "../../ConnectWSC";
 
 const Introduction: React.FC = () => {
   const context = useContext();
-  const locales = useLocales({});
 
-  const ctaUrl = locales.onboardingScreen_ctaUrl;
   return (
     <PageContent>
       <Graphic>
@@ -102,11 +94,11 @@ const Introduction: React.FC = () => {
         <GraphicBackground>{wave}</GraphicBackground>
       </Graphic>
       <ModalContent style={{ paddingBottom: 18 }}>
-        <ModalH1 $small>{locales.onboardingScreen_h1}</ModalH1>
-        <ModalBody>{locales.onboardingScreen_p}</ModalBody>
+        <ModalH1 $small>Welcome!</ModalH1>
+        <ModalBody>Welcome, heres description</ModalBody>
       </ModalContent>
-      <Button href={ctaUrl} arrow>
-        {locales.onboardingScreen_ctaText}
+      <Button href={""} arrow>
+        Start
       </Button>
     </PageContent>
   );

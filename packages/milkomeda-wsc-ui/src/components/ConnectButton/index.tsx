@@ -1,30 +1,24 @@
-import React from 'react';
-import { Chain, useAccount, useEnsName, useNetwork } from 'wagmi';
-import { truncateENSAddress, truncateEthAddress } from '../../utils';
-import useIsMounted from '../../hooks/useIsMounted';
+import React from "react";
+import { Chain, useAccount, useEnsName, useNetwork } from "wagmi";
+import { truncateENSAddress, truncateEthAddress } from "../../utils";
+import useIsMounted from "../../hooks/useIsMounted";
 
-import {
-  IconContainer,
-  TextContainer,
-  UnsupportedNetworkContainer,
-} from './styles';
-import { routes, useContext } from '../ConnectWSC';
-import { useModal } from '../../hooks/useModal';
+import { IconContainer, TextContainer, UnsupportedNetworkContainer } from "./styles";
+import { routes, useContext } from "../ConnectWSC";
+import { useModal } from "../../hooks/useModal";
 
-import Avatar from '../Common/Avatar';
-import { AnimatePresence, Variants, motion } from 'framer-motion';
-import { CustomTheme, Mode, Theme } from '../../types';
-import { Balance } from '../BalanceButton';
-import ThemedButton, { ThemeContainer } from '../Common/ThemedButton';
-import { ResetContainer } from '../../styles';
-import { AuthIcon } from '../../assets/icons';
-import useLocales from '../../hooks/useLocales';
+import { AnimatePresence, Variants, motion } from "framer-motion";
+import { CustomTheme, Mode, Theme } from "../../types";
+import { Balance } from "../BalanceButton";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
+import { ResetContainer } from "../../styles";
+import { AuthIcon } from "../../assets/icons";
 
 const contentVariants: Variants = {
   initial: {
     zIndex: 2,
     opacity: 0,
-    x: '-100%',
+    x: "-100%",
   },
   animate: {
     opacity: 1,
@@ -37,9 +31,9 @@ const contentVariants: Variants = {
   exit: {
     zIndex: 1,
     opacity: 0,
-    x: '-100%',
-    pointerEvents: 'none',
-    position: 'absolute',
+    x: "-100%",
+    pointerEvents: "none",
+    position: "absolute",
     transition: {
       duration: 0.4,
       ease: [0.25, 1, 0.5, 1],
@@ -51,7 +45,7 @@ const addressVariants: Variants = {
   initial: {
     zIndex: 2,
     opacity: 0,
-    x: '100%',
+    x: "100%",
   },
   animate: {
     x: 0.2,
@@ -63,10 +57,10 @@ const addressVariants: Variants = {
   },
   exit: {
     zIndex: 1,
-    x: '100%',
+    x: "100%",
     opacity: 0,
-    pointerEvents: 'none',
-    position: 'absolute',
+    pointerEvents: "none",
+    position: "absolute",
     transition: {
       duration: 0.4,
       ease: [0.25, 1, 0.5, 1],
@@ -86,7 +80,7 @@ const textVariants: Variants = {
     },
   },
   exit: {
-    position: 'absolute',
+    position: "absolute",
     opacity: 0,
     transition: {
       duration: 0.3,
@@ -113,9 +107,7 @@ type ConnectButtonRendererProps = {
   }) => React.ReactNode;
 };
 
-const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({
-  children,
-}) => {
+const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children }) => {
   const isMounted = useIsMounted();
   const context = useContext();
   const { open, setOpen } = useModal();
@@ -156,7 +148,7 @@ const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({
   );
 };
 
-ConnectButtonRenderer.displayName = 'ConnectKitButton.Custom';
+ConnectButtonRenderer.displayName = "ConnectKitButton.Custom";
 
 function ConnectKitButtonInner({
   label,
@@ -167,7 +159,6 @@ function ConnectKitButtonInner({
   showAvatar?: boolean;
   separator?: string;
 }) {
-  const locales = useLocales({});
   const context = useContext();
 
   const { address } = useAccount();
@@ -176,16 +167,16 @@ function ConnectKitButtonInner({
     address: address,
   });
   const { chain } = useNetwork();
-  const defaultLabel = locales.connectWallet;
+  const defaultLabel = "connect wallet";
 
   return (
     <AnimatePresence initial={false}>
       {address ? (
         <TextContainer
           key="connectedText"
-          initial={'initial'}
-          animate={'animate'}
-          exit={'exit'}
+          initial={"initial"}
+          animate={"animate"}
+          exit={"exit"}
           variants={addressVariants}
           style={{
             height: 40,
@@ -199,7 +190,7 @@ function ConnectKitButtonInner({
                   <motion.div
                     style={{
                       zIndex: 2,
-                      position: 'absolute',
+                      position: "absolute",
                       bottom: 0,
                       right: 0,
                     }}
@@ -231,13 +222,12 @@ function ConnectKitButtonInner({
                   </UnsupportedNetworkContainer>
                 )}
               </AnimatePresence>
-              <Avatar size={24} address={address} />
             </IconContainer>
           )}
 
           <div
             style={{
-              position: 'relative',
+              position: "relative",
               paddingRight: showAvatar ? 1 : 0,
             }}
           >
@@ -245,12 +235,12 @@ function ConnectKitButtonInner({
               {ensName ? (
                 <TextContainer
                   key="ckEnsName"
-                  initial={'initial'}
-                  animate={'animate'}
-                  exit={'exit'}
+                  initial={"initial"}
+                  animate={"animate"}
+                  exit={"exit"}
                   variants={textVariants}
                   style={{
-                    position: ensName ? 'relative' : 'absolute',
+                    position: ensName ? "relative" : "absolute",
                   }}
                 >
                   {truncateENSAddress(ensName, 20)}
@@ -258,15 +248,15 @@ function ConnectKitButtonInner({
               ) : (
                 <TextContainer
                   key="ckTruncatedAddress"
-                  initial={'initial'}
-                  animate={'animate'}
-                  exit={'exit'}
+                  initial={"initial"}
+                  animate={"animate"}
+                  exit={"exit"}
                   variants={textVariants}
                   style={{
-                    position: ensName ? 'absolute' : 'relative',
+                    position: ensName ? "absolute" : "relative",
                   }}
                 >
-                  {truncateEthAddress(address, separator)}{' '}
+                  {truncateEthAddress(address, separator)}{" "}
                 </TextContainer>
               )}
             </AnimatePresence>
@@ -275,9 +265,9 @@ function ConnectKitButtonInner({
       ) : (
         <TextContainer
           key="connectWalletText"
-          initial={'initial'}
-          animate={'animate'}
-          exit={'exit'}
+          initial={"initial"}
+          animate={"animate"}
+          exit={"exit"}
           variants={contentVariants}
           style={{
             height: 40,
@@ -332,11 +322,7 @@ export function ConnectWSCButton({
     context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
   }
 
-  const separator = ['web95', 'rounded', 'minimal'].includes(
-    theme ?? context.theme ?? ''
-  )
-    ? '....'
-    : undefined;
+  const separator = ["web95", "rounded", "minimal"].includes(theme ?? "") ? "...." : undefined;
 
   if (!isMounted) return null;
 
@@ -344,11 +330,7 @@ export function ConnectWSCButton({
   const willShowBalance = address && shouldShowBalance;
 
   return (
-    <ResetContainer
-      $useTheme={theme ?? context.theme}
-      $useMode={mode ?? context.mode}
-      $customTheme={customTheme ?? context.customTheme}
-    >
+    <ResetContainer>
       <ThemeContainer
         onClick={() => {
           if (onClick) {
@@ -362,17 +344,17 @@ export function ConnectWSCButton({
           <AnimatePresence initial={false}>
             {willShowBalance && (
               <motion.div
-                key={'balance'}
+                key={"balance"}
                 initial={{
                   opacity: 0,
-                  x: '100%',
+                  x: "100%",
                   width: 0,
                   marginRight: 0,
                 }}
                 animate={{
                   opacity: 1,
                   x: 0,
-                  width: 'auto',
+                  width: "auto",
                   marginRight: -24,
                   transition: {
                     duration: 0.4,
@@ -381,7 +363,7 @@ export function ConnectWSCButton({
                 }}
                 exit={{
                   opacity: 0,
-                  x: '100%',
+                  x: "100%",
                   width: 0,
                   marginRight: 0,
                   transition: {
@@ -390,13 +372,7 @@ export function ConnectWSCButton({
                   },
                 }}
               >
-                <ThemedButton
-                  variant={'secondary'}
-                  theme={theme ?? context.theme}
-                  mode={mode ?? context.mode}
-                  customTheme={customTheme ?? context.customTheme}
-                  style={{ overflow: 'hidden' }}
-                >
+                <ThemedButton variant={"secondary"} style={{ overflow: "hidden" }}>
                   <motion.div style={{ paddingRight: 24 }}>
                     <Balance hideSymbol />
                   </motion.div>
@@ -406,32 +382,23 @@ export function ConnectWSCButton({
           </AnimatePresence>
         )}
         <ThemedButton
-          theme={theme ?? context.theme}
-          mode={mode ?? context.mode}
-          customTheme={customTheme ?? context.customTheme}
+          theme={theme}
+          mode={mode}
+          customTheme={customTheme}
           style={
-            shouldShowBalance &&
-            showBalance &&
-            address &&
-            (theme === 'retro' || context.theme === 'retro')
+            shouldShowBalance && showBalance && address && theme === "retro"
               ? {
                   /** Special fix for the retro theme... not happy about this one */
-                  boxShadow:
-                    'var(--ck-connectbutton-balance-connectbutton-box-shadow)',
-                  borderRadius:
-                    'var(--ck-connectbutton-balance-connectbutton-border-radius)',
-                  overflow: 'hidden',
+                  boxShadow: "var(--ck-connectbutton-balance-connectbutton-box-shadow)",
+                  borderRadius: "var(--ck-connectbutton-balance-connectbutton-border-radius)",
+                  overflow: "hidden",
                 }
               : {
-                  overflow: 'hidden',
+                  overflow: "hidden",
                 }
           }
         >
-          <ConnectKitButtonInner
-            separator={separator}
-            showAvatar={showAvatar}
-            label={label}
-          />
+          <ConnectKitButtonInner separator={separator} showAvatar={showAvatar} label={label} />
         </ThemedButton>
       </ThemeContainer>
     </ResetContainer>

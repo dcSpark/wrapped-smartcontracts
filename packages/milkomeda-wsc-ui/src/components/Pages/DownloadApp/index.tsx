@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
-import supportedConnectors from '../../../constants/supportedConnectors';
+import React, { useState } from "react";
+import supportedConnectors from "../../../constants/supportedConnectors";
 
-import {
-  PageContent,
-  ModalBody,
-  ModalContent,
-} from '../../Common/Modal/styles';
-import { OrDivider } from '../../Common/Modal';
+import { PageContent, ModalBody, ModalContent } from "../../Common/Modal/styles";
+import { OrDivider } from "../../Common/Modal";
 
-import CustomQRCode from '../../Common/CustomQRCode';
-import Button from '../../Common/Button';
+import CustomQRCode from "../../Common/CustomQRCode";
+import Button from "../../Common/Button";
 
-import { ExternalLinkIcon } from '../../../assets/icons';
-import useLocales from '../../../hooks/useLocales';
+import { ExternalLinkIcon } from "../../../assets/icons";
 
 const DownloadApp: React.FC<{
   connectorId: string;
@@ -20,30 +15,19 @@ const DownloadApp: React.FC<{
   const [id] = useState(connectorId);
   const connector = supportedConnectors.filter((c) => c.id === id)[0];
 
-  const locales = useLocales({
-    CONNECTORNAME: connector.name,
-  });
-
   if (!connector) return <>Connector not found</>;
 
   const ios = connector.appUrls?.ios;
   const android = connector.appUrls?.android;
   const downloadUri = connector.appUrls?.download;
-  const bodycopy =
-    ios && android
-      ? locales.downloadAppScreen_iosAndroid
-      : ios
-      ? locales.downloadAppScreen_ios
-      : locales.downloadAppScreen_android;
+  const bodycopy = ios && android ? "ios" : ios ? "app ios" : "android";
 
   return (
     <PageContent>
       <ModalContent style={{ paddingBottom: 4, gap: 14 }}>
         {downloadUri && <CustomQRCode value={downloadUri} />}
         {!downloadUri && <>No download link available</>}
-        <ModalBody
-          style={{ fontSize: 15, lineHeight: '20px', padding: '0 12px' }}
-        >
+        <ModalBody style={{ fontSize: 15, lineHeight: "20px", padding: "0 12px" }}>
           {bodycopy}
         </ModalBody>
         {connector.defaultConnect && <OrDivider />}

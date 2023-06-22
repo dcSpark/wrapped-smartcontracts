@@ -21,4 +21,3 @@ export type All = {
 };
 
 export type { ConnectWSCOptions } from "./components/ConnectWSC";
-export type { CustomAvatarProps } from "./components/Common/Avatar";

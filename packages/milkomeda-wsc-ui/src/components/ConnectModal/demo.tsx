@@ -1,22 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { useAccount, useNetwork } from 'wagmi';
-import { routes, useContext } from '../ConnectWSC';
-import { CustomTheme, Languages, Theme, Mode } from '../../types';
-import Modal from '../Common/Modal';
+import { useEffect, useRef, useState } from "react";
+import { useAccount, useNetwork } from "wagmi";
+import { routes, useContext } from "../ConnectWSC";
+import { CustomTheme, Languages, Theme, Mode } from "../../types";
+import Modal from "../Common/Modal";
 
-import Onboarding from '../Pages/Onboarding';
-import Connectors from '../Pages/Connectors';
-import ConnectUsing from './ConnectUsing';
-import DownloadApp from '../Pages/DownloadApp';
-import Profile from '../Pages/Profile';
+import Onboarding from "../Pages/Onboarding";
+import Connectors from "../Pages/Connectors";
+import ConnectUsing from "./ConnectUsing";
+import DownloadApp from "../Pages/DownloadApp";
+import Profile from "../Pages/Profile";
 
-import MobileConnectors from '../Pages/MobileConnectors';
+import MobileConnectors from "../Pages/MobileConnectors";
 
-import { ConnectWSCButton } from '../ConnectButton';
-import { ConnectWSCThemeProvider } from '../ConnectWSCThemeProvider/ConnectWSCThemeProvider';
+import { ConnectWSCButton } from "../ConnectButton";
 
-import styled from '../../styles/styled';
-import { keyframes } from 'styled-components';
+import styled from "../../styles/styled";
+import { keyframes } from "styled-components";
 
 const dist = 8;
 const shake = keyframes`
@@ -68,7 +67,7 @@ const ButtonContainer = styled.div`
   justify-content: center;
   &:before {
     z-index: 9;
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
   }
@@ -85,10 +84,10 @@ const ConnectModal: React.FC<{
   open?: boolean;
   onClose?: () => void;
 }> = ({
-  theme = 'auto',
+  theme = "auto",
   customTheme = customThemeDefault,
-  lang = 'en-US',
-  mode = 'auto',
+  lang = "en-US",
+  mode = "auto",
   inline = false,
   open,
   onClose,
@@ -98,14 +97,10 @@ const ConnectModal: React.FC<{
   const { chain } = useNetwork();
 
   //if chain is unsupported we enforce a "switch chain" prompt
-  const closeable = !(
-    context.options?.enforceSupportedChains && chain?.unsupported
-  );
+  const closeable = !chain?.unsupported;
 
   const showBackButton =
-    closeable &&
-    context.route !== routes.CONNECTORS &&
-    context.route !== routes.PROFILE;
+    closeable && context.route !== routes.CONNECTORS && context.route !== routes.PROFILE;
 
   const showInfoButton = closeable && context.route !== routes.PROFILE;
 
@@ -131,23 +126,21 @@ const ConnectModal: React.FC<{
   const [isOpen, setIsOpen] = useState<boolean>(open ?? false);
 
   useEffect(() => {
-    if (open)
-      context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
+    if (open) context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
     setIsOpen(open ?? false);
   }, [open]);
 
   useEffect(() => {
-    if (isOpen)
-      context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
+    if (isOpen) context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
   }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen && inline) {
       if (onClose) {
         if (cursorRef.current) {
-          cursorRef.current.classList.remove('play');
+          cursorRef.current.classList.remove("play");
           void cursorRef.current.offsetWidth;
-          cursorRef.current.classList.add('play');
+          cursorRef.current.classList.add("play");
         }
         setTimeout(() => {
           setIsOpen(true);
@@ -168,9 +161,9 @@ const ConnectModal: React.FC<{
     } else {
       if (ref.current) {
         // reset animation
-        ref.current.classList.remove('shake');
+        ref.current.classList.remove("shake");
         void ref.current.offsetWidth;
-        ref.current.classList.add('shake');
+        ref.current.classList.add("shake");
       }
     }
   };
@@ -189,8 +182,8 @@ const ConnectModal: React.FC<{
   useEffect(() => {
     if (!open && !inline) return;
 
-    const title = document.createElement('meta');
-    title.setAttribute('property', 'og:title');
+    const title = document.createElement("meta");
+    title.setAttribute("property", "og:title");
     // title.setAttribute('content', appName);
     document.head.prepend(title);
 
@@ -200,36 +193,26 @@ const ConnectModal: React.FC<{
   }, [open, inline]);
 
   return (
-    <ConnectWSCThemeProvider
-      theme={theme}
-      customTheme={customTheme}
-      mode={mode}
-    >
-      <Container ref={ref}>
-        {inline && onClose && (
-          <>
-            <Cursor ref={cursorRef} />
-            <ButtonContainer>
-              <ConnectWSCButton
-                customTheme={customTheme}
-                theme={theme}
-                mode={mode}
-              />
-            </ButtonContainer>
-          </>
-        )}
-        <Modal
-          demo={{ theme: theme, customTheme: customTheme, mode: mode }}
-          onClose={closeable ? onModalClose : undefined}
-          positionInside={inline}
-          open={isOpen}
-          pages={pages}
-          pageId={context.route}
-          onInfo={undefined}
-          onBack={showBackButton ? onBack : undefined}
-        />
-      </Container>
-    </ConnectWSCThemeProvider>
+    <Container ref={ref}>
+      {inline && onClose && (
+        <>
+          <Cursor ref={cursorRef} />
+          <ButtonContainer>
+            <ConnectWSCButton customTheme={customTheme} theme={theme} mode={mode} />
+          </ButtonContainer>
+        </>
+      )}
+      <Modal
+        demo={{ theme: theme, customTheme: customTheme, mode: mode }}
+        onClose={closeable ? onModalClose : undefined}
+        positionInside={inline}
+        open={isOpen}
+        pages={pages}
+        pageId={context.route}
+        onInfo={undefined}
+        onBack={showBackButton ? onBack : undefined}
+      />
+    </Container>
   );
 };
 

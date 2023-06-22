@@ -7,7 +7,7 @@ import useDefaultWallets from "../../../wallets/useDefaultWallets";
 import { routes, useContext } from "../../ConnectWSC";
 import { WalletProps } from "../../../wallets/wallet";
 import CopyToClipboard from "../../Common/CopyToClipboard";
-import useLocales from "../../../hooks/useLocales";
+
 import { Spinner } from "../../Common/Spinner";
 
 const MoreIcon = (
@@ -23,7 +23,6 @@ const MoreIcon = (
 
 const MobileConnectors: React.FC = () => {
   const context = useContext();
-  const locales = useLocales();
 
   const wallets = useDefaultWallets().filter(
     (wallet: WalletProps) => wallet.installed === undefined
@@ -71,21 +70,19 @@ const MobileConnectors: React.FC = () => {
             })}
           </WalletList>
         </ModalContent>
-        {context.options?.walletConnectCTA !== "modal" && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 14,
-              paddingTop: 16,
-            }}
-          >
-            <CopyToClipboard variant="button" string={"random"}>
-              {locales.copyToClipboard}
-            </CopyToClipboard>
-          </div>
-        )}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 14,
+            paddingTop: 16,
+          }}
+        >
+          <CopyToClipboard variant="button" string={"random"}>
+            Copy to clipboard
+          </CopyToClipboard>
+        </div>
       </Container>
     </PageContent>
   );

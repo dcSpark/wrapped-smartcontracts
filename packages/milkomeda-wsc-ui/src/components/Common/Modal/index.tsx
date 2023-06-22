@@ -27,17 +27,14 @@ import {
 } from "./styles";
 
 import { routes, useContext } from "../../ConnectWSC";
-import useLockBodyScroll from "../../../hooks/useLockBodyScroll";
 
 import { useTransition } from "react-transition-state";
 import FocusTrap from "../../../hooks/useFocusTrap";
 import { supportedConnectors } from "../../../index";
 import usePrevious from "../../../hooks/usePrevious";
 import { CustomTheme } from "../../../types";
-import { useThemeContext } from "../../ConnectWSCThemeProvider/ConnectWSCThemeProvider";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { AuthIcon } from "../../../assets/icons";
-import useLocales from "../../../hooks/useLocales";
 import FitText from "../FitText";
 
 const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
@@ -192,14 +189,10 @@ const Modal: React.FC<ModalProps> = ({
   onInfo,
 }) => {
   const context = useContext();
-  const themeContext = useThemeContext();
   const mobile = isMobile();
 
   const connector = supportedConnectors.find((x) => x.id === context.connector);
   console.log("connector", connector);
-  const locales = useLocales({
-    CONNECTORNAME: connector?.name,
-  });
 
   const [state, setOpen] = useTransition({
     timeout: mobile ? 160 : 160, // different animations, 10ms extra to avoid final-frame drops
@@ -212,7 +205,6 @@ const Modal: React.FC<ModalProps> = ({
   const currentDepth =
     context.route === routes.CONNECTORS ? 0 : context.route === routes.DOWNLOAD ? 2 : 1;
   const prevDepth = usePrevious(currentDepth, currentDepth);
-  if (!positionInside) useLockBodyScroll(mounted);
 
   const prevPage = usePrevious(pageId, pageId);
 
@@ -305,20 +297,20 @@ const Modal: React.FC<ModalProps> = ({
     switch (context.route) {
       case routes.CONNECT:
         if (shouldUseQrcode()) {
-          return locales.scanScreen_heading;
+          return "Connect";
         } else {
           return connector?.name;
         }
       case routes.CONNECTORS:
-        return locales.connectorsScreen_heading;
+        return "Connectors";
       case routes.MOBILECONNECTORS:
-        return locales.mobileConnectorsScreen_heading;
+        return "Mobile connectors";
       case routes.DOWNLOAD:
-        return locales.downloadAppScreen_heading;
+        return "download";
       case routes.ONBOARDING:
-        return locales.onboardingScreen_heading;
+        return "onboarding";
       case routes.PROFILE:
-        return locales.profileScreen_heading;
+        return "profile";
 
       default:
         return "";
@@ -326,11 +318,7 @@ const Modal: React.FC<ModalProps> = ({
   }
 
   const Content = (
-    <ResetContainer
-      $useTheme={demo?.theme ?? themeContext.theme}
-      $useMode={demo?.mode ?? themeContext.mode}
-      $customTheme={demo?.customTheme ?? themeContext.customTheme}
-    >
+    <ResetContainer>
       <ModalContainer
         role="dialog"
         style={{
@@ -338,13 +326,7 @@ const Modal: React.FC<ModalProps> = ({
           position: positionInside ? "absolute" : undefined,
         }}
       >
-        {!inline && (
-          <BackgroundOverlay
-            $active={rendered}
-            onClick={onClose}
-            $blur={context.options?.overlayBlur}
-          />
-        )}
+        {!inline && <BackgroundOverlay $active={rendered} onClick={onClose} />}
         <Container
           style={dimensionsCSS}
           initial={false}
@@ -367,28 +349,7 @@ const Modal: React.FC<ModalProps> = ({
             }}
           />
           <BoxContainer className={`${rendered && "active"}`}>
-            <AnimatePresence initial={false}>
-              {context.options?.disclaimer && context.route === routes.CONNECTORS && (
-                <DisclaimerBackground
-                  initial={{
-                    opacity: 0,
-                  }}
-                  animate={{
-                    opacity: 1,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    delay: 0,
-                    duration: 0.2,
-                    ease: [0.25, 0.1, 0.25, 1.0],
-                  }}
-                >
-                  <Disclaimer>
-                    <div>{context.options?.disclaimer}</div>
-                  </Disclaimer>
-                </DisclaimerBackground>
-              )}
-            </AnimatePresence>
+            <AnimatePresence initial={false}></AnimatePresence>
             <AnimatePresence initial={false}>
               {context.errorMessage && (
                 <ErrorMessage
@@ -414,10 +375,7 @@ const Modal: React.FC<ModalProps> = ({
             </AnimatePresence>
             <ControllerContainer>
               {onClose && (
-                <CloseButton
-                  aria-label={flattenChildren(locales.close).toString()}
-                  onClick={onClose}
-                >
+                <CloseButton onClick={onClose}>
                   <CloseIcon />
                 </CloseButton>
               )}
@@ -434,7 +392,6 @@ const Modal: React.FC<ModalProps> = ({
                   {onBack ? (
                     <BackButton
                       disabled={inTransition}
-                      aria-label={flattenChildren(locales.back).toString()}
                       key="backButton"
                       onClick={onBack}
                       initial={{ opacity: 0 }}
@@ -452,7 +409,6 @@ const Modal: React.FC<ModalProps> = ({
                     onInfo && (
                       <InfoButton
                         disabled={inTransition}
-                        aria-label={flattenChildren(locales.moreInformation).toString()}
                         key="infoButton"
                         onClick={onInfo}
                         initial={{ opacity: 0 }}
@@ -607,10 +563,9 @@ const Page: React.FC<PageProps> = ({
 };
 
 export const OrDivider = ({ children }: { children?: React.ReactNode }) => {
-  const locales = useLocales();
   return (
     <TextWithHr>
-      <span>{children ?? locales.or}</span>
+      <span>{children}</span>
     </TextWithHr>
   );
 };

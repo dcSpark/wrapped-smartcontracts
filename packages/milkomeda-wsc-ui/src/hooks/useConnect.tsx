@@ -3,23 +3,21 @@
  * additional functionality.
  */
 
-import { useConnect as wagmiUseConnect } from 'wagmi';
-import { useContext } from '../components/ConnectWSC';
-import { useLastConnector } from './useLastConnector';
+import { useConnect as wagmiUseConnect } from "wagmi";
+import { useContext } from "../components/ConnectWSC";
+import { useLastConnector } from "./useLastConnector";
 
 export function useConnect({ ...props } = {}) {
   const context = useContext();
 
-  const connectProps = {
-    chainId: context.options?.initialChainId,
-  };
+  const connectProps = {};
 
   const { updateLastConnectorId } = useLastConnector();
 
   const { connect, connectAsync, connectors, ...rest } = wagmiUseConnect({
     onError(err) {
       if (err.message) {
-        if (err.message !== 'User rejected request') {
+        if (err.message !== "User rejected request") {
           context.log(err.message, err);
         }
       } else {
@@ -27,7 +25,7 @@ export function useConnect({ ...props } = {}) {
       }
     },
     onSuccess(data: any) {
-      updateLastConnectorId(data?.connector?.id ?? '');
+      updateLastConnectorId(data?.connector?.id ?? "");
     },
     ...props,
     /*
