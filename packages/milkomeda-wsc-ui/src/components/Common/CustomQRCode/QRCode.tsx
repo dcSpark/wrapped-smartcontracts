@@ -1,5 +1,5 @@
-import QRCodeUtil from 'src/components/Common/CustomQRCode/QRCode';
-import React, { ReactElement, useMemo } from 'react';
+import QRCodeUtil from "qrcode";
+import React, { ReactElement, useMemo } from "react";
 
 const generateMatrix = (
   value: string,
@@ -12,9 +12,7 @@ const generateMatrix = (
   const sqrt = Math.sqrt(arr.length);
   return arr.reduce(
     (rows, key, index) =>
-      (index % sqrt === 0
-        ? rows.push([key])
-        : rows[rows.length - 1].push(key)) && rows,
+      (index % sqrt === 0 ? rows.push([key]) : rows[rows.length - 1].push(key)) && rows,
     []
   );
 };
@@ -29,12 +27,12 @@ type Props = {
 };
 
 export function QRCode({
-  ecl = 'M',
+  ecl = "M",
   size: sizeProp = 200,
   uri,
   clearArea = false,
   image,
-  imageBackground = 'transparent',
+  imageBackground = "transparent",
 }: Props) {
   const logoSize = clearArea ? 76 : 0;
   const size = sizeProp - 10 * 2;
@@ -58,8 +56,8 @@ export function QRCode({
             key={`${i}-${x}-${y}`}
             fill={
               i % 2 !== 0
-                ? 'var(--ck-qr-background, var(--ck-body-background))'
-                : 'var(--ck-qr-dot-color)'
+                ? "var(--ck-qr-background, var(--ck-body-background))"
+                : "var(--ck-qr-dot-color)"
             }
             rx={(i - 2) * -5 + (i === 0 ? 2 : 3)}
             ry={(i - 2) * -5 + (i === 0 ? 2 : 3)}
@@ -92,9 +90,7 @@ export function QRCode({
             x={x1 + cellSize * 0}
             y={y1 + cellSize * 0}
           >
-            <div style={{ borderRadius: (0 - 2) * -5 + 2, overflow: 'hidden' }}>
-              {image}
-            </div>
+            <div style={{ borderRadius: (0 - 2) * -5 + 2, overflow: "hidden" }}>{image}</div>
           </foreignObject>
         </>
       );

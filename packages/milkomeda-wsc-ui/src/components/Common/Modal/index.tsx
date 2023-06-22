@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from "framer-motion";
 
-import { ResetContainer } from '../../../styles';
-import Portal from '../Portal';
+import { ResetContainer } from "../../../styles";
+import Portal from "../Portal";
 
-import { flattenChildren, isMobile } from '../../../utils';
+import { flattenChildren, isMobile } from "../../../utils";
 
 import {
   Container,
@@ -24,24 +24,24 @@ import {
   ErrorMessage,
   DisclaimerBackground,
   Disclaimer,
-} from './styles';
+} from "./styles";
 
-import { routes, useContext } from '../../ConnectWSC';
-import useLockBodyScroll from '../../../hooks/useLockBodyScroll';
+import { routes, useContext } from "../../ConnectWSC";
+import useLockBodyScroll from "../../../hooks/useLockBodyScroll";
 
-import { useTransition } from 'react-transition-state';
-import FocusTrap from '../../../hooks/useFocusTrap';
-import { supportedConnectors } from '../../../index';
-import usePrevious from '../../../hooks/usePrevious';
-import { CustomTheme } from '../../../types';
-import { useThemeContext } from '../../ConnectWSCThemeProvider/ConnectWSCThemeProvider';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
-import { AuthIcon } from '../../../assets/icons';
-import useLocales from '../../../hooks/useLocales';
-import FitText from '../FitText';
+import { useTransition } from "react-transition-state";
+import FocusTrap from "../../../hooks/useFocusTrap";
+import { supportedConnectors } from "../../../index";
+import usePrevious from "../../../hooks/usePrevious";
+import { CustomTheme } from "../../../types";
+import { useThemeContext } from "../../ConnectWSCThemeProvider/ConnectWSCThemeProvider";
+import { useNetwork, useSwitchNetwork } from "wagmi";
+import { AuthIcon } from "../../../assets/icons";
+import useLocales from "../../../hooks/useLocales";
+import FitText from "../FitText";
 
 const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
-  <div style={{ position: 'relative' }}>
+  <div style={{ position: "relative" }}>
     {isSignedIn ? (
       <AuthIcon
         style={{
@@ -53,12 +53,12 @@ const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
       <div
         style={{
           zIndex: 2,
-          position: 'absolute',
+          position: "absolute",
           top: -2,
           right: -2,
-          background: '#1A88F8',
+          background: "#1A88F8",
           borderRadius: 8,
-          boxShadow: '0 0 0 2px var(--ck-body-background)',
+          boxShadow: "0 0 0 2px var(--ck-body-background)",
           width: 8,
           height: 8,
         }}
@@ -71,7 +71,7 @@ const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
       viewBox="0 0 20 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ overflow: 'visible' }}
+      style={{ overflow: "visible" }}
     >
       <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
       <path
@@ -110,18 +110,8 @@ const CloseIcon = ({ ...props }) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <path
-      d="M1 13L13 1"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <path
-      d="M1 0.999999L13 13"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
+    <path d="M1 13L13 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M1 0.999999L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </motion.svg>
 );
 const BackIcon = ({ ...props }) => (
@@ -163,10 +153,10 @@ export const contentVariants: Variants = {
   exit: {
     zIndex: 1,
     opacity: 0,
-    pointerEvents: 'none',
-    position: 'absolute',
-    left: ['50%', '50%'],
-    x: ['-50%', '-50%'],
+    pointerEvents: "none",
+    position: "absolute",
+    left: ["50%", "50%"],
+    x: ["-50%", "-50%"],
     transition: {
       duration: contentTransitionDuration,
       ease: [0.26, 0.08, 0.25, 1],
@@ -206,6 +196,7 @@ const Modal: React.FC<ModalProps> = ({
   const mobile = isMobile();
 
   const connector = supportedConnectors.find((x) => x.id === context.connector);
+  console.log("connector", connector);
   const locales = useLocales({
     CONNECTORNAME: connector?.name,
   });
@@ -216,14 +207,10 @@ const Modal: React.FC<ModalProps> = ({
     mountOnEnter: true,
     unmountOnExit: true,
   });
-  const mounted = !(state === 'exited' || state === 'unmounted');
-  const rendered = state === 'preEnter' || state !== 'exiting';
+  const mounted = !(state === "exited" || state === "unmounted");
+  const rendered = state === "preEnter" || state !== "exiting";
   const currentDepth =
-    context.route === routes.CONNECTORS
-      ? 0
-      : context.route === routes.DOWNLOAD
-      ? 2
-      : 1;
+    context.route === routes.CONNECTORS ? 0 : context.route === routes.DOWNLOAD ? 2 : 1;
   const prevDepth = usePrevious(currentDepth, currentDepth);
   if (!positionInside) useLockBodyScroll(mounted);
 
@@ -241,9 +228,7 @@ const Modal: React.FC<ModalProps> = ({
     width: undefined,
     height: undefined,
   });
-  const [inTransition, setInTransition] = useState<boolean | undefined>(
-    undefined
-  );
+  const [inTransition, setInTransition] = useState<boolean | undefined>(undefined);
 
   // Calculate new content bounds
   const updateBounds = (node: any) => {
@@ -293,25 +278,24 @@ const Modal: React.FC<ModalProps> = ({
     }
 
     const listener = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onClose) onClose();
+      if (e.key === "Escape" && onClose) onClose();
     };
-    document.addEventListener('keydown', listener);
+    document.addEventListener("keydown", listener);
     return () => {
-      document.removeEventListener('keydown', listener);
+      document.removeEventListener("keydown", listener);
     };
   }, [mounted, onClose]);
 
   const dimensionsCSS = {
-    '--height': dimensions.height,
-    '--width': dimensions.width,
+    "--height": dimensions.height,
+    "--width": dimensions.width,
   } as React.CSSProperties;
 
   function shouldUseQrcode() {
     const c = supportedConnectors.filter((x) => x.id === context.connector)[0];
     if (!c) return false; // Fail states are shown in the injector flow
 
-    const hasExtensionInstalled =
-      c.extensionIsInstalled && c.extensionIsInstalled();
+    const hasExtensionInstalled = c.extensionIsInstalled && c.extensionIsInstalled();
 
     const useInjector = !c.scannable || hasExtensionInstalled;
     return !useInjector;
@@ -337,7 +321,7 @@ const Modal: React.FC<ModalProps> = ({
         return locales.profileScreen_heading;
 
       default:
-        return '';
+        return "";
     }
   }
 
@@ -350,8 +334,8 @@ const Modal: React.FC<ModalProps> = ({
       <ModalContainer
         role="dialog"
         style={{
-          pointerEvents: rendered ? 'auto' : 'none',
-          position: positionInside ? 'absolute' : undefined,
+          pointerEvents: rendered ? "auto" : "none",
+          position: positionInside ? "absolute" : undefined,
         }}
       >
         {!inline && (
@@ -371,57 +355,56 @@ const Modal: React.FC<ModalProps> = ({
         >
           <div
             style={{
-              pointerEvents: inTransition ? 'all' : 'none', // Block interaction while transitioning
-              position: 'absolute',
+              pointerEvents: inTransition ? "all" : "none", // Block interaction while transitioning
+              position: "absolute",
               top: 0,
               bottom: 0,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 'var(--width)',
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "var(--width)",
               zIndex: 9,
-              transition: 'width 200ms ease',
+              transition: "width 200ms ease",
             }}
           />
-          <BoxContainer className={`${rendered && 'active'}`}>
+          <BoxContainer className={`${rendered && "active"}`}>
             <AnimatePresence initial={false}>
-              {context.options?.disclaimer &&
-                context.route === routes.CONNECTORS && (
-                  <DisclaimerBackground
-                    initial={{
-                      opacity: 0,
-                    }}
-                    animate={{
-                      opacity: 1,
-                    }}
-                    exit={{ opacity: 0 }}
-                    transition={{
-                      delay: 0,
-                      duration: 0.2,
-                      ease: [0.25, 0.1, 0.25, 1.0],
-                    }}
-                  >
-                    <Disclaimer>
-                      <div>{context.options?.disclaimer}</div>
-                    </Disclaimer>
-                  </DisclaimerBackground>
-                )}
+              {context.options?.disclaimer && context.route === routes.CONNECTORS && (
+                <DisclaimerBackground
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    delay: 0,
+                    duration: 0.2,
+                    ease: [0.25, 0.1, 0.25, 1.0],
+                  }}
+                >
+                  <Disclaimer>
+                    <div>{context.options?.disclaimer}</div>
+                  </Disclaimer>
+                </DisclaimerBackground>
+              )}
             </AnimatePresence>
             <AnimatePresence initial={false}>
               {context.errorMessage && (
                 <ErrorMessage
-                  initial={{ y: '10%', x: '-50%' }}
-                  animate={{ y: '-100%' }}
-                  exit={{ y: '100%' }}
-                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  initial={{ y: "10%", x: "-50%" }}
+                  animate={{ y: "-100%" }}
+                  exit={{ y: "100%" }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
                 >
                   <span>{context.errorMessage}</span>
                   <div
                     onClick={() => context.displayError(null)}
                     style={{
-                      position: 'absolute',
+                      position: "absolute",
                       right: 24,
                       top: 24,
-                      cursor: 'pointer',
+                      cursor: "pointer",
                     }}
                   >
                     <CloseIcon />
@@ -440,7 +423,7 @@ const Modal: React.FC<ModalProps> = ({
               )}
               <div
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 23,
                   left: 20,
                   width: 32,
@@ -469,9 +452,7 @@ const Modal: React.FC<ModalProps> = ({
                     onInfo && (
                       <InfoButton
                         disabled={inTransition}
-                        aria-label={flattenChildren(
-                          locales.moreInformation
-                        ).toString()}
+                        aria-label={flattenChildren(locales.moreInformation).toString()}
                         key="infoButton"
                         onClick={onInfo}
                         initial={{ opacity: 0 }}
@@ -494,14 +475,14 @@ const Modal: React.FC<ModalProps> = ({
               <AnimatePresence>
                 <motion.div
                   style={{
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
                     bottom: 0,
                     left: 52,
                     right: 52,
-                    display: 'flex',
+                    display: "flex",
                     //alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: "center",
                   }}
                   key={`${context.route}`}
                   initial={{ opacity: 0 }}
@@ -526,28 +507,23 @@ const Modal: React.FC<ModalProps> = ({
                   <Page
                     key={key}
                     open={key === pageId}
-                    initial={!positionInside && state !== 'entered'}
+                    initial={!positionInside && state !== "entered"}
                     enterAnim={
                       key === pageId
                         ? currentDepth > prevDepth
-                          ? 'active-scale-up'
-                          : 'active'
-                        : ''
+                          ? "active-scale-up"
+                          : "active"
+                        : ""
                     }
                     exitAnim={
-                      key !== pageId
-                        ? currentDepth < prevDepth
-                          ? 'exit-scale-down'
-                          : 'exit'
-                        : ''
+                      key !== pageId ? (currentDepth < prevDepth ? "exit-scale-down" : "exit") : ""
                     }
                   >
                     <PageContents
                       key={`inner-${key}`}
                       ref={contentRef}
                       style={{
-                        pointerEvents:
-                          key === pageId && rendered ? 'auto' : 'none',
+                        pointerEvents: key === pageId && rendered ? "auto" : "none",
                       }}
                     >
                       {page}
@@ -608,8 +584,8 @@ const Page: React.FC<PageProps> = ({
     mountOnEnter: true,
     unmountOnExit: true,
   });
-  const mounted = !(state === 'exited' || state === 'unmounted');
-  const rendered = state === 'preEnter' || state !== 'exiting';
+  const mounted = !(state === "exited" || state === "unmounted");
+  const rendered = state === "preEnter" || state !== "exiting";
 
   useEffect(() => {
     setOpen(open);
@@ -621,8 +597,8 @@ const Page: React.FC<PageProps> = ({
     <PageContainer
       className={`${rendered ? enterAnim : exitAnim}`}
       style={{
-        animationDuration: initial ? '0ms' : undefined,
-        animationDelay: initial ? '0ms' : undefined,
+        animationDuration: initial ? "0ms" : undefined,
+        animationDelay: initial ? "0ms" : undefined,
       }}
     >
       {children}

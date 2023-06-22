@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useContext } from '../../ConnectWSC';
-import { nFormatter, truncateEthAddress } from '../../../utils';
+import React, { useEffect, useState } from "react";
+import { useContext } from "../../ConnectWSC";
+import { nFormatter, truncateEthAddress } from "../../../utils";
 
-import {
-  useConnect,
-  useDisconnect,
-  useAccount,
-  useEnsName,
-  useBalance,
-  useNetwork,
-} from 'wagmi';
+import { useConnect, useDisconnect, useAccount, useEnsName, useBalance, useNetwork } from "wagmi";
 
 import {
   AvatarContainer,
@@ -18,22 +11,17 @@ import {
   BalanceContainer,
   LoadingBalance,
   Balance,
-} from './styles';
+} from "./styles";
 
-import {
-  PageContent,
-  ModalBody,
-  ModalContent,
-  ModalH1,
-} from '../../Common/Modal/styles';
-import Button from '../../Common/Button';
-import Avatar from '../../Common/Avatar';
+import { PageContent, ModalBody, ModalContent, ModalH1 } from "../../Common/Modal/styles";
+import Button from "../../Common/Button";
+import Avatar from "../../Common/Avatar";
 
-import { DisconnectIcon } from '../../../assets/icons';
-import CopyToClipboard from '../../Common/CopyToClipboard';
-import { AnimatePresence } from 'framer-motion';
-import { useThemeContext } from '../../ConnectWSCThemeProvider/ConnectWSCThemeProvider';
-import useLocales from '../../../hooks/useLocales';
+import { DisconnectIcon } from "../../../assets/icons";
+import CopyToClipboard from "../../Common/CopyToClipboard";
+import { AnimatePresence } from "framer-motion";
+import { useThemeContext } from "../../ConnectWSCThemeProvider/ConnectWSCThemeProvider";
+import useLocales from "../../../hooks/useLocales";
 
 const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   const context = useContext();
@@ -76,10 +64,10 @@ const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
     };
   }, [shouldDisconnect, disconnect, reset]);
 
-  const separator = ['web95', 'rounded', 'minimal'].includes(
-    themeContext.theme ?? context.theme ?? ''
+  const separator = ["web95", "rounded", "minimal"].includes(
+    themeContext.theme ?? context.theme ?? ""
   )
-    ? '....'
+    ? "...."
     : undefined;
   return (
     <PageContent>
@@ -126,10 +114,7 @@ const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
           </ModalBody>
         )}
       </ModalContent>
-      <Button
-        onClick={() => setShouldDisconnect(true)}
-        icon={<DisconnectIcon />}
-      >
+      <Button onClick={() => setShouldDisconnect(true)} icon={<DisconnectIcon />}>
         {locales.disconnect}
       </Button>
     </PageContent>
