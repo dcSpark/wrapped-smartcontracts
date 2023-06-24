@@ -1,7 +1,6 @@
 import styled from "./styled";
 import { css } from "styled-components";
 import { motion } from "framer-motion";
-import { CustomTheme } from "../types";
 import { hexToP3 } from "../utils/p3";
 
 import predefinedThemes from "./themes";
@@ -196,11 +195,7 @@ const globalsDark = css`
 // TODO: Merge theme objects instead of overriding
 
 let mode = "auto";
-export const ResetContainer = styled(motion.div)<{
-  $useTheme?: string;
-  $useMode?: string;
-  $customTheme?: CustomTheme;
-}>`
+export const ResetContainer = styled(motion.div)`
   ${themes.default}
 
   ${(props) => {

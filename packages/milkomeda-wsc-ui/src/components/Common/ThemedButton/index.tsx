@@ -1,13 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import { ThemeContainer, Container } from './styles';
+import { ThemeContainer, Container } from "./styles";
 
-import { All } from '../../../types';
-import useMeasure from 'react-use-measure';
+import useMeasure from "react-use-measure";
 
 type ThemedButtonProps = {
   children?: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'tertiary';
+  variant?: "primary" | "secondary" | "tertiary";
   autoSize?: boolean;
   duration?: number;
   style?: React.CSSProperties;
@@ -18,9 +17,9 @@ export const PlaceholderButton = () => {
   return <div style={{ height: 40 }} />;
 };
 
-const ThemedButton: React.FC<ThemedButtonProps & All> = ({
+const ThemedButton: React.FC<ThemedButtonProps> = ({
   children,
-  variant = 'primary',
+  variant = "primary",
   autoSize = true,
   duration = 0.3,
   style,
@@ -33,7 +32,7 @@ const ThemedButton: React.FC<ThemedButtonProps & All> = ({
       animate={
         autoSize
           ? {
-              width: bounds.width > 10 ? bounds.width : 'auto',
+              width: bounds.width > 10 ? bounds.width : "auto",
             }
           : undefined
       }
@@ -47,10 +46,10 @@ const ThemedButton: React.FC<ThemedButtonProps & All> = ({
       <div
         ref={contentRef}
         style={{
-          whiteSpace: 'nowrap',
-          width: 'fit-content',
-          position: 'relative',
-          padding: '0 12px',
+          whiteSpace: "nowrap",
+          width: "fit-content",
+          position: "relative",
+          padding: "0 12px",
         }}
       >
         {children}

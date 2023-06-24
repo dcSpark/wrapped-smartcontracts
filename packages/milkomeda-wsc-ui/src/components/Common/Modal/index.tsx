@@ -32,7 +32,6 @@ import { useTransition } from "react-transition-state";
 import FocusTrap from "../../../hooks/useFocusTrap";
 import { supportedConnectors } from "../../../index";
 import usePrevious from "../../../hooks/usePrevious";
-import { CustomTheme } from "../../../types";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { AuthIcon } from "../../../assets/icons";
 import FitText from "../FitText";
@@ -170,12 +169,6 @@ type ModalProps = {
   onClose?: () => void;
   onBack?: () => void;
   onInfo?: () => void;
-
-  demo?: {
-    theme: string;
-    mode?: string;
-    customTheme: CustomTheme;
-  };
 };
 const Modal: React.FC<ModalProps> = ({
   open,
@@ -183,7 +176,6 @@ const Modal: React.FC<ModalProps> = ({
   pageId,
   positionInside,
   inline,
-  demo,
   onClose,
   onBack,
   onInfo,

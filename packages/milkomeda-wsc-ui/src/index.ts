@@ -15,4 +15,3 @@ export { useChains } from "./hooks/useChains";
 
 // TODO: Make this private
 export { default as supportedConnectors } from "./constants/supportedConnectors";
-export { default as ConnectWSCModalDemo } from "./components/ConnectModal/demo";

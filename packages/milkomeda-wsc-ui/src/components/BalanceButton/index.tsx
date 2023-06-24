@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { All } from '../../types';
+import React, { useEffect, useState } from "react";
 
-import styled from '../../styles/styled';
-import { keyframes } from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
+import styled from "../../styles/styled";
+import { keyframes } from "styled-components";
+import { motion, AnimatePresence } from "framer-motion";
 
-import { useAccount, useBalance, useNetwork } from 'wagmi';
-import useIsMounted from '../../hooks/useIsMounted';
+import { useAccount, useBalance, useNetwork } from "wagmi";
+import useIsMounted from "../../hooks/useIsMounted";
 
-import supportedChains from '../../constants/supportedChains';
-import ThemedButton from '../Common/ThemedButton';
-import { nFormatter } from '../../utils';
+import supportedChains from "../../constants/supportedChains";
+import ThemedButton from "../Common/ThemedButton";
+import { nFormatter } from "../../utils";
 
 const Container = styled(motion.div)`
   display: flex;
@@ -68,7 +67,7 @@ export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
   }, []);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: "relative" }}>
       <AnimatePresence initial={false}>
         <motion.div
           key={state}
@@ -77,12 +76,12 @@ export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
               ? {
                   opacity: 1,
                 }
-              : { opacity: 0, position: 'absolute', top: 0, left: 0, bottom: 0 }
+              : { opacity: 0, position: "absolute", top: 0, left: 0, bottom: 0 }
           }
-          animate={{ opacity: 1, position: 'relative' }}
+          animate={{ opacity: 1, position: "relative" }}
           exit={{
             opacity: 0,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
             bottom: 0,
@@ -97,9 +96,9 @@ export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
             <Container>
               <span style={{ minWidth: 32 }}>
                 <PulseContainer>
-                  <span style={{ animationDelay: '0ms' }} />
-                  <span style={{ animationDelay: '50ms' }} />
-                  <span style={{ animationDelay: '100ms' }} />
+                  <span style={{ animationDelay: "0ms" }} />
+                  <span style={{ animationDelay: "50ms" }} />
+                  <span style={{ animationDelay: "100ms" }} />
                 </PulseContainer>
               </span>
             </Container>
@@ -109,9 +108,7 @@ export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
             </Container>
           ) : (
             <Container>
-              <span style={{ minWidth: 32 }}>
-                {nFormatter(Number(balance?.formatted))}
-              </span>
+              <span style={{ minWidth: 32 }}>{nFormatter(Number(balance?.formatted))}</span>
               {!hideSymbol && ` ${balance?.symbol}`}
             </Container>
           )}
@@ -144,21 +141,9 @@ export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
   );
 };
 
-const BalanceButton: React.FC<All & BalanceProps> = ({
-  theme,
-  mode,
-  customTheme,
-  hideIcon,
-  hideSymbol,
-}) => {
+const BalanceButton: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
   return (
-    <ThemedButton
-      duration={0.4}
-      variant={'secondary'}
-      theme={theme}
-      mode={mode}
-      customTheme={customTheme}
-    >
+    <ThemedButton duration={0.4} variant={"secondary"}>
       <Balance hideIcon={hideIcon} hideSymbol={hideSymbol} />
     </ThemedButton>
   );

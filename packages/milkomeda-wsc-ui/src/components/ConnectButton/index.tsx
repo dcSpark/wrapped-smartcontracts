@@ -1,6 +1,6 @@
 import React from "react";
 import { Chain, useAccount, useEnsName, useNetwork } from "wagmi";
-import { truncateENSAddress, truncateEthAddress } from "../../utils";
+import { truncateEthAddress } from "../../utils";
 import useIsMounted from "../../hooks/useIsMounted";
 
 import { IconContainer, TextContainer, UnsupportedNetworkContainer } from "./styles";
@@ -8,7 +8,6 @@ import { routes, useContext } from "../ConnectWSC";
 import { useModal } from "../../hooks/useModal";
 
 import { AnimatePresence, Variants, motion } from "framer-motion";
-import { CustomTheme, Mode, Theme } from "../../types";
 import { Balance } from "../BalanceButton";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { ResetContainer } from "../../styles";
@@ -162,12 +161,9 @@ function ConnectKitButtonInner({
   const context = useContext();
 
   const { address } = useAccount();
-  const { data: ensName } = useEnsName({
-    chainId: 1,
-    address: address,
-  });
+
   const { chain } = useNetwork();
-  const defaultLabel = "connect wallet";
+  const defaultLabel = "Connect WSC";
 
   return (
     <AnimatePresence initial={false}>
@@ -186,21 +182,6 @@ function ConnectKitButtonInner({
           {showAvatar && (
             <IconContainer>
               <AnimatePresence initial={false}>
-                {true && (
-                  <motion.div
-                    style={{
-                      zIndex: 2,
-                      position: "absolute",
-                      bottom: 0,
-                      right: 0,
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    <AuthIcon />
-                  </motion.div>
-                )}
                 {chain?.unsupported && (
                   <UnsupportedNetworkContainer
                     initial={{ opacity: 0 }}
@@ -232,33 +213,18 @@ function ConnectKitButtonInner({
             }}
           >
             <AnimatePresence initial={false}>
-              {ensName ? (
-                <TextContainer
-                  key="ckEnsName"
-                  initial={"initial"}
-                  animate={"animate"}
-                  exit={"exit"}
-                  variants={textVariants}
-                  style={{
-                    position: ensName ? "relative" : "absolute",
-                  }}
-                >
-                  {truncateENSAddress(ensName, 20)}
-                </TextContainer>
-              ) : (
-                <TextContainer
-                  key="ckTruncatedAddress"
-                  initial={"initial"}
-                  animate={"animate"}
-                  exit={"exit"}
-                  variants={textVariants}
-                  style={{
-                    position: ensName ? "absolute" : "relative",
-                  }}
-                >
-                  {truncateEthAddress(address, separator)}{" "}
-                </TextContainer>
-              )}
+              <TextContainer
+                key="ckTruncatedAddress"
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
+                variants={textVariants}
+                style={{
+                  position: "relative",
+                }}
+              >
+                {truncateEthAddress(address, separator)}{" "}
+              </TextContainer>
             </AnimatePresence>
           </div>
         </TextContainer>
@@ -283,33 +249,12 @@ function ConnectKitButtonInner({
 
 type ConnectKitButtonProps = {
   // Options
-  label?: string;
-  showBalance?: boolean;
-  showAvatar?: boolean;
-
-  // Theming
-  theme?: Theme;
-  mode?: Mode;
-  customTheme?: CustomTheme;
 
   // Events
   onClick?: (open: () => void) => void;
 };
 
-export function ConnectWSCButton({
-  // Options
-  label,
-  showBalance = false,
-  showAvatar = true,
-
-  // Theming
-  theme,
-  mode,
-  customTheme,
-
-  // Events
-  onClick,
-}: ConnectKitButtonProps) {
+export function ConnectWSCButton({ onClick }: ConnectKitButtonProps) {
   const isMounted = useIsMounted();
 
   const context = useContext();
@@ -322,11 +267,11 @@ export function ConnectWSCButton({
     context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
   }
 
-  const separator = ["web95", "rounded", "minimal"].includes(theme ?? "") ? "...." : undefined;
+  const separator = ["web95", "rounded", "minimal"].includes("") ? "...." : undefined;
 
   if (!isMounted) return null;
 
-  const shouldShowBalance = showBalance && !chain?.unsupported;
+  const shouldShowBalance = !chain?.unsupported;
   const willShowBalance = address && shouldShowBalance;
 
   return (
@@ -382,11 +327,8 @@ export function ConnectWSCButton({
           </AnimatePresence>
         )}
         <ThemedButton
-          theme={theme}
-          mode={mode}
-          customTheme={customTheme}
           style={
-            shouldShowBalance && showBalance && address && theme === "retro"
+            shouldShowBalance && address
               ? {
                   /** Special fix for the retro theme... not happy about this one */
                   boxShadow: "var(--ck-connectbutton-balance-connectbutton-box-shadow)",
@@ -398,7 +340,7 @@ export function ConnectWSCButton({
                 }
           }
         >
-          <ConnectKitButtonInner separator={separator} showAvatar={showAvatar} label={label} />
+          <ConnectKitButtonInner separator={separator} />
         </ThemedButton>
       </ThemeContainer>
     </ResetContainer>
