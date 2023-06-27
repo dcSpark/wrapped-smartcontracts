@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useContext } from "../../ConnectWSC";
 import { nFormatter, truncateEthAddress } from "../../../utils";
 
-import { useConnect, useDisconnect, useAccount, useEnsName, useBalance, useNetwork } from "wagmi";
+import { useConnect, useDisconnect, useAccount, useNetwork } from "wagmi";
 
 import {
   AvatarContainer,
@@ -28,15 +28,6 @@ const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
 
   const { chain } = useNetwork();
   const { address, isConnected, connector } = useAccount();
-  const { data: ensName } = useEnsName({
-    chainId: 1,
-    address: address,
-  });
-  const { data: balance } = useBalance({
-    address,
-    //watch: true,
-  });
-
   const [shouldDisconnect, setShouldDisconnect] = useState(false);
 
   useEffect(() => {
@@ -67,7 +58,7 @@ const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
         </AvatarContainer>
         <ModalH1>
           <CopyToClipboard string={address}>
-            {ensName ?? truncateEthAddress(address, separator)}
+            {truncateEthAddress(address, separator)}
           </CopyToClipboard>
         </ModalH1>
       </ModalContent>

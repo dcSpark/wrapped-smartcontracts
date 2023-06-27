@@ -3,8 +3,7 @@ import { Chain } from "wagmi/chains";
 
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-import { CardanoWSCConnector } from "./wsc-cardano-connector";
-// import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi/dist";
+import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi/dist";
 
 export const milkomedaChains = [
   {
@@ -79,38 +78,32 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
 
   // Add the rest of the connectors
   connectors = [
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     ...connectors,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     new CardanoWSCConnector({
       chains,
       options: {
         name: "flint",
-        // oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
-        // blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
-        // jsonRpcProviderUrl: undefined,
+        oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
+        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+        jsonRpcProviderUrl: undefined,
       },
     }),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // new CardanoWSCConnector({
-    //   chains,
-    //   options: {
-    //     name: "etrnal",
-    //     oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
-    //     blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
-    //     jsonRpcProviderUrl: undefined,
-    //   },
-    // }),
+    new CardanoWSCConnector({
+      chains,
+      options: {
+        name: "etrnal",
+        oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
+        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+        jsonRpcProviderUrl: undefined,
+      },
+    }),
   ];
 
   return connectors;
 };
 
 const defaultConfig = ({
-  autoConnect = true,
+  autoConnect = false, // TODO: check why breaks in wsc
   chains = defaultChains,
   connectors,
   provider,

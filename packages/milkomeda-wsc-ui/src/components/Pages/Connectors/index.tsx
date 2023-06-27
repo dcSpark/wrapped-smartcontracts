@@ -16,16 +16,13 @@ import {
   MobileConnectorLabel,
   InfoBox,
   InfoBoxButtons,
-  ConnectorRecentlyUsed,
+  MobileConnectorIcon,
 } from "./styles";
 
 import { isMobile } from "../../../utils";
 
 import Button from "../../Common/Button";
-import useDefaultWallets from "../../../wallets/useDefaultWallets";
 import { Connector } from "wagmi";
-
-import { useLastConnector } from "../../../hooks/useLastConnector";
 
 const Wallets: React.FC = () => {
   const context = useContext();
@@ -33,48 +30,13 @@ const Wallets: React.FC = () => {
   const mobile = isMobile();
 
   const { connectAsync, connectors } = useConnect();
-  const { lastConnectorId } = useLastConnector();
+
   const openDefaultConnect = async (connector: Connector) => {
     try {
       await connectAsync({ connector: connector });
     } catch (err) {
       context.displayError("Async connect error. See console for more details.", err);
     }
-  };
-
-  /**
-   * Some injected connectors pretend to be metamask, this helps avoid that issue.
-   */
-
-  const shouldShowInjectedConnector = () => {
-    // Only display if an injected connector is detected
-    const { ethereum } = window;
-
-    const needsInjectedWalletFallback = typeof window !== "undefined";
-    //!ethereum?.isBraveWallet; // TODO: Add this line when Brave is supported
-
-    return needsInjectedWalletFallback;
-  };
-
-  const wallets = useDefaultWallets();
-
-  const findInjectedConnectorInfo = (name: string) => {
-    let walletList = name.split(/[(),]+/);
-    walletList.shift(); // remove "Injected" from array
-    walletList = walletList.map((x) => x.trim());
-
-    const hasWalletLogo = walletList.filter((x) => {
-      const a = wallets.map((wallet: any) => wallet.name).includes(x);
-      if (a) return x;
-      return null;
-    });
-    if (hasWalletLogo.length === 0) return null;
-
-    const foundInjector = wallets.filter(
-      (wallet: any) => wallet.installed && wallet.name === hasWalletLogo[0]
-    )[0];
-
-    return foundInjector;
   };
 
   return (
@@ -84,7 +46,10 @@ const Wallets: React.FC = () => {
           <MobileConnectorsContainer>
             {connectors.map((connector) => {
               const info = supportedConnectors.filter((c) => c.id === connector.id)[0];
+
               if (!info) return null;
+              const logos = info.logos;
+              const name = info.shortName ?? info.name ?? connector.name;
 
               return (
                 <MobileConnectorButton
@@ -96,6 +61,9 @@ const Wallets: React.FC = () => {
                     openDefaultConnect(connector);
                   }}
                 >
+                  <MobileConnectorIcon>
+                    {logos.mobile ?? logos.appIcon ?? logos.connectorButton ?? logos.default}
+                  </MobileConnectorIcon>
                   <MobileConnectorLabel>{name}</MobileConnectorLabel>
                 </MobileConnectorButton>
               );

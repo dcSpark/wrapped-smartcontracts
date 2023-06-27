@@ -337,19 +337,10 @@ const ConnectWithInjector: React.FC<{
                 <ModalContent>
                   <ModalH1 $error>
                     <AlertIcon />
-                    Fail!
+                    Something went wrong!
                   </ModalH1>
-                  <ModalBody>Failed!</ModalBody>
+                  <ModalBody>Please try again</ModalBody>
                 </ModalContent>
-                {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
-                {connector.scannable && connector.id !== "coinbaseWallet" && (
-                  <>
-                    <OrDivider />
-                    <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
-                      scan QR code
-                    </Button>
-                  </>
-                )}
               </Content>
             )}
             {status === states.REJECTED && (
@@ -364,16 +355,6 @@ const ConnectWithInjector: React.FC<{
                   <ModalH1>Rejected</ModalH1>
                   <ModalBody>rejected description</ModalBody>
                 </ModalContent>
-
-                {/* Reason: Coinbase Wallet does not expose a QRURI when extension is installed */}
-                {connector.scannable && connector.id !== "coinbaseWallet" && (
-                  <>
-                    <OrDivider />
-                    <Button icon={<Scan />} onClick={() => switchConnectMethod(id)}>
-                      scan qr code
-                    </Button>
-                  </>
-                )}
               </Content>
             )}
             {(status === states.CONNECTING || status === states.EXPIRING) && (
@@ -454,16 +435,6 @@ const ConnectWithInjector: React.FC<{
                       <ModalH1>injectionScreen_install_h1</ModalH1>
                       <ModalBody>injectionScreen_install_p</ModalBody>
                     </ModalContent>
-                    {/**
-                  {(connector.scannable &&|
-                    (!hasExtensionInstalled && extensionUrl)) && <OrDivider />}
-
-                  {connector.scannable && (
-                    <Button icon={<Scan />} onClick={switchConnectMethod}>
-                      {locales.scanTheQRCode}
-                    </Button>
-                  )}
-                  */}
                     {!hasExtensionInstalled && extensionUrl && (
                       <Button href={extensionUrl} icon={<BrowserIcon />}>
                         Install extension

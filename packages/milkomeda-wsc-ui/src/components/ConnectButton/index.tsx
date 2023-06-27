@@ -1,5 +1,5 @@
 import React from "react";
-import { Chain, useAccount, useEnsName, useNetwork } from "wagmi";
+import { Chain, useAccount, useNetwork } from "wagmi";
 import { truncateEthAddress } from "../../utils";
 import useIsMounted from "../../hooks/useIsMounted";
 
@@ -102,7 +102,6 @@ type ConnectButtonRendererProps = {
     isConnecting: boolean;
     address?: Hash;
     truncatedAddress?: string;
-    ensName?: string;
   }) => React.ReactNode;
 };
 
@@ -113,10 +112,6 @@ const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children 
 
   const { chain } = useNetwork();
   const { address, isConnected } = useAccount();
-  const { data: ensName } = useEnsName({
-    chainId: 1,
-    address: address,
-  });
 
   function hide() {
     setOpen(false);
@@ -141,7 +136,6 @@ const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children 
         isConnecting: open, // Using `open` to determine if connecting as wagmi isConnecting only is set to true when an active connector is awaiting connection
         address: address,
         truncatedAddress: address ? truncateEthAddress(address) : undefined,
-        ensName: ensName?.toString(),
       })}
     </>
   );

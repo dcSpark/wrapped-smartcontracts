@@ -5,14 +5,11 @@
 
 import { useConnect as wagmiUseConnect } from "wagmi";
 import { useContext } from "../components/ConnectWSC";
-import { useLastConnector } from "./useLastConnector";
 
 export function useConnect({ ...props } = {}) {
   const context = useContext();
 
   const connectProps = {};
-
-  const { updateLastConnectorId } = useLastConnector();
 
   const { connect, connectAsync, connectors, ...rest } = wagmiUseConnect({
     onError(err) {
@@ -24,9 +21,7 @@ export function useConnect({ ...props } = {}) {
         context.log(`Could not connect.`, err);
       }
     },
-    onSuccess(data: any) {
-      updateLastConnectorId(data?.connector?.id ?? "");
-    },
+
     ...props,
     /*
     onSuccess: (data) => {
