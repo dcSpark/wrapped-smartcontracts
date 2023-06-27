@@ -5,9 +5,7 @@ import defaultTheme from "../styles/defaultTheme";
 
 import ConnectWSCModal from "./ConnectModal";
 import { ThemeProvider } from "styled-components";
-import { useThemeFont } from "../hooks/useGoogleFont";
 
-import { useChains } from "../hooks/useChains";
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
 
 export const routes = {
@@ -69,7 +67,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   // if (typeof window !== "undefined") {
   // Buffer Polyfill, needed for bundlers that don't provide Node polyfills (e.g CRA, Vite, etc.)
-  // if (opts.bufferPolyfill) window.Buffer = window.Buffer ?? Buffer;
+  // window.Buffer = window.Buffer ?? Buffer;
 
   // Some bundlers may need `global` and `process.env` polyfills as well
   // Not implemented here to avoid unexpected behaviors, but leaving example here for future reference

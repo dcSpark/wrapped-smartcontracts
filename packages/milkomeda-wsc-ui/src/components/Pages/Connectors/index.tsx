@@ -135,7 +135,6 @@ const Wallets: React.FC = () => {
                   key={connector.id}
                   disabled={context.route !== routes.CONNECTORS}
                   onClick={() => {
-                    console.log(connector, "connector-id");
                     context.setRoute(routes.CONNECT);
                     context.setConnector(connector.id);
                   }}

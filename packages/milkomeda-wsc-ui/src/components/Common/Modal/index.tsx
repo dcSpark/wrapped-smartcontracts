@@ -184,7 +184,6 @@ const Modal: React.FC<ModalProps> = ({
   const mobile = isMobile();
 
   const connector = supportedConnectors.find((x) => x.id === context.connector);
-  console.log("connector", connector);
 
   const [state, setOpen] = useTransition({
     timeout: mobile ? 160 : 160, // different animations, 10ms extra to avoid final-frame drops

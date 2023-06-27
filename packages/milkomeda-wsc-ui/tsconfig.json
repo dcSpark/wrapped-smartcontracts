@@ -15,7 +15,8 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "jsx": "react-jsx",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "importHelpers": true
   },
   "include": [
     "src/**/*"
