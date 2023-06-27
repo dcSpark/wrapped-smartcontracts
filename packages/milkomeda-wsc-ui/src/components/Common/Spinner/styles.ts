@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import styled from "../../../styles/styled";
 import { keyframes } from "styled-components";
 
-const Spin = keyframes`
+export const Spin = keyframes`
   0%{ transform: rotate(0deg); }
   100%{ transform: rotate(360deg); }
 `;

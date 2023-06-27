@@ -3,6 +3,26 @@ import styled from "../../../styles/styled";
 import { motion } from "framer-motion";
 import defaultTheme from "../../../constants/defaultTheme";
 
+export const StepperTransactionContainer = styled(motion.div)`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 50px;
+  padding-right: 20px;
+  padding-left: 20px;
+`;
+
+export const StepperTransactionInner = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+`;
+export const StepperTransactionContent = styled(motion.div)`
+  border-radius: 10px;
+  padding: 16px;
+`;
 export const AvatarContainer = styled(motion.div)`
   padding: 18px 0 20px;
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {

@@ -301,7 +301,7 @@ const Modal: React.FC<ModalProps> = ({
       case routes.ONBOARDING:
         return "onboarding";
       case routes.PROFILE:
-        return "profile";
+        return "Connected";
 
       default:
         return "";
