@@ -1,12 +1,20 @@
 import * as React from "react";
-import { VariantProps, cva } from "class-variance-authority";
 import { Check, Loader2, X } from "lucide-react";
-
-import { cn } from "@/lib/utils";
 
 import * as Separator from "@radix-ui/react-separator";
 
 import { useMediaQuery } from "./use-stepper";
+import {
+  StepperContainer,
+  StepperSteLabelDescription,
+  StepperStepButton,
+  StepperStepConnectorContainer,
+  StepperStepConnectorLast,
+  StepperStepContainer,
+  StepperStepLabelContainer,
+  StepperStepOptionalLabel,
+  StepperStepRow,
+} from "./styles";
 
 /********** StepperProvider **********/
 
@@ -118,12 +126,13 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
           variant,
         }}
       >
-        <div
+        <StepperContainer
           ref={ref}
-          className={cn(
-            "flex w-full flex-1 justify-between gap-4 text-center",
-            orientation === "vertical" ? "flex-col" : "flex-row"
-          )}
+          isVertical={orientation === "vertical"}
+          // className={cn(
+          //   "flex w-full flex-1 justify-between gap-4 text-center",
+          //   orientation === "vertical" ? "flex-col" : "flex-row"
+          // )}
         >
           {React.Children.map(children, (child, i) => {
             const isCompletedStep =
@@ -144,7 +153,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 
             return null;
           })}
-        </div>
+        </StepperContainer>
         {orientation === "horizontal" && renderHorizontalContent()}
       </StepperProvider>
     );
@@ -155,37 +164,34 @@ Stepper.displayName = "Stepper";
 
 /********** StepperStep **********/
 
-const stepVariants = cva("flex-row flex relative gap-2", {
-  variants: {
-    isLastStep: {
-      true: "flex-[0_0_auto] justify-end",
-      false: "flex-[1_0_auto] justify-start",
-    },
-    isVertical: {
-      true: "flex-col",
-      false: "items-center",
-    },
-    isClickable: {
-      true: "cursor-pointer",
-    },
-  },
-  compoundVariants: [
-    {
-      isVertical: true,
-      isLastStep: true,
-      class: "flex-col items-start flex-[1_0_auto] w-full justify-start",
-    },
-  ],
-});
+// const stepVariants = cva("flex-row flex relative gap-2", {
+//   variants: {
+//     isLastStep: {
+//       true: "flex-[0_0_auto] justify-end",
+//       false: "flex-[1_0_auto] justify-start",
+//     },
+//     isVertical: {
+//       true: "flex-col",
+//       false: "items-center",
+//     },
+//     isClickable: {
+//       true: "cursor-pointer",
+//     },
+//   },
+//   compoundVariants: [
+//     {
+//       isVertical: true,
+//       isLastStep: true,
+//       class: "flex-col items-start flex-[1_0_auto] w-full justify-start",
+//     },
+//   ],
+// });
 
 export interface StepperConfig extends StepperStepLabelProps {
   icon?: React.ReactElement;
 }
 
-export interface StepperStepProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof stepVariants>,
-    StepperConfig {
+export interface StepperStepProps extends React.HTMLAttributes<HTMLDivElement>, StepperConfig {
   isCompletedStep?: boolean;
 }
 
@@ -250,31 +256,37 @@ export const StepperStep = React.forwardRef<HTMLDivElement, StepperStepAndStatus
     }, [isCompletedStep, Success, isCurrentStep, Icon, index, isError, Error, isLoading]);
 
     return (
-      <div
-        className={stepVariants({
-          isLastStep,
-          isVertical,
-          isClickable: isClickable && !!onClickStep,
-        })}
+      <StepperStepContainer
+        isLastStep={isLastStep}
+        isVertical={isVertical}
+        isClickable={isClickable && !!onClickStep}
+        // className={stepVariants({
+        //   isLastStep,
+        //   isVertical,
+        //   isClickable: isClickable && !!onClickStep,
+        // })}
         ref={ref}
         onClick={() => handleClick(index)}
         aria-disabled={!hasVisited}
       >
-        <div className={cn("flex items-center gap-2", isLabelVertical ? "flex-col" : "")}>
-          <button
+        <StepperStepRow
+        // className={cn("flex items-center gap-2", isLabelVertical ? "flex-col" : "")}
+        >
+          <StepperStepButton
             aria-current={isCurrentStep ? "step" : undefined}
             data-invalid={isCurrentStep && isError}
             data-highlighted={isCompletedStep}
             data-clickable={isClickable}
             disabled={!(hasVisited || isClickable)}
-            className={cn(
-              "h-12 w-12 rounded-full data-[highlighted=true]:bg-green-700 data-[highlighted=true]:text-white",
-              isCompletedStep || typeof RenderIcon !== "number" ? "px-3 py-2" : ""
-            )}
+            isCompletedStep={isCompletedStep || typeof RenderIcon !== "number"}
+            // className={cn(
+            //   "h-12 w-12 rounded-full data-[highlighted=true]:bg-green-700 data-[highlighted=true]:text-white",
+            //   isCompletedStep || typeof RenderIcon !== "number" ? "px-3 py-2" : ""
+            // )}
             // variant={isCurrentStep && isError ? "destructive" : variant}
           >
             {RenderIcon}
-          </button>
+          </StepperStepButton>
           <StepperStepLabel
             label={label}
             description={description}
@@ -282,7 +294,7 @@ export const StepperStep = React.forwardRef<HTMLDivElement, StepperStepAndStatus
             optionalLabel={optionalLabel}
             {...{ isCurrentStep }}
           />
-        </div>
+        </StepperStepRow>
         <StepperStepConnector
           index={index}
           isLastStep={isLastStep}
@@ -291,7 +303,7 @@ export const StepperStep = React.forwardRef<HTMLDivElement, StepperStepAndStatus
         >
           {(isCurrentStep || isCompletedStep) && children}
         </StepperStepConnector>
-      </div>
+      </StepperStepContainer>
     );
   }
 );
@@ -323,23 +335,30 @@ const StepperStepLabel = ({
   const renderOptionalLabel = !!optional && !!optionalLabel;
 
   return shouldRender ? (
-    <div
+    <StepperStepLabelContainer
       aria-current={isCurrentStep ? "step" : undefined}
-      className={cn(
-        "flex w-max flex-col justify-center",
-        isLabelVertical ? "items-center text-center" : "items-start text-left"
-      )}
+      isLabelVertical={isLabelVertical}
+      // className={cn(
+      //   "flex w-max flex-col justify-center",
+      //   isLabelVertical ? "items-center text-center" : "items-start text-left"
+      // )}
     >
       {!!label && (
         <p>
           {label}
           {renderOptionalLabel && (
-            <span className="ml-1 text-xs text-muted-foreground">({optionalLabel})</span>
+            <StepperStepOptionalLabel className="ml-1 text-xs text-muted-foreground">
+              ({optionalLabel})
+            </StepperStepOptionalLabel>
           )}
         </p>
       )}
-      {!!description && <p className="text-sm text-muted-foreground">{description}</p>}
-    </div>
+      {!!description && (
+        <StepperSteLabelDescription className="text-sm text-muted-foreground">
+          {description}
+        </StepperSteLabelDescription>
+      )}
+    </StepperStepLabelContainer>
   ) : null;
 };
 
@@ -360,16 +379,22 @@ const StepperStepConnector = React.memo(
 
     if (isVertical) {
       return (
-        <div
+        <StepperStepConnectorContainer
           data-highlighted={isCompletedStep}
-          className={cn(
-            "ms-6 mt-1 flex h-auto min-h-[2rem] flex-1 self-stretch border-l-2 ps-8",
-            isLastStep ? "min-h-0 border-transparent" : "",
-            isCompletedStep ? "border-green-700" : ""
-          )}
+          isLastStep={isLastStep}
+          isCompletedStep={isCompletedStep}
+          // className={cn(
+          //   "ms-6 mt-1 flex h-auto min-h-[2rem] flex-1 self-stretch border-l-2 ps-8",
+          //   isLastStep ? "min-h-0 border-transparent" : "",
+          //   isCompletedStep ? "border-green-700" : ""
+          // )}
         >
-          {!isCompletedStep && <div className="my-4 block h-auto w-full">{children}</div>}
-        </div>
+          {!isCompletedStep && (
+            <StepperStepConnectorLast className="my-4 block h-auto w-full">
+              {children}
+            </StepperStepConnectorLast>
+          )}
+        </StepperStepConnectorContainer>
       );
     }
 
