@@ -1,6 +1,7 @@
+import type { NextPage } from "next";
 import { ConnectWSCButton } from "milkomeda-wsc-ui";
 
-function App() {
+const Home: NextPage = () => {
   return (
     <div
       style={{
@@ -13,6 +14,6 @@ function App() {
       <ConnectWSCButton />
     </div>
   );
-}
+};
 
-export default App;
+export default Home;

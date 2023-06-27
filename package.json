@@ -36,6 +36,6 @@
     "packages/milkomeda-wsc",
     "packages/actor-webpage",
     "packages/milkomeda-wsc-ui",
-    "packages/milkomeda-wsc-ui-example"
+    "packages/milkomeda-wsc-ui-next-example"
   ]
 }

@@ -1,10 +1,5 @@
-import "./polyfills";
-
-import React from "react";
-import ReactDOM from "react-dom/client";
-
-import "./index.css";
-import App from "./App";
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
 
 import { WagmiConfig, createClient } from "wagmi";
 import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
@@ -16,14 +11,14 @@ const client = createClient(
   })
 );
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-
-root.render(
-  <React.StrictMode>
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
     <WagmiConfig client={client}>
       <ConnectWSCProvider debugMode>
-        <App />
+        <Component {...pageProps} />
       </ConnectWSCProvider>
     </WagmiConfig>
-  </React.StrictMode>
-);
+  );
+}
+
+export default MyApp;
