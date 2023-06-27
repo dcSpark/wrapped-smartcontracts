@@ -51,7 +51,7 @@
     "rollup-plugin-typescript2": "^0.34.0",
     "rollup-plugin-visualizer": "^5.5.4",
     "styled-components": "^5.3.5",
-    "tslib": "^1.9.3",
+    "tslib": "^2.5.3",
     "typescript-plugin-styled-components": "^2.0.0",
     "wagmi": "0.12.15"
   },

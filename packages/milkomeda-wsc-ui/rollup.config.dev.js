@@ -1,7 +1,7 @@
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import typescript from 'rollup-plugin-typescript2';
-import createStyledComponentsTransformer from 'typescript-plugin-styled-components';
-import packageJson from './package.json';
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import typescript from "rollup-plugin-typescript2";
+import createStyledComponentsTransformer from "typescript-plugin-styled-components";
+import packageJson from "./package.json";
 
 const styledComponentsTransformer = createStyledComponentsTransformer({
   displayName: true,
@@ -9,20 +9,21 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
 
 export default [
   {
-    input: ['./src/index.ts'],
-    external: ['react', 'react-dom', 'framer-motion', 'wagmi'],
+    input: ["./src/index.ts"],
+    external: ["react", "react-dom", "framer-motion", "wagmi", "milkomeda-wsc"],
     output: [
       {
         file: packageJson.exports,
-        format: 'esm',
+        format: "esm",
         sourcemap: false,
       },
     ],
+
     plugins: [
       peerDepsExternal(),
       typescript({
         useTsconfigDeclarationDir: true,
-        exclude: 'node_modules/**',
+        exclude: "node_modules/**",
         transformers: [
           () => ({
             before: [styledComponentsTransformer],
