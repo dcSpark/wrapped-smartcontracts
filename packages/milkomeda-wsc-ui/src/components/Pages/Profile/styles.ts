@@ -45,13 +45,19 @@ export const BalanceContainer = styled(motion.div)`
 `;
 export const Balance = styled(motion.div)`
   position: relative;
+  min-width: 150px;
+  text-align: left;
+  span {
+    color: rgb(55 55 55);
+    font-size: 1.125rem;
+  }
 `;
 const PlaceholderKeyframes = keyframes`
   0%{ background-position: 100% 0; }
   100%{ background-position: -100% 0; }
 `;
 export const LoadingBalance = styled(motion.div)`
-  width: 25%;
+  min-width: 150px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;

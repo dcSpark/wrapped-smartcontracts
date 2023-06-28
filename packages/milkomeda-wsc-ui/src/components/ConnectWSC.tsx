@@ -7,6 +7,7 @@ import ConnectWSCModal from "./ConnectModal";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
+import { useAccount } from "wagmi";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -20,6 +21,18 @@ export const routes = {
 type Connector = any;
 type Error = string | React.ReactNode | null;
 
+type StargateInfo = {
+  fromNativeTokenInLoveLaceOrMicroAlgo: string;
+  stargateMinNativeTokenFromL1: number;
+  stargateMinNativeTokenToL1: number;
+  stargateNativeTokenFeeToL1: number;
+};
+type WSCContext = {
+  wscProvider: any;
+  originTokens: any;
+  stargateInfo: StargateInfo | null;
+};
+
 type ContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -32,7 +45,8 @@ type ContextValue = {
   debugMode?: boolean;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
-} & useConnectCallbackProps;
+} & useConnectCallbackProps &
+  WSCContext;
 
 export const Context = createContext<ContextValue | null>(null);
 
@@ -82,6 +96,46 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [route, setRoute] = useState<string>(routes.CONNECTORS);
   const [errorMessage, setErrorMessage] = useState<Error>("");
 
+  // wsc connector
+  const { connector: activeConnector } = useAccount();
+  const [wscProvider, setWscProvider] = React.useState(null);
+  const [originTokens, setOriginTokens] = useState([]);
+  const [tokens, setTokens] = useState([]);
+  const [destinationBalance, setDestinationBalance] = useState(null);
+  const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
+
+  const [originAddress, setOriginAddress] = useState(null);
+  const [pendingTxs, setPendingTxs] = useState([]);
+  const [address, setAddress] = useState(null);
+  const [originBalance, setOriginBalance] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [algorandConnected, setAlgorandConnected] = useState(false);
+  const [cardanoConnected, setCardanoConnected] = useState(false);
+  const [network, setNetwork] = useState(null);
+
+  useEffect(() => {
+    if (!activeConnector?.id?.includes("wsc")) return;
+    const loadWscProvider = async () => {
+      try {
+        const provider = await activeConnector.getProvider();
+        if (!provider) return;
+        const originTokens = await provider.origin_getTokenBalances();
+        const tokenBalances = await provider.getTokenBalances();
+        const destinationBalance = await provider.eth_getBalance();
+        const stargate = await provider.stargateObject();
+        console.log("stargate", stargate);
+        setWscProvider(provider);
+        setOriginTokens(originTokens);
+        setTokens(tokenBalances ?? []);
+        setDestinationBalance(destinationBalance);
+        setStargateInfo(stargate);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    loadWscProvider();
+  }, [activeConnector, wscProvider]);
+
   useEffect(() => setErrorMessage(null), [route, open]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -95,6 +149,11 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     connector,
     setConnector,
     onConnect,
+    // wsc provider
+    wscProvider,
+    originTokens,
+    stargateInfo,
+
     // Other configuration
     errorMessage,
     debugMode,
