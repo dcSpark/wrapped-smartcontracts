@@ -301,7 +301,7 @@ const Modal: React.FC<ModalProps> = ({
       case routes.ONBOARDING:
         return "onboarding";
       case routes.PROFILE:
-        return "Connected";
+        return "Buy Milkomeda-C1 Djed Osiris Dollar"; // TODO: fix it
 
       default:
         return "";

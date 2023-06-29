@@ -1,7 +1,11 @@
 import React from "react";
 import { StepDescription, StepTitle } from "./styles";
+import Button from "../Common/Button";
 
-const ActionExecutionStep = () => {
+const ActionExecutionStep = ({ nextStep }) => {
+  const onWSCAction = () => {
+    nextStep();
+  };
   return (
     <div>
       <StepTitle>Executing Actions with Wrap Tokens: Smart Contract Interoperability</StepTitle>
@@ -11,6 +15,9 @@ const ActionExecutionStep = () => {
         contracts to interact with assets and access decentralized applications on different
         blockchain networks.
       </StepDescription>
+      <Button variant="primary" onClick={onWSCAction}>
+        Confirm wrapping
+      </Button>
     </div>
   );
 };

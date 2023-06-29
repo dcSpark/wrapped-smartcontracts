@@ -4,7 +4,6 @@ import { StepperStepProps } from "./index";
 
 type UseStepper = {
   initialStep: number;
-  steps: Pick<StepperStepProps, "label" | "description" | "optional" | "optionalLabel" | "icon">[];
 };
 
 type UseStepperReturn = {
@@ -14,11 +13,9 @@ type UseStepperReturn = {
   setStep: (step: number) => void;
   activeStep: number;
   isDisabledStep: boolean;
-  isLastStep: boolean;
-  isOptionalStep: boolean | undefined;
 };
 
-export function useStepper({ initialStep, steps }: UseStepper): UseStepperReturn {
+export function useStepper({ initialStep }: UseStepper): UseStepperReturn {
   const [activeStep, setActiveStep] = React.useState(initialStep);
 
   const nextStep = () => {
@@ -39,10 +36,6 @@ export function useStepper({ initialStep, steps }: UseStepper): UseStepperReturn
 
   const isDisabledStep = activeStep === 0;
 
-  const isLastStep = activeStep === steps.length - 1;
-
-  const isOptionalStep = steps[activeStep]?.optional;
-
   return {
     nextStep,
     prevStep,
@@ -50,8 +43,6 @@ export function useStepper({ initialStep, steps }: UseStepper): UseStepperReturn
     setStep,
     activeStep,
     isDisabledStep,
-    isLastStep,
-    isOptionalStep,
   };
 }
 

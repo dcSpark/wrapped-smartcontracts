@@ -143,7 +143,7 @@ const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children 
 
 ConnectButtonRenderer.displayName = "ConnectKitButton.Custom";
 
-function ConnectKitButtonInner({
+function ConnectWSCButtonInner({
   label,
   showAvatar,
   separator,
@@ -334,7 +334,7 @@ export function ConnectWSCButton({ onClick }: ConnectKitButtonProps) {
                 }
           }
         >
-          <ConnectKitButtonInner separator={separator} />
+          <ConnectWSCButtonInner separator={separator} />
         </ThemedButton>
       </ThemeContainer>
     </ResetContainer>

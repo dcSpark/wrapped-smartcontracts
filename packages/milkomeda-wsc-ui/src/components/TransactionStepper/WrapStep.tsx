@@ -9,9 +9,19 @@ import {
   ErrorMessage,
   LabelText,
   LabelWithBalanceContainer,
+  SpinnerWrapper,
   StepDescription,
   StepTitle,
+  WrapperButtons,
 } from "./styles";
+import { StepperSeparator } from "../Common/Stepper/styles";
+import Button from "../Common/Button";
+import { TxPendingStatus } from "milkomeda-wsc";
+import { Spinner } from "../Common/Spinner";
+import CircleSpinner from "../ConnectModal/ConnectWithInjector/CircleSpinner";
+import useInterval from "../../hooks/useInterval";
+import { useStepperContext } from "../Common/Stepper";
+import { CheckCircle2 } from "lucide-react";
 
 const balance = true;
 
@@ -24,56 +34,79 @@ type WrapToken = {
   quantity: BigNumber;
   unit: string;
 };
-const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace" }) => {
+
+export const WrapStatus = {
+  ...TxPendingStatus,
+  Idle: "Idle" as const,
+  Init: "Init" as const,
+  Pending: "Pending" as const,
+  Error: "Error" as const,
+};
+
+const statusWrapMessages = {
+  [WrapStatus.Init]: "Confirm Wrapping",
+  [WrapStatus.Pending]: "Wrapping your token",
+  [WrapStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
+  [WrapStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
+  [WrapStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
+  [WrapStatus.Confirmed]: "Your asset has been successfully wrapped!",
+};
+
+const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", nextStep }) => {
+  const { setOpen } = useContext();
+  const stepper = useStepperContext();
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
   const { wscProvider, originTokens, stargateInfo } = useContext();
-  const [formattedOriginTokens, setFormattedOriginTokens] = React.useState([]);
 
   const [txHash, setTxHash] = React.useState(null);
 
-  const [txStatus, setTxStatus] = React.useState("idle");
+  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
+  const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
+  const isIdle = txStatus === WrapStatus.Idle;
+  const isLoading =
+    txStatus === WrapStatus.Init ||
+    txStatus === WrapStatus.Pending ||
+    txStatus === WrapStatus.WaitingL1Confirmation ||
+    txStatus === WrapStatus.WaitingBridgeConfirmation ||
+    txStatus === WrapStatus.WaitingL2Confirmation;
+  const isError = txStatus === WrapStatus.Error;
+  const isSuccess = txStatus === WrapStatus.Confirmed;
 
-  // useInterval(
-  //   async () => {
-  //     if (!wscProvider || txHash == null) return;
-  //     const response = await wscProvider.getTxStatus(txHash);
-  //     setTxStatus(response);
-  //     if (response === TxPendingStatus.Confirmed) {
-  //       setTxHash(null);
-  //       setTimeout(() => {
-  //         goNextStep();
-  //       }, 2000);
-  //     }
-  //   },
-  //   txHash != null ? 4000 : null
-  // );
+  useInterval(
+    async () => {
+      if (!wscProvider || txHash == null) return;
+      const response = await wscProvider.getTxStatus(txHash);
+      setTxStatus(response);
+      if (response === TxPendingStatus.Confirmed) {
+        setTxHash(null);
+        setTimeout(() => {
+          nextStep();
+        }, 2000);
+      }
+    },
+    txHash != null ? 4000 : null
+  );
 
   const wrapToken = async () => {
-    setTxStatus("init");
+    setTxStatus(WrapStatus.Init);
     try {
-      // const txHash = await wscProvider?.wrap(
-      //   undefined,
-      //   selectedToken.unit,
-      //   new BigNumber(amount ?? "0")
-      // );
-      // setTxHash(txHash);
-      setTxStatus("pending");
+      const txHash = await wscProvider?.wrap(
+        undefined,
+        selectedWrapToken?.unit,
+        new BigNumber(defaultAmountEth ?? "0")
+      );
+      setTxHash(txHash);
+      setTxStatus(WrapStatus.Pending);
     } catch (err) {
-      console.error(err);
-      setTxStatus("error");
+      setTxStatus(WrapStatus.Error);
+      if (err instanceof Error) {
+        setTxStatusError(err.message);
+      }
     }
   };
 
-  // const handleTokenChange = (tokenUnit) => {
-  //   const token = formattedOriginTokens.find((t) => t.unit === tokenUnit);
-  //   setSelectedToken(token);
-  // };
-  // const onMaxToken = () => {
-  //   setAmount(selectedToken.quantity?.toFixed());
-  // };
-
   React.useEffect(() => {
-    const loadOriginTokens = async () => {
+    const loadOriginToken = async () => {
       const token = originTokens.find((t) => t.unit === defaultTokenUnit);
       if (!token) return;
       const defaultToken = {
@@ -82,7 +115,7 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace" }) =>
       };
       setSelectedWrapToken(defaultToken);
     };
-    loadOriginTokens();
+    loadOriginToken();
   }, [defaultAmountEth, defaultTokenUnit, originTokens, setSelectedWrapToken]);
 
   const fee =
@@ -95,31 +128,45 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace" }) =>
 
   return (
     <div>
-      <StepTitle>Wrap Tokens: Connecting Cardano and Ethereum</StepTitle>
+      <StepTitle>Wrap Tokens</StepTitle>
       <StepDescription>
         Explore the power of wrap tokens as they seamlessly connect Cardano and Ethereum, enabling
         users to leverage the benefits of both blockchain ecosystems. With wrap tokens, Cardano
-        tokens can be wrapped and utilized on the Ethereum network, expanding access to
-        decentralized applications and fostering interoperability between these two prominent
-        blockchain platforms.
+        tokens can be wrapped and utilized on the Ethereum network.
       </StepDescription>
       <BalancesWrapper>
         <LabelWithBalance
-          label="Amount to wrap:"
+          label="You're moving:"
           amount={new BigNumber(defaultAmountEth).toFixed()}
           assetName={selectedWrapToken?.assetName}
         />
         <LabelWithBalance
-          label="Estimated fee:"
+          label="Wrapping fee:"
           amount={fee?.toFixed()}
           assetName={selectedWrapToken?.assetName}
         />
         <LabelWithBalance
-          label="Total:"
+          label="You'll transfer:"
           amount={fee && new BigNumber(defaultAmountEth).plus(fee).toFixed()}
           assetName={selectedWrapToken?.assetName}
         />
       </BalancesWrapper>
+
+      {isLoading && (
+        <>
+          <SpinnerWrapper>
+            <Spinner />
+            <span>{statusWrapMessages[txStatus]}</span>
+          </SpinnerWrapper>
+          <p>Wrapping transaction may take a few minutes (~3m).</p>
+        </>
+      )}
+      {isSuccess && (
+        <SpinnerWrapper>
+          <CheckCircle2 />
+          <span>{statusWrapMessages[TxPendingStatus.Confirmed]}</span>
+        </SpinnerWrapper>
+      )}
 
       {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
         <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
@@ -127,20 +174,27 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace" }) =>
       {selectedWrapToken != null && !isAmountValid && (
         <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
       )}
+      {isError && (
+        <ErrorMessage role="alert">
+          Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
+        </ErrorMessage>
+      )}
 
-      {/*<div>*/}
-      {/*  {txStatus !== TxPendingStatus.Confirmed && txStatus !== "idle" && txStatus !== "error" && (*/}
-      {/*    <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />*/}
-      {/*  )}*/}
-      {/*  {txStatus !== "idle" && <p>{statusWrapFirstMessages[txStatus]}</p>}*/}
-      {/*</div>*/}
+      {(isIdle || isError) && (
+        <WrapperButtons>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="primary" onClick={wrapToken}>
+            Confirm wrapping
+          </Button>
+        </WrapperButtons>
+      )}
     </div>
   );
 };
 
 export default WrapStep;
 
-const LabelWithBalance = ({ label, amount, assetName }) => {
+export const LabelWithBalance = ({ label, amount, assetName }) => {
   return (
     <LabelWithBalanceContainer>
       <LabelText>{label} </LabelText>
@@ -156,8 +210,8 @@ const LabelWithBalance = ({ label, amount, assetName }) => {
               <span>
                 {amount}
                 {` `}
+                {assetName}
               </span>
-              {assetName}
             </Balance>
           ) : (
             <LoadingBalance

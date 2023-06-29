@@ -337,9 +337,9 @@ const ConnectWithInjector: React.FC<{
                 <ModalContent>
                   <ModalH1 $error>
                     <AlertIcon />
-                    Something went wrong!
+                    Connection Failed
                   </ModalH1>
-                  <ModalBody>Please try again</ModalBody>
+                  <ModalBody>Sorry, something went wrong. Please try connecting again.</ModalBody>
                 </ModalContent>
               </Content>
             )}
@@ -366,11 +366,9 @@ const ConnectWithInjector: React.FC<{
                 variants={contentVariants}
               >
                 <ModalContent style={{ paddingBottom: 28 }}>
-                  <ModalH1>
-                    {connector.id === "injected" ? "injected" : "connecting injected"}
-                  </ModalH1>
+                  <ModalH1>Requesting Connection</ModalH1>
                   <ModalBody>
-                    {connector.id === "injected" ? "injected d" : "connecting injected ddd"}
+                    Open the {connector.name} browser extension to connect your wallet.
                   </ModalBody>
                 </ModalContent>
               </Content>

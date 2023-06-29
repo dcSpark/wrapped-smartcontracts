@@ -30,6 +30,7 @@ type StargateInfo = {
 type WSCContext = {
   wscProvider: any;
   originTokens: any;
+  tokens: any;
   stargateInfo: StargateInfo | null;
 };
 
@@ -153,7 +154,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     wscProvider,
     originTokens,
     stargateInfo,
-
+    tokens,
     // Other configuration
     errorMessage,
     debugMode,

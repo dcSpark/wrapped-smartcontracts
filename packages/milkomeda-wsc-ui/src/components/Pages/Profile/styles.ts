@@ -11,6 +11,11 @@ export const StepperTransactionContainer = styled(motion.div)`
   padding-top: 50px;
   padding-right: 20px;
   padding-left: 20px;
+  --ck-primary-button-background: rgb(55, 55, 55);
+  --ck-primary-button-color: #ffffff;
+  --ck-primary-button-border-radius: 16px;
+  --ck-primary-button-font-weight: 600;
+  --ck-primary-button-hover-background: #404040;
 `;
 
 export const StepperTransactionInner = styled(motion.div)`

@@ -35,7 +35,7 @@ export default {
     "--ck-primary-button-hover-background": "#F0F2F5",
     //'--ck-primary-button-hover-box-shadow': 'inset 0 0 0 2px var(--ck-focus-color)',
 
-    //'--ck-primary-button-active-background': '#EAECF1',
+    "--ck-primary-button-active-background": "#EAECF1",
 
     /** Secondary Button */
     "--ck-secondary-button-border-radius": "16px",

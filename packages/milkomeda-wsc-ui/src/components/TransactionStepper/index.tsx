@@ -15,10 +15,26 @@ import WrapStep from "./WrapStep";
 import ActionExecutionStep from "./ActionExecutionStep";
 import UnwrapStep from "./UnwrapStep";
 import TokenAllowanceStep from "./TokenAllowanceStep";
+import { useContext } from "../ConnectWSC";
 
 const balance = true;
 
-const TransactionStepper = () => {
+// TODO: this might be need to be passed on the config provider
+const cardanoAddressTReserveCoin =
+  "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
+const cardanoAddressTStableCoin =
+  "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
+
+const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
+
+const TransactionStepper = ({
+  contractAddress = reserveCoinAddress, // TODO
+}) => {
+  const { nextStep, prevStep, activeStep } = useStepper({
+    initialStep: 0,
+  });
+  const { setOpen } = useContext();
+
   const [value, setValue] = useState<"loading" | "error">("loading");
 
   const steps = [
@@ -26,38 +42,20 @@ const TransactionStepper = () => {
       label: "Cardano Wrapping",
       children: (
         <WrapStep
-          defaultTokenUnit="lovelace" // TODO: hardcoded for now
+          // TODO: hardcoded for now
+          defaultTokenUnit="lovelace"
           defaultAmountEth="30"
-          // setSelectedToken={setSelectedToken}
-          // selectedToken={selectedToken}
-          // amount={amount}
-          // setAmount={setAmount}
-          // defaultAmountEth={
-          //   currentAmountWei
-          //     ? ethers.utils.formatEther(new BigNumber(currentAmountWei).toString())
-          //     : "0"
-          // }
-          // goNextStep={handleNextStep}
+          nextStep={nextStep}
         />
       ),
     },
-    { label: "Action Execution", children: <ActionExecutionStep /> },
-    { label: "Token Allowance", children: <TokenAllowanceStep /> },
-    { label: "Milkomeda Unwrapping", children: <UnwrapStep /> },
+    { label: "Action Execution", children: <ActionExecutionStep nextStep={nextStep} /> },
+    {
+      label: "Token Allowance",
+      children: <TokenAllowanceStep nextStep={nextStep} contractAddress={contractAddress} />,
+    },
+    { label: "Milkomeda Unwrapping", children: <UnwrapStep contractAddress={contractAddress} /> },
   ];
-
-  const {
-    nextStep,
-    prevStep,
-    resetSteps,
-    activeStep,
-    isDisabledStep,
-    isLastStep,
-    isOptionalStep,
-  } = useStepper({
-    initialStep: 0,
-    steps,
-  });
 
   return (
     <StepperTransactionContainer>
@@ -74,23 +72,20 @@ const TransactionStepper = () => {
           </StepperStep>
         ))}
       </Stepper>
-      <StepperTransactionInner>
+      <div>
         {activeStep === steps.length ? (
           <>
-            <h2>All steps completed!</h2>
-            <Button onClick={resetSteps}>Reset</Button>
-          </>
-        ) : (
-          <>
-            <Button disabled={isDisabledStep} onClick={prevStep}>
-              Prev
-            </Button>
-            <Button onClick={nextStep}>
-              {isLastStep ? "Finish" : isOptionalStep ? "Skip" : "Next"}
+            <p>The entire process has been completed successfully</p>
+            <Button
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Close
             </Button>
           </>
-        )}
-      </StepperTransactionInner>
+        ) : null}
+      </div>
     </StepperTransactionContainer>
   );
 };

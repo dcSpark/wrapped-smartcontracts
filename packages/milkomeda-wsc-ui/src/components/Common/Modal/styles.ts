@@ -379,6 +379,7 @@ export const ModalContainer = styled.div`
   z-index: 2147483646; // z-index set one below max (2147483647) for if we wish to layer things ontop of the modal in a seperate Portal
   position: fixed;
   inset: 0;
+  --ck-spinner-color: #f07d00;
 `;
 
 export const CloseButton = styled(motion.button)`

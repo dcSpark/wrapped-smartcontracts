@@ -21,6 +21,7 @@ export const BalancesWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  margin-bottom: 30px;
 `;
 export const LabelWithBalanceContainer = styled.div`
   display: flex;
@@ -34,4 +35,22 @@ export const LabelText = styled.div`
 `;
 export const ErrorMessage = styled.div`
   color: rgb(239, 68, 68);
+  margin-bottom: 18px;
+`;
+export const SpinnerWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0 40px;
+  svg {
+    color: #f07d00;
+  }
+`;
+export const WrapperButtons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 40px;
 `;
