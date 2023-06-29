@@ -1,6 +1,5 @@
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import typescript from "rollup-plugin-typescript2";
-import { wasm } from "@rollup/plugin-wasm";
 import packageJson from "./package.json";
 
 export default [

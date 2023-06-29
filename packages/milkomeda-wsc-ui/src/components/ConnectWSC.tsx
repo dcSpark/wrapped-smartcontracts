@@ -124,7 +124,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
         const tokenBalances = await provider.getTokenBalances();
         const destinationBalance = await provider.eth_getBalance();
         const stargate = await provider.stargateObject();
-        console.log("stargate", stargate);
         setWscProvider(provider);
         setOriginTokens(originTokens);
         setTokens(tokenBalances ?? []);
