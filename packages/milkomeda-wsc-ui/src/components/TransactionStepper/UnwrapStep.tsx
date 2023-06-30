@@ -5,6 +5,7 @@ import {
   SpinnerWrapper,
   StepDescription,
   StepTitle,
+  SuccessWrapper,
 } from "./styles";
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
@@ -127,10 +128,10 @@ const UnwrapStep = ({ contractAddress }) => {
         </ErrorMessage>
       )}
       {isSuccess && (
-        <SpinnerWrapper>
+        <SuccessWrapper>
           <CheckCircle2 />
           <span>{statusUnwrapMessages[TxPendingStatus.Confirmed]}</span>
-        </SpinnerWrapper>
+        </SuccessWrapper>
       )}
       {(isIdle || isError) && (
         <Button variant="primary" onClick={unwrapToken}>

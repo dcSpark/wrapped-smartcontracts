@@ -16,8 +16,8 @@ import ActionExecutionStep from "./ActionExecutionStep";
 import UnwrapStep from "./UnwrapStep";
 import TokenAllowanceStep from "./TokenAllowanceStep";
 import { useContext } from "../ConnectWSC";
-
-const balance = true;
+import { TransactionCompleteContainer } from "./styles";
+import Confetti from "react-confetti";
 
 // TODO: this might be need to be passed on the config provider
 const cardanoAddressTReserveCoin =
@@ -75,7 +75,16 @@ const TransactionStepper = ({
       <div>
         {activeStep === steps.length ? (
           <>
-            <p>The entire process has been completed successfully</p>
+            <TransactionCompleteContainer>
+              <h1>Transaction completed!</h1>
+              <p>You've successfully interacted with the Milkomeda Wrapped Smart Contract.</p>
+            </TransactionCompleteContainer>
+            <Confetti
+              recycle={false}
+              style={{ position: "absolute", inset: 0, width: "100%" }}
+              initialVelocityX={10}
+              initialVelocityY={10}
+            />
             <Button
               onClick={() => {
                 setOpen(false);

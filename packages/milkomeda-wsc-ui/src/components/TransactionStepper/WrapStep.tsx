@@ -12,6 +12,7 @@ import {
   SpinnerWrapper,
   StepDescription,
   StepTitle,
+  SuccessWrapper,
   WrapperButtons,
 } from "./styles";
 import { StepperSeparator } from "../Common/Stepper/styles";
@@ -60,7 +61,7 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
 
   const [txHash, setTxHash] = React.useState(null);
 
-  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Confirmed);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === WrapStatus.Idle;
   const isLoading =
@@ -162,10 +163,10 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
         </>
       )}
       {isSuccess && (
-        <SpinnerWrapper>
+        <SuccessWrapper>
           <CheckCircle2 />
           <span>{statusWrapMessages[TxPendingStatus.Confirmed]}</span>
-        </SpinnerWrapper>
+        </SuccessWrapper>
       )}
 
       {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (

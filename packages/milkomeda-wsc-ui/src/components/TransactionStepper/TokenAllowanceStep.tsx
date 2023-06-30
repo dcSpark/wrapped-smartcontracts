@@ -8,6 +8,7 @@ import {
   SpinnerWrapper,
   StepDescription,
   StepTitle,
+  SuccessWrapper,
 } from "./styles";
 import { erc20ABI, useSigner } from "wagmi";
 import { useContext } from "../ConnectWSC";
@@ -73,10 +74,10 @@ const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
       )}
       {isError && <ErrorMessage role="alert">Ups, something went wrong.</ErrorMessage>}
       {isSuccess && (
-        <SpinnerWrapper>
+        <SuccessWrapper>
           <CheckCircle2 />
           <span>You've successfully approved the bridge to spend your tokens.</span>
-        </SpinnerWrapper>
+        </SuccessWrapper>
       )}
       <Button variant="primary" onClick={onTokenAllowance}>
         Grant token allowance

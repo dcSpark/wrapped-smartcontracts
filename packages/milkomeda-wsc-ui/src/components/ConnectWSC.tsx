@@ -170,12 +170,10 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   return createElement(
     Context.Provider,
     { value },
-    <>
-      <ThemeProvider theme={defaultTheme}>
-        {children}
-        <ConnectWSCModal />
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme={defaultTheme}>
+      {children}
+      <ConnectWSCModal />
+    </ThemeProvider>
   );
 };
 
