@@ -25,36 +25,23 @@ const cardanoAddressTReserveCoin =
 const cardanoAddressTStableCoin =
   "27f2e501c0fa1f9b7b79ae0f7faeb5ecbe4897d984406602a1afd8a874537461626c65436f696e";
 
-const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
-
-const TransactionStepper = ({
-  contractAddress = reserveCoinAddress, // TODO
-}) => {
-  const { nextStep, prevStep, activeStep } = useStepper({
+const TransactionStepper = () => {
+  const { nextStep, activeStep } = useStepper({
     initialStep: 0,
   });
   const { setOpen } = useContext();
 
-  const [value, setValue] = useState<"loading" | "error">("loading");
-
   const steps = [
     {
       label: "Cardano Wrapping",
-      children: (
-        <WrapStep
-          // TODO: hardcoded for now
-          defaultTokenUnit="lovelace"
-          defaultAmountEth="30"
-          nextStep={nextStep}
-        />
-      ),
+      children: <WrapStep nextStep={nextStep} />,
     },
     { label: "Action Execution", children: <ActionExecutionStep nextStep={nextStep} /> },
     {
       label: "Token Allowance",
-      children: <TokenAllowanceStep nextStep={nextStep} contractAddress={contractAddress} />,
+      children: <TokenAllowanceStep nextStep={nextStep} />,
     },
-    { label: "Milkomeda Unwrapping", children: <UnwrapStep contractAddress={contractAddress} /> },
+    { label: "Milkomeda Unwrapping", children: <UnwrapStep nextStep={nextStep} /> },
   ];
 
   return (
@@ -64,7 +51,6 @@ const TransactionStepper = ({
         successIcon={<CheckCircle2 />}
         errorIcon={<XCircle />}
         labelOrientation="vertical"
-        state={value}
       >
         {steps.map((step, index) => (
           <StepperStep index={index} key={index} {...step}>

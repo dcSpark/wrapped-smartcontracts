@@ -1,4 +1,11 @@
-import React, { createContext, createElement, useEffect, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  createElement,
+  useEffect,
+  useState,
+  ReactNode,
+  useRef,
+} from "react";
 import { Buffer } from "buffer";
 
 import defaultTheme from "../styles/defaultTheme";
@@ -8,6 +15,7 @@ import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
 import { useAccount } from "wagmi";
+import { WSCLib } from "milkomeda-wsc";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -21,17 +29,35 @@ export const routes = {
 type Connector = any;
 type Error = string | React.ReactNode | null;
 
+export type DefaultCardanoAsset = {
+  unit: string;
+  amount: number;
+};
+
 type StargateInfo = {
   fromNativeTokenInLoveLaceOrMicroAlgo: string;
   stargateMinNativeTokenFromL1: number;
   stargateMinNativeTokenToL1: number;
   stargateNativeTokenFeeToL1: number;
 };
+type WSCAction = () => Promise<void>;
+// type WSCAction = {
+//   isSuccess: boolean;
+//   isLoading: boolean;
+//   isError: boolean;
+//   callback: () => Promise<void>;
+// };
 type WSCContext = {
-  wscProvider: any;
+  wscProvider: WSCLib | null;
   originTokens: any;
   tokens: any;
   stargateInfo: StargateInfo | null;
+  defaultCardanoAsset: DefaultCardanoAsset | null;
+  setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
+  contractAddress: string;
+  setContractAddress: React.Dispatch<React.SetStateAction<string>>;
+  wscAction: WSCAction | null;
+  setWscAction: React.Dispatch<React.SetStateAction<WSCAction | null>>;
 };
 
 type ContextValue = {
@@ -105,6 +131,11 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [destinationBalance, setDestinationBalance] = useState(null);
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
 
+  const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
+  const [contractAddress, setContractAddress] = useState("");
+
+  const [wscAction, setWscAction] = useState<WSCAction | null>(null);
+
   const [originAddress, setOriginAddress] = useState(null);
   const [pendingTxs, setPendingTxs] = useState([]);
   const [address, setAddress] = useState(null);
@@ -154,8 +185,16 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     originTokens,
     stargateInfo,
     tokens,
+    //
+    defaultCardanoAsset,
+    setDefaultCardanoAsset,
+    contractAddress,
+    setContractAddress,
+    wscAction,
+    setWscAction,
     // Other configuration
     errorMessage,
+
     debugMode,
     log,
     displayError: (message: string | React.ReactNode | null, code?: any) => {

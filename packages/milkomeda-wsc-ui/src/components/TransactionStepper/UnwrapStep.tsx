@@ -16,6 +16,7 @@ import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiTo
 import { Spinner } from "../Common/Spinner";
 import { CheckCircle2 } from "lucide-react";
 import { TxPendingStatus } from "milkomeda-wsc";
+import { DEFAULT_STEP_TIMEOUT } from "./constants";
 
 const statusUnwrapMessages = {
   [WrapStatus.Init]: "Confirm Unwrapping",
@@ -33,10 +34,10 @@ type UnwrapToken = {
   symbol: string;
   type: "ERC-20";
 };
-const UnwrapStep = ({ contractAddress }) => {
-  const { wscProvider, tokens, stargateInfo } = useContext();
+const UnwrapStep = ({ nextStep }) => {
+  const { wscProvider, tokens, stargateInfo, contractAddress } = useContext();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<UnwrapToken | null>(null);
-  const [txHash, setTxHash] = React.useState(null);
+  const [txHash, setTxHash] = React.useState<null | string | undefined>(null);
   const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === WrapStatus.Idle;
@@ -56,6 +57,9 @@ const UnwrapStep = ({ contractAddress }) => {
       setTxStatus(response);
       if (response === statusUnwrapMessages.Confirmed) {
         setTxHash(null);
+        setTimeout(() => {
+          nextStep();
+        }, DEFAULT_STEP_TIMEOUT);
       }
     },
     txHash != null ? 4000 : null
@@ -68,7 +72,7 @@ const UnwrapStep = ({ contractAddress }) => {
   }, [tokens, contractAddress]);
 
   const unwrapToken = async () => {
-    if (!selectedUnwrapToken) return;
+    if (!selectedUnwrapToken || !wscProvider) return;
     setTxStatus(WrapStatus.Init);
 
     try {

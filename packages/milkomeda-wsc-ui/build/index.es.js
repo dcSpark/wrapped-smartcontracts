@@ -18,6 +18,7 @@ import * as Separator from '@radix-ui/react-separator';
 import BigNumber from 'bignumber.js';
 import { TxPendingStatus } from 'milkomeda-wsc';
 import { ethers } from 'ethers';
+import Confetti from 'react-confetti';
 
 var types = /*#__PURE__*/Object.freeze({
   __proto__: null
@@ -94,7 +95,7 @@ const getDefaultConnectors = ({ chains }) => {
     ];
     return connectors;
 };
-const defaultConfig = ({ autoConnect = false, // TODO: check why breaks in wsc
+const defaultConfig = ({ autoConnect = true, // TODO: check why breaks in wsc
 chains = defaultChains, connectors, provider, stallTimeout, webSocketProvider, enableWebSocketProvider, }) => {
     const providers = [];
     providers.push(jsonRpcProvider({
@@ -1192,7 +1193,7 @@ const globalsDark = css `
 // TODO: Think more about how to reset our components as to not be affected by external stylings
 // TODO: Merge theme objects instead of overriding
 let mode = "auto";
-const ResetContainer = styled(motion.div) `
+const ResetContainer = styled(motion.div).withConfig({ displayName: "ResetContainer", componentId: "-bjpgwr" }) `
   ${themes.default}
 
   ${(props) => {
@@ -1529,7 +1530,7 @@ var defaultTheme = {
     mobileWidth: 560,
 };
 
-const ErrorMessage$1 = styled(motion.div) `
+const ErrorMessage$1 = styled(motion.div).withConfig({ displayName: "ErrorMessage", componentId: "-168s1ia" }) `
   z-index: -1;
   pointer-events: auto;
   position: absolute;
@@ -1584,17 +1585,17 @@ const FadeOutScaleDown = keyframes `
 from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(0.85); }
 `;
-const PageContent = styled(motion.div) `
+const PageContent = styled(motion.div).withConfig({ displayName: "PageContent", componentId: "-1laqldp" }) `
   max-width: 100%;
   width: 295px;
   padding-top: 48px;
 `;
-const MainPageContent = styled(motion.div) `
+const MainPageContent = styled(motion.div).withConfig({ displayName: "MainPageContent", componentId: "-u4lvcf" }) `
   max-width: 100%;
   width: 800px;
   padding-top: 48px;
 `;
-const TextWithHr = styled(motion.div) `
+const TextWithHr = styled(motion.div).withConfig({ displayName: "TextWithHr", componentId: "-ns096e" }) `
   user-select: none;
   position: relative;
   display: block;
@@ -1626,7 +1627,7 @@ const TextWithHr = styled(motion.div) `
     box-shadow: var(--ck-body-divider-box-shadow);
   }
 `;
-const ModalHeading = styled(motion.div) `
+const ModalHeading = styled(motion.div).withConfig({ displayName: "ModalHeading", componentId: "-eeds6k" }) `
   z-index: 3;
   pointer-events: none;
   user-select: none;
@@ -1648,11 +1649,11 @@ const ModalHeading = styled(motion.div) `
     display: inline-block;
   }
 `;
-const ModalContentContainer = styled(motion.div) `
+const ModalContentContainer = styled(motion.div).withConfig({ displayName: "ModalContentContainer", componentId: "-107728z" }) `
   position: relative;
   padding: 0;
 `;
-const ModalContent = styled(motion.div) `
+const ModalContent = styled(motion.div).withConfig({ displayName: "ModalContent", componentId: "-1fanrvr" }) `
   left: 0;
   right: 0;
   text-align: center;
@@ -1665,7 +1666,7 @@ const ModalContent = styled(motion.div) `
     display: block;
   }
 `;
-const ModalH1 = styled(motion.h1) `
+const ModalH1 = styled(motion.h1).withConfig({ displayName: "ModalH1", componentId: "-1enfhl3" }) `
   margin: 0;
   padding: 0;
   line-height: ${(props) => (props.$small ? 20 : 22)}px;
@@ -1690,7 +1691,7 @@ const ModalH1 = styled(motion.h1) `
     font-size: 17px;
   }
 `;
-const ModalBody = styled.div `
+const ModalBody = styled.div.withConfig({ displayName: "ModalBody", componentId: "-hwrywx" }) `
   font-size: 16px;
   font-weight: 400;
   line-height: 21px;
@@ -1700,7 +1701,7 @@ const ModalBody = styled.div `
     color: var(--ck-body-color);
   }
 `;
-styled.div `
+styled.div.withConfig({ displayName: "ModalBodySmall", componentId: "-1ufojtl" }) `
   padding: 0 12px;
   font-size: 13px;
   font-weight: 400;
@@ -1711,7 +1712,7 @@ styled.div `
     color: var(--ck-body-color);
   }
 `;
-const BackgroundOverlay = styled(motion.div) `
+const BackgroundOverlay = styled(motion.div).withConfig({ displayName: "BackgroundOverlay", componentId: "-1aml865" }) `
   z-index: 1;
   position: absolute;
   top: 0;
@@ -1739,7 +1740,7 @@ const MobileBoxOut = keyframes `
   from { opacity: 1; }
   to { opacity: 0; }
 `;
-const BoxContainer = styled(motion.div) `
+const BoxContainer = styled(motion.div).withConfig({ displayName: "BoxContainer", componentId: "-1a1svs3" }) `
   z-index: 2;
   position: relative;
   color: var(--ck-body-color);
@@ -1785,7 +1786,7 @@ const BoxContainer = styled(motion.div) `
     }
   }
 `;
-const ControllerContainer = styled(motion.div) `
+const ControllerContainer = styled(motion.div).withConfig({ displayName: "ControllerContainer", componentId: "-feud1u" }) `
   z-index: 3;
   position: absolute;
   top: 0;
@@ -1798,7 +1799,7 @@ const ControllerContainer = styled(motion.div) `
   pointer-events: auto;
   //border-bottom: 1px solid var(--ck-body-divider);
 `;
-const InnerContainer$1 = styled(motion.div) `
+const InnerContainer$1 = styled(motion.div).withConfig({ displayName: "InnerContainer", componentId: "-hto21s" }) `
   position: relative;
   overflow: hidden;
   height: var(--height);
@@ -1808,7 +1809,7 @@ const InnerContainer$1 = styled(motion.div) `
     /* animation-delay: 34ms; */
   }
 `;
-const PageContainer = styled(motion.div) `
+const PageContainer = styled(motion.div).withConfig({ displayName: "PageContainer", componentId: "-1dxsuij" }) `
   z-index: 2;
   position: relative;
   top: 0;
@@ -1870,19 +1871,19 @@ const PageContainer = styled(motion.div) `
     }
   }
 `;
-const PageContents = styled(motion.div) `
+const PageContents = styled(motion.div).withConfig({ displayName: "PageContents", componentId: "-uhaxzn" }) `
   margin: 0 auto;
   width: fit-content;
   padding: 29px 24px 24px;
   backface-visibility: hidden;
 `;
-const ModalContainer = styled.div `
+const ModalContainer = styled.div.withConfig({ displayName: "ModalContainer", componentId: "-1irik83" }) `
   z-index: 2147483646; // z-index set one below max (2147483647) for if we wish to layer things ontop of the modal in a seperate Portal
   position: fixed;
   inset: 0;
   --ck-spinner-color: #f07d00;
 `;
-const CloseButton = styled(motion.button) `
+const CloseButton = styled(motion.button).withConfig({ displayName: "CloseButton", componentId: "-zdjs4c" }) `
   z-index: 3;
   cursor: pointer;
   position: absolute;
@@ -1911,7 +1912,7 @@ const CloseButton = styled(motion.button) `
     transform: scale(0.9);
   }
 `;
-styled(motion.button) `
+styled(motion.button).withConfig({ displayName: "SiweButton", componentId: "-1ynp4ri" }) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -1941,7 +1942,7 @@ styled(motion.button) `
     }
   }
 `;
-const BackButton = styled(motion.button) `
+const BackButton = styled(motion.button).withConfig({ displayName: "BackButton", componentId: "-1r0bzhj" }) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -1972,7 +1973,7 @@ const BackButton = styled(motion.button) `
     }
   }
 `;
-const InfoButton = styled(motion.button) `
+const InfoButton = styled(motion.button).withConfig({ displayName: "InfoButton", componentId: "-15o2fx" }) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -2002,7 +2003,7 @@ const InfoButton = styled(motion.button) `
     }
   }
 `;
-const Container$5 = styled(motion.div) `
+const Container$5 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-1x7cxsv" }) `
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --duration: 200ms;
   --transition: height var(--duration) var(--ease), width var(--duration) var(--ease);
@@ -2085,7 +2086,7 @@ const Container$5 = styled(motion.div) `
     }
   }
 `;
-const Disclaimer = styled(motion.div) `
+const Disclaimer = styled(motion.div).withConfig({ displayName: "Disclaimer", componentId: "-rnwrok" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2112,7 +2113,7 @@ const Disclaimer = styled(motion.div) `
     padding: 20px 42px 22px 42px;
   }
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "DisclaimerBackground", componentId: "-1xqzaqt" }) `
   pointer-events: all;
   z-index: 9;
   position: absolute;
@@ -2140,7 +2141,7 @@ styled(motion.div) `
     border-radius: 0;
   }
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "SignInTooltip", componentId: "-1kfslgi" }) `
   z-index: 2;
   position: absolute;
   top: 100%;
@@ -2638,7 +2639,7 @@ const OrDivider = ({ children }) => {
     return (jsx(TextWithHr, { children: jsx("span", { children: children }) }));
 };
 
-const Graphic = styled(motion.div) `
+const Graphic = styled(motion.div).withConfig({ displayName: "Graphic", componentId: "-dkhi6y" }) `
   position: relative;
   margin: 16px auto 20px;
   height: 190px;
@@ -2651,7 +2652,7 @@ const Graphic = styled(motion.div) `
     margin-bottom: 32px;
   }
 `;
-const LogoGroup = styled(motion.div) `
+const LogoGroup = styled(motion.div).withConfig({ displayName: "LogoGroup", componentId: "-1jc164e" }) `
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -2666,7 +2667,7 @@ const graphicIn = keyframes `
     transform:none;
   }
 `;
-const GraphicBackground = styled(motion.div) `
+const GraphicBackground = styled(motion.div).withConfig({ displayName: "GraphicBackground", componentId: "-18k9s3u" }) `
   z-index: 1;
   position: absolute;
   inset: 0;
@@ -2704,16 +2705,16 @@ const logoIn = keyframes `
     transform:none;
   }
 `;
-const LogoPosition = styled(motion.div) `
+const LogoPosition = styled(motion.div).withConfig({ displayName: "LogoPosition", componentId: "-1wne4m3" }) `
   position: absolute;
   inset: 0;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-delay: inherit;
 `;
-const LogoInner = styled(motion.div) `
+const LogoInner = styled(motion.div).withConfig({ displayName: "LogoInner", componentId: "-6q6ag1" }) `
   position: absolute;
 `;
-const LogoGraphic = styled(motion.div) `
+const LogoGraphic = styled(motion.div).withConfig({ displayName: "LogoGraphic", componentId: "-w9bnza" }) `
   position: relative;
   overflow: hidden;
   height: 58px;
@@ -2731,7 +2732,7 @@ const float = keyframes `
   0%,100%{ transform:none; }
   50%{ transform: translateY(-10%) }
 `;
-const FloatWrapper = styled(motion.div) `
+const FloatWrapper = styled(motion.div).withConfig({ displayName: "FloatWrapper", componentId: "-44r43q" }) `
   position: relative;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-name: ${float};
@@ -2741,13 +2742,13 @@ const rotate = keyframes `
   0%,100%{ transform:rotate(-3deg); }
   50%{ transform:rotate(3deg); }
 `;
-const RotateWrapper = styled(motion.div) `
+const RotateWrapper = styled(motion.div).withConfig({ displayName: "RotateWrapper", componentId: "-w8ymff" }) `
   position: relative;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-name: ${rotate};
   animation-duration: 3200ms;
 `;
-const Logo$1 = styled(motion.div) `
+const Logo$1 = styled(motion.div).withConfig({ displayName: "Logo", componentId: "-6a2gs2" }) `
   position: absolute;
   inset: 0;
 
@@ -2860,7 +2861,7 @@ const Logo$1 = styled(motion.div) `
 
 var wave = (jsxs("svg", { "aria-hidden": "true", width: "298", height: "188", viewBox: "0 0 298 188", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [jsx("path", { d: "M1 55.2757L21.6438 46.0285C55.5896 30.8228 94.4104 30.8228 128.356 46.0286L169.644 64.5229C203.59 79.7287 242.41 79.7286 276.356 64.5229L297 55.2757M1 44.2118L21.6438 34.9646C55.5896 19.7589 94.4104 19.7589 128.356 34.9646L169.644 53.459C203.59 68.6647 242.41 68.6647 276.356 53.459L297 44.2118M1 33.1477L21.6438 23.9005C55.5896 8.69479 94.4104 8.69479 128.356 23.9005L169.644 42.3949C203.59 57.6006 242.41 57.6006 276.356 42.3949L297 33.1477M1 22.1477L21.6438 12.9005C55.5896 -2.30521 94.4104 -2.30521 128.356 12.9005L169.644 31.3949C203.59 46.6006 242.41 46.6006 276.356 31.3949L297 22.1477M1 66.3398L21.6438 57.0926C55.5896 41.8869 94.4104 41.8869 128.356 57.0926L169.644 75.587C203.59 90.7927 242.41 90.7927 276.356 75.587L297 66.3398M1 77.404L21.6438 68.1568C55.5896 52.9511 94.4104 52.9511 128.356 68.1569L169.644 86.6512C203.59 101.857 242.41 101.857 276.356 86.6512L297 77.404M1 88.4681L21.6438 79.2209C55.5896 64.0152 94.4104 64.0152 128.356 79.2209L169.644 97.7153C203.59 112.921 242.41 112.921 276.356 97.7153L297 88.4681M1 121.66L21.6438 112.413C55.5896 97.2075 94.4104 97.2075 128.356 112.413L169.644 130.908C203.59 146.113 242.41 146.113 276.356 130.908L297 121.66M1 110.596L21.6438 101.349C55.5896 86.1433 94.4104 86.1433 128.356 101.349L169.644 119.843C203.59 135.049 242.41 135.049 276.356 119.843L297 110.596M1 99.5321L21.6438 90.2849C55.5896 75.0792 94.4104 75.0792 128.356 90.2849L169.644 108.779C203.59 123.985 242.41 123.985 276.356 108.779L297 99.5321M1 132.724L21.6438 123.477C55.5896 108.271 94.4104 108.271 128.356 123.477L169.644 141.971C203.59 157.177 242.41 157.177 276.356 141.971L297 132.724M1 143.788L21.6438 134.541C55.5896 119.336 94.4104 119.336 128.356 134.541L169.644 153.036C203.59 168.241 242.41 168.241 276.356 153.036L297 143.788M1 154.853L21.6438 145.605C55.5896 130.4 94.4104 130.4 128.356 145.605L169.644 164.1C203.59 179.305 242.41 179.305 276.356 164.1L297 154.853M1 165.853L21.6438 156.605C55.5896 141.4 94.4104 141.4 128.356 156.605L169.644 175.1C203.59 190.305 242.41 190.305 276.356 175.1L297 165.853", stroke: "url(#paint0_linear_1094_2077)", strokeOpacity: "0.9", strokeLinecap: "round", strokeLinejoin: "round" }), jsx("defs", { children: jsxs("linearGradient", { id: "paint0_linear_1094_2077", x1: "1", y1: "112.587", x2: "297.034", y2: "79.6111", gradientUnits: "userSpaceOnUse", children: [jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-01)" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-02)", offset: "0.239583" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-03)", offset: "0.515625" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-04)", offset: "0.739583" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-05)", offset: "1" })] }) })] }));
 
-const SpinnerContainer$2 = styled(motion.div) `
+const SpinnerContainer$2 = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-haahok" }) `
   position: absolute;
   right: 16px;
   top: 0;
@@ -2869,7 +2870,7 @@ const SpinnerContainer$2 = styled(motion.div) `
   align-items: center;
   justify-content: center;
 `;
-const Arrow = styled.svg `
+const Arrow = styled.svg.withConfig({ displayName: "Arrow", componentId: "-13evc9r" }) `
   --x: -3px;
   --stroke-width: 2;
   position: relative;
@@ -2884,34 +2885,34 @@ const Arrow = styled.svg `
   color: var(--ck-secondary-button-color, var(--ck-body-color));
   opacity: 0.4;
 `;
-const ArrowChevron = styled.path ``;
-const ArrowLine = styled.line `
+const ArrowChevron = styled.path.withConfig({ displayName: "ArrowChevron", componentId: "-1yygzne" }) ``;
+const ArrowLine = styled.line.withConfig({ displayName: "ArrowLine", componentId: "-fzsk07" }) `
   transition: inherit;
   transition-property: transform;
   transform-origin: 90% 50%;
   transform: scaleX(0.1);
 `;
-const DownloadArrow = styled.div `
+const DownloadArrow = styled.div.withConfig({ displayName: "DownloadArrow", componentId: "-3pimua" }) `
   display: inline-block;
   vertical-align: middle;
   position: relative;
   margin-right: 6px;
   color: var(--ck-secondary-button-color, var(--ck-body-color));
 `;
-const DownloadArrowInner = styled.div `
+const DownloadArrowInner = styled.div.withConfig({ displayName: "DownloadArrowInner", componentId: "-ga2f3w" }) `
   transform: rotate(90deg);
   ${Arrow} {
     margin: 0 auto;
   }
 `;
-const ButtonContainerInner = styled(motion.div) `
+const ButtonContainerInner = styled(motion.div).withConfig({ displayName: "ButtonContainerInner", componentId: "-gj4ojw" }) `
   display: flex;
   align-items: center;
   justify-content: center;
   inset: 0;
   height: 100%;
 `;
-const ButtonContainer = styled.button `
+const ButtonContainer = styled.button.withConfig({ displayName: "ButtonContainer", componentId: "-ube0yn" }) `
 
   ${({ disabled }) => disabled &&
     css `
@@ -3065,7 +3066,7 @@ const ButtonContainer = styled.button `
     }
   }
 `;
-const InnerContainer = styled.div `
+const InnerContainer = styled.div.withConfig({ displayName: "InnerContainer", componentId: "-14t7lkh" }) `
   transform: translateZ(0); // Shifting fix
   position: relative;
   display: inline-block;
@@ -3077,7 +3078,7 @@ const InnerContainer = styled.div `
   text-overflow: ellipsis;
   */
 `;
-const IconContainer$3 = styled(motion.div) `
+const IconContainer$3 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-1ptiqki" }) `
   position: relative;
   display: inline-block;
   vertical-align: middle;
@@ -3109,7 +3110,7 @@ const Spin = keyframes `
   0%{ transform: rotate(0deg); }
   100%{ transform: rotate(360deg); }
 `;
-const SpinnerContainer$1 = styled(motion.div) `
+const SpinnerContainer$1 = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-1t7rfsm" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3225,7 +3226,7 @@ const Shimmer = keyframes `
   0%{ transform: translate(-100%) rotate(-45deg); }
   100%{ transform: translate(100%) rotate(-80deg); }
 `;
-const InfoBox = styled.div `
+const InfoBox = styled.div.withConfig({ displayName: "InfoBox", componentId: "-14kmump" }) `
   padding: 24px 24px 28px;
   border-radius: var(--ck-tertiary-border-radius, 24px);
   box-shadow: var(--ck-tertiary-box-shadow, none);
@@ -3234,7 +3235,7 @@ const InfoBox = styled.div `
     max-width: none;
   }
 `;
-const InfoBoxButtons = styled.div `
+const InfoBoxButtons = styled.div.withConfig({ displayName: "InfoBoxButtons", componentId: "-umu0wk" }) `
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -3242,11 +3243,11 @@ const InfoBoxButtons = styled.div `
   button {
   }
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "LearnMoreContainer", componentId: "-1tzwau7" }) `
   text-align: center;
   margin-bottom: -6px;
 `;
-styled(motion.button) `
+styled(motion.button).withConfig({ displayName: "LearnMoreButton", componentId: "-10idruv" }) `
   appearance: none;
   user-select: none;
   cursor: pointer;
@@ -3298,13 +3299,13 @@ styled(motion.button) `
     transform: scale(0.96);
   }
 `;
-const ConnectorsContainer = styled(motion.div) `
+const ConnectorsContainer = styled(motion.div).withConfig({ displayName: "ConnectorsContainer", componentId: "-e66yy1" }) `
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 0 0 16px;
 `;
-const ConnectorButton = styled(motion.button) `
+const ConnectorButton = styled(motion.button).withConfig({ displayName: "ConnectorButton", componentId: "-1gudbfz" }) `
   cursor: pointer;
   user-select: none;
   position: relative;
@@ -3379,7 +3380,7 @@ const ConnectorButton = styled(motion.button) `
     }
   }
 `;
-styled(motion.span) `
+styled(motion.span).withConfig({ displayName: "ConnectorRecentlyUsed", componentId: "-p92xqr" }) `
   position: relative;
   top: var(--ck-recent-badge-top-offset, 0.5px);
   display: inline-block;
@@ -3424,7 +3425,7 @@ styled(motion.span) `
     animation: ${Shimmer} 2s linear infinite;
   }
 `;
-const ConnectorLabel = styled(motion.span) `
+const ConnectorLabel = styled(motion.span).withConfig({ displayName: "ConnectorLabel", componentId: "-1bw6a8o" }) `
   display: flex;
   align-items: center;
   gap: 9px;
@@ -3435,7 +3436,7 @@ const ConnectorLabel = styled(motion.span) `
   padding: 2px 0;
   padding-right: 38px;
 `;
-const ConnectorIcon = styled(motion.div) `
+const ConnectorIcon = styled(motion.div).withConfig({ displayName: "ConnectorIcon", componentId: "-iv2833" }) `
   position: absolute;
   right: 20px;
   width: 32px;
@@ -3447,7 +3448,7 @@ const ConnectorIcon = styled(motion.div) `
     height: 100%;
   }
 `;
-const MobileConnectorsContainer = styled(motion.div) `
+const MobileConnectorsContainer = styled(motion.div).withConfig({ displayName: "MobileConnectorsContainer", componentId: "-13eua9l" }) `
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -3455,7 +3456,7 @@ const MobileConnectorsContainer = styled(motion.div) `
   padding: 14px 0 28px;
   margin: 0 0;
 `;
-const MobileConnectorButton = styled(motion.button) `
+const MobileConnectorButton = styled(motion.button).withConfig({ displayName: "MobileConnectorButton", componentId: "-wr8oki" }) `
   --background: var(--ck-body-background-secondary);
   cursor: pointer;
   user-select: none;
@@ -3482,7 +3483,7 @@ const MobileConnectorButton = styled(motion.button) `
     }
   }
 `;
-const MobileConnectorLabel = styled(motion.span) `
+const MobileConnectorLabel = styled(motion.span).withConfig({ displayName: "MobileConnectorLabel", componentId: "-1huexbu" }) `
   display: block;
   padding: 10px 0 0;
   color: var(--ck-body-color);
@@ -3491,7 +3492,7 @@ const MobileConnectorLabel = styled(motion.span) `
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
-const MobileConnectorIcon = styled(motion.div) `
+const MobileConnectorIcon = styled(motion.div).withConfig({ displayName: "MobileConnectorIcon", componentId: "-h0848u" }) `
   margin: 0 auto;
   width: 60px;
   height: 60px;
@@ -3550,12 +3551,12 @@ const Wallets = () => {
                 }) }) })) }));
 };
 
-const WalletItem = styled.div `
+const WalletItem = styled.div.withConfig({ displayName: "WalletItem", componentId: "-19ygdef" }) `
   text-align: center;
   transition: opacity 100ms ease;
   opacity: ${(props) => (props.$waiting ? 0.4 : 1)};
 `;
-const WalletIcon = styled.div `
+const WalletIcon = styled.div.withConfig({ displayName: "WalletIcon", componentId: "-nvfw6i" }) `
   z-index: 9;
   position: relative;
   margin: 0 auto 10px;
@@ -3580,7 +3581,7 @@ const WalletIcon = styled.div `
     height: auto;
   }
 `;
-const WalletLabel = styled.div `
+const WalletLabel = styled.div.withConfig({ displayName: "WalletLabel", componentId: "-1b0fbo1" }) `
   color: var(--ck-body-color);
   font-size: 13px;
   line-height: 15px;
@@ -3591,7 +3592,7 @@ const PulseKeyframes = keyframes `
   0%,100% { opacity:1; }
   50% { opacity:0.5; }
 `;
-const WalletList = styled.div `
+const WalletList = styled.div.withConfig({ displayName: "WalletList", componentId: "-isedt" }) `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 22px 8px;
@@ -3607,7 +3608,7 @@ const WalletList = styled.div `
       }
     `}
 `;
-const Container$4 = styled.div ``;
+const Container$4 = styled.div.withConfig({ displayName: "Container", componentId: "-1bjdt79" }) ``;
 
 const flint = () => {
     return {
@@ -3656,7 +3657,7 @@ function useDefaultWallets() {
     return wallets.filter((wallet) => defaultWallets.includes(wallet.id));
 }
 
-const IconContainer$2 = styled(motion.div) `
+const IconContainer$2 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-1g6afq5" }) `
   transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
   display: flex;
   align-items: center;
@@ -3719,7 +3720,7 @@ const CopyToClipboardIcon = ({ copied, small, }) => (jsx(IconContainer$2, { "$cl
             opacity: small || copied ? 1 : 0.3,
         } }) }));
 
-const Container$3 = styled.div `
+const Container$3 = styled.div.withConfig({ displayName: "Container", componentId: "-wdoxk5" }) `
   --color: var(--ck-copytoclipboard-stroke);
   --bg: var(--ck-body-background);
   transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -3740,7 +3741,7 @@ const Container$3 = styled.div `
           }
         `}
 `;
-const OffsetContainer = styled.div `
+const OffsetContainer = styled.div.withConfig({ displayName: "OffsetContainer", componentId: "-4a1ndg" }) `
   display: block;
   position: relative;
   transition: inherit;
@@ -3801,7 +3802,7 @@ const MobileConnectors = () => {
                     }, children: jsx(CopyToClipboard, { variant: "button", string: "random", children: "Copy to clipboard" }) })] }) }));
 };
 
-const Content = styled(motion.div) `
+const Content = styled(motion.div).withConfig({ displayName: "Content", componentId: "-t71xh5" }) `
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -3825,14 +3826,14 @@ const outlineKeyframes = keyframes `
   0%{ opacity:1; }
   100%{ opacity:0; }
 `;
-const Container$2 = styled(motion.div) `
+const Container$2 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-vyfjr6" }) `
   /*
   background: var(
     --ck-body-background
   ); // To stop the overlay issue during transition for the squircle spinner
   */
 `;
-const ConnectingContainer = styled(motion.div) `
+const ConnectingContainer = styled(motion.div).withConfig({ displayName: "ConnectingContainer", componentId: "-a23hib" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3840,7 +3841,7 @@ const ConnectingContainer = styled(motion.div) `
   height: 120px;
   //transform: scale(1.001); // fixes shifting issue between states
 `;
-const ConnectingAnimation = styled(motion.div) `
+const ConnectingAnimation = styled(motion.div).withConfig({ displayName: "ConnectingAnimation", componentId: "-7o0n8" }) `
   user-select: none;
   position: relative;
   --spinner-error-opacity: 0;
@@ -3865,7 +3866,7 @@ const ConnectingAnimation = styled(motion.div) `
       }
     `}
 `;
-const RetryButton = styled(motion.button) `
+const RetryButton = styled(motion.button).withConfig({ displayName: "RetryButton", componentId: "-1c0pgc4" }) `
   z-index: 5;
   appearance: none;
   position: absolute;
@@ -3900,7 +3901,7 @@ const RetryButton = styled(motion.button) `
     opacity: 0.1;
   }
 `;
-const RetryIconContainer = styled(motion.div) `
+const RetryIconContainer = styled(motion.div).withConfig({ displayName: "RetryIconContainer", componentId: "-1hnj4qb" }) `
   position: absolute;
   inset: 0;
 
@@ -3922,13 +3923,13 @@ const RetryIconContainer = styled(motion.div) `
   }
 `;
 
-const TooltipWindow = styled(motion.div) `
+const TooltipWindow = styled(motion.div).withConfig({ displayName: "TooltipWindow", componentId: "-1y41em" }) `
   z-index: 2147483647;
   position: fixed;
   inset: 0;
   pointer-events: none;
 `;
-const TooltipContainer = styled(motion.div) `
+const TooltipContainer = styled(motion.div).withConfig({ displayName: "TooltipContainer", componentId: "-ltgam" }) `
   --shadow: var(--ck-tooltip-shadow);
   z-index: 2147483647;
   position: absolute;
@@ -3975,7 +3976,7 @@ const TooltipContainer = styled(motion.div) `
     }
   }
 `;
-const TooltipTail = styled(motion.div) `
+const TooltipTail = styled(motion.div).withConfig({ displayName: "TooltipTail", componentId: "-pnayr3" }) `
   z-index: 2;
   position: absolute;
   display: flex;
@@ -4074,7 +4075,7 @@ const Tooltip = ({ children, message, open, xOffset = 0, yOffset = 0, delay, }) 
                                 }, children: [message, jsx(TooltipTail, { "$size": size })] }) }) })) }) })] }));
 };
 
-const AlertContainer = styled(motion.div) `
+const AlertContainer = styled(motion.div).withConfig({ displayName: "AlertContainer", componentId: "-1fyjg7b" }) `
   display: flex;
   gap: 8px;
   position: relative;
@@ -4101,7 +4102,7 @@ const AlertContainer = styled(motion.div) `
     text-align: center;
   }
 `;
-const IconContainer$1 = styled(motion.div) `
+const IconContainer$1 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-hnge79" }) `
   width: 24px;
   height: 24px;
   display: flex;
@@ -4119,7 +4120,7 @@ const Alert = ({ children, icon }) => {
 };
 Alert.displayName = 'Alert';
 
-const LogoContainer$1 = styled(motion.div) `
+const LogoContainer$1 = styled(motion.div).withConfig({ displayName: "LogoContainer", componentId: "-1dhdopa" }) `
   z-index: 4;
   position: relative;
   width: 100px;
@@ -4130,7 +4131,7 @@ const LogoContainer$1 = styled(motion.div) `
     display: block;
   }
 `;
-const Logo = styled(motion.div) `
+const Logo = styled(motion.div).withConfig({ displayName: "Logo", componentId: "-ic8el2" }) `
   z-index: 2;
   position: absolute;
   //overflow: hidden;
@@ -4154,11 +4155,11 @@ const Logo = styled(motion.div) `
       `}
   }
 `;
-const SpinnerContainer = styled(motion.div) `
+const SpinnerContainer = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-12o22xb" }) `
   position: absolute;
   inset: -5px;
 `;
-const ExpiringSpinner = styled(motion.div) `
+const ExpiringSpinner = styled(motion.div).withConfig({ displayName: "ExpiringSpinner", componentId: "-1y28v5p" }) `
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -4206,7 +4207,7 @@ const ExpiringSpinner = styled(motion.div) `
     }
   }
 `;
-const Spinner = styled(motion.div) `
+const Spinner = styled(motion.div).withConfig({ displayName: "Spinner", componentId: "-ykqdhl" }) `
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -4240,7 +4241,7 @@ const CircleSpinner = ({ logo, smallLogo, connecting = true, unavailable = false
                             }, children: jsxs("svg", { "aria-hidden": "true", width: "102", height: "102", viewBox: "0 0 102 102", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [jsx("path", { d: "M52 100C24.3858 100 2 77.6142 2 50", stroke: "url(#paint0_linear_1943_4139)", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round" }), jsx("defs", { children: jsxs("linearGradient", { id: "paint0_linear_1943_4139", x1: "2", y1: "48.5", x2: "53", y2: "100", gradientUnits: "userSpaceOnUse", children: [jsx("stop", { stopColor: "var(--ck-spinner-color)" }), jsx("stop", { offset: "1", stopColor: "var(--ck-spinner-color)", stopOpacity: "0" })] }) })] }) }, "Spinner")), countdown && (jsxs(ExpiringSpinner, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.25 }, children: [jsx("div", {}), jsx("div", {})] }, "ExpiringSpinner"))] }) })] }));
 };
 
-const BrowserIconContainer = styled(motion.div) `
+const BrowserIconContainer = styled(motion.div).withConfig({ displayName: "BrowserIconContainer", componentId: "-jo0nwz" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4459,7 +4460,7 @@ const ConnectUsing = ({ connectorId }) => {
                 } }) }, states.INJECTOR)) }));
 };
 
-const QRCodeContainer = styled(motion.div) `
+const QRCodeContainer = styled(motion.div).withConfig({ displayName: "QRCodeContainer", componentId: "-qpob7j" }) `
   z-index: 3;
   position: relative;
   overflow: hidden;
@@ -4480,7 +4481,7 @@ const QRCodeContainer = styled(motion.div) `
     height: auto;
   }
 `;
-const QRCodeContent = styled(motion.div) `
+const QRCodeContent = styled(motion.div).withConfig({ displayName: "QRCodeContent", componentId: "-86k19m" }) `
   position: absolute;
   inset: 13px;
   svg {
@@ -4492,7 +4493,7 @@ const PlaceholderKeyframes$2 = keyframes `
   0%{ background-position: 100% 0; }
   100%{ background-position: -100% 0; }
 `;
-const QRPlaceholder = styled(motion.div) `
+const QRPlaceholder = styled(motion.div).withConfig({ displayName: "QRPlaceholder", componentId: "-g7073w" }) `
   --color: var(--ck-qr-dot-color);
   --bg: var(--ck-qr-background, var(--ck-body-background));
 
@@ -4563,7 +4564,7 @@ const QRPlaceholder = styled(motion.div) `
     animation: ${PlaceholderKeyframes$2} 1000ms linear infinite both;
   }
 `;
-const LogoContainer = styled(motion.div) `
+const LogoContainer = styled(motion.div).withConfig({ displayName: "LogoContainer", componentId: "-q3yb3q" }) `
   z-index: 6;
   position: absolute;
   top: 0;
@@ -4572,7 +4573,7 @@ const LogoContainer = styled(motion.div) `
   height: 100%;
   transform: translateY(50%) scale(0.9999); // Shifting fix
 `;
-const LogoIcon = styled(motion.div) `
+const LogoIcon = styled(motion.div).withConfig({ displayName: "LogoIcon", componentId: "-arcswd" }) `
   z-index: 6;
   position: absolute;
   left: 50%;
@@ -4778,7 +4779,7 @@ function useMediaQuery(query, initialValue, { getInitialValueInEffect } = {
     return matches;
 }
 
-const StepperTransactionContainer = styled(motion.div) `
+const StepperTransactionContainer = styled(motion.div).withConfig({ displayName: "StepperTransactionContainer", componentId: "-1htl9jm" }) `
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -4792,36 +4793,36 @@ const StepperTransactionContainer = styled(motion.div) `
   --ck-primary-button-font-weight: 600;
   --ck-primary-button-hover-background: #404040;
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "StepperTransactionInner", componentId: "-18jx178" }) `
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
 `;
-const StepperTransactionContent = styled(motion.div) `
+const StepperTransactionContent = styled(motion.div).withConfig({ displayName: "StepperTransactionContent", componentId: "-qyah95" }) `
   border-radius: 10px;
   padding: 16px;
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "AvatarContainer", componentId: "-1r8mlhb" }) `
   padding: 18px 0 20px;
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
     padding: 16px 0 20px;
   }
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "AvatarInner", componentId: "-1a34i0p" }) `
   position: relative;
   display: inline-block;
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "ChainSelectorContainer", componentId: "-lryhx8" }) `
   z-index: 3;
   position: absolute;
   bottom: 0px;
   right: -16px;
 `;
-const BalanceContainer = styled(motion.div) `
+const BalanceContainer = styled(motion.div).withConfig({ displayName: "BalanceContainer", componentId: "-1gv3znb" }) `
   position: relative;
 `;
-const Balance$1 = styled(motion.div) `
+const Balance$1 = styled(motion.div).withConfig({ displayName: "Balance", componentId: "-1ntec5c" }) `
   position: relative;
   min-width: 150px;
   text-align: left;
@@ -4834,7 +4835,7 @@ const PlaceholderKeyframes$1 = keyframes `
   0%{ background-position: 100% 0; }
   100%{ background-position: -100% 0; }
 `;
-const LoadingBalance = styled(motion.div) `
+const LoadingBalance = styled(motion.div).withConfig({ displayName: "LoadingBalance", componentId: "-vb9yz5" }) `
   min-width: 150px;
   margin: 0 auto;
   position: relative;
@@ -4859,22 +4860,22 @@ const LoadingBalance = styled(motion.div) `
   }
 `;
 
-const StepperStepLabelContainer = styled(motion.div) `
+const StepperStepLabelContainer = styled(motion.div).withConfig({ displayName: "StepperStepLabelContainer", componentId: "-gvxur9" }) `
   display: flex;
   flex-direction: column;
   align-items: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "flex-start")};
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
 `;
-const StepperStepOptionalLabel = styled(motion.span) `
+const StepperStepOptionalLabel = styled(motion.span).withConfig({ displayName: "StepperStepOptionalLabel", componentId: "-10e7ne4" }) `
   font-size: 0.875rem;
   color: rgb(113, 113, 122);
   margin-left: 4px;
 `;
-const StepperSteLabelDescription = styled(motion.span) `
+const StepperSteLabelDescription = styled(motion.span).withConfig({ displayName: "StepperSteLabelDescription", componentId: "-es92e7" }) `
   font-size: 0.875rem;
   color: rgb(113, 113, 122);
 `;
-const StepperStepConnectorContainer = styled(motion.div) `
+const StepperStepConnectorContainer = styled(motion.div).withConfig({ displayName: "StepperStepConnectorContainer", componentId: "-1o7f3n4" }) `
   margin-left: 24px;
   display: flex;
   margin-top: 0.25rem;
@@ -4893,14 +4894,14 @@ const StepperStepConnectorContainer = styled(motion.div) `
       border-color: rgb(14, 117, 55);
     `}
 `;
-const StepperStepConnectorLast = styled(motion.div) `
+const StepperStepConnectorLast = styled(motion.div).withConfig({ displayName: "StepperStepConnectorLast", componentId: "-1krzixg" }) `
   display: block;
   margin-top: 1rem;
   margin-bottom: 1rem;
   width: 100%;
   height: auto;
 `;
-const StepperStepContainer = styled(motion.div) `
+const StepperStepContainer = styled(motion.div).withConfig({ displayName: "StepperStepContainer", componentId: "-1agritk" }) `
   display: flex;
   flex-direction: row;
   position: relative;
@@ -4936,7 +4937,7 @@ const StepperStepContainer = styled(motion.div) `
       width: 100%;
     `}
 `;
-const StepperContainer = styled(motion.div) `
+const StepperContainer = styled(motion.div).withConfig({ displayName: "StepperContainer", componentId: "-1uz1sz3" }) `
   display: flex;
   flex: 1 1 0%;
   width: 100%;
@@ -4945,7 +4946,7 @@ const StepperContainer = styled(motion.div) `
   text-align: center;
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
 `;
-const StepperStepRow = styled(motion.div) `
+const StepperStepRow = styled(motion.div).withConfig({ displayName: "StepperStepRow", componentId: "-1d11zqs" }) `
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4956,7 +4957,7 @@ const StepperStepRow = styled(motion.div) `
       flex-direction: column;
     `}
 `;
-const StepperStepButton = styled(motion.button) `
+const StepperStepButton = styled(motion.button).withConfig({ displayName: "StepperStepButton", componentId: "-13snpml" }) `
   height: 48px;
   width: 48px;
   border-radius: 9999px;
@@ -4989,7 +4990,7 @@ const StepperStepButton = styled(motion.button) `
       background: rgb(239, 68, 68);
     `}
 `;
-const StepperSeparator = styled(Separator.Root) `
+const StepperSeparator = styled(Separator.Root).withConfig({ displayName: "StepperSeparator", componentId: "-1oxqrck" }) `
   flex: 1 1 auto;
   height: 2px;
   min-height: auto;
@@ -5113,41 +5114,41 @@ StepperStepConnector.displayName = "StepperStepConnector";
 const convertWeiToTokens = ({ valueWei, token }) => new BigNumber(valueWei).dividedBy(new BigNumber(10).pow(token.decimals)).dp(+token.decimals);
 const convertTokensToWei = ({ value, token }) => new BigNumber(value).multipliedBy(new BigNumber(10).pow(token.decimals)).dp(0);
 
-const StepTitle = styled.h1 `
+const StepTitle = styled.h1.withConfig({ displayName: "StepTitle", componentId: "-cp81kk" }) `
   font-size: 1.25rem;
   text-align: center;
   color: rgb(55 55 55);
   margin-bottom: 10px;
 `;
-const StepDescription = styled.p `
+const StepDescription = styled.p.withConfig({ displayName: "StepDescription", componentId: "-z9fv79" }) `
   font-size: 1rem;
   text-align: center;
   color: rgb(153 153 153);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
-const BalancesWrapper = styled.div `
+const BalancesWrapper = styled.div.withConfig({ displayName: "BalancesWrapper", componentId: "-1tvy2ac" }) `
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   margin-bottom: 30px;
 `;
-const LabelWithBalanceContainer = styled.div `
+const LabelWithBalanceContainer = styled.div.withConfig({ displayName: "LabelWithBalanceContainer", componentId: "-1ayb30j" }) `
   display: flex;
   align-items: center;
   gap: 20px;
   justify-content: center;
 `;
-const LabelText = styled.div `
+const LabelText = styled.div.withConfig({ displayName: "LabelText", componentId: "-1qjh61c" }) `
   min-width: 150px;
   text-align: right;
 `;
-const ErrorMessage = styled.div `
+const ErrorMessage = styled.div.withConfig({ displayName: "ErrorMessage", componentId: "-189pr2u" }) `
   color: rgb(239, 68, 68);
   margin-bottom: 18px;
 `;
-const SpinnerWrapper = styled.div `
+const SpinnerWrapper = styled.div.withConfig({ displayName: "SpinnerWrapper", componentId: "-123sppi" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5157,12 +5158,38 @@ const SpinnerWrapper = styled.div `
     color: #f07d00;
   }
 `;
-const WrapperButtons = styled.div `
+const SuccessWrapper = styled.div.withConfig({ displayName: "SuccessWrapper", componentId: "-1rakh89" }) `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 0 40px;
+  svg {
+    color: rgb(14, 117, 55);
+  }
+`;
+const WrapperButtons = styled.div.withConfig({ displayName: "WrapperButtons", componentId: "-usqpt9" }) `
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 40px;
+`;
+const TransactionCompleteContainer = styled.div.withConfig({ displayName: "TransactionCompleteContainer", componentId: "-wvx7me" }) `
+  position: relative;
+  padding: 30px 0;
+  color: rgb(55 55 55);
+  h1 {
+    font-size: 1.25rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  svg {
+    width: 50px;
+    height: 50px;
+    color: rgb(14, 117, 55);
+  }
 `;
 
 const useInterval = (callback, delay) => {
@@ -5179,6 +5206,8 @@ const useInterval = (callback, delay) => {
     }, [delay]);
 };
 
+const DEFAULT_STEP_TIMEOUT = 2000;
+
 const WrapStatus = {
     ...TxPendingStatus,
     Idle: "Idle",
@@ -5194,9 +5223,8 @@ const statusWrapMessages = {
     [WrapStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
     [WrapStatus.Confirmed]: "Your asset has been successfully wrapped!",
 };
-const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", nextStep }) => {
-    const { setOpen } = useContext();
-    useStepperContext();
+const WrapStep = ({ nextStep }) => {
+    const { setOpen, defaultCardanoAsset } = useContext();
     const [selectedWrapToken, setSelectedWrapToken] = React__default.useState(null);
     const { wscProvider, originTokens, stargateInfo } = useContext();
     const [txHash, setTxHash] = React__default.useState(null);
@@ -5219,13 +5247,15 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
             setTxHash(null);
             setTimeout(() => {
                 nextStep();
-            }, 2000);
+            }, DEFAULT_STEP_TIMEOUT);
         }
     }, txHash != null ? 4000 : null);
     const wrapToken = async () => {
+        if (!selectedWrapToken || !defaultCardanoAsset)
+            return;
         setTxStatus(WrapStatus.Init);
         try {
-            const txHash = await (wscProvider === null || wscProvider === void 0 ? void 0 : wscProvider.wrap(undefined, selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.unit, new BigNumber(defaultAmountEth !== null && defaultAmountEth !== void 0 ? defaultAmountEth : "0")));
+            const txHash = await (wscProvider === null || wscProvider === void 0 ? void 0 : wscProvider.wrap(undefined, selectedWrapToken.unit, defaultCardanoAsset.amount));
             setTxHash(txHash);
             setTxStatus(WrapStatus.Pending);
         }
@@ -5237,8 +5267,10 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
         }
     };
     React__default.useEffect(() => {
+        if (!defaultCardanoAsset)
+            return;
         const loadOriginToken = async () => {
-            const token = originTokens.find((t) => t.unit === defaultTokenUnit);
+            const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit);
             if (!token)
                 return;
             const defaultToken = {
@@ -5248,22 +5280,43 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
             setSelectedWrapToken(defaultToken);
         };
         loadOriginToken();
-    }, [defaultAmountEth, defaultTokenUnit, originTokens, setSelectedWrapToken]);
+    }, [defaultCardanoAsset === null || defaultCardanoAsset === void 0 ? void 0 : defaultCardanoAsset.amount, defaultCardanoAsset === null || defaultCardanoAsset === void 0 ? void 0 : defaultCardanoAsset.unit, originTokens, setSelectedWrapToken]);
     const fee = stargateInfo != null ? new BigNumber(stargateInfo === null || stargateInfo === void 0 ? void 0 : stargateInfo.stargateMinNativeTokenFromL1) : null;
-    const isAmountValid = selectedWrapToken != null && fee != null
-        ? new BigNumber(defaultAmountEth).plus(fee).lte(selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.quantity)
+    const isAmountValid = selectedWrapToken != null && defaultCardanoAsset != null && fee != null
+        ? new BigNumber(defaultCardanoAsset.amount).plus(fee).lte(selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.quantity)
         : false;
-    return (jsxs("div", { children: [jsx(StepTitle, { children: "Wrap Tokens" }), jsx(StepDescription, { children: "Explore the power of wrap tokens as they seamlessly connect Cardano and Ethereum, enabling users to leverage the benefits of both blockchain ecosystems. With wrap tokens, Cardano tokens can be wrapped and utilized on the Ethereum network." }), jsxs(BalancesWrapper, { children: [jsx(LabelWithBalance, { label: "You're moving:", amount: new BigNumber(defaultAmountEth).toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName }), jsx(LabelWithBalance, { label: "Wrapping fee:", amount: fee === null || fee === void 0 ? void 0 : fee.toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName }), jsx(LabelWithBalance, { label: "You'll transfer:", amount: fee && new BigNumber(defaultAmountEth).plus(fee).toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName })] }), isLoading && (jsxs(Fragment, { children: [jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: statusWrapMessages[txStatus] })] }), jsx("p", { children: "Wrapping transaction may take a few minutes (~3m)." })] })), isSuccess && (jsxs(SpinnerWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: statusWrapMessages[TxPendingStatus.Confirmed] })] })), selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (jsx(ErrorMessage, { role: "alert", children: "Error: Bridge doesn't allow this token" })), selectedWrapToken != null && !isAmountValid && (jsx(ErrorMessage, { role: "alert", children: "Error: Amount exceeds your current balance" })), isError && (jsxs(ErrorMessage, { role: "alert", children: ["Ups, something went wrong. ", txStatusError ? `Error: ${txStatusError}` : "", " "] })), (isIdle || isError) && (jsxs(WrapperButtons, { children: [jsx(Button, { onClick: () => setOpen(false), children: "Cancel" }), jsx(Button, { variant: "primary", onClick: wrapToken, children: "Confirm wrapping" })] }))] }));
+    return (jsxs("div", { children: [jsx(StepTitle, { children: "Wrap Tokens" }), jsx(StepDescription, { children: "Explore the power of wrap tokens as they seamlessly connect Cardano and Ethereum, enabling users to leverage the benefits of both blockchain ecosystems. With wrap tokens, Cardano tokens can be wrapped and utilized on the Ethereum network." }), jsxs(BalancesWrapper, { children: [jsx(LabelWithBalance, { label: "You're moving:", amount: defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName }), jsx(LabelWithBalance, { label: "Wrapping fee:", amount: fee === null || fee === void 0 ? void 0 : fee.toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName }), jsx(LabelWithBalance, { label: "You'll transfer:", amount: fee &&
+                            defaultCardanoAsset != null &&
+                            new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed(), assetName: selectedWrapToken === null || selectedWrapToken === void 0 ? void 0 : selectedWrapToken.assetName })] }), isLoading && (jsxs(Fragment, { children: [jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: statusWrapMessages[txStatus] })] }), jsx("p", { children: "Wrapping transaction may take a few minutes (~3m)." })] })), isSuccess && (jsxs(SuccessWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: statusWrapMessages[TxPendingStatus.Confirmed] })] })), selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (jsx(ErrorMessage, { role: "alert", children: "Error: Bridge doesn't allow this token" })), selectedWrapToken != null && !isAmountValid && (jsx(ErrorMessage, { role: "alert", children: "Error: Amount exceeds your current balance" })), isError && (jsxs(ErrorMessage, { role: "alert", children: ["Ups, something went wrong. ", txStatusError ? `Error: ${txStatusError}` : "", " "] })), (isIdle || isError) && (jsxs(WrapperButtons, { children: [jsx(Button, { onClick: () => setOpen(false), children: "Cancel" }), jsx(Button, { variant: "primary", onClick: wrapToken, children: "Confirm wrapping" })] }))] }));
 };
 const LabelWithBalance = ({ label, amount, assetName }) => {
     return (jsxs(LabelWithBalanceContainer, { children: [jsxs(LabelText, { children: [label, " "] }), jsx(BalanceContainer, { children: jsx(AnimatePresence, { exitBeforeEnter: true, initial: false, children: amount && assetName ? (jsx(Balance$1, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 }, children: jsxs("span", { children: [amount, ` `, assetName] }) })) : (jsx(LoadingBalance, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 }, children: "\u00A0" })) }) })] }));
 };
 
 const ActionExecutionStep = ({ nextStep }) => {
-    const onWSCAction = () => {
-        nextStep();
+    const { wscAction } = useContext();
+    const [executionTxStatus, setExecutionTxStatus] = React__default.useState("idle");
+    const [txStatusError, setTxStatusError] = React__default.useState(null);
+    const onWSCAction = async () => {
+        setExecutionTxStatus("pending");
+        try {
+            await (wscAction === null || wscAction === void 0 ? void 0 : wscAction());
+            setExecutionTxStatus("success");
+            setTimeout(() => {
+                nextStep();
+            }, DEFAULT_STEP_TIMEOUT);
+        }
+        catch (err) {
+            setExecutionTxStatus("error");
+            if (err instanceof Error) {
+                setTxStatusError(err.message);
+            }
+        }
     };
-    return (jsxs("div", { children: [jsx(StepTitle, { children: "Executing Actions with Wrap Tokens: Smart Contract Interoperability" }), jsx(StepDescription, { children: "Discover the power of wrap tokens in smart contracts, enabling seamless execution of actions across multiple blockchains. These tokens act as a bridge, empowering smart contracts to interact with assets and access decentralized applications on different blockchain networks." }), jsx(Button, { variant: "primary", onClick: onWSCAction, children: "Confirm wrapping" })] }));
+    const isLoading = executionTxStatus === "pending";
+    const isSuccess = executionTxStatus === "success";
+    const isError = executionTxStatus === "error";
+    return (jsxs("div", { children: [jsx(StepTitle, { children: "Executing Actions with Wrap Tokens: Smart Contract Interoperability" }), jsx(StepDescription, { children: "Discover the power of wrap tokens in smart contracts, enabling seamless execution of actions across multiple blockchains." }), isLoading && (jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: "Executing transaction" })] })), isSuccess && (jsxs(SuccessWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: "Transaction has been successfully executed!" })] })), isError && (jsxs(ErrorMessage, { role: "alert", children: ["Ups, something went wrong. ", txStatusError ? `Error: ${txStatusError}` : "", " "] })), jsx(Button, { variant: "primary", onClick: onWSCAction, children: "Confirm wrapping" })] }));
 };
 
 const statusUnwrapMessages = {
@@ -5274,8 +5327,8 @@ const statusUnwrapMessages = {
     [WrapStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
     [WrapStatus.Confirmed]: "Your asset has been successfully unwrapped!",
 };
-const UnwrapStep = ({ contractAddress }) => {
-    const { wscProvider, tokens, stargateInfo } = useContext();
+const UnwrapStep = ({ nextStep }) => {
+    const { wscProvider, tokens, stargateInfo, contractAddress } = useContext();
     const [selectedUnwrapToken, setSelectedUnwrapToken] = React__default.useState(null);
     const [txHash, setTxHash] = React__default.useState(null);
     const [txStatus, setTxStatus] = React__default.useState(WrapStatus.Idle);
@@ -5295,6 +5348,9 @@ const UnwrapStep = ({ contractAddress }) => {
         setTxStatus(response);
         if (response === statusUnwrapMessages.Confirmed) {
             setTxHash(null);
+            setTimeout(() => {
+                nextStep();
+            }, DEFAULT_STEP_TIMEOUT);
         }
     }, txHash != null ? 4000 : null);
     useEffect(() => {
@@ -5304,7 +5360,7 @@ const UnwrapStep = ({ contractAddress }) => {
         setSelectedUnwrapToken(selectedToken);
     }, [tokens, contractAddress]);
     const unwrapToken = async () => {
-        if (!selectedUnwrapToken)
+        if (!selectedUnwrapToken || !wscProvider)
             return;
         setTxStatus(WrapStatus.Init);
         try {
@@ -5325,14 +5381,15 @@ const UnwrapStep = ({ contractAddress }) => {
                             convertWeiToTokens({
                                 valueWei: selectedUnwrapToken === null || selectedUnwrapToken === void 0 ? void 0 : selectedUnwrapToken.balance,
                                 token: selectedUnwrapToken,
-                            }).toFixed(), assetName: selectedUnwrapToken === null || selectedUnwrapToken === void 0 ? void 0 : selectedUnwrapToken.symbol }), jsx(LabelWithBalance, { label: "Unwrapping fee:", amount: fee === null || fee === void 0 ? void 0 : fee.toFixed(), assetName: "mADA" })] }), isLoading && (jsxs(Fragment, { children: [jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: statusUnwrapMessages[txStatus] })] }), jsx("p", { children: "Unwrapping transaction may take a few minutes (~2m)." })] })), isError && (jsxs(ErrorMessage, { role: "alert", children: ["Ups, something went wrong. ", txStatusError ? `Error: ${txStatusError}` : "", " "] })), isSuccess && (jsxs(SpinnerWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: statusUnwrapMessages[TxPendingStatus.Confirmed] })] })), (isIdle || isError) && (jsx(Button, { variant: "primary", onClick: unwrapToken, children: "Confirm Unwrapping" }))] }));
+                            }).toFixed(), assetName: selectedUnwrapToken === null || selectedUnwrapToken === void 0 ? void 0 : selectedUnwrapToken.symbol }), jsx(LabelWithBalance, { label: "Unwrapping fee:", amount: fee === null || fee === void 0 ? void 0 : fee.toFixed(), assetName: "mADA" })] }), isLoading && (jsxs(Fragment, { children: [jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: statusUnwrapMessages[txStatus] })] }), jsx("p", { children: "Unwrapping transaction may take a few minutes (~2m)." })] })), isError && (jsxs(ErrorMessage, { role: "alert", children: ["Ups, something went wrong. ", txStatusError ? `Error: ${txStatusError}` : "", " "] })), isSuccess && (jsxs(SuccessWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: statusUnwrapMessages[TxPendingStatus.Confirmed] })] })), (isIdle || isError) && (jsx(Button, { variant: "primary", onClick: unwrapToken, children: "Confirm Unwrapping" }))] }));
 };
 
 const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
-const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
+const TokenAllowanceStep = ({ nextStep }) => {
     const { data: signer } = useSigner();
     const { tokens } = useContext();
     const [approvalStatus, setApprovalStatus] = React__default.useState("idle");
+    const { contractAddress } = useContext();
     const onTokenAllowance = async () => {
         const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
         if (!selectedToken)
@@ -5352,7 +5409,7 @@ const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
             setApprovalStatus("success");
             setTimeout(() => {
                 nextStep();
-            }, 2000);
+            }, DEFAULT_STEP_TIMEOUT);
         }
         catch (err) {
             setApprovalStatus("error");
@@ -5362,34 +5419,27 @@ const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
     const isLoading = approvalStatus === "pending";
     const isSuccess = approvalStatus === "success";
     const isError = approvalStatus === "error";
-    return (jsxs("div", { children: [jsx(StepTitle, { children: "Token Allowance: Empowering Controlled Asset Transfers" }), jsx(StepDescription, { style: { marginBottom: 30 }, children: "Allow the smart contract to spend the specified amount of tokens on your behalf, enabling the unwrapping process from the Sidechain to the L1 chain." }), isLoading && (jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: "Approving token allowance" })] })), isError && jsx(ErrorMessage, { role: "alert", children: "Ups, something went wrong." }), isSuccess && (jsxs(SpinnerWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: "You've successfully approved the bridge to spend your tokens." })] })), jsx(Button, { variant: "primary", onClick: onTokenAllowance, children: "Grant token allowance" })] }));
+    return (jsxs("div", { children: [jsx(StepTitle, { children: "Token Allowance: Empowering Controlled Asset Transfers" }), jsx(StepDescription, { style: { marginBottom: 30 }, children: "Allow the smart contract to spend the specified amount of tokens on your behalf, enabling the unwrapping process from the Sidechain to the L1 chain." }), isLoading && (jsxs(SpinnerWrapper, { children: [jsx(Spinner$1, {}), jsx("span", { children: "Approving token allowance" })] })), isError && jsx(ErrorMessage, { role: "alert", children: "Ups, something went wrong." }), isSuccess && (jsxs(SuccessWrapper, { children: [jsx(CheckCircle2, {}), jsx("span", { children: "You've successfully approved the bridge to spend your tokens." })] })), jsx(Button, { variant: "primary", onClick: onTokenAllowance, children: "Grant token allowance" })] }));
 };
 
-const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
-const TransactionStepper = ({ contractAddress = reserveCoinAddress, // TODO
- }) => {
-    const { nextStep, prevStep, activeStep } = useStepper({
+const TransactionStepper = () => {
+    const { nextStep, activeStep } = useStepper({
         initialStep: 0,
     });
     const { setOpen } = useContext();
-    const [value, setValue] = useState("loading");
     const steps = [
         {
             label: "Cardano Wrapping",
-            children: (jsx(WrapStep
-            // TODO: hardcoded for now
-            , { 
-                // TODO: hardcoded for now
-                defaultTokenUnit: "lovelace", defaultAmountEth: "30", nextStep: nextStep })),
+            children: jsx(WrapStep, { nextStep: nextStep }),
         },
         { label: "Action Execution", children: jsx(ActionExecutionStep, { nextStep: nextStep }) },
         {
             label: "Token Allowance",
-            children: jsx(TokenAllowanceStep, { nextStep: nextStep, contractAddress: contractAddress }),
+            children: jsx(TokenAllowanceStep, { nextStep: nextStep }),
         },
-        { label: "Milkomeda Unwrapping", children: jsx(UnwrapStep, { contractAddress: contractAddress }) },
+        { label: "Milkomeda Unwrapping", children: jsx(UnwrapStep, { nextStep: nextStep }) },
     ];
-    return (jsxs(StepperTransactionContainer, { children: [jsx(Stepper, { activeStep: activeStep, successIcon: jsx(CheckCircle2, {}), errorIcon: jsx(XCircle, {}), labelOrientation: "vertical", state: value, children: steps.map((step, index) => (jsx(StepperStep, { index: index, ...step, children: jsx(StepperTransactionContent, { children: step.children }) }, index))) }), jsx("div", { children: activeStep === steps.length ? (jsxs(Fragment, { children: [jsx("p", { children: "The entire process has been completed successfully" }), jsx(Button, { onClick: () => {
+    return (jsxs(StepperTransactionContainer, { children: [jsx(Stepper, { activeStep: activeStep, successIcon: jsx(CheckCircle2, {}), errorIcon: jsx(XCircle, {}), labelOrientation: "vertical", children: steps.map((step, index) => (jsx(StepperStep, { index: index, ...step, children: jsx(StepperTransactionContent, { children: step.children }) }, index))) }), jsx("div", { children: activeStep === steps.length ? (jsxs(Fragment, { children: [jsxs(TransactionCompleteContainer, { children: [jsx("h1", { children: "Transaction completed!" }), jsx("p", { children: "You've successfully interacted with the Milkomeda Wrapped Smart Contract." })] }), jsx(Confetti, { recycle: false, style: { position: "absolute", inset: 0, width: "100%" }, initialVelocityX: 10, initialVelocityY: 10 }), jsx(Button, { onClick: () => {
                                 setOpen(false);
                             }, children: "Close" })] })) : null })] }));
 };
@@ -5516,6 +5566,9 @@ const ConnectWSCProvider = ({ children, onConnect, onDisconnect, debugMode = fal
     const [tokens, setTokens] = useState([]);
     const [destinationBalance, setDestinationBalance] = useState(null);
     const [stargateInfo, setStargateInfo] = useState(null);
+    const [defaultCardanoAsset, setDefaultCardanoAsset] = useState(null);
+    const [contractAddress, setContractAddress] = useState("");
+    const [wscAction, setWscAction] = useState(null);
     useState(null);
     useState([]);
     useState(null);
@@ -5565,6 +5618,13 @@ const ConnectWSCProvider = ({ children, onConnect, onDisconnect, debugMode = fal
         originTokens,
         stargateInfo,
         tokens,
+        //
+        defaultCardanoAsset,
+        setDefaultCardanoAsset,
+        contractAddress,
+        setContractAddress,
+        wscAction,
+        setWscAction,
         // Other configuration
         errorMessage,
         debugMode,
@@ -5578,7 +5638,7 @@ const ConnectWSCProvider = ({ children, onConnect, onDisconnect, debugMode = fal
             console.log("---------/CONNECTWSC DEBUG---------");
         },
     };
-    return createElement(Context.Provider, { value }, jsx(Fragment, { children: jsxs(ThemeProvider, { theme: defaultTheme$1, children: [children, jsx(ConnectModal, {})] }) }));
+    return createElement(Context.Provider, { value }, jsxs(ThemeProvider, { theme: defaultTheme$1, children: [children, jsx(ConnectModal, {})] }));
 };
 const useContext = () => {
     const context = React__default.useContext(Context);
@@ -5651,7 +5711,7 @@ function useIsMounted() {
     return mounted;
 }
 
-const TextContainer = styled(motion.div) `
+const TextContainer = styled(motion.div).withConfig({ displayName: "TextContainer", componentId: "-1pax54s" }) `
   top: 0;
   bottom: 0;
   left: 0;
@@ -5660,7 +5720,7 @@ const TextContainer = styled(motion.div) `
   justify-content: center;
   white-space: nowrap;
 `;
-styled(motion.div) `
+styled(motion.div).withConfig({ displayName: "ChainContainer", componentId: "-1lmv052" }) `
   position: relative;
   width: 24px;
   height: 24px;
@@ -5670,7 +5730,7 @@ styled(motion.div) `
     display: block;
   }
 `;
-const IconContainer = styled(motion.div) `
+const IconContainer = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-157jujx" }) `
   pointer-events: none;
   user-select: none;
   position: relative;
@@ -5678,7 +5738,7 @@ const IconContainer = styled(motion.div) `
   height: 24px;
   margin-right: 8px;
 `;
-const UnsupportedNetworkContainer = styled(motion.div) `
+const UnsupportedNetworkContainer = styled(motion.div).withConfig({ displayName: "UnsupportedNetworkContainer", componentId: "-vp0qb3" }) `
   z-index: 1;
   position: absolute;
   inset: 0;
@@ -6052,7 +6112,7 @@ const supportedChains = [
     },
 ];
 
-const Container$1 = styled(motion.div) `
+const Container$1 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-102d07x" }) `
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -6123,7 +6183,7 @@ const Container$1 = styled(motion.div) `
     );
   }
 `;
-const ThemeContainer = styled.button `
+const ThemeContainer = styled.button.withConfig({ displayName: "ThemeContainer", componentId: "-1w2l5w4" }) `
   all: initial;
   appearance: none;
   user-select: none;
@@ -6184,7 +6244,7 @@ const ThemedButton = ({ children, variant = "primary", autoSize = true, duration
             }, children: children }) }));
 };
 
-const Container = styled(motion.div) `
+const Container = styled(motion.div).withConfig({ displayName: "Container", componentId: "-119o1sg" }) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6194,7 +6254,7 @@ const PlaceholderKeyframes = keyframes `
   0%,100%{ opacity: 0.1; transform: scale(0.75); }
   50%{ opacity: 0.75; transform: scale(1.2) }
 `;
-const PulseContainer = styled.div `
+const PulseContainer = styled.div.withConfig({ displayName: "PulseContainer", componentId: "-t5xjvl" }) `
   pointer-events: none;
   user-select: none;
   padding: 0 5px;
@@ -6315,35 +6375,6 @@ const textVariants = {
         },
     },
 };
-const ConnectButtonRenderer = ({ children }) => {
-    const isMounted = useIsMounted();
-    const context = useContext();
-    const { open, setOpen } = useModal();
-    const { chain } = useNetwork();
-    const { address, isConnected } = useAccount();
-    function hide() {
-        setOpen(false);
-    }
-    function show() {
-        setOpen(true);
-        context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
-    }
-    if (!children)
-        return null;
-    if (!isMounted)
-        return null;
-    return (jsx(Fragment, { children: children({
-            show,
-            hide,
-            chain: chain,
-            unsupported: !!(chain === null || chain === void 0 ? void 0 : chain.unsupported),
-            isConnected: !!address,
-            isConnecting: open,
-            address: address,
-            truncatedAddress: address ? truncateEthAddress(address) : undefined,
-        }) }));
-};
-ConnectButtonRenderer.displayName = "ConnectKitButton.Custom";
 function ConnectWSCButtonInner({ label, showAvatar, separator, }) {
     useContext();
     const { address } = useAccount();
@@ -6417,7 +6448,21 @@ function ConnectWSCButton({ onClick }) {
                             overflow: "hidden",
                         }, children: jsx(ConnectWSCButtonInner, { separator: separator }) })] }) }));
 }
-ConnectWSCButton.Custom = ConnectButtonRenderer;
+
+const useWSCTransactionConfig = ({ defaultCardanoToken, contractAddress, wscActionCallback, }) => {
+    const context = useContext();
+    useEffect(() => {
+        if (!defaultCardanoToken)
+            return;
+        if (!contractAddress)
+            return;
+        if (!wscActionCallback)
+            return;
+        context.setDefaultCardanoAsset(defaultCardanoToken);
+        context.setContractAddress(contractAddress);
+        context.setWscAction(wscActionCallback);
+    }, []);
+};
 
 function useConnectors() {
     const { connectors } = useConnect$1();
@@ -6431,5 +6476,4 @@ function useChains() {
     return (_a = connectors[0]) === null || _a === void 0 ? void 0 : _a.chains;
 }
 
-export { ConnectWSCButton, ConnectWSCProvider, Context, types as Types, defaultConfig as getDefaultConfig, supportedConnectors$1 as supportedConnectors, useChains, useIsMounted, useModal };
-//# sourceMappingURL=index.es.js.map
+export { ConnectWSCButton, ConnectWSCProvider, Context, types as Types, defaultConfig as getDefaultConfig, supportedConnectors$1 as supportedConnectors, useChains, useIsMounted, useModal, useWSCTransactionConfig };

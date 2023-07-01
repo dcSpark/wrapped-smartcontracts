@@ -15,18 +15,14 @@ import {
   SuccessWrapper,
   WrapperButtons,
 } from "./styles";
-import { StepperSeparator } from "../Common/Stepper/styles";
 import Button from "../Common/Button";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
-import CircleSpinner from "../ConnectModal/ConnectWithInjector/CircleSpinner";
 import useInterval from "../../hooks/useInterval";
-import { useStepperContext } from "../Common/Stepper";
 import { CheckCircle2 } from "lucide-react";
+import { DEFAULT_STEP_TIMEOUT } from "./constants";
 
-const balance = true;
-
-type WrapToken = {
+export type WrapToken = {
   assetName: string;
   bridgeAllowed: boolean;
   decimals: number;
@@ -53,15 +49,13 @@ const statusWrapMessages = {
   [WrapStatus.Confirmed]: "Your asset has been successfully wrapped!",
 };
 
-const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", nextStep }) => {
-  const { setOpen } = useContext();
-  const stepper = useStepperContext();
+const WrapStep = ({ nextStep }) => {
+  const { setOpen, defaultCardanoAsset } = useContext();
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
   const { wscProvider, originTokens, stargateInfo } = useContext();
+  const [txHash, setTxHash] = React.useState<string | undefined | null>(null);
 
-  const [txHash, setTxHash] = React.useState(null);
-
-  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Confirmed);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === WrapStatus.Idle;
   const isLoading =
@@ -82,19 +76,21 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
         setTxHash(null);
         setTimeout(() => {
           nextStep();
-        }, 2000);
+        }, DEFAULT_STEP_TIMEOUT);
       }
     },
     txHash != null ? 4000 : null
   );
 
   const wrapToken = async () => {
+    if (!selectedWrapToken || !defaultCardanoAsset) return;
     setTxStatus(WrapStatus.Init);
+
     try {
       const txHash = await wscProvider?.wrap(
         undefined,
-        selectedWrapToken?.unit,
-        new BigNumber(defaultAmountEth ?? "0")
+        selectedWrapToken.unit,
+        defaultCardanoAsset.amount
       );
       setTxHash(txHash);
       setTxStatus(WrapStatus.Pending);
@@ -107,8 +103,9 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
   };
 
   React.useEffect(() => {
+    if (!defaultCardanoAsset) return;
     const loadOriginToken = async () => {
-      const token = originTokens.find((t) => t.unit === defaultTokenUnit);
+      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit);
       if (!token) return;
       const defaultToken = {
         ...token,
@@ -117,14 +114,14 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
       setSelectedWrapToken(defaultToken);
     };
     loadOriginToken();
-  }, [defaultAmountEth, defaultTokenUnit, originTokens, setSelectedWrapToken]);
+  }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
 
   const fee =
     stargateInfo != null ? new BigNumber(stargateInfo?.stargateMinNativeTokenFromL1) : null;
 
   const isAmountValid =
-    selectedWrapToken != null && fee != null
-      ? new BigNumber(defaultAmountEth).plus(fee).lte(selectedWrapToken?.quantity)
+    selectedWrapToken != null && defaultCardanoAsset != null && fee != null
+      ? new BigNumber(defaultCardanoAsset.amount).plus(fee).lte(selectedWrapToken?.quantity)
       : false;
 
   return (
@@ -138,7 +135,9 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
       <BalancesWrapper>
         <LabelWithBalance
           label="You're moving:"
-          amount={new BigNumber(defaultAmountEth).toFixed()}
+          amount={
+            defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
+          }
           assetName={selectedWrapToken?.assetName}
         />
         <LabelWithBalance
@@ -148,7 +147,11 @@ const WrapStep = ({ defaultAmountEth = "30", defaultTokenUnit = "lovelace", next
         />
         <LabelWithBalance
           label="You'll transfer:"
-          amount={fee && new BigNumber(defaultAmountEth).plus(fee).toFixed()}
+          amount={
+            fee &&
+            defaultCardanoAsset != null &&
+            new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
+          }
           assetName={selectedWrapToken?.assetName}
         />
       </BalancesWrapper>

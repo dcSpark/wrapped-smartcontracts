@@ -18,13 +18,15 @@ import { CheckCircle2 } from "lucide-react";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
 import { convertTokensToWei } from "../../utils/convertWeiToTokens";
+import { DEFAULT_STEP_TIMEOUT } from "./constants";
 
 const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
-const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
+const TokenAllowanceStep = ({ nextStep }) => {
   const { data: signer } = useSigner();
   const { tokens } = useContext();
   const [approvalStatus, setApprovalStatus] = React.useState("idle");
+  const { contractAddress } = useContext();
 
   const onTokenAllowance = async () => {
     const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
@@ -49,7 +51,7 @@ const TokenAllowanceStep = ({ contractAddress, nextStep }) => {
       setApprovalStatus("success");
       setTimeout(() => {
         nextStep();
-      }, 2000);
+      }, DEFAULT_STEP_TIMEOUT);
     } catch (err) {
       setApprovalStatus("error");
       console.error(err);

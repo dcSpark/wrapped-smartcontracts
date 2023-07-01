@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Chain, useAccount, useNetwork } from "wagmi";
 import { truncateEthAddress } from "../../utils";
 import useIsMounted from "../../hooks/useIsMounted";
 
 import { IconContainer, TextContainer, UnsupportedNetworkContainer } from "./styles";
-import { routes, useContext } from "../ConnectWSC";
+import { DefaultCardanoAsset, routes, useContext } from "../ConnectWSC";
 import { useModal } from "../../hooks/useModal";
 
 import { AnimatePresence, Variants, motion } from "framer-motion";
@@ -87,61 +87,6 @@ const textVariants: Variants = {
     },
   },
 };
-
-type Hash = `0x${string}`;
-
-type ConnectButtonRendererProps = {
-  children?: (renderProps: {
-    show?: () => void;
-    hide?: () => void;
-    chain?: Chain & {
-      unsupported?: boolean;
-    };
-    unsupported: boolean;
-    isConnected: boolean;
-    isConnecting: boolean;
-    address?: Hash;
-    truncatedAddress?: string;
-  }) => React.ReactNode;
-};
-
-const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children }) => {
-  const isMounted = useIsMounted();
-  const context = useContext();
-  const { open, setOpen } = useModal();
-
-  const { chain } = useNetwork();
-  const { address, isConnected } = useAccount();
-
-  function hide() {
-    setOpen(false);
-  }
-
-  function show() {
-    setOpen(true);
-    context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
-  }
-
-  if (!children) return null;
-  if (!isMounted) return null;
-
-  return (
-    <>
-      {children({
-        show,
-        hide,
-        chain: chain,
-        unsupported: !!chain?.unsupported,
-        isConnected: !!address,
-        isConnecting: open, // Using `open` to determine if connecting as wagmi isConnecting only is set to true when an active connector is awaiting connection
-        address: address,
-        truncatedAddress: address ? truncateEthAddress(address) : undefined,
-      })}
-    </>
-  );
-};
-
-ConnectButtonRenderer.displayName = "ConnectKitButton.Custom";
 
 function ConnectWSCButtonInner({
   label,
@@ -340,5 +285,3 @@ export function ConnectWSCButton({ onClick }: ConnectKitButtonProps) {
     </ResetContainer>
   );
 }
-
-ConnectWSCButton.Custom = ConnectButtonRenderer;

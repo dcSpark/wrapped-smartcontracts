@@ -103,7 +103,7 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
 };
 
 const defaultConfig = ({
-  autoConnect = false, // TODO: check why breaks in wsc
+  autoConnect = true, // TODO: check why breaks in wsc
   chains = defaultChains,
   connectors,
   provider,

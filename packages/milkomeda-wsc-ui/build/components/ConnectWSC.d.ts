@@ -1,5 +1,6 @@
 import React from "react";
 import { useConnectCallbackProps } from "../hooks/useConnectCallback";
+import { WSCLib } from "milkomeda-wsc";
 export declare const routes: {
     ONBOARDING: string;
     CONNECTORS: string;
@@ -10,17 +11,28 @@ export declare const routes: {
 };
 type Connector = any;
 type Error = string | React.ReactNode | null;
+export type DefaultCardanoAsset = {
+    unit: string;
+    amount: number;
+};
 type StargateInfo = {
     fromNativeTokenInLoveLaceOrMicroAlgo: string;
     stargateMinNativeTokenFromL1: number;
     stargateMinNativeTokenToL1: number;
     stargateNativeTokenFeeToL1: number;
 };
+type WSCAction = () => Promise<void>;
 type WSCContext = {
-    wscProvider: any;
+    wscProvider: WSCLib | null;
     originTokens: any;
     tokens: any;
     stargateInfo: StargateInfo | null;
+    defaultCardanoAsset: DefaultCardanoAsset | null;
+    setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
+    contractAddress: string;
+    setContractAddress: React.Dispatch<React.SetStateAction<string>>;
+    wscAction: WSCAction | null;
+    setWscAction: React.Dispatch<React.SetStateAction<WSCAction | null>>;
 };
 type ContextValue = {
     open: boolean;

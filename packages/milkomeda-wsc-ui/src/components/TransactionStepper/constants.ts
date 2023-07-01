@@ -1,0 +1,1 @@
+export const DEFAULT_STEP_TIMEOUT = 2000;

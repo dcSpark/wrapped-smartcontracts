@@ -1,4 +1,4 @@
-declare const UnwrapStep: ({ contractAddress }: {
-    contractAddress: any;
+declare const UnwrapStep: ({ nextStep }: {
+    nextStep: any;
 }) => import("react/jsx-runtime").JSX.Element;
 export default UnwrapStep;
