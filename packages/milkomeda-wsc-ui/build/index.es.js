@@ -1193,7 +1193,7 @@ const globalsDark = css `
 // TODO: Think more about how to reset our components as to not be affected by external stylings
 // TODO: Merge theme objects instead of overriding
 let mode = "auto";
-const ResetContainer = styled(motion.div).withConfig({ displayName: "ResetContainer", componentId: "-bjpgwr" }) `
+const ResetContainer = styled(motion.div) `
   ${themes.default}
 
   ${(props) => {
@@ -1530,7 +1530,7 @@ var defaultTheme = {
     mobileWidth: 560,
 };
 
-const ErrorMessage$1 = styled(motion.div).withConfig({ displayName: "ErrorMessage", componentId: "-168s1ia" }) `
+const ErrorMessage$1 = styled(motion.div) `
   z-index: -1;
   pointer-events: auto;
   position: absolute;
@@ -1585,17 +1585,17 @@ const FadeOutScaleDown = keyframes `
 from { opacity: 1; transform: scale(1); }
   to { opacity: 0; transform: scale(0.85); }
 `;
-const PageContent = styled(motion.div).withConfig({ displayName: "PageContent", componentId: "-1laqldp" }) `
+const PageContent = styled(motion.div) `
   max-width: 100%;
   width: 295px;
   padding-top: 48px;
 `;
-const MainPageContent = styled(motion.div).withConfig({ displayName: "MainPageContent", componentId: "-u4lvcf" }) `
+const MainPageContent = styled(motion.div) `
   max-width: 100%;
   width: 800px;
   padding-top: 48px;
 `;
-const TextWithHr = styled(motion.div).withConfig({ displayName: "TextWithHr", componentId: "-ns096e" }) `
+const TextWithHr = styled(motion.div) `
   user-select: none;
   position: relative;
   display: block;
@@ -1627,7 +1627,7 @@ const TextWithHr = styled(motion.div).withConfig({ displayName: "TextWithHr", co
     box-shadow: var(--ck-body-divider-box-shadow);
   }
 `;
-const ModalHeading = styled(motion.div).withConfig({ displayName: "ModalHeading", componentId: "-eeds6k" }) `
+const ModalHeading = styled(motion.div) `
   z-index: 3;
   pointer-events: none;
   user-select: none;
@@ -1649,11 +1649,11 @@ const ModalHeading = styled(motion.div).withConfig({ displayName: "ModalHeading"
     display: inline-block;
   }
 `;
-const ModalContentContainer = styled(motion.div).withConfig({ displayName: "ModalContentContainer", componentId: "-107728z" }) `
+const ModalContentContainer = styled(motion.div) `
   position: relative;
   padding: 0;
 `;
-const ModalContent = styled(motion.div).withConfig({ displayName: "ModalContent", componentId: "-1fanrvr" }) `
+const ModalContent = styled(motion.div) `
   left: 0;
   right: 0;
   text-align: center;
@@ -1666,7 +1666,7 @@ const ModalContent = styled(motion.div).withConfig({ displayName: "ModalContent"
     display: block;
   }
 `;
-const ModalH1 = styled(motion.h1).withConfig({ displayName: "ModalH1", componentId: "-1enfhl3" }) `
+const ModalH1 = styled(motion.h1) `
   margin: 0;
   padding: 0;
   line-height: ${(props) => (props.$small ? 20 : 22)}px;
@@ -1691,7 +1691,7 @@ const ModalH1 = styled(motion.h1).withConfig({ displayName: "ModalH1", component
     font-size: 17px;
   }
 `;
-const ModalBody = styled.div.withConfig({ displayName: "ModalBody", componentId: "-hwrywx" }) `
+const ModalBody = styled.div `
   font-size: 16px;
   font-weight: 400;
   line-height: 21px;
@@ -1701,7 +1701,7 @@ const ModalBody = styled.div.withConfig({ displayName: "ModalBody", componentId:
     color: var(--ck-body-color);
   }
 `;
-styled.div.withConfig({ displayName: "ModalBodySmall", componentId: "-1ufojtl" }) `
+styled.div `
   padding: 0 12px;
   font-size: 13px;
   font-weight: 400;
@@ -1712,7 +1712,7 @@ styled.div.withConfig({ displayName: "ModalBodySmall", componentId: "-1ufojtl" }
     color: var(--ck-body-color);
   }
 `;
-const BackgroundOverlay = styled(motion.div).withConfig({ displayName: "BackgroundOverlay", componentId: "-1aml865" }) `
+const BackgroundOverlay = styled(motion.div) `
   z-index: 1;
   position: absolute;
   top: 0;
@@ -1740,7 +1740,7 @@ const MobileBoxOut = keyframes `
   from { opacity: 1; }
   to { opacity: 0; }
 `;
-const BoxContainer = styled(motion.div).withConfig({ displayName: "BoxContainer", componentId: "-1a1svs3" }) `
+const BoxContainer = styled(motion.div) `
   z-index: 2;
   position: relative;
   color: var(--ck-body-color);
@@ -1786,7 +1786,7 @@ const BoxContainer = styled(motion.div).withConfig({ displayName: "BoxContainer"
     }
   }
 `;
-const ControllerContainer = styled(motion.div).withConfig({ displayName: "ControllerContainer", componentId: "-feud1u" }) `
+const ControllerContainer = styled(motion.div) `
   z-index: 3;
   position: absolute;
   top: 0;
@@ -1799,7 +1799,7 @@ const ControllerContainer = styled(motion.div).withConfig({ displayName: "Contro
   pointer-events: auto;
   //border-bottom: 1px solid var(--ck-body-divider);
 `;
-const InnerContainer$1 = styled(motion.div).withConfig({ displayName: "InnerContainer", componentId: "-hto21s" }) `
+const InnerContainer$1 = styled(motion.div) `
   position: relative;
   overflow: hidden;
   height: var(--height);
@@ -1809,7 +1809,7 @@ const InnerContainer$1 = styled(motion.div).withConfig({ displayName: "InnerCont
     /* animation-delay: 34ms; */
   }
 `;
-const PageContainer = styled(motion.div).withConfig({ displayName: "PageContainer", componentId: "-1dxsuij" }) `
+const PageContainer = styled(motion.div) `
   z-index: 2;
   position: relative;
   top: 0;
@@ -1871,19 +1871,19 @@ const PageContainer = styled(motion.div).withConfig({ displayName: "PageContaine
     }
   }
 `;
-const PageContents = styled(motion.div).withConfig({ displayName: "PageContents", componentId: "-uhaxzn" }) `
+const PageContents = styled(motion.div) `
   margin: 0 auto;
   width: fit-content;
   padding: 29px 24px 24px;
   backface-visibility: hidden;
 `;
-const ModalContainer = styled.div.withConfig({ displayName: "ModalContainer", componentId: "-1irik83" }) `
+const ModalContainer = styled.div `
   z-index: 2147483646; // z-index set one below max (2147483647) for if we wish to layer things ontop of the modal in a seperate Portal
   position: fixed;
   inset: 0;
   --ck-spinner-color: #f07d00;
 `;
-const CloseButton = styled(motion.button).withConfig({ displayName: "CloseButton", componentId: "-zdjs4c" }) `
+const CloseButton = styled(motion.button) `
   z-index: 3;
   cursor: pointer;
   position: absolute;
@@ -1912,7 +1912,7 @@ const CloseButton = styled(motion.button).withConfig({ displayName: "CloseButton
     transform: scale(0.9);
   }
 `;
-styled(motion.button).withConfig({ displayName: "SiweButton", componentId: "-1ynp4ri" }) `
+styled(motion.button) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -1942,7 +1942,7 @@ styled(motion.button).withConfig({ displayName: "SiweButton", componentId: "-1yn
     }
   }
 `;
-const BackButton = styled(motion.button).withConfig({ displayName: "BackButton", componentId: "-1r0bzhj" }) `
+const BackButton = styled(motion.button) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -1973,7 +1973,7 @@ const BackButton = styled(motion.button).withConfig({ displayName: "BackButton",
     }
   }
 `;
-const InfoButton = styled(motion.button).withConfig({ displayName: "InfoButton", componentId: "-15o2fx" }) `
+const InfoButton = styled(motion.button) `
   z-index: 3;
   position: absolute;
   inset: 0;
@@ -2003,7 +2003,7 @@ const InfoButton = styled(motion.button).withConfig({ displayName: "InfoButton",
     }
   }
 `;
-const Container$5 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-1x7cxsv" }) `
+const Container$5 = styled(motion.div) `
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --duration: 200ms;
   --transition: height var(--duration) var(--ease), width var(--duration) var(--ease);
@@ -2086,7 +2086,7 @@ const Container$5 = styled(motion.div).withConfig({ displayName: "Container", co
     }
   }
 `;
-const Disclaimer = styled(motion.div).withConfig({ displayName: "Disclaimer", componentId: "-rnwrok" }) `
+const Disclaimer = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2113,7 +2113,7 @@ const Disclaimer = styled(motion.div).withConfig({ displayName: "Disclaimer", co
     padding: 20px 42px 22px 42px;
   }
 `;
-styled(motion.div).withConfig({ displayName: "DisclaimerBackground", componentId: "-1xqzaqt" }) `
+styled(motion.div) `
   pointer-events: all;
   z-index: 9;
   position: absolute;
@@ -2141,7 +2141,7 @@ styled(motion.div).withConfig({ displayName: "DisclaimerBackground", componentId
     border-radius: 0;
   }
 `;
-styled(motion.div).withConfig({ displayName: "SignInTooltip", componentId: "-1kfslgi" }) `
+styled(motion.div) `
   z-index: 2;
   position: absolute;
   top: 100%;
@@ -2639,7 +2639,7 @@ const OrDivider = ({ children }) => {
     return (jsx(TextWithHr, { children: jsx("span", { children: children }) }));
 };
 
-const Graphic = styled(motion.div).withConfig({ displayName: "Graphic", componentId: "-dkhi6y" }) `
+const Graphic = styled(motion.div) `
   position: relative;
   margin: 16px auto 20px;
   height: 190px;
@@ -2652,7 +2652,7 @@ const Graphic = styled(motion.div).withConfig({ displayName: "Graphic", componen
     margin-bottom: 32px;
   }
 `;
-const LogoGroup = styled(motion.div).withConfig({ displayName: "LogoGroup", componentId: "-1jc164e" }) `
+const LogoGroup = styled(motion.div) `
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -2667,7 +2667,7 @@ const graphicIn = keyframes `
     transform:none;
   }
 `;
-const GraphicBackground = styled(motion.div).withConfig({ displayName: "GraphicBackground", componentId: "-18k9s3u" }) `
+const GraphicBackground = styled(motion.div) `
   z-index: 1;
   position: absolute;
   inset: 0;
@@ -2705,16 +2705,16 @@ const logoIn = keyframes `
     transform:none;
   }
 `;
-const LogoPosition = styled(motion.div).withConfig({ displayName: "LogoPosition", componentId: "-1wne4m3" }) `
+const LogoPosition = styled(motion.div) `
   position: absolute;
   inset: 0;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-delay: inherit;
 `;
-const LogoInner = styled(motion.div).withConfig({ displayName: "LogoInner", componentId: "-6q6ag1" }) `
+const LogoInner = styled(motion.div) `
   position: absolute;
 `;
-const LogoGraphic = styled(motion.div).withConfig({ displayName: "LogoGraphic", componentId: "-w9bnza" }) `
+const LogoGraphic = styled(motion.div) `
   position: relative;
   overflow: hidden;
   height: 58px;
@@ -2732,7 +2732,7 @@ const float = keyframes `
   0%,100%{ transform:none; }
   50%{ transform: translateY(-10%) }
 `;
-const FloatWrapper = styled(motion.div).withConfig({ displayName: "FloatWrapper", componentId: "-44r43q" }) `
+const FloatWrapper = styled(motion.div) `
   position: relative;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-name: ${float};
@@ -2742,13 +2742,13 @@ const rotate = keyframes `
   0%,100%{ transform:rotate(-3deg); }
   50%{ transform:rotate(3deg); }
 `;
-const RotateWrapper = styled(motion.div).withConfig({ displayName: "RotateWrapper", componentId: "-w8ymff" }) `
+const RotateWrapper = styled(motion.div) `
   position: relative;
   animation: cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite both;
   animation-name: ${rotate};
   animation-duration: 3200ms;
 `;
-const Logo$1 = styled(motion.div).withConfig({ displayName: "Logo", componentId: "-6a2gs2" }) `
+const Logo$1 = styled(motion.div) `
   position: absolute;
   inset: 0;
 
@@ -2861,7 +2861,7 @@ const Logo$1 = styled(motion.div).withConfig({ displayName: "Logo", componentId:
 
 var wave = (jsxs("svg", { "aria-hidden": "true", width: "298", height: "188", viewBox: "0 0 298 188", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [jsx("path", { d: "M1 55.2757L21.6438 46.0285C55.5896 30.8228 94.4104 30.8228 128.356 46.0286L169.644 64.5229C203.59 79.7287 242.41 79.7286 276.356 64.5229L297 55.2757M1 44.2118L21.6438 34.9646C55.5896 19.7589 94.4104 19.7589 128.356 34.9646L169.644 53.459C203.59 68.6647 242.41 68.6647 276.356 53.459L297 44.2118M1 33.1477L21.6438 23.9005C55.5896 8.69479 94.4104 8.69479 128.356 23.9005L169.644 42.3949C203.59 57.6006 242.41 57.6006 276.356 42.3949L297 33.1477M1 22.1477L21.6438 12.9005C55.5896 -2.30521 94.4104 -2.30521 128.356 12.9005L169.644 31.3949C203.59 46.6006 242.41 46.6006 276.356 31.3949L297 22.1477M1 66.3398L21.6438 57.0926C55.5896 41.8869 94.4104 41.8869 128.356 57.0926L169.644 75.587C203.59 90.7927 242.41 90.7927 276.356 75.587L297 66.3398M1 77.404L21.6438 68.1568C55.5896 52.9511 94.4104 52.9511 128.356 68.1569L169.644 86.6512C203.59 101.857 242.41 101.857 276.356 86.6512L297 77.404M1 88.4681L21.6438 79.2209C55.5896 64.0152 94.4104 64.0152 128.356 79.2209L169.644 97.7153C203.59 112.921 242.41 112.921 276.356 97.7153L297 88.4681M1 121.66L21.6438 112.413C55.5896 97.2075 94.4104 97.2075 128.356 112.413L169.644 130.908C203.59 146.113 242.41 146.113 276.356 130.908L297 121.66M1 110.596L21.6438 101.349C55.5896 86.1433 94.4104 86.1433 128.356 101.349L169.644 119.843C203.59 135.049 242.41 135.049 276.356 119.843L297 110.596M1 99.5321L21.6438 90.2849C55.5896 75.0792 94.4104 75.0792 128.356 90.2849L169.644 108.779C203.59 123.985 242.41 123.985 276.356 108.779L297 99.5321M1 132.724L21.6438 123.477C55.5896 108.271 94.4104 108.271 128.356 123.477L169.644 141.971C203.59 157.177 242.41 157.177 276.356 141.971L297 132.724M1 143.788L21.6438 134.541C55.5896 119.336 94.4104 119.336 128.356 134.541L169.644 153.036C203.59 168.241 242.41 168.241 276.356 153.036L297 143.788M1 154.853L21.6438 145.605C55.5896 130.4 94.4104 130.4 128.356 145.605L169.644 164.1C203.59 179.305 242.41 179.305 276.356 164.1L297 154.853M1 165.853L21.6438 156.605C55.5896 141.4 94.4104 141.4 128.356 156.605L169.644 175.1C203.59 190.305 242.41 190.305 276.356 175.1L297 165.853", stroke: "url(#paint0_linear_1094_2077)", strokeOpacity: "0.9", strokeLinecap: "round", strokeLinejoin: "round" }), jsx("defs", { children: jsxs("linearGradient", { id: "paint0_linear_1094_2077", x1: "1", y1: "112.587", x2: "297.034", y2: "79.6111", gradientUnits: "userSpaceOnUse", children: [jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-01)" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-02)", offset: "0.239583" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-03)", offset: "0.515625" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-04)", offset: "0.739583" }), jsx("stop", { stopColor: "var(--ck-graphic-wave-stop-05)", offset: "1" })] }) })] }));
 
-const SpinnerContainer$2 = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-haahok" }) `
+const SpinnerContainer$2 = styled(motion.div) `
   position: absolute;
   right: 16px;
   top: 0;
@@ -2870,7 +2870,7 @@ const SpinnerContainer$2 = styled(motion.div).withConfig({ displayName: "Spinner
   align-items: center;
   justify-content: center;
 `;
-const Arrow = styled.svg.withConfig({ displayName: "Arrow", componentId: "-13evc9r" }) `
+const Arrow = styled.svg `
   --x: -3px;
   --stroke-width: 2;
   position: relative;
@@ -2885,34 +2885,34 @@ const Arrow = styled.svg.withConfig({ displayName: "Arrow", componentId: "-13evc
   color: var(--ck-secondary-button-color, var(--ck-body-color));
   opacity: 0.4;
 `;
-const ArrowChevron = styled.path.withConfig({ displayName: "ArrowChevron", componentId: "-1yygzne" }) ``;
-const ArrowLine = styled.line.withConfig({ displayName: "ArrowLine", componentId: "-fzsk07" }) `
+const ArrowChevron = styled.path ``;
+const ArrowLine = styled.line `
   transition: inherit;
   transition-property: transform;
   transform-origin: 90% 50%;
   transform: scaleX(0.1);
 `;
-const DownloadArrow = styled.div.withConfig({ displayName: "DownloadArrow", componentId: "-3pimua" }) `
+const DownloadArrow = styled.div `
   display: inline-block;
   vertical-align: middle;
   position: relative;
   margin-right: 6px;
   color: var(--ck-secondary-button-color, var(--ck-body-color));
 `;
-const DownloadArrowInner = styled.div.withConfig({ displayName: "DownloadArrowInner", componentId: "-ga2f3w" }) `
+const DownloadArrowInner = styled.div `
   transform: rotate(90deg);
   ${Arrow} {
     margin: 0 auto;
   }
 `;
-const ButtonContainerInner = styled(motion.div).withConfig({ displayName: "ButtonContainerInner", componentId: "-gj4ojw" }) `
+const ButtonContainerInner = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
   inset: 0;
   height: 100%;
 `;
-const ButtonContainer = styled.button.withConfig({ displayName: "ButtonContainer", componentId: "-ube0yn" }) `
+const ButtonContainer = styled.button `
 
   ${({ disabled }) => disabled &&
     css `
@@ -3066,7 +3066,7 @@ const ButtonContainer = styled.button.withConfig({ displayName: "ButtonContainer
     }
   }
 `;
-const InnerContainer = styled.div.withConfig({ displayName: "InnerContainer", componentId: "-14t7lkh" }) `
+const InnerContainer = styled.div `
   transform: translateZ(0); // Shifting fix
   position: relative;
   display: inline-block;
@@ -3078,7 +3078,7 @@ const InnerContainer = styled.div.withConfig({ displayName: "InnerContainer", co
   text-overflow: ellipsis;
   */
 `;
-const IconContainer$3 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-1ptiqki" }) `
+const IconContainer$3 = styled(motion.div) `
   position: relative;
   display: inline-block;
   vertical-align: middle;
@@ -3110,7 +3110,7 @@ const Spin = keyframes `
   0%{ transform: rotate(0deg); }
   100%{ transform: rotate(360deg); }
 `;
-const SpinnerContainer$1 = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-1t7rfsm" }) `
+const SpinnerContainer$1 = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3226,7 +3226,7 @@ const Shimmer = keyframes `
   0%{ transform: translate(-100%) rotate(-45deg); }
   100%{ transform: translate(100%) rotate(-80deg); }
 `;
-const InfoBox = styled.div.withConfig({ displayName: "InfoBox", componentId: "-14kmump" }) `
+const InfoBox = styled.div `
   padding: 24px 24px 28px;
   border-radius: var(--ck-tertiary-border-radius, 24px);
   box-shadow: var(--ck-tertiary-box-shadow, none);
@@ -3235,7 +3235,7 @@ const InfoBox = styled.div.withConfig({ displayName: "InfoBox", componentId: "-1
     max-width: none;
   }
 `;
-const InfoBoxButtons = styled.div.withConfig({ displayName: "InfoBoxButtons", componentId: "-umu0wk" }) `
+const InfoBoxButtons = styled.div `
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -3243,11 +3243,11 @@ const InfoBoxButtons = styled.div.withConfig({ displayName: "InfoBoxButtons", co
   button {
   }
 `;
-styled(motion.div).withConfig({ displayName: "LearnMoreContainer", componentId: "-1tzwau7" }) `
+styled(motion.div) `
   text-align: center;
   margin-bottom: -6px;
 `;
-styled(motion.button).withConfig({ displayName: "LearnMoreButton", componentId: "-10idruv" }) `
+styled(motion.button) `
   appearance: none;
   user-select: none;
   cursor: pointer;
@@ -3299,13 +3299,13 @@ styled(motion.button).withConfig({ displayName: "LearnMoreButton", componentId: 
     transform: scale(0.96);
   }
 `;
-const ConnectorsContainer = styled(motion.div).withConfig({ displayName: "ConnectorsContainer", componentId: "-e66yy1" }) `
+const ConnectorsContainer = styled(motion.div) `
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 0 0 16px;
 `;
-const ConnectorButton = styled(motion.button).withConfig({ displayName: "ConnectorButton", componentId: "-1gudbfz" }) `
+const ConnectorButton = styled(motion.button) `
   cursor: pointer;
   user-select: none;
   position: relative;
@@ -3380,7 +3380,7 @@ const ConnectorButton = styled(motion.button).withConfig({ displayName: "Connect
     }
   }
 `;
-styled(motion.span).withConfig({ displayName: "ConnectorRecentlyUsed", componentId: "-p92xqr" }) `
+styled(motion.span) `
   position: relative;
   top: var(--ck-recent-badge-top-offset, 0.5px);
   display: inline-block;
@@ -3425,7 +3425,7 @@ styled(motion.span).withConfig({ displayName: "ConnectorRecentlyUsed", component
     animation: ${Shimmer} 2s linear infinite;
   }
 `;
-const ConnectorLabel = styled(motion.span).withConfig({ displayName: "ConnectorLabel", componentId: "-1bw6a8o" }) `
+const ConnectorLabel = styled(motion.span) `
   display: flex;
   align-items: center;
   gap: 9px;
@@ -3436,7 +3436,7 @@ const ConnectorLabel = styled(motion.span).withConfig({ displayName: "ConnectorL
   padding: 2px 0;
   padding-right: 38px;
 `;
-const ConnectorIcon = styled(motion.div).withConfig({ displayName: "ConnectorIcon", componentId: "-iv2833" }) `
+const ConnectorIcon = styled(motion.div) `
   position: absolute;
   right: 20px;
   width: 32px;
@@ -3448,7 +3448,7 @@ const ConnectorIcon = styled(motion.div).withConfig({ displayName: "ConnectorIco
     height: 100%;
   }
 `;
-const MobileConnectorsContainer = styled(motion.div).withConfig({ displayName: "MobileConnectorsContainer", componentId: "-13eua9l" }) `
+const MobileConnectorsContainer = styled(motion.div) `
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -3456,7 +3456,7 @@ const MobileConnectorsContainer = styled(motion.div).withConfig({ displayName: "
   padding: 14px 0 28px;
   margin: 0 0;
 `;
-const MobileConnectorButton = styled(motion.button).withConfig({ displayName: "MobileConnectorButton", componentId: "-wr8oki" }) `
+const MobileConnectorButton = styled(motion.button) `
   --background: var(--ck-body-background-secondary);
   cursor: pointer;
   user-select: none;
@@ -3483,7 +3483,7 @@ const MobileConnectorButton = styled(motion.button).withConfig({ displayName: "M
     }
   }
 `;
-const MobileConnectorLabel = styled(motion.span).withConfig({ displayName: "MobileConnectorLabel", componentId: "-1huexbu" }) `
+const MobileConnectorLabel = styled(motion.span) `
   display: block;
   padding: 10px 0 0;
   color: var(--ck-body-color);
@@ -3492,7 +3492,7 @@ const MobileConnectorLabel = styled(motion.span).withConfig({ displayName: "Mobi
   white-space: nowrap;
   text-overflow: ellipsis;
 `;
-const MobileConnectorIcon = styled(motion.div).withConfig({ displayName: "MobileConnectorIcon", componentId: "-h0848u" }) `
+const MobileConnectorIcon = styled(motion.div) `
   margin: 0 auto;
   width: 60px;
   height: 60px;
@@ -3551,12 +3551,12 @@ const Wallets = () => {
                 }) }) })) }));
 };
 
-const WalletItem = styled.div.withConfig({ displayName: "WalletItem", componentId: "-19ygdef" }) `
+const WalletItem = styled.div `
   text-align: center;
   transition: opacity 100ms ease;
   opacity: ${(props) => (props.$waiting ? 0.4 : 1)};
 `;
-const WalletIcon = styled.div.withConfig({ displayName: "WalletIcon", componentId: "-nvfw6i" }) `
+const WalletIcon = styled.div `
   z-index: 9;
   position: relative;
   margin: 0 auto 10px;
@@ -3581,7 +3581,7 @@ const WalletIcon = styled.div.withConfig({ displayName: "WalletIcon", componentI
     height: auto;
   }
 `;
-const WalletLabel = styled.div.withConfig({ displayName: "WalletLabel", componentId: "-1b0fbo1" }) `
+const WalletLabel = styled.div `
   color: var(--ck-body-color);
   font-size: 13px;
   line-height: 15px;
@@ -3592,7 +3592,7 @@ const PulseKeyframes = keyframes `
   0%,100% { opacity:1; }
   50% { opacity:0.5; }
 `;
-const WalletList = styled.div.withConfig({ displayName: "WalletList", componentId: "-isedt" }) `
+const WalletList = styled.div `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 22px 8px;
@@ -3608,7 +3608,7 @@ const WalletList = styled.div.withConfig({ displayName: "WalletList", componentI
       }
     `}
 `;
-const Container$4 = styled.div.withConfig({ displayName: "Container", componentId: "-1bjdt79" }) ``;
+const Container$4 = styled.div ``;
 
 const flint = () => {
     return {
@@ -3657,7 +3657,7 @@ function useDefaultWallets() {
     return wallets.filter((wallet) => defaultWallets.includes(wallet.id));
 }
 
-const IconContainer$2 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-1g6afq5" }) `
+const IconContainer$2 = styled(motion.div) `
   transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
   display: flex;
   align-items: center;
@@ -3720,7 +3720,7 @@ const CopyToClipboardIcon = ({ copied, small, }) => (jsx(IconContainer$2, { "$cl
             opacity: small || copied ? 1 : 0.3,
         } }) }));
 
-const Container$3 = styled.div.withConfig({ displayName: "Container", componentId: "-wdoxk5" }) `
+const Container$3 = styled.div `
   --color: var(--ck-copytoclipboard-stroke);
   --bg: var(--ck-body-background);
   transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
@@ -3741,7 +3741,7 @@ const Container$3 = styled.div.withConfig({ displayName: "Container", componentI
           }
         `}
 `;
-const OffsetContainer = styled.div.withConfig({ displayName: "OffsetContainer", componentId: "-4a1ndg" }) `
+const OffsetContainer = styled.div `
   display: block;
   position: relative;
   transition: inherit;
@@ -3802,7 +3802,7 @@ const MobileConnectors = () => {
                     }, children: jsx(CopyToClipboard, { variant: "button", string: "random", children: "Copy to clipboard" }) })] }) }));
 };
 
-const Content = styled(motion.div).withConfig({ displayName: "Content", componentId: "-t71xh5" }) `
+const Content = styled(motion.div) `
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -3826,14 +3826,14 @@ const outlineKeyframes = keyframes `
   0%{ opacity:1; }
   100%{ opacity:0; }
 `;
-const Container$2 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-vyfjr6" }) `
+const Container$2 = styled(motion.div) `
   /*
   background: var(
     --ck-body-background
   ); // To stop the overlay issue during transition for the squircle spinner
   */
 `;
-const ConnectingContainer = styled(motion.div).withConfig({ displayName: "ConnectingContainer", componentId: "-a23hib" }) `
+const ConnectingContainer = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3841,7 +3841,7 @@ const ConnectingContainer = styled(motion.div).withConfig({ displayName: "Connec
   height: 120px;
   //transform: scale(1.001); // fixes shifting issue between states
 `;
-const ConnectingAnimation = styled(motion.div).withConfig({ displayName: "ConnectingAnimation", componentId: "-7o0n8" }) `
+const ConnectingAnimation = styled(motion.div) `
   user-select: none;
   position: relative;
   --spinner-error-opacity: 0;
@@ -3866,7 +3866,7 @@ const ConnectingAnimation = styled(motion.div).withConfig({ displayName: "Connec
       }
     `}
 `;
-const RetryButton = styled(motion.button).withConfig({ displayName: "RetryButton", componentId: "-1c0pgc4" }) `
+const RetryButton = styled(motion.button) `
   z-index: 5;
   appearance: none;
   position: absolute;
@@ -3901,7 +3901,7 @@ const RetryButton = styled(motion.button).withConfig({ displayName: "RetryButton
     opacity: 0.1;
   }
 `;
-const RetryIconContainer = styled(motion.div).withConfig({ displayName: "RetryIconContainer", componentId: "-1hnj4qb" }) `
+const RetryIconContainer = styled(motion.div) `
   position: absolute;
   inset: 0;
 
@@ -3923,13 +3923,13 @@ const RetryIconContainer = styled(motion.div).withConfig({ displayName: "RetryIc
   }
 `;
 
-const TooltipWindow = styled(motion.div).withConfig({ displayName: "TooltipWindow", componentId: "-1y41em" }) `
+const TooltipWindow = styled(motion.div) `
   z-index: 2147483647;
   position: fixed;
   inset: 0;
   pointer-events: none;
 `;
-const TooltipContainer = styled(motion.div).withConfig({ displayName: "TooltipContainer", componentId: "-ltgam" }) `
+const TooltipContainer = styled(motion.div) `
   --shadow: var(--ck-tooltip-shadow);
   z-index: 2147483647;
   position: absolute;
@@ -3976,7 +3976,7 @@ const TooltipContainer = styled(motion.div).withConfig({ displayName: "TooltipCo
     }
   }
 `;
-const TooltipTail = styled(motion.div).withConfig({ displayName: "TooltipTail", componentId: "-pnayr3" }) `
+const TooltipTail = styled(motion.div) `
   z-index: 2;
   position: absolute;
   display: flex;
@@ -4075,7 +4075,7 @@ const Tooltip = ({ children, message, open, xOffset = 0, yOffset = 0, delay, }) 
                                 }, children: [message, jsx(TooltipTail, { "$size": size })] }) }) })) }) })] }));
 };
 
-const AlertContainer = styled(motion.div).withConfig({ displayName: "AlertContainer", componentId: "-1fyjg7b" }) `
+const AlertContainer = styled(motion.div) `
   display: flex;
   gap: 8px;
   position: relative;
@@ -4102,7 +4102,7 @@ const AlertContainer = styled(motion.div).withConfig({ displayName: "AlertContai
     text-align: center;
   }
 `;
-const IconContainer$1 = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-hnge79" }) `
+const IconContainer$1 = styled(motion.div) `
   width: 24px;
   height: 24px;
   display: flex;
@@ -4120,7 +4120,7 @@ const Alert = ({ children, icon }) => {
 };
 Alert.displayName = 'Alert';
 
-const LogoContainer$1 = styled(motion.div).withConfig({ displayName: "LogoContainer", componentId: "-1dhdopa" }) `
+const LogoContainer$1 = styled(motion.div) `
   z-index: 4;
   position: relative;
   width: 100px;
@@ -4131,7 +4131,7 @@ const LogoContainer$1 = styled(motion.div).withConfig({ displayName: "LogoContai
     display: block;
   }
 `;
-const Logo = styled(motion.div).withConfig({ displayName: "Logo", componentId: "-ic8el2" }) `
+const Logo = styled(motion.div) `
   z-index: 2;
   position: absolute;
   //overflow: hidden;
@@ -4155,11 +4155,11 @@ const Logo = styled(motion.div).withConfig({ displayName: "Logo", componentId: "
       `}
   }
 `;
-const SpinnerContainer = styled(motion.div).withConfig({ displayName: "SpinnerContainer", componentId: "-12o22xb" }) `
+const SpinnerContainer = styled(motion.div) `
   position: absolute;
   inset: -5px;
 `;
-const ExpiringSpinner = styled(motion.div).withConfig({ displayName: "ExpiringSpinner", componentId: "-1y28v5p" }) `
+const ExpiringSpinner = styled(motion.div) `
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -4207,7 +4207,7 @@ const ExpiringSpinner = styled(motion.div).withConfig({ displayName: "ExpiringSp
     }
   }
 `;
-const Spinner = styled(motion.div).withConfig({ displayName: "Spinner", componentId: "-ykqdhl" }) `
+const Spinner = styled(motion.div) `
   pointer-events: none;
   user-select: none;
   z-index: 1;
@@ -4241,7 +4241,7 @@ const CircleSpinner = ({ logo, smallLogo, connecting = true, unavailable = false
                             }, children: jsxs("svg", { "aria-hidden": "true", width: "102", height: "102", viewBox: "0 0 102 102", fill: "none", xmlns: "http://www.w3.org/2000/svg", children: [jsx("path", { d: "M52 100C24.3858 100 2 77.6142 2 50", stroke: "url(#paint0_linear_1943_4139)", strokeWidth: "3.5", strokeLinecap: "round", strokeLinejoin: "round" }), jsx("defs", { children: jsxs("linearGradient", { id: "paint0_linear_1943_4139", x1: "2", y1: "48.5", x2: "53", y2: "100", gradientUnits: "userSpaceOnUse", children: [jsx("stop", { stopColor: "var(--ck-spinner-color)" }), jsx("stop", { offset: "1", stopColor: "var(--ck-spinner-color)", stopOpacity: "0" })] }) })] }) }, "Spinner")), countdown && (jsxs(ExpiringSpinner, { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.25 }, children: [jsx("div", {}), jsx("div", {})] }, "ExpiringSpinner"))] }) })] }));
 };
 
-const BrowserIconContainer = styled(motion.div).withConfig({ displayName: "BrowserIconContainer", componentId: "-jo0nwz" }) `
+const BrowserIconContainer = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4460,7 +4460,7 @@ const ConnectUsing = ({ connectorId }) => {
                 } }) }, states.INJECTOR)) }));
 };
 
-const QRCodeContainer = styled(motion.div).withConfig({ displayName: "QRCodeContainer", componentId: "-qpob7j" }) `
+const QRCodeContainer = styled(motion.div) `
   z-index: 3;
   position: relative;
   overflow: hidden;
@@ -4481,7 +4481,7 @@ const QRCodeContainer = styled(motion.div).withConfig({ displayName: "QRCodeCont
     height: auto;
   }
 `;
-const QRCodeContent = styled(motion.div).withConfig({ displayName: "QRCodeContent", componentId: "-86k19m" }) `
+const QRCodeContent = styled(motion.div) `
   position: absolute;
   inset: 13px;
   svg {
@@ -4493,7 +4493,7 @@ const PlaceholderKeyframes$2 = keyframes `
   0%{ background-position: 100% 0; }
   100%{ background-position: -100% 0; }
 `;
-const QRPlaceholder = styled(motion.div).withConfig({ displayName: "QRPlaceholder", componentId: "-g7073w" }) `
+const QRPlaceholder = styled(motion.div) `
   --color: var(--ck-qr-dot-color);
   --bg: var(--ck-qr-background, var(--ck-body-background));
 
@@ -4564,7 +4564,7 @@ const QRPlaceholder = styled(motion.div).withConfig({ displayName: "QRPlaceholde
     animation: ${PlaceholderKeyframes$2} 1000ms linear infinite both;
   }
 `;
-const LogoContainer = styled(motion.div).withConfig({ displayName: "LogoContainer", componentId: "-q3yb3q" }) `
+const LogoContainer = styled(motion.div) `
   z-index: 6;
   position: absolute;
   top: 0;
@@ -4573,7 +4573,7 @@ const LogoContainer = styled(motion.div).withConfig({ displayName: "LogoContaine
   height: 100%;
   transform: translateY(50%) scale(0.9999); // Shifting fix
 `;
-const LogoIcon = styled(motion.div).withConfig({ displayName: "LogoIcon", componentId: "-arcswd" }) `
+const LogoIcon = styled(motion.div) `
   z-index: 6;
   position: absolute;
   left: 50%;
@@ -4779,7 +4779,7 @@ function useMediaQuery(query, initialValue, { getInitialValueInEffect } = {
     return matches;
 }
 
-const StepperTransactionContainer = styled(motion.div).withConfig({ displayName: "StepperTransactionContainer", componentId: "-1htl9jm" }) `
+const StepperTransactionContainer = styled(motion.div) `
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -4793,36 +4793,36 @@ const StepperTransactionContainer = styled(motion.div).withConfig({ displayName:
   --ck-primary-button-font-weight: 600;
   --ck-primary-button-hover-background: #404040;
 `;
-styled(motion.div).withConfig({ displayName: "StepperTransactionInner", componentId: "-18jx178" }) `
+styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
 `;
-const StepperTransactionContent = styled(motion.div).withConfig({ displayName: "StepperTransactionContent", componentId: "-qyah95" }) `
+const StepperTransactionContent = styled(motion.div) `
   border-radius: 10px;
   padding: 16px;
 `;
-styled(motion.div).withConfig({ displayName: "AvatarContainer", componentId: "-1r8mlhb" }) `
+styled(motion.div) `
   padding: 18px 0 20px;
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
     padding: 16px 0 20px;
   }
 `;
-styled(motion.div).withConfig({ displayName: "AvatarInner", componentId: "-1a34i0p" }) `
+styled(motion.div) `
   position: relative;
   display: inline-block;
 `;
-styled(motion.div).withConfig({ displayName: "ChainSelectorContainer", componentId: "-lryhx8" }) `
+styled(motion.div) `
   z-index: 3;
   position: absolute;
   bottom: 0px;
   right: -16px;
 `;
-const BalanceContainer = styled(motion.div).withConfig({ displayName: "BalanceContainer", componentId: "-1gv3znb" }) `
+const BalanceContainer = styled(motion.div) `
   position: relative;
 `;
-const Balance$1 = styled(motion.div).withConfig({ displayName: "Balance", componentId: "-1ntec5c" }) `
+const Balance$1 = styled(motion.div) `
   position: relative;
   min-width: 150px;
   text-align: left;
@@ -4835,7 +4835,7 @@ const PlaceholderKeyframes$1 = keyframes `
   0%{ background-position: 100% 0; }
   100%{ background-position: -100% 0; }
 `;
-const LoadingBalance = styled(motion.div).withConfig({ displayName: "LoadingBalance", componentId: "-vb9yz5" }) `
+const LoadingBalance = styled(motion.div) `
   min-width: 150px;
   margin: 0 auto;
   position: relative;
@@ -4860,22 +4860,22 @@ const LoadingBalance = styled(motion.div).withConfig({ displayName: "LoadingBala
   }
 `;
 
-const StepperStepLabelContainer = styled(motion.div).withConfig({ displayName: "StepperStepLabelContainer", componentId: "-gvxur9" }) `
+const StepperStepLabelContainer = styled(motion.div) `
   display: flex;
   flex-direction: column;
   align-items: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "flex-start")};
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
 `;
-const StepperStepOptionalLabel = styled(motion.span).withConfig({ displayName: "StepperStepOptionalLabel", componentId: "-10e7ne4" }) `
+const StepperStepOptionalLabel = styled(motion.span) `
   font-size: 0.875rem;
   color: rgb(113, 113, 122);
   margin-left: 4px;
 `;
-const StepperSteLabelDescription = styled(motion.span).withConfig({ displayName: "StepperSteLabelDescription", componentId: "-es92e7" }) `
+const StepperSteLabelDescription = styled(motion.span) `
   font-size: 0.875rem;
   color: rgb(113, 113, 122);
 `;
-const StepperStepConnectorContainer = styled(motion.div).withConfig({ displayName: "StepperStepConnectorContainer", componentId: "-1o7f3n4" }) `
+const StepperStepConnectorContainer = styled(motion.div) `
   margin-left: 24px;
   display: flex;
   margin-top: 0.25rem;
@@ -4894,14 +4894,14 @@ const StepperStepConnectorContainer = styled(motion.div).withConfig({ displayNam
       border-color: rgb(14, 117, 55);
     `}
 `;
-const StepperStepConnectorLast = styled(motion.div).withConfig({ displayName: "StepperStepConnectorLast", componentId: "-1krzixg" }) `
+const StepperStepConnectorLast = styled(motion.div) `
   display: block;
   margin-top: 1rem;
   margin-bottom: 1rem;
   width: 100%;
   height: auto;
 `;
-const StepperStepContainer = styled(motion.div).withConfig({ displayName: "StepperStepContainer", componentId: "-1agritk" }) `
+const StepperStepContainer = styled(motion.div) `
   display: flex;
   flex-direction: row;
   position: relative;
@@ -4937,7 +4937,7 @@ const StepperStepContainer = styled(motion.div).withConfig({ displayName: "Stepp
       width: 100%;
     `}
 `;
-const StepperContainer = styled(motion.div).withConfig({ displayName: "StepperContainer", componentId: "-1uz1sz3" }) `
+const StepperContainer = styled(motion.div) `
   display: flex;
   flex: 1 1 0%;
   width: 100%;
@@ -4946,7 +4946,7 @@ const StepperContainer = styled(motion.div).withConfig({ displayName: "StepperCo
   text-align: center;
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
 `;
-const StepperStepRow = styled(motion.div).withConfig({ displayName: "StepperStepRow", componentId: "-1d11zqs" }) `
+const StepperStepRow = styled(motion.div) `
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4957,7 +4957,7 @@ const StepperStepRow = styled(motion.div).withConfig({ displayName: "StepperStep
       flex-direction: column;
     `}
 `;
-const StepperStepButton = styled(motion.button).withConfig({ displayName: "StepperStepButton", componentId: "-13snpml" }) `
+const StepperStepButton = styled(motion.button) `
   height: 48px;
   width: 48px;
   border-radius: 9999px;
@@ -4990,7 +4990,7 @@ const StepperStepButton = styled(motion.button).withConfig({ displayName: "Stepp
       background: rgb(239, 68, 68);
     `}
 `;
-const StepperSeparator = styled(Separator.Root).withConfig({ displayName: "StepperSeparator", componentId: "-1oxqrck" }) `
+const StepperSeparator = styled(Separator.Root) `
   flex: 1 1 auto;
   height: 2px;
   min-height: auto;
@@ -5114,41 +5114,41 @@ StepperStepConnector.displayName = "StepperStepConnector";
 const convertWeiToTokens = ({ valueWei, token }) => new BigNumber(valueWei).dividedBy(new BigNumber(10).pow(token.decimals)).dp(+token.decimals);
 const convertTokensToWei = ({ value, token }) => new BigNumber(value).multipliedBy(new BigNumber(10).pow(token.decimals)).dp(0);
 
-const StepTitle = styled.h1.withConfig({ displayName: "StepTitle", componentId: "-cp81kk" }) `
+const StepTitle = styled.h1 `
   font-size: 1.25rem;
   text-align: center;
   color: rgb(55 55 55);
   margin-bottom: 10px;
 `;
-const StepDescription = styled.p.withConfig({ displayName: "StepDescription", componentId: "-z9fv79" }) `
+const StepDescription = styled.p `
   font-size: 1rem;
   text-align: center;
   color: rgb(153 153 153);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
-const BalancesWrapper = styled.div.withConfig({ displayName: "BalancesWrapper", componentId: "-1tvy2ac" }) `
+const BalancesWrapper = styled.div `
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   margin-bottom: 30px;
 `;
-const LabelWithBalanceContainer = styled.div.withConfig({ displayName: "LabelWithBalanceContainer", componentId: "-1ayb30j" }) `
+const LabelWithBalanceContainer = styled.div `
   display: flex;
   align-items: center;
   gap: 20px;
   justify-content: center;
 `;
-const LabelText = styled.div.withConfig({ displayName: "LabelText", componentId: "-1qjh61c" }) `
+const LabelText = styled.div `
   min-width: 150px;
   text-align: right;
 `;
-const ErrorMessage = styled.div.withConfig({ displayName: "ErrorMessage", componentId: "-189pr2u" }) `
+const ErrorMessage = styled.div `
   color: rgb(239, 68, 68);
   margin-bottom: 18px;
 `;
-const SpinnerWrapper = styled.div.withConfig({ displayName: "SpinnerWrapper", componentId: "-123sppi" }) `
+const SpinnerWrapper = styled.div `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5158,7 +5158,7 @@ const SpinnerWrapper = styled.div.withConfig({ displayName: "SpinnerWrapper", co
     color: #f07d00;
   }
 `;
-const SuccessWrapper = styled.div.withConfig({ displayName: "SuccessWrapper", componentId: "-1rakh89" }) `
+const SuccessWrapper = styled.div `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5168,14 +5168,14 @@ const SuccessWrapper = styled.div.withConfig({ displayName: "SuccessWrapper", co
     color: rgb(14, 117, 55);
   }
 `;
-const WrapperButtons = styled.div.withConfig({ displayName: "WrapperButtons", componentId: "-usqpt9" }) `
+const WrapperButtons = styled.div `
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 40px;
 `;
-const TransactionCompleteContainer = styled.div.withConfig({ displayName: "TransactionCompleteContainer", componentId: "-wvx7me" }) `
+const TransactionCompleteContainer = styled.div `
   position: relative;
   padding: 30px 0;
   color: rgb(55 55 55);
@@ -5711,7 +5711,7 @@ function useIsMounted() {
     return mounted;
 }
 
-const TextContainer = styled(motion.div).withConfig({ displayName: "TextContainer", componentId: "-1pax54s" }) `
+const TextContainer = styled(motion.div) `
   top: 0;
   bottom: 0;
   left: 0;
@@ -5720,7 +5720,7 @@ const TextContainer = styled(motion.div).withConfig({ displayName: "TextContaine
   justify-content: center;
   white-space: nowrap;
 `;
-styled(motion.div).withConfig({ displayName: "ChainContainer", componentId: "-1lmv052" }) `
+styled(motion.div) `
   position: relative;
   width: 24px;
   height: 24px;
@@ -5730,7 +5730,7 @@ styled(motion.div).withConfig({ displayName: "ChainContainer", componentId: "-1l
     display: block;
   }
 `;
-const IconContainer = styled(motion.div).withConfig({ displayName: "IconContainer", componentId: "-157jujx" }) `
+const IconContainer = styled(motion.div) `
   pointer-events: none;
   user-select: none;
   position: relative;
@@ -5738,7 +5738,7 @@ const IconContainer = styled(motion.div).withConfig({ displayName: "IconContaine
   height: 24px;
   margin-right: 8px;
 `;
-const UnsupportedNetworkContainer = styled(motion.div).withConfig({ displayName: "UnsupportedNetworkContainer", componentId: "-vp0qb3" }) `
+const UnsupportedNetworkContainer = styled(motion.div) `
   z-index: 1;
   position: absolute;
   inset: 0;
@@ -6112,7 +6112,7 @@ const supportedChains = [
     },
 ];
 
-const Container$1 = styled(motion.div).withConfig({ displayName: "Container", componentId: "-102d07x" }) `
+const Container$1 = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -6183,7 +6183,7 @@ const Container$1 = styled(motion.div).withConfig({ displayName: "Container", co
     );
   }
 `;
-const ThemeContainer = styled.button.withConfig({ displayName: "ThemeContainer", componentId: "-1w2l5w4" }) `
+const ThemeContainer = styled.button `
   all: initial;
   appearance: none;
   user-select: none;
@@ -6244,7 +6244,7 @@ const ThemedButton = ({ children, variant = "primary", autoSize = true, duration
             }, children: children }) }));
 };
 
-const Container = styled(motion.div).withConfig({ displayName: "Container", componentId: "-119o1sg" }) `
+const Container = styled(motion.div) `
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6254,7 +6254,7 @@ const PlaceholderKeyframes = keyframes `
   0%,100%{ opacity: 0.1; transform: scale(0.75); }
   50%{ opacity: 0.75; transform: scale(1.2) }
 `;
-const PulseContainer = styled.div.withConfig({ displayName: "PulseContainer", componentId: "-t5xjvl" }) `
+const PulseContainer = styled.div `
   pointer-events: none;
   user-select: none;
   padding: 0 5px;
@@ -6477,3 +6477,4 @@ function useChains() {
 }
 
 export { ConnectWSCButton, ConnectWSCProvider, Context, types as Types, defaultConfig as getDefaultConfig, supportedConnectors$1 as supportedConnectors, useChains, useIsMounted, useModal, useWSCTransactionConfig };
+//# sourceMappingURL=index.es.js.map
