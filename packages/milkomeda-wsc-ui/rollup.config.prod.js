@@ -5,7 +5,7 @@ import packageJson from "./package.json";
 export default [
   {
     input: ["./src/index.ts"],
-    external: ["react", "react-dom", "framer-motion", "wagmi", "ethers"],
+    external: ["react", "react-dom", "framer-motion"],
     output: {
       file: packageJson.exports,
       format: "esm",

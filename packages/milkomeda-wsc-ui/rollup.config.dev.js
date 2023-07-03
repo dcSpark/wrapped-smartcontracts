@@ -10,7 +10,7 @@ const styledComponentsTransformer = createStyledComponentsTransformer({
 export default [
   {
     input: ["./src/index.ts"],
-    external: ["react", "react-dom", "framer-motion", "wagmi", "ethers"],
+    external: ["react", "react-dom", "framer-motion"],
     output: [
       {
         file: packageJson.exports,
@@ -18,7 +18,6 @@ export default [
         sourcemap: false,
       },
     ],
-
     plugins: [
       peerDepsExternal(),
       typescript({
