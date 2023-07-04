@@ -19,5 +19,5 @@ export const useWSCTransactionConfig = ({
     context.setDefaultCardanoAsset(defaultCardanoToken);
     context.setContractAddress(contractAddress);
     context.setWscAction(wscActionCallback);
-  }, []);
+  }, [defaultCardanoToken?.amount, defaultCardanoToken?.amount, contractAddress]);
 };

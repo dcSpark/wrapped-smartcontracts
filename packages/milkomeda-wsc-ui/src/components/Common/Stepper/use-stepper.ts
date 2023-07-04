@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { StepperStepProps } from "./index";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
 
 type UseStepper = {
   initialStep: number;
@@ -16,7 +17,7 @@ type UseStepperReturn = {
 };
 
 export function useStepper({ initialStep }: UseStepper): UseStepperReturn {
-  const [activeStep, setActiveStep] = React.useState(initialStep);
+  const [activeStep, setActiveStep] = useLocalStorage("wsc-stepper", 0);
 
   const nextStep = () => {
     setActiveStep((prev) => prev + 1);
