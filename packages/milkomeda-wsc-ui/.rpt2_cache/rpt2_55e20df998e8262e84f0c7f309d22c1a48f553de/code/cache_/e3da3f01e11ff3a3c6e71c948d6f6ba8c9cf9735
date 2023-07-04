@@ -1,0 +1,1 @@
+{"code":"export default {\r\n    mobileWidth: 560,\r\n};\r\n","references":[],"dts":{"name":"/Users/paulclindo/local/dcspark/wrapped-smartcontracts/packages/milkomeda-wsc-ui/build/constants/defaultTheme.d.ts","writeByteOrderMark":false,"text":"declare const _default: {\r\n    mobileWidth: number;\r\n};\r\nexport default _default;\r\n"}}
