@@ -67,7 +67,7 @@ const ActionExecutionStep = ({ nextStep }) => {
         </ErrorMessage>
       )}
       <Button variant="primary" onClick={onWSCAction}>
-        Confirm wrapping
+        Execute Action
       </Button>
     </div>
   );
