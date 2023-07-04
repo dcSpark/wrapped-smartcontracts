@@ -68,7 +68,7 @@ type ContextValue = {
   connector: string;
   setConnector: React.Dispatch<React.SetStateAction<Connector>>;
   errorMessage: Error;
-  options?: ConnectWSCOptions;
+  // options?: ConnectWSCOptions;
   debugMode?: boolean;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
@@ -77,7 +77,7 @@ type ContextValue = {
 
 export const Context = createContext<ContextValue | null>(null);
 
-export type ConnectWSCOptions = NonNullable<unknown>;
+// export type ConnectWSCOptions = NonNullable<unknown>;
 
 type ConnectKitProviderProps = {
   children?: React.ReactNode;
@@ -104,7 +104,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   });
 
   // Default config options
-  const defaultOptions: ConnectWSCOptions = {};
+  // const defaultOptions: ConnectWSCOptions = {};
 
   // if (typeof window !== "undefined") {
   // Buffer Polyfill, needed for bundlers that don't provide Node polyfills (e.g CRA, Vite, etc.)

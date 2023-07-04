@@ -1,4 +1,4 @@
-export * as Types from "./types";
+// export * as Types from "./types";
 export { default as getDefaultConfig } from "./defaultConfig";
 
 export { useModal } from "./hooks/useModal";
@@ -11,8 +11,8 @@ export { useWSCTransactionConfig } from "./hooks/useWSCTransactionConfig";
 //export { default as BalanceButton, Balance } from './components/BalanceButton';
 
 // Hooks
-export { default as useIsMounted } from "./hooks/useIsMounted"; // Useful for apps that use SSR
-export { useChains } from "./hooks/useChains";
+// export { default as useIsMounted } from "./hooks/useIsMounted"; // Useful for apps that use SSR
+// export { useChains } from "./hooks/useChains";
 
 // TODO: Make this private
 export { default as supportedConnectors } from "./constants/supportedConnectors";

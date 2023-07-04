@@ -1,1 +1,1 @@
-export type { ConnectWSCOptions } from "./components/ConnectWSC";
+// export type { ConnectWSCOptions } from "./components/ConnectWSC";
