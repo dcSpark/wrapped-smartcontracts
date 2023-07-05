@@ -1,35 +1,18 @@
-import type { Chain } from "@wagmi/chains";
 import { WSCLib, MilkomedaNetworkName } from "milkomeda-wsc";
 import { Connector, ConnectorNotFoundError } from "wagmi";
 import { normalizeChainId } from "@wagmi/core";
-// import { getAddress } from "ethers/lib/utils.js";
-
-type CardanoWSCConnectorOptions = {
-  name: string;
-  network?: MilkomedaNetworkName;
-  oracleUrl?: string;
-  blockfrostKey: string;
-  jsonRpcProviderUrl?: string;
-};
 /**
  * Connector for [Cardano WSC]
  */
-export class CardanoWSCConnector extends Connector<WSCLib, CardanoWSCConnectorOptions> {
-  readonly ready = true;
-  readonly id;
-  readonly name;
-  #provider?: any;
+export class CardanoWSCConnector extends Connector {
+  ready = true;
+  id;
+  name;
+  #provider;
   #sdk;
   #previousEVMProvider;
   #previousCardanoProvider;
-
-  constructor({
-    chains,
-    options: options_,
-  }: {
-    chains: Chain[];
-    options: CardanoWSCConnectorOptions;
-  }) {
+  constructor({ chains, options: options_ }) {
     const options = {
       id: options_.name + "-wsc",
       ...options_,
@@ -37,11 +20,9 @@ export class CardanoWSCConnector extends Connector<WSCLib, CardanoWSCConnectorOp
     super({ chains, options });
     this.id = options.id;
     this.name = options.name;
-
     if (typeof window === "undefined") return;
     this.#previousEVMProvider = window?.ethereum;
     this.#previousCardanoProvider = window?.cardano;
-
     const network = options_.network ?? MilkomedaNetworkName.C1Devnet;
     this.#sdk = new WSCLib(network, options_.name, {
       oracleUrl: options_.oracleUrl,
@@ -49,53 +30,45 @@ export class CardanoWSCConnector extends Connector<WSCLib, CardanoWSCConnectorOp
       jsonRpcProviderUrl: options_.jsonRpcProviderUrl,
     });
   }
-
-  async connect(): Promise<any> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  async connect() {
     const provider = await this.getProvider();
     if (!provider) throw new ConnectorNotFoundError();
-
     if (provider.on) {
       provider.on("accountsChanged", this.onAccountsChanged);
       provider.on("chainChanged", this.onChainChanged);
       provider.on("disconnect", this.onDisconnect);
     }
-
     this.emit("message", { type: "connecting" });
-
     const account = await this.getAccount();
     const id = await this.getChainId();
-
     return {
       account,
       chain: { id, unsupported: this.isChainUnsupported(id) },
     };
   }
-
   async disconnect() {
     const provider = await this.getProvider();
     // switch back to previous provider
     window.ethereum = this.#previousEVMProvider;
-    window.cardano = this.#previousCardanoProvider as any;
-
+    window.cardano = this.#previousCardanoProvider;
     if (!provider?.removeListener) return;
     provider.removeListener("accountsChanged", this.onAccountsChanged);
     provider.removeListener("chainChanged", this.onChainChanged);
     provider.removeListener("disconnect", this.onDisconnect);
   }
-
   async getAccount() {
     const provider = await this.getProvider();
     if (!provider) throw new ConnectorNotFoundError();
     const account = await this.#provider?.eth_getAccount();
-    return account as any;
+    return account;
   }
-
   async getChainId() {
     const provider = await this.getProvider();
     if (!provider) throw new ConnectorNotFoundError();
     return normalizeChainId(200101);
   }
-
   async getProvider() {
     if (!this.#provider) {
       const wsc = await this.#sdk?.inject();
@@ -104,12 +77,10 @@ export class CardanoWSCConnector extends Connector<WSCLib, CardanoWSCConnectorOp
     }
     return this.#provider;
   }
-
   async getSigner() {
     const provider = await this.getProvider();
     return (await provider.getEthersProvider()).getSigner();
   }
-
   async isAuthorized() {
     try {
       const account = await this.getAccount();
@@ -118,21 +89,18 @@ export class CardanoWSCConnector extends Connector<WSCLib, CardanoWSCConnectorOp
       return false;
     }
   }
-
-  onAccountsChanged = (accounts: string[]) => {
+  onAccountsChanged = (accounts) => {
     if (accounts.length === 0) this.emit("disconnect");
     else
       this.emit("change", {
-        account: "0x",
+        account: accounts[0],
       });
   };
-
-  onChainChanged = (chainId: number | string) => {
+  onChainChanged = (chainId) => {
     const id = normalizeChainId(chainId);
     const unsupported = this.isChainUnsupported(id);
     this.emit("change", { chain: { id, unsupported } });
   };
-
   onDisconnect() {
     this.emit("disconnect");
   }

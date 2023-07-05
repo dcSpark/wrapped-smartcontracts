@@ -3,8 +3,8 @@ import { Chain } from "wagmi/chains";
 
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-// import { CardanoWSCConnector } from "./wsc-cardano-connector";
-import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi"; //TODO: fix this
+import { CardanoWSCConnector } from "./wsc-cardano-connector";
+// import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi"; //TODO: fix this
 
 export const milkomedaChains = [
   {
@@ -75,7 +75,7 @@ type MilkomedaWSCClientProps = {
 };
 
 const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
-  let connectors: Connector[] = [];
+  let connectors: any[] = [];
 
   // Add the rest of the connectors
   connectors = [
@@ -104,7 +104,7 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
 };
 
 const defaultConfig = ({
-  autoConnect = true, // TODO: check why breaks in wsc
+  autoConnect = false, // TODO: check why breaks in wsc
   chains = defaultChains,
   connectors,
   provider,

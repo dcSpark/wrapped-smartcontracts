@@ -17,7 +17,7 @@ type UseStepperReturn = {
 };
 
 export function useStepper({ initialStep }: UseStepper): UseStepperReturn {
-  const [activeStep, setActiveStep] = useLocalStorage("wsc-stepper", 0);
+  const [activeStep, setActiveStep] = useLocalStorage("wsc-stepper", initialStep);
 
   const nextStep = () => {
     setActiveStep((prev) => prev + 1);

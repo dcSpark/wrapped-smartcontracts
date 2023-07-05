@@ -22,8 +22,6 @@ import {
   ModalHeading,
   TextWithHr,
   ErrorMessage,
-  DisclaimerBackground,
-  Disclaimer,
 } from "./styles";
 
 import { routes, useContext } from "../../ConnectWSC";
@@ -301,7 +299,7 @@ const Modal: React.FC<ModalProps> = ({
       case routes.ONBOARDING:
         return "onboarding";
       case routes.PROFILE:
-        return "Buy Milkomeda-C1 Djed Osiris Dollar"; // TODO: fix it
+        return context.titleModalTx ?? "Wrapped Smart Contract";
 
       default:
         return "";
@@ -321,10 +319,10 @@ const Modal: React.FC<ModalProps> = ({
         <Container
           style={dimensionsCSS}
           initial={false}
-          // transition={{
-          //   ease: [0.2555, 0.1111, 0.2555, 1.0001],
-          //   duration: !positionInside && state !== 'entered' ? 0 : 0.24,
-          // }}
+          transition={{
+            ease: [0.2555, 0.1111, 0.2555, 1.0001],
+            duration: !positionInside && state !== "entered" ? 0 : 0.24,
+          }}
         >
           <div
             style={{
@@ -449,8 +447,6 @@ const Modal: React.FC<ModalProps> = ({
               {Object.keys(pages).map((key) => {
                 const page = pages[key];
                 return (
-                  // TODO: We may need to use the follow check avoid unnecessary computations, but this causes a bug where the content flashes
-                  // (key === pageId || key === prevPage) && (
                   <Page
                     key={key}
                     open={key === pageId}

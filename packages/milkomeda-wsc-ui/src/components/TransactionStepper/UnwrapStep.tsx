@@ -35,7 +35,7 @@ type UnwrapToken = {
   type: "ERC-20";
 };
 const UnwrapStep = ({ nextStep }) => {
-  const { wscProvider, tokens, stargateInfo, contractAddress } = useContext();
+  const { wscProvider, tokens, stargateInfo, evmTokenAddress } = useContext();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<UnwrapToken | null>(null);
   const [txHash, setTxHash] = React.useState<null | string | undefined>(null);
   const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
@@ -66,10 +66,10 @@ const UnwrapStep = ({ nextStep }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
+    const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress);
     if (!selectedToken) return;
     setSelectedUnwrapToken(selectedToken);
-  }, [tokens, contractAddress]);
+  }, [tokens, evmTokenAddress]);
 
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider) return;

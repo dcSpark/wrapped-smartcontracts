@@ -1,23 +1,35 @@
-import { useEffect } from "react";
-import { DefaultCardanoAsset, useContext } from "../components/ConnectWSC";
+import { useEffect, useLayoutEffect } from "react";
+import { DefaultCardanoAsset, StepTxDirection, useContext } from "../components/ConnectWSC";
 
 export const useWSCTransactionConfig = ({
   defaultCardanoToken,
-  contractAddress,
+  evmTokenAddress,
   wscActionCallback,
+  stepTxDirection,
+  titleModal,
 }: {
   defaultCardanoToken: DefaultCardanoAsset | null;
-  contractAddress: string;
-  wscActionCallback: () => Promise<void>;
+  evmTokenAddress: string;
+  wscActionCallback: () => Promise<any>;
+  stepTxDirection: StepTxDirection;
+  titleModal?: string;
 }) => {
   const context = useContext();
 
+  useLayoutEffect(() => {
+    context.wscActionRef.current = wscActionCallback;
+  });
+
   useEffect(() => {
     if (!defaultCardanoToken) return;
-    if (!contractAddress) return;
-    if (!wscActionCallback) return;
+    if (!evmTokenAddress) return;
+    if (!stepTxDirection) return;
+
     context.setDefaultCardanoAsset(defaultCardanoToken);
-    context.setContractAddress(contractAddress);
-    context.setWscAction(wscActionCallback);
-  }, [defaultCardanoToken?.amount, defaultCardanoToken?.amount, contractAddress]);
+    context.setEvmTokenAddress(evmTokenAddress);
+    context.setStepTxDirection(stepTxDirection);
+    if (titleModal) {
+      context.setTitleModalTx(titleModal);
+    }
+  }, [defaultCardanoToken?.amount, defaultCardanoToken?.amount, evmTokenAddress, stepTxDirection]);
 };

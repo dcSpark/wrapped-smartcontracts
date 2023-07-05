@@ -1,66 +1,62 @@
-import React from "react";
-import { AnimatePresence } from "framer-motion";
-import { Balance, BalanceContainer, LoadingBalance } from "../Pages/Profile/styles";
+import React, { useMemo } from "react";
 import {
   ErrorMessage,
-  LabelText,
-  LabelWithBalanceContainer,
   SpinnerWrapper,
   StepDescription,
   StepTitle,
   SuccessWrapper,
 } from "./styles";
-import { erc20ABI, useSigner } from "wagmi";
+import { erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { useContext } from "../ConnectWSC";
-import { ethers } from "ethers";
 import Button from "../Common/Button";
 import { CheckCircle2 } from "lucide-react";
-import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
-import { convertTokensToWei } from "../../utils/convertWeiToTokens";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
+import { ethers } from "ethers";
 
 const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const TokenAllowanceStep = ({ nextStep }) => {
-  const { data: signer } = useSigner();
   const { tokens } = useContext();
-  const [approvalStatus, setApprovalStatus] = React.useState("idle");
-  const { contractAddress } = useContext();
+  const { evmTokenAddress } = useContext();
 
-  const onTokenAllowance = async () => {
-    const selectedToken = tokens.find((t) => t.contractAddress === contractAddress);
-    if (!selectedToken) return;
-    const convertAmountBN = convertTokensToWei({
-      value: selectedToken.balance,
-      token: selectedToken,
-    }).toFixed();
+  const selectedToken = useMemo(
+    () => tokens.find((t) => t.contractAddress === evmTokenAddress),
+    [tokens, evmTokenAddress]
+  );
 
-    try {
-      setApprovalStatus("pending");
-      const erc20Contract = new ethers.Contract(
-        selectedToken.contractAddress,
-        erc20ABI,
-        signer as any
-      );
-      const approvalTx = await erc20Contract.approve(bridgeAddress, convertAmountBN, {
-        gasLimit: 500000,
-      });
-      const approvalReceipt = await approvalTx.wait();
-      console.log(approvalReceipt, "approvalReceipt");
-      setApprovalStatus("success");
+  const { config, isLoading: isPreparingLoading } = usePrepareContractWrite({
+    address: evmTokenAddress as `0x${string}`,
+    abi: erc20ABI,
+    functionName: "approve",
+    args: [
+      bridgeAddress,
+      selectedToken && ethers.utils.parseUnits(selectedToken?.balance, selectedToken?.decimals),
+    ],
+    enabled: !!selectedToken,
+    overrides: {
+      gasLimit: ethers.BigNumber.from(500000),
+    },
+  });
+
+  const { data, write, isLoading: isWritingContract } = useContractWrite(config);
+
+  const {
+    isLoading: isWaitingForTxLoading,
+    isSuccess,
+    isError,
+  } = useWaitForTransaction({
+    hash: data?.hash,
+    enabled: !!data?.hash,
+    onSuccess: () => {
       setTimeout(() => {
         nextStep();
       }, DEFAULT_STEP_TIMEOUT);
-    } catch (err) {
-      setApprovalStatus("error");
-      console.error(err);
-    }
-  };
+    },
+  });
 
-  const isLoading = approvalStatus === "pending";
-  const isSuccess = approvalStatus === "success";
-  const isError = approvalStatus === "error";
+  const isLoadingTx = isPreparingLoading || isWritingContract || isWaitingForTxLoading;
+
   return (
     <div>
       <StepTitle>Token Allowance: Empowering Controlled Asset Transfers</StepTitle>
@@ -68,7 +64,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
         Allow the smart contract to spend the specified amount of tokens on your behalf, enabling
         the unwrapping process from the Sidechain to the L1 chain.
       </StepDescription>
-      {isLoading && (
+      {isLoadingTx && (
         <SpinnerWrapper>
           <Spinner />
           <span>Approving token allowance</span>
@@ -81,9 +77,11 @@ const TokenAllowanceStep = ({ nextStep }) => {
           <span>You've successfully approved the bridge to spend your tokens.</span>
         </SuccessWrapper>
       )}
-      <Button variant="primary" onClick={onTokenAllowance}>
-        Grant token allowance
-      </Button>
+      {isSuccess || isLoadingTx ? null : (
+        <Button disabled={!write} variant="primary" onClick={() => write?.()}>
+          Grant token allowance
+        </Button>
+      )}
     </div>
   );
 };
