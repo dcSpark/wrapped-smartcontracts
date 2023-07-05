@@ -18,3 +18,4 @@ tsconfig.tsbuildinfo
 .env.production.local
 
 npm-debug.log*
+.rpt2_cache
