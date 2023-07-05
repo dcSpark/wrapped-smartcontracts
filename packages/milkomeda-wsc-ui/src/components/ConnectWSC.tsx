@@ -5,8 +5,9 @@ import React, {
   useState,
   ReactNode,
   useRef,
+  useCallback,
 } from "react";
-import { Buffer } from "buffer";
+// import { Buffer } from "buffer";
 
 import defaultTheme from "../styles/defaultTheme";
 
@@ -15,7 +16,9 @@ import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
 import { useAccount } from "wagmi";
-import { WSCLib } from "milkomeda-wsc";
+import { EVMTokenBalance, WSCLib } from "milkomeda-wsc";
+import useInterval from "../hooks/useInterval";
+import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -40,13 +43,10 @@ type StargateInfo = {
   stargateMinNativeTokenToL1: number;
   stargateNativeTokenFeeToL1: number;
 };
-type WSCAction = () => Promise<void>;
-// type WSCAction = {
-//   isSuccess: boolean;
-//   isLoading: boolean;
-//   isError: boolean;
-//   callback: () => Promise<void>;
-// };
+export type WSCAction = () => Promise<any>;
+
+export type StepTxDirection = "buy" | "sell";
+
 type WSCContext = {
   wscProvider: WSCLib | null;
   originTokens: any;
@@ -54,10 +54,15 @@ type WSCContext = {
   stargateInfo: StargateInfo | null;
   defaultCardanoAsset: DefaultCardanoAsset | null;
   setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
-  contractAddress: string;
-  setContractAddress: React.Dispatch<React.SetStateAction<string>>;
-  wscAction: WSCAction | null;
-  setWscAction: React.Dispatch<React.SetStateAction<WSCAction | null>>;
+  cardanoERC20TokenAddress: string;
+  setCardanoERC20TokenAddress: React.Dispatch<React.SetStateAction<string>>;
+  evmTokenAddress: string;
+  setEvmTokenAddress: React.Dispatch<React.SetStateAction<string>>;
+  wscActionRef: React.MutableRefObject<WSCAction | null>;
+  stepTxDirection: StepTxDirection;
+  setStepTxDirection: React.Dispatch<React.SetStateAction<StepTxDirection>>;
+  titleModalTx: string;
+  setTitleModalTx: React.Dispatch<React.SetStateAction<string>>;
 };
 
 type ContextValue = {
@@ -125,25 +130,28 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   // wsc connector
   const { connector: activeConnector } = useAccount();
-  const [wscProvider, setWscProvider] = React.useState(null);
-  const [originTokens, setOriginTokens] = useState([]);
-  const [tokens, setTokens] = useState([]);
+  const [wscProvider, setWscProvider] = React.useState<WSCLib | null>(null);
+  const [originTokens, setOriginTokens] = useState<OriginAmount[]>([]);
+  const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [destinationBalance, setDestinationBalance] = useState(null);
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
 
   const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
-  const [contractAddress, setContractAddress] = useState("");
+  const [cardanoERC20TokenAddress, setCardanoERC20TokenAddress] = useState("");
+  const [evmTokenAddress, setEvmTokenAddress] = useState("");
+  const [stepTxDirection, setStepTxDirection] = useState<StepTxDirection>("buy");
+  const [titleModalTx, setTitleModalTx] = useState<string>("");
 
-  const [wscAction, setWscAction] = useState<WSCAction | null>(null);
+  const wscActionRef = useRef<WSCAction | null>(null);
 
-  const [originAddress, setOriginAddress] = useState(null);
-  const [pendingTxs, setPendingTxs] = useState([]);
-  const [address, setAddress] = useState(null);
-  const [originBalance, setOriginBalance] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [algorandConnected, setAlgorandConnected] = useState(false);
-  const [cardanoConnected, setCardanoConnected] = useState(false);
-  const [network, setNetwork] = useState(null);
+  // const [originAddress, setOriginAddress] = useState(null);
+  // const [pendingTxs, setPendingTxs] = useState([]);
+  // const [address, setAddress] = useState(null);
+  // const [originBalance, setOriginBalance] = useState(null);
+  // const [transactions, setTransactions] = useState([]);
+  // const [algorandConnected, setAlgorandConnected] = useState(false);
+  // const [cardanoConnected, setCardanoConnected] = useState(false);
+  // const [network, setNetwork] = useState(null);
 
   useEffect(() => {
     if (!activeConnector?.id?.includes("wsc")) return;
@@ -167,6 +175,28 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     loadWscProvider();
   }, [activeConnector, wscProvider]);
 
+  const updateWalletData = useCallback(async () => {
+    if (wscProvider == null) return;
+    // const destinationBalance = await wscProvider.eth_getBalance();
+    // setDestinationBalance(destinationBalance);
+    // const originBalance = await wscProvider.origin_getNativeBalance();
+    // setOriginBalance(originBalance);
+    const tokenBalances = await wscProvider.getTokenBalances();
+    setTokens(tokenBalances ?? []);
+
+    const originTokens = await wscProvider.origin_getTokenBalances();
+    setOriginTokens(originTokens ?? []);
+  }, []);
+
+  useInterval(
+    () => {
+      if (wscProvider != null) {
+        updateWalletData();
+      }
+    },
+    wscProvider != null ? 4000 : null
+  );
+
   useEffect(() => setErrorMessage(null), [route, open]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -188,10 +218,15 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     //
     defaultCardanoAsset,
     setDefaultCardanoAsset,
-    contractAddress,
-    setContractAddress,
-    wscAction,
-    setWscAction,
+    cardanoERC20TokenAddress,
+    setCardanoERC20TokenAddress,
+    evmTokenAddress,
+    setEvmTokenAddress,
+    wscActionRef,
+    stepTxDirection,
+    setStepTxDirection,
+    titleModalTx,
+    setTitleModalTx,
     // Other configuration
     errorMessage,
 

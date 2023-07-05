@@ -16,6 +16,7 @@ const Home: NextPage = () => {
     wscActionCallback: promiseFunction,
     evmTokenAddress: reserveCoinAddress,
     stepTxDirection: "buy",
+    titleModal: "Buy Reserve Coin",
   });
 
   return (

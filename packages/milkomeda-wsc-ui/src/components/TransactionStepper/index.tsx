@@ -57,7 +57,7 @@ const TransactionStepper = () => {
         labelOrientation="vertical"
       >
         {steps.map((step, index) => (
-          <StepperStep index={index} key={index} {...step}>
+          <StepperStep isCurrentStep={index === activeStep} index={index} key={index} {...step}>
             <StepperTransactionContent>{step.children}</StepperTransactionContent>
           </StepperStep>
         ))}
