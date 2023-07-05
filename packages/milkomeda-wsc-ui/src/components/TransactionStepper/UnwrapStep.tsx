@@ -10,52 +10,47 @@ import {
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import useInterval from "../../hooks/useInterval";
-import { LabelWithBalance, WrapStatus } from "./WrapStep";
+import { defaultSymbol, LabelWithBalance, TxStatus } from "./WrapStep";
 import BigNumber from "bignumber.js";
-import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiToTokens";
+import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { Spinner } from "../Common/Spinner";
 import { CheckCircle2 } from "lucide-react";
-import { TxPendingStatus } from "milkomeda-wsc";
+import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
 
 const statusUnwrapMessages = {
-  [WrapStatus.Init]: "Confirm Unwrapping",
-  [WrapStatus.Pending]: "Unwrapping your token",
-  [WrapStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
-  [WrapStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
-  [WrapStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
-  [WrapStatus.Confirmed]: "Your asset has been successfully unwrapped!",
+  [TxStatus.Init]: "Confirm Unwrapping",
+  [TxStatus.Pending]: "Unwrapping your token",
+  [TxStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
+  [TxStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
+  [TxStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
+  [TxStatus.Confirmed]: "Your asset has been successfully unwrapped!",
 };
-type UnwrapToken = {
-  balance: string;
-  contractAddress: string;
-  decimals: string;
-  name: string;
-  symbol: string;
-  type: "ERC-20";
-};
+
 const UnwrapStep = ({ nextStep }) => {
   const { wscProvider, tokens, stargateInfo, evmTokenAddress } = useContext();
-  const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<UnwrapToken | null>(null);
+  const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
+    null
+  );
   const [txHash, setTxHash] = React.useState<null | string | undefined>(null);
-  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
-  const isIdle = txStatus === WrapStatus.Idle;
+  const isIdle = txStatus === TxStatus.Idle;
   const isLoading =
-    txStatus === WrapStatus.Init ||
-    txStatus === WrapStatus.Pending ||
-    txStatus === WrapStatus.WaitingL1Confirmation ||
-    txStatus === WrapStatus.WaitingBridgeConfirmation ||
-    txStatus === WrapStatus.WaitingL2Confirmation;
-  const isError = txStatus === WrapStatus.Error;
-  const isSuccess = txStatus === WrapStatus.Confirmed;
+    txStatus === TxStatus.Init ||
+    txStatus === TxStatus.Pending ||
+    txStatus === TxStatus.WaitingL1Confirmation ||
+    txStatus === TxStatus.WaitingBridgeConfirmation ||
+    txStatus === TxStatus.WaitingL2Confirmation;
+  const isError = txStatus === TxStatus.Error;
+  const isSuccess = txStatus === TxStatus.Confirmed;
 
   useInterval(
     async () => {
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
-      if (response === statusUnwrapMessages.Confirmed) {
+      if (response === TxStatus.Confirmed) {
         setTxHash(null);
         setTimeout(() => {
           nextStep();
@@ -73,7 +68,7 @@ const UnwrapStep = ({ nextStep }) => {
 
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider) return;
-    setTxStatus(WrapStatus.Init);
+    setTxStatus(TxStatus.Init);
 
     try {
       const txHash = await wscProvider.unwrap(
@@ -82,18 +77,19 @@ const UnwrapStep = ({ nextStep }) => {
         new BigNumber(selectedUnwrapToken.balance)
       );
       setTxHash(txHash);
-      setTxStatus(WrapStatus.Pending);
+      setTxStatus(TxStatus.Pending);
     } catch (err) {
       console.error(err);
-      setTxStatus(WrapStatus.Error);
+      setTxStatus(TxStatus.Error);
       if (err instanceof Error) {
         setTxStatusError(err.message);
       }
     }
   };
 
+  console.log(stargateInfo, "stargateInfo");
   const fee =
-    stargateInfo != null ? new BigNumber(stargateInfo?.stargateMinNativeTokenToL1) : null;
+    stargateInfo != null ? new BigNumber(stargateInfo?.stargateNativeTokenFeeToL1) : null;
 
   return (
     <div>
@@ -104,7 +100,7 @@ const UnwrapStep = ({ nextStep }) => {
       </StepDescription>
       <BalancesWrapper>
         <LabelWithBalance
-          label="You're moving:"
+          label="You'll transfer:"
           amount={
             selectedUnwrapToken?.balance &&
             convertWeiToTokens({
@@ -114,7 +110,7 @@ const UnwrapStep = ({ nextStep }) => {
           }
           assetName={selectedUnwrapToken?.symbol}
         />
-        <LabelWithBalance label="Unwrapping fee:" amount={fee?.toFixed()} assetName={"mADA"} />
+        <LabelWithBalance label="" amount={fee?.toFixed()} assetName={defaultSymbol} />
       </BalancesWrapper>
 
       {isLoading && (

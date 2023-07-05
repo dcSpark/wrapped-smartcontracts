@@ -21,19 +21,13 @@ import { Spinner } from "../Common/Spinner";
 import useInterval from "../../hooks/useInterval";
 import { CheckCircle2 } from "lucide-react";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
-export type WrapToken = {
-  assetName: string;
-  bridgeAllowed: boolean;
-  decimals: number;
-  fingerprint: string;
-  has_nft_onchain_metadata: boolean;
+export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
-  unit: string;
 };
 
-export const WrapStatus = {
+export const TxStatus = {
   ...TxPendingStatus,
   Idle: "Idle" as const,
   Init: "Init" as const,
@@ -42,13 +36,15 @@ export const WrapStatus = {
 };
 
 const statusWrapMessages = {
-  [WrapStatus.Init]: "Confirm Wrapping",
-  [WrapStatus.Pending]: "Wrapping your token",
-  [WrapStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
-  [WrapStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
-  [WrapStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
-  [WrapStatus.Confirmed]: "Your asset has been successfully wrapped!",
+  [TxStatus.Init]: "Confirm Wrapping",
+  [TxStatus.Pending]: "Wrapping your token",
+  [TxStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
+  [TxStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
+  [TxStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
+  [TxStatus.Confirmed]: "Your asset has been successfully wrapped!",
 };
+
+export const defaultSymbol = "TADA";
 
 const WrapStep = ({ nextStep }) => {
   const { setOpen, defaultCardanoAsset } = useContext();
@@ -56,25 +52,17 @@ const WrapStep = ({ nextStep }) => {
   const { wscProvider, originTokens, stargateInfo } = useContext();
   const [txHash, setTxHash] = React.useState<string | undefined | null>(null);
 
-  const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
-  const { chain } = useNetwork();
-  const { address } = useAccount();
-  const { data: balance } = useBalance({
-    address,
-    chainId: chain?.id,
-    watch: true,
-  });
-
-  const isIdle = txStatus === WrapStatus.Idle;
+  const isIdle = txStatus === TxStatus.Idle;
   const isLoading =
-    txStatus === WrapStatus.Init ||
-    txStatus === WrapStatus.Pending ||
-    txStatus === WrapStatus.WaitingL1Confirmation ||
-    txStatus === WrapStatus.WaitingBridgeConfirmation ||
-    txStatus === WrapStatus.WaitingL2Confirmation;
-  const isError = txStatus === WrapStatus.Error;
-  const isSuccess = txStatus === WrapStatus.Confirmed;
+    txStatus === TxStatus.Init ||
+    txStatus === TxStatus.Pending ||
+    txStatus === TxStatus.WaitingL1Confirmation ||
+    txStatus === TxStatus.WaitingBridgeConfirmation ||
+    txStatus === TxStatus.WaitingL2Confirmation;
+  const isError = txStatus === TxStatus.Error;
+  const isSuccess = txStatus === TxStatus.Confirmed;
 
   useInterval(
     async () => {
@@ -93,7 +81,7 @@ const WrapStep = ({ nextStep }) => {
 
   const wrapToken = async () => {
     if (!selectedWrapToken || !defaultCardanoAsset) return;
-    setTxStatus(WrapStatus.Init);
+    setTxStatus(TxStatus.Init);
 
     try {
       const txHash = await wscProvider?.wrap(
@@ -102,9 +90,9 @@ const WrapStep = ({ nextStep }) => {
         defaultCardanoAsset.amount
       );
       setTxHash(txHash);
-      setTxStatus(WrapStatus.Pending);
+      setTxStatus(TxStatus.Pending);
     } catch (err) {
-      setTxStatus(WrapStatus.Error);
+      setTxStatus(TxStatus.Error);
       if (err instanceof Error) {
         setTxStatusError(err.message);
       }
@@ -129,7 +117,7 @@ const WrapStep = ({ nextStep }) => {
     stargateInfo != null
       ? convertWeiToTokens({
           valueWei: stargateInfo.fromNativeTokenInLoveLaceOrMicroAlgo,
-          token: { decimals: balance?.decimals },
+          token: { decimals: 6 },
         })
       : null;
 
@@ -146,29 +134,46 @@ const WrapStep = ({ nextStep }) => {
         users to leverage the benefits of both blockchain ecosystems. With wrap tokens, Cardano
         tokens can be wrapped and utilized on the Ethereum network.
       </StepDescription>
-      <BalancesWrapper>
-        <LabelWithBalance
-          label="You're moving:"
-          amount={
-            defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-          }
-          assetName={selectedWrapToken?.assetName}
-        />
-        <LabelWithBalance
-          label="Wrapping fee:"
-          amount={fee?.toFixed()}
-          assetName={balance?.symbol}
-        />
-        <LabelWithBalance
-          label="You'll transfer:"
-          amount={
-            fee &&
-            defaultCardanoAsset != null &&
-            new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
-          }
-          assetName={selectedWrapToken?.assetName}
-        />
-      </BalancesWrapper>
+      {selectedWrapToken?.unit === "lovelace" ? (
+        <BalancesWrapper>
+          <LabelWithBalance
+            label="You're moving:"
+            amount={
+              defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
+            }
+            assetName={selectedWrapToken?.assetName}
+          />
+          <LabelWithBalance
+            label="Wrapping fee:"
+            amount={fee?.toFixed()}
+            assetName={defaultSymbol}
+          />
+          <LabelWithBalance
+            label="You'll transfer:"
+            amount={
+              fee &&
+              defaultCardanoAsset != null &&
+              new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
+            }
+            assetName={selectedWrapToken?.assetName}
+          />
+        </BalancesWrapper>
+      ) : (
+        <BalancesWrapper>
+          <LabelWithBalance
+            label="You'll transfer:"
+            amount={
+              defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
+            }
+            assetName={selectedWrapToken?.assetName}
+          />
+          <LabelWithBalance
+            label=""
+            amount={fee?.plus(new BigNumber(3))?.toFixed()}
+            assetName={defaultSymbol}
+          />
+        </BalancesWrapper>
+      )}
 
       {isLoading && (
         <>

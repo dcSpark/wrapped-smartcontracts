@@ -6,6 +6,7 @@ export { useModal } from "./hooks/useModal";
 export { ConnectWSCProvider, Context } from "./components/ConnectWSC";
 export { ConnectWSCButton } from "./components/ConnectButton";
 export { useWSCTransactionConfig } from "./hooks/useWSCTransactionConfig";
+export { useWSCProvider } from "./hooks/useWSCProvider";
 
 //export { default as NetworkButton } from './components/NetworkButton';
 //export { default as BalanceButton, Balance } from './components/BalanceButton';

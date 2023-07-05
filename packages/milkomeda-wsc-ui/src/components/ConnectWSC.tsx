@@ -47,20 +47,20 @@ export type WSCAction = () => Promise<any>;
 
 export type StepTxDirection = "buy" | "sell";
 
-type WSCContext = {
+export type WSCContext = {
   wscProvider: WSCLib | null;
-  originTokens: any;
-  tokens: any;
+  originTokens: OriginAmount[];
+  tokens: EVMTokenBalance[];
   stargateInfo: StargateInfo | null;
   destinationBalance: string;
   originBalance: string;
   pendingTxs: PendingTx[];
   originAddress: string;
   address: string;
+};
+export type WSCConfig = {
   defaultCardanoAsset: DefaultCardanoAsset | null;
   setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
-  cardanoERC20TokenAddress: string;
-  setCardanoERC20TokenAddress: React.Dispatch<React.SetStateAction<string>>;
   evmTokenAddress: string;
   setEvmTokenAddress: React.Dispatch<React.SetStateAction<string>>;
   wscActionRef: React.MutableRefObject<WSCAction | null>;
@@ -69,7 +69,6 @@ type WSCContext = {
   titleModalTx: string;
   setTitleModalTx: React.Dispatch<React.SetStateAction<string>>;
 };
-
 type ContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -83,7 +82,8 @@ type ContextValue = {
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
-  WSCContext;
+  WSCContext &
+  WSCConfig;
 
 export const Context = createContext<ContextValue | null>(null);
 
@@ -142,7 +142,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
 
   const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
-  const [cardanoERC20TokenAddress, setCardanoERC20TokenAddress] = useState("");
   const [evmTokenAddress, setEvmTokenAddress] = useState("");
   const [stepTxDirection, setStepTxDirection] = useState<StepTxDirection>("buy");
   const [titleModalTx, setTitleModalTx] = useState<string>("");
@@ -235,8 +234,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     //
     defaultCardanoAsset,
     setDefaultCardanoAsset,
-    cardanoERC20TokenAddress,
-    setCardanoERC20TokenAddress,
     evmTokenAddress,
     setEvmTokenAddress,
     wscActionRef,

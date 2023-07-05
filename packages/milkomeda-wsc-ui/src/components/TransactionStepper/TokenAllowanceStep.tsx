@@ -31,7 +31,9 @@ const TokenAllowanceStep = ({ nextStep }) => {
     functionName: "approve",
     args: [
       bridgeAddress,
-      selectedToken && ethers.utils.parseUnits(selectedToken?.balance, selectedToken?.decimals),
+      selectedToken != null
+        ? ethers.utils.parseUnits(selectedToken?.balance, selectedToken?.decimals)
+        : ethers.BigNumber.from(0),
     ],
     enabled: !!selectedToken,
     overrides: {
