@@ -13,7 +13,7 @@ import { CheckCircle2 } from "lucide-react";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
 
 const ActionExecutionStep = ({ nextStep }) => {
-  const { wscAction } = useContext();
+  const { wscActionRef } = useContext();
   const [executionTxStatus, setExecutionTxStatus] = React.useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
@@ -21,12 +21,12 @@ const ActionExecutionStep = ({ nextStep }) => {
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
 
   const onWSCAction = async () => {
+    if (wscActionRef?.current === null) return;
     setExecutionTxStatus("pending");
 
     try {
-      await wscAction?.();
+      await wscActionRef.current();
       setExecutionTxStatus("success");
-
       setTimeout(() => {
         nextStep();
       }, DEFAULT_STEP_TIMEOUT);

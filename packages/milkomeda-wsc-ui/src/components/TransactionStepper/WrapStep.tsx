@@ -21,6 +21,7 @@ import { Spinner } from "../Common/Spinner";
 import useInterval from "../../hooks/useInterval";
 import { CheckCircle2 } from "lucide-react";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 
 export type WrapToken = {
   assetName: string;
@@ -57,6 +58,14 @@ const WrapStep = ({ nextStep }) => {
 
   const [txStatus, setTxStatus] = React.useState<keyof typeof WrapStatus>(WrapStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
+  const { chain } = useNetwork();
+  const { address } = useAccount();
+  const { data: balance } = useBalance({
+    address,
+    chainId: chain?.id,
+    watch: true,
+  });
+
   const isIdle = txStatus === WrapStatus.Idle;
   const isLoading =
     txStatus === WrapStatus.Init ||
@@ -117,7 +126,12 @@ const WrapStep = ({ nextStep }) => {
   }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
 
   const fee =
-    stargateInfo != null ? new BigNumber(stargateInfo?.stargateMinNativeTokenFromL1) : null;
+    stargateInfo != null
+      ? convertWeiToTokens({
+          valueWei: stargateInfo.fromNativeTokenInLoveLaceOrMicroAlgo,
+          token: { decimals: balance?.decimals },
+        })
+      : null;
 
   const isAmountValid =
     selectedWrapToken != null && defaultCardanoAsset != null && fee != null
@@ -143,7 +157,7 @@ const WrapStep = ({ nextStep }) => {
         <LabelWithBalance
           label="Wrapping fee:"
           amount={fee?.toFixed()}
-          assetName={selectedWrapToken?.assetName}
+          assetName={balance?.symbol}
         />
         <LabelWithBalance
           label="You'll transfer:"

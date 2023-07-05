@@ -16,7 +16,7 @@ import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
 import { useAccount } from "wagmi";
-import { EVMTokenBalance, WSCLib } from "milkomeda-wsc";
+import { EVMTokenBalance, PendingTx, WSCLib } from "milkomeda-wsc";
 import useInterval from "../hooks/useInterval";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
@@ -52,6 +52,11 @@ type WSCContext = {
   originTokens: any;
   tokens: any;
   stargateInfo: StargateInfo | null;
+  destinationBalance: string;
+  originBalance: string;
+  pendingTxs: PendingTx[];
+  originAddress: string;
+  address: string;
   defaultCardanoAsset: DefaultCardanoAsset | null;
   setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
   cardanoERC20TokenAddress: string;
@@ -133,7 +138,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [wscProvider, setWscProvider] = React.useState<WSCLib | null>(null);
   const [originTokens, setOriginTokens] = useState<OriginAmount[]>([]);
   const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
-  const [destinationBalance, setDestinationBalance] = useState(null);
+  const [destinationBalance, setDestinationBalance] = useState("");
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
 
   const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
@@ -144,10 +149,11 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   const wscActionRef = useRef<WSCAction | null>(null);
 
-  // const [originAddress, setOriginAddress] = useState(null);
-  // const [pendingTxs, setPendingTxs] = useState([]);
-  // const [address, setAddress] = useState(null);
-  // const [originBalance, setOriginBalance] = useState(null);
+  const [originBalance, setOriginBalance] = useState("");
+  const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
+  const [originAddress, setOriginAddress] = useState("");
+  const [address, setAddress] = useState("");
+
   // const [transactions, setTransactions] = useState([]);
   // const [algorandConnected, setAlgorandConnected] = useState(false);
   // const [cardanoConnected, setCardanoConnected] = useState(false);
@@ -163,11 +169,18 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
         const tokenBalances = await provider.getTokenBalances();
         const destinationBalance = await provider.eth_getBalance();
         const stargate = await provider.stargateObject();
+        const pendingTxs = await provider.getPendingTransactions();
+        const originAddress = await provider.origin_getAddress();
+        const address = await provider.eth_getAccount();
+
         setWscProvider(provider);
         setOriginTokens(originTokens);
         setTokens(tokenBalances ?? []);
         setDestinationBalance(destinationBalance);
         setStargateInfo(stargate);
+        setPendingTxs(pendingTxs ?? []);
+        setOriginAddress(originAddress);
+        setAddress(address);
       } catch (e) {
         console.log(e);
       }
@@ -177,25 +190,24 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   const updateWalletData = useCallback(async () => {
     if (wscProvider == null) return;
-    // const destinationBalance = await wscProvider.eth_getBalance();
-    // setDestinationBalance(destinationBalance);
-    // const originBalance = await wscProvider.origin_getNativeBalance();
-    // setOriginBalance(originBalance);
+
     const tokenBalances = await wscProvider.getTokenBalances();
     setTokens(tokenBalances ?? []);
 
     const originTokens = await wscProvider.origin_getTokenBalances();
     setOriginTokens(originTokens ?? []);
-  }, []);
 
-  useInterval(
-    () => {
-      if (wscProvider != null) {
-        updateWalletData();
-      }
-    },
-    wscProvider != null ? 4000 : null
-  );
+    const destinationBalance = await wscProvider.eth_getBalance();
+    setDestinationBalance(destinationBalance);
+
+    const originBalance = await wscProvider.origin_getNativeBalance();
+    setOriginBalance(originBalance);
+
+    const pendingTxs = await wscProvider.getPendingTransactions();
+    setPendingTxs(pendingTxs ?? []);
+  }, [wscProvider]);
+
+  useInterval(updateWalletData, wscProvider != null ? 4000 : null);
 
   useEffect(() => setErrorMessage(null), [route, open]);
 
@@ -215,6 +227,11 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     originTokens,
     stargateInfo,
     tokens,
+    destinationBalance,
+    originBalance,
+    pendingTxs,
+    originAddress,
+    address,
     //
     defaultCardanoAsset,
     setDefaultCardanoAsset,

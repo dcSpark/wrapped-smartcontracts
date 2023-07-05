@@ -104,7 +104,7 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
 };
 
 const defaultConfig = ({
-  autoConnect = false, // TODO: check why breaks in wsc
+  autoConnect = false,
   chains = defaultChains,
   connectors,
   provider,
@@ -121,7 +121,7 @@ const defaultConfig = ({
       },
     })
   );
-  providers.push(publicProvider());
+  // providers.push(publicProvider());
 
   const {
     provider: configuredProvider,
