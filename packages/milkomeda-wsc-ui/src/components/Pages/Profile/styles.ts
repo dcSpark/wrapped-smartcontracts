@@ -23,14 +23,13 @@ export const StepperTransactionInner = styled(motion.div)`
   justify-content: flex-end;
   gap: 8px;
 `;
-export const StepperTransactionContent = styled(motion.div)<{ $step: number }>`
+export const StepperTransactionContent = styled(motion.div)`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   justify-content: space-between;
   padding: 16px;
-  ${({ $step }) => ($step === 0 || $step === 3 ? `min-height: 500px;` : `min-height: 300px;`)}
 `;
 
 export const BalanceContainer = styled(motion.div)`

@@ -11,6 +11,8 @@ import {
   LabelWithBalanceContainer,
   SpinnerWrapper,
   StepDescription,
+  StepLargeHeight,
+  StepNormalHeight,
   StepTitle,
   SuccessWrapper,
   WrapperButtons,
@@ -164,7 +166,7 @@ const WrapStep = ({ nextStep }) => {
 
   return (
     <>
-      <div>
+      <StepLargeHeight>
         <StepTitle>Wrap Tokens</StepTitle>
         <StepDescription>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
@@ -246,7 +248,7 @@ const WrapStep = ({ nextStep }) => {
             Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
           </ErrorMessage>
         )}
-      </div>
+      </StepLargeHeight>
 
       {(isIdle || isError) && (
         <WrapperButtons>

@@ -58,9 +58,7 @@ const TransactionStepper = () => {
       >
         {steps.map((step, index) => (
           <StepperStep isCurrentStep={index === activeStep} index={index} key={index} {...step}>
-            <StepperTransactionContent $step={activeStep}>
-              {step.children}
-            </StepperTransactionContent>
+            <StepperTransactionContent>{step.children}</StepperTransactionContent>
           </StepperStep>
         ))}
       </Stepper>

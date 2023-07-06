@@ -4,6 +4,7 @@ import {
   ErrorMessage,
   SpinnerWrapper,
   StepDescription,
+  StepLargeHeight,
   StepTitle,
   SuccessWrapper,
 } from "./styles";
@@ -93,7 +94,7 @@ const UnwrapStep = ({ nextStep }) => {
 
   return (
     <>
-      <div>
+      <StepLargeHeight>
         <StepTitle>Unwrap Tokens: Liberating Assets from Wrapper Chains</StepTitle>
         <StepDescription>
           Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
@@ -134,7 +135,7 @@ const UnwrapStep = ({ nextStep }) => {
             <span>{statusUnwrapMessages[TxPendingStatus.Confirmed]}</span>
           </SuccessWrapper>
         )}
-      </div>
+      </StepLargeHeight>
       {(isIdle || isError) && (
         <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
           Confirm Unwrapping

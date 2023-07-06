@@ -1,5 +1,11 @@
 import styled from "../../styles/styled";
 
+export const StepLargeHeight = styled.div`
+  min-height: 300px;
+`;
+export const StepNormalHeight = styled.div`
+  min-height: 300px;
+`;
 export const StepTitle = styled.h1`
   font-size: 1.25rem;
   text-align: center;
