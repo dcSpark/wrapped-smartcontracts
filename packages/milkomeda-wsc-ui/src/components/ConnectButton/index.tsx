@@ -102,7 +102,11 @@ export function ConnectWSCButton({ label, onClick }: ConnectKitButtonProps) {
 
   function show() {
     context.setOpen(true);
-    context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
+    if (!isConnected) {
+      context.setRoute(routes.CONNECTORS);
+      return;
+    }
+    context.setRoute(context.acceptedWSC ? routes.STEPPER : routes.OVERVIEW);
   }
 
   if (!isMounted) return null;

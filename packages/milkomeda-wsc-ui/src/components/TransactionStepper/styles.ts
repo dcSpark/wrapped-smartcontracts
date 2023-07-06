@@ -1,5 +1,3 @@
-import { keyframes } from "styled-components";
-import { motion } from "framer-motion";
 import styled from "../../styles/styled";
 
 export const StepTitle = styled.h1`
@@ -15,11 +13,17 @@ export const StepDescription = styled.p`
   margin-bottom: 40px;
   line-height: 1.5;
 `;
+export const OverviewDescription = styled.p`
+  font-size: 1rem;
+  text-align: center;
+  color: rgb(153 153 153);
+  margin-bottom: 40px;
+  line-height: 1.5;
+`;
 
 export const BalancesWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 20px;
   margin-bottom: 30px;
 `;

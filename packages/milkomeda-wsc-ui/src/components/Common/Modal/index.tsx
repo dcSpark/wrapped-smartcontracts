@@ -77,7 +77,7 @@ const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
     </svg>
   </div>
 );
-const InfoIcon = ({ ...props }) => (
+export const InfoIcon = ({ ...props }) => (
   <svg
     aria-hidden="true"
     width="22"
@@ -298,7 +298,9 @@ const Modal: React.FC<ModalProps> = ({
         return "download";
       case routes.ONBOARDING:
         return "onboarding";
-      case routes.PROFILE:
+      case routes.OVERVIEW:
+        return "Summary";
+      case routes.STEPPER:
         return context.titleModalTx ?? "Wrapped Smart Contract";
 
       default:
@@ -394,7 +396,7 @@ const Modal: React.FC<ModalProps> = ({
                       <BackIcon />
                     </BackButton>
                   ) : (
-                    context.route === routes.PROFILE &&
+                    context.route === routes.STEPPER &&
                     onInfo && (
                       <InfoButton
                         disabled={inTransition}

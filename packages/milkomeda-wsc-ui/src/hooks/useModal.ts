@@ -9,7 +9,7 @@ const safeRoutes: {
   disconnected: ModalRoutes[];
 } = {
   disconnected: [routes.CONNECTORS, routes.ONBOARDING, routes.MOBILECONNECTORS, routes.ONBOARDING],
-  connected: [routes.PROFILE],
+  connected: [routes.STEPPER],
 };
 const allRoutes: ModalRoutes[] = [...safeRoutes.connected, ...safeRoutes.disconnected];
 
@@ -38,12 +38,12 @@ export const useModal = ({ onConnect, onDisconnect }: UseModalProps = {}) => {
     let validRoute: ValidRoutes = route;
 
     if (!allRoutes.includes(route)) {
-      validRoute = isConnected ? routes.PROFILE : routes.CONNECTORS;
+      validRoute = isConnected ? routes.STEPPER : routes.CONNECTORS;
       context.log(`Route ${route} is not a valid route, navigating to ${validRoute} instead.`);
     } else {
       if (isConnected) {
         if (!safeRoutes.connected.includes(route)) {
-          validRoute = routes.PROFILE;
+          validRoute = routes.STEPPER;
           context.log(
             `Route ${route} is not a valid route when connected, navigating to ${validRoute} instead.`
           );
@@ -66,7 +66,7 @@ export const useModal = ({ onConnect, onDisconnect }: UseModalProps = {}) => {
     open: context.open,
     setOpen: (show: boolean) => {
       if (show) {
-        gotoAndOpen(isConnected ? routes.PROFILE : routes.CONNECTORS);
+        gotoAndOpen(isConnected ? routes.STEPPER : routes.CONNECTORS);
       } else {
         close();
       }
@@ -74,6 +74,6 @@ export const useModal = ({ onConnect, onDisconnect }: UseModalProps = {}) => {
     // Disconnected Routes
     openOnboarding: () => gotoAndOpen(routes.ONBOARDING),
     // Connected Routes
-    openProfile: () => gotoAndOpen(routes.PROFILE),
+    openProfile: () => gotoAndOpen(routes.STEPPER),
   };
 };

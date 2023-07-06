@@ -10,12 +10,13 @@ const Home: NextPage = () => {
 
   useWSCTransactionConfig({
     defaultCardanoToken: {
-      unit: cardanoAddressTReserveCoin, //default lovelace when buying, selling to cardanoAddressTReserveCoin
-      amount: +"10178117048345547532",
+      // unit: "lovelace", //default lovelace when buying, selling to cardanoAddressTReserveCoin
+      amount: +"3.178",
+      unit: "lovelace",
     },
     wscActionCallback: promiseFunction,
     evmTokenAddress: reserveCoinAddress,
-    stepTxDirection: "buy",
+    stepTxDirection: "sell",
     titleModal: "Buy Reserve Coin",
   });
 

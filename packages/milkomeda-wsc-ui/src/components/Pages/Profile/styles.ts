@@ -1,14 +1,13 @@
 import { keyframes } from "styled-components";
 import styled from "../../../styles/styled";
 import { motion } from "framer-motion";
-import defaultTheme from "../../../constants/defaultTheme";
 
 export const StepperTransactionContainer = styled(motion.div)`
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 16px;
-  padding-top: 50px;
+  padding-top: 20px;
   padding-right: 20px;
   padding-left: 20px;
   --ck-primary-button-background: rgb(55, 55, 55);
@@ -24,25 +23,14 @@ export const StepperTransactionInner = styled(motion.div)`
   justify-content: flex-end;
   gap: 8px;
 `;
-export const StepperTransactionContent = styled(motion.div)`
+export const StepperTransactionContent = styled(motion.div)<{ $step: number }>`
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: space-between;
   padding: 16px;
-`;
-export const AvatarContainer = styled(motion.div)`
-  padding: 18px 0 20px;
-  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
-    padding: 16px 0 20px;
-  }
-`;
-export const AvatarInner = styled(motion.div)`
-  position: relative;
-  display: inline-block;
-`;
-export const ChainSelectorContainer = styled(motion.div)`
-  z-index: 3;
-  position: absolute;
-  bottom: 0px;
-  right: -16px;
+  ${({ $step }) => ($step === 0 || $step === 3 ? `min-height: 500px;` : `min-height: 300px;`)}
 `;
 
 export const BalanceContainer = styled(motion.div)`
@@ -52,6 +40,13 @@ export const Balance = styled(motion.div)`
   position: relative;
   min-width: 150px;
   text-align: left;
+  display: flex;
+  gap: 9px;
+  svg {
+    width: 18px;
+    height: 18px;
+    color: rgb(153 153 153);
+  }
   span {
     color: rgb(55 55 55);
     font-size: 1.125rem;

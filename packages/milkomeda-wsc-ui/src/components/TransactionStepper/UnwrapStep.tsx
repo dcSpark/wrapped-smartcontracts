@@ -17,6 +17,7 @@ import { Spinner } from "../Common/Spinner";
 import { CheckCircle2 } from "lucide-react";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
+import { LOCK_ADA } from "../Pages/Overview";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -65,7 +66,7 @@ const UnwrapStep = ({ nextStep }) => {
     if (!selectedToken) return;
     setSelectedUnwrapToken(selectedToken);
   }, [tokens, evmTokenAddress]);
-
+  console.log(tokens);
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider) return;
     setTxStatus(TxStatus.Init);
@@ -87,58 +88,59 @@ const UnwrapStep = ({ nextStep }) => {
     }
   };
 
-  console.log(stargateInfo, "stargateInfo");
   const fee =
     stargateInfo != null ? new BigNumber(stargateInfo?.stargateNativeTokenFeeToL1) : null;
 
   return (
-    <div>
-      <StepTitle>Unwrap Tokens: Liberating Assets from Wrapper Chains</StepTitle>
-      <StepDescription>
-        Unwrap Tokens liberate assets from wrapper chains, providing users with the ability to
-        seamlessly retrieve their original tokens from a wrapped form.
-      </StepDescription>
-      <BalancesWrapper>
-        <LabelWithBalance
-          label="You'll transfer:"
-          amount={
-            selectedUnwrapToken?.balance &&
-            convertWeiToTokens({
-              valueWei: selectedUnwrapToken?.balance,
-              token: selectedUnwrapToken,
-            }).toFixed()
-          }
-          assetName={selectedUnwrapToken?.symbol}
-        />
-        <LabelWithBalance label="" amount={fee?.toFixed()} assetName={defaultSymbol} />
-      </BalancesWrapper>
+    <>
+      <div>
+        <StepTitle>Unwrap Tokens: Liberating Assets from Wrapper Chains</StepTitle>
+        <StepDescription>
+          Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
+          interdum velit laoreet.
+        </StepDescription>
+        <BalancesWrapper>
+          <LabelWithBalance
+            label="You'll transfer:"
+            amount={
+              selectedUnwrapToken?.balance &&
+              convertWeiToTokens({
+                valueWei: selectedUnwrapToken?.balance,
+                token: selectedUnwrapToken,
+              }).toFixed()
+            }
+            assetName={selectedUnwrapToken?.symbol}
+          />
+          <LabelWithBalance label="" amount={LOCK_ADA} assetName={defaultSymbol} />
+        </BalancesWrapper>
 
-      {isLoading && (
-        <>
-          <SpinnerWrapper>
-            <Spinner />
-            <span>{statusUnwrapMessages[txStatus]}</span>
-          </SpinnerWrapper>
-          <p>Unwrapping transaction may take a few minutes (~2m).</p>
-        </>
-      )}
-      {isError && (
-        <ErrorMessage role="alert">
-          Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
-        </ErrorMessage>
-      )}
-      {isSuccess && (
-        <SuccessWrapper>
-          <CheckCircle2 />
-          <span>{statusUnwrapMessages[TxPendingStatus.Confirmed]}</span>
-        </SuccessWrapper>
-      )}
+        {isLoading && (
+          <>
+            <SpinnerWrapper>
+              <Spinner />
+              <span>{statusUnwrapMessages[txStatus]}</span>
+            </SpinnerWrapper>
+            <p>Unwrapping transaction may take a few minutes (~2m).</p>
+          </>
+        )}
+        {isError && (
+          <ErrorMessage role="alert">
+            Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
+          </ErrorMessage>
+        )}
+        {isSuccess && (
+          <SuccessWrapper>
+            <CheckCircle2 />
+            <span>{statusUnwrapMessages[TxPendingStatus.Confirmed]}</span>
+          </SuccessWrapper>
+        )}
+      </div>
       {(isIdle || isError) && (
-        <Button variant="primary" onClick={unwrapToken}>
+        <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
           Confirm Unwrapping
         </Button>
       )}
-    </div>
+    </>
   );
 };
 

@@ -70,6 +70,11 @@ export const PageContent = styled(motion.div)`
   width: 295px;
   padding-top: 48px;
 `;
+export const OverviewContent = styled(motion.div)`
+  max-width: 100%;
+  width: 400px;
+  padding-top: 48px;
+`;
 export const MainPageContent = styled(motion.div)`
   max-width: 100%;
   width: 800px;

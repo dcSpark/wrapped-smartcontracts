@@ -43,33 +43,35 @@ const ActionExecutionStep = ({ nextStep }) => {
   const isSuccess = executionTxStatus === "success";
   const isError = executionTxStatus === "error";
   return (
-    <div>
-      <StepTitle>Executing Actions with Wrap Tokens: Smart Contract Interoperability</StepTitle>
-      <StepDescription>
-        Discover the power of wrap tokens in smart contracts, enabling seamless execution of
-        actions across multiple blockchains.
-      </StepDescription>
-      {isLoading && (
-        <SpinnerWrapper>
-          <Spinner />
-          <span>Executing transaction</span>
-        </SpinnerWrapper>
-      )}
-      {isSuccess && (
-        <SuccessWrapper>
-          <CheckCircle2 />
-          <span>Transaction has been successfully executed!</span>
-        </SuccessWrapper>
-      )}
-      {isError && (
-        <ErrorMessage role="alert">
-          Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
-        </ErrorMessage>
-      )}
+    <>
+      <div>
+        <StepTitle>Executing Actions: sed do eiusmod tempor incididunt ut labore</StepTitle>
+        <StepDescription>
+          Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
+          interdum velit laoreet.
+        </StepDescription>
+        {isLoading && (
+          <SpinnerWrapper>
+            <Spinner />
+            <span>Executing transaction</span>
+          </SpinnerWrapper>
+        )}
+        {isSuccess && (
+          <SuccessWrapper>
+            <CheckCircle2 />
+            <span>Transaction has been successfully executed!</span>
+          </SuccessWrapper>
+        )}
+        {isError && (
+          <ErrorMessage role="alert">
+            Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
+          </ErrorMessage>
+        )}
+      </div>
       <Button variant="primary" onClick={onWSCAction}>
         Execute Action
       </Button>
-    </div>
+    </>
   );
 };
 

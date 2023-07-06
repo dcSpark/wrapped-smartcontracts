@@ -9,21 +9,23 @@ import MobileConnectors from "../Pages/MobileConnectors";
 import ConnectUsing from "./ConnectUsing";
 import DownloadApp from "../Pages/DownloadApp";
 import Profile from "../Pages/Profile";
+import Overview from "../Pages/Overview";
 
 const ConnectModal = () => {
   const context = useContext();
   const { isConnected } = useAccount();
-  const { chain } = useNetwork();
 
-  //if chain is unsupported we enforce a "switch chain" prompt
-  const closeable = !chain?.unsupported;
+  const closeable = context.route !== routes.STEPPER && context.route !== routes.CONNECT;
 
   const showBackButton =
-    closeable && context.route !== routes.CONNECTORS && context.route !== routes.PROFILE;
+    closeable &&
+    context.route !== routes.CONNECTORS &&
+    context.route !== routes.STEPPER &&
+    context.acceptedWSC;
 
   const onBack = () => {
-    if (context.route === routes.DOWNLOAD) {
-      context.setRoute(routes.CONNECT);
+    if (context.route === routes.OVERVIEW) {
+      context.setRoute(routes.STEPPER);
     } else {
       context.setRoute(routes.CONNECTORS);
     }
@@ -36,15 +38,17 @@ const ConnectModal = () => {
     mobileConnectors: <MobileConnectors />,
     connect: <ConnectUsing connectorId={context.connector} />,
     profile: <Profile />,
+    overview: <Overview />,
   };
 
   function hide() {
     context.setOpen(false);
+    context.setAcceptedWSC(false); // reset tx summary
   }
 
   useEffect(() => {
     if (isConnected) {
-      if (context.route !== routes.PROFILE) {
+      if (context.route !== routes.STEPPER) {
         hide(); // Hide on connect
       }
     } else {
@@ -52,13 +56,17 @@ const ConnectModal = () => {
     }
   }, [isConnected]);
 
+  const showInfoButton = closeable && context.route === routes.STEPPER;
+
+  console.log(context.acceptedWSC, "acce");
+
   return (
     <Modal
       open={context.open}
       pages={pages}
       pageId={context.route}
       onClose={closeable ? hide : undefined}
-      onInfo={undefined}
+      // onInfo={showInfoButton ? () => context.setRoute(routes.OVERVIEW) : undefined}
       onBack={showBackButton ? onBack : undefined}
     />
   );

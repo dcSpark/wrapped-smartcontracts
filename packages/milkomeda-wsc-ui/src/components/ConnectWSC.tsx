@@ -26,7 +26,8 @@ export const routes = {
   MOBILECONNECTORS: "mobileConnectors",
   CONNECT: "connect",
   DOWNLOAD: "download",
-  PROFILE: "profile",
+  STEPPER: "profile",
+  OVERVIEW: "overview",
 };
 
 type Connector = any;
@@ -77,6 +78,8 @@ type ContextValue = {
   connector: string;
   setConnector: React.Dispatch<React.SetStateAction<Connector>>;
   errorMessage: Error;
+  acceptedWSC: boolean;
+  setAcceptedWSC: React.Dispatch<React.SetStateAction<boolean>>;
   // options?: ConnectWSCOptions;
   debugMode?: boolean;
   log: (...props: any) => void;
@@ -132,11 +135,14 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [connector, setConnector] = useState<string>("");
   const [route, setRoute] = useState<string>(routes.CONNECTORS);
   const [errorMessage, setErrorMessage] = useState<Error>("");
+  // to skip overview page if user accepted
+  const [acceptedWSC, setAcceptedWSC] = useState(false);
 
   // wsc connector
   const { connector: activeConnector } = useAccount();
   const [wscProvider, setWscProvider] = React.useState<WSCLib | null>(null);
   const [originTokens, setOriginTokens] = useState<OriginAmount[]>([]);
+  console.log(originTokens);
   const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [destinationBalance, setDestinationBalance] = useState("");
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
@@ -221,6 +227,8 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     connector,
     setConnector,
     onConnect,
+    acceptedWSC,
+    setAcceptedWSC,
     // wsc provider
     wscProvider,
     originTokens,

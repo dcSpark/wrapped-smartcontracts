@@ -60,31 +60,33 @@ const TokenAllowanceStep = ({ nextStep }) => {
   const isLoadingTx = isPreparingLoading || isWritingContract || isWaitingForTxLoading;
 
   return (
-    <div>
-      <StepTitle>Token Allowance: Empowering Controlled Asset Transfers</StepTitle>
-      <StepDescription style={{ marginBottom: 30 }}>
-        Allow the smart contract to spend the specified amount of tokens on your behalf, enabling
-        the unwrapping process from the Sidechain to the L1 chain.
-      </StepDescription>
-      {isLoadingTx && (
-        <SpinnerWrapper>
-          <Spinner />
-          <span>Approving token allowance</span>
-        </SpinnerWrapper>
-      )}
-      {isError && <ErrorMessage role="alert">Ups, something went wrong.</ErrorMessage>}
-      {isSuccess && (
-        <SuccessWrapper>
-          <CheckCircle2 />
-          <span>You've successfully approved the bridge to spend your tokens.</span>
-        </SuccessWrapper>
-      )}
+    <>
+      <div>
+        <StepTitle>Token Allowance: Lacus suspendisse faucibus</StepTitle>
+        <StepDescription style={{ marginBottom: 30 }}>
+          Porttitor rhoncus dolor purus non. Id cursus metus aliquam eleifend mi in nulla posuere
+          sollicitudin. Lacus suspendisse faucibus interdum posuere lorem.
+        </StepDescription>
+        {isLoadingTx && (
+          <SpinnerWrapper>
+            <Spinner />
+            <span>Approving token allowance</span>
+          </SpinnerWrapper>
+        )}
+        {isError && <ErrorMessage role="alert">Ups, something went wrong.</ErrorMessage>}
+        {isSuccess && (
+          <SuccessWrapper>
+            <CheckCircle2 />
+            <span>You've successfully approved the bridge to spend your tokens.</span>
+          </SuccessWrapper>
+        )}
+      </div>
       {isSuccess || isLoadingTx ? null : (
         <Button disabled={!write} variant="primary" onClick={() => write?.()}>
           Grant token allowance
         </Button>
       )}
-    </div>
+    </>
   );
 };
 

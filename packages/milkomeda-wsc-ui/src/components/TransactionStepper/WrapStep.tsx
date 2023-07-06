@@ -19,9 +19,13 @@ import Button from "../Common/Button";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
 import useInterval from "../../hooks/useInterval";
-import { CheckCircle2 } from "lucide-react";
+import { BadgeInfoIcon, CheckCircle2, LucideInfo } from "lucide-react";
 import { DEFAULT_STEP_TIMEOUT } from "./constants";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
+import { OrDivider } from "../Common/Modal";
+import { RetryIconCircle } from "../../assets/icons";
+import Tooltip from "../Common/Tooltip";
+import { states } from "../ConnectModal/ConnectWithInjector";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -46,12 +50,34 @@ const statusWrapMessages = {
 
 export const defaultSymbol = "TADA";
 
+export const useSelectedWrapToken = () => {
+  const { originTokens } = useContext();
+  const { defaultCardanoAsset } = useContext();
+
+  const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
+
+  React.useEffect(() => {
+    if (!defaultCardanoAsset) return;
+    const loadOriginToken = async () => {
+      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit);
+      if (!token) return;
+      const defaultToken = {
+        ...token,
+        quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
+      };
+      setSelectedWrapToken(defaultToken);
+    };
+    loadOriginToken();
+  }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
+
+  return { selectedWrapToken };
+};
+
 const WrapStep = ({ nextStep }) => {
   const { setOpen, defaultCardanoAsset } = useContext();
-  const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
-  const { wscProvider, originTokens, stargateInfo } = useContext();
+  const { wscProvider, stargateInfo } = useContext();
   const [txHash, setTxHash] = React.useState<string | undefined | null>(null);
-
+  const { selectedWrapToken } = useSelectedWrapToken();
   const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === TxStatus.Idle;
@@ -99,20 +125,6 @@ const WrapStep = ({ nextStep }) => {
     }
   };
 
-  React.useEffect(() => {
-    if (!defaultCardanoAsset) return;
-    const loadOriginToken = async () => {
-      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit);
-      if (!token) return;
-      const defaultToken = {
-        ...token,
-        quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
-      };
-      setSelectedWrapToken(defaultToken);
-    };
-    loadOriginToken();
-  }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
-
   const fee =
     stargateInfo != null
       ? convertWeiToTokens({
@@ -126,101 +138,126 @@ const WrapStep = ({ nextStep }) => {
       ? new BigNumber(defaultCardanoAsset.amount).plus(fee).lte(selectedWrapToken?.quantity)
       : false;
 
+  const isAboveMinAmount =
+    stargateInfo != null &&
+    selectedWrapToken != null &&
+    defaultCardanoAsset != null &&
+    new BigNumber(defaultCardanoAsset.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
+
   return (
-    <div>
-      <StepTitle>Wrap Tokens</StepTitle>
-      <StepDescription>
-        Explore the power of wrap tokens as they seamlessly connect Cardano and Ethereum, enabling
-        users to leverage the benefits of both blockchain ecosystems. With wrap tokens, Cardano
-        tokens can be wrapped and utilized on the Ethereum network.
-      </StepDescription>
-      {selectedWrapToken?.unit === "lovelace" ? (
-        <BalancesWrapper>
-          <LabelWithBalance
-            label="You're moving:"
-            amount={
-              defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-            }
-            assetName={selectedWrapToken?.assetName}
-          />
-          <LabelWithBalance
-            label="Wrapping fee:"
-            amount={fee?.toFixed()}
-            assetName={defaultSymbol}
-          />
-          <LabelWithBalance
-            label="You'll transfer:"
-            amount={
-              fee &&
-              defaultCardanoAsset != null &&
-              new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
-            }
-            assetName={selectedWrapToken?.assetName}
-          />
-        </BalancesWrapper>
-      ) : (
-        <BalancesWrapper>
-          <LabelWithBalance
-            label="You'll transfer:"
-            amount={
-              defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-            }
-            assetName={selectedWrapToken?.assetName}
-          />
-          <LabelWithBalance
-            label=""
-            amount={fee?.plus(new BigNumber(3))?.toFixed()}
-            assetName={defaultSymbol}
-          />
-        </BalancesWrapper>
-      )}
+    <>
+      <div>
+        <StepTitle>Wrap Tokens</StepTitle>
+        <StepDescription>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua. Condimentum mattis pellentesque id nibh. Facilisis
+          mauris sit amet massa vitae tortor condimentum lacinia.
+        </StepDescription>
+        {selectedWrapToken?.unit === "lovelace" ? (
+          <BalancesWrapper>
+            <LabelWithBalance
+              label="You're moving:"
+              amount={
+                defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
+              }
+              assetName={selectedWrapToken?.assetName}
+            />
+            <LabelWithBalance
+              label="Wrapping fee:"
+              amount={fee?.toFixed()}
+              assetName={defaultSymbol}
+            />
+            <OrDivider />
 
-      {isLoading && (
-        <>
-          <SpinnerWrapper>
-            <Spinner />
-            <span>{statusWrapMessages[txStatus]}</span>
-          </SpinnerWrapper>
-          <p>Wrapping transaction may take a few minutes (~3m).</p>
-        </>
-      )}
-      {isSuccess && (
-        <SuccessWrapper>
-          <CheckCircle2 />
-          <span>{statusWrapMessages[TxPendingStatus.Confirmed]}</span>
-        </SuccessWrapper>
-      )}
+            <LabelWithBalance
+              label="You'll transfer:"
+              amount={
+                fee &&
+                defaultCardanoAsset != null &&
+                new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
+              }
+              assetName={selectedWrapToken?.assetName}
+            />
+          </BalancesWrapper>
+        ) : (
+          <BalancesWrapper>
+            <LabelWithBalance
+              label="You'll transfer:"
+              amount={
+                defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
+              }
+              assetName={selectedWrapToken?.assetName}
+            />
+            <LabelWithBalance
+              label=""
+              amount={fee?.plus(new BigNumber(3))?.toFixed()}
+              assetName={defaultSymbol}
+            />
+          </BalancesWrapper>
+        )}
 
-      {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
-        <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
-      )}
-      {selectedWrapToken != null && !isAmountValid && (
-        <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
-      )}
-      {isError && (
-        <ErrorMessage role="alert">
-          Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
-        </ErrorMessage>
-      )}
+        {isLoading && (
+          <>
+            <SpinnerWrapper>
+              <Spinner />
+              <span>{statusWrapMessages[txStatus]}</span>
+            </SpinnerWrapper>
+            <p>Wrapping transaction may take a few minutes (~3m).</p>
+          </>
+        )}
+        {isSuccess && (
+          <SuccessWrapper>
+            <CheckCircle2 />
+            <span>{statusWrapMessages[TxPendingStatus.Confirmed]}</span>
+          </SuccessWrapper>
+        )}
+
+        {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
+          <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
+        )}
+        {selectedWrapToken != null && !isAmountValid && (
+          <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
+        )}
+        {selectedWrapToken != null && !isAboveMinAmount && (
+          <ErrorMessage role="alert">
+            Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
+            {defaultSymbol}
+          </ErrorMessage>
+        )}
+        {isError && (
+          <ErrorMessage role="alert">
+            Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
+          </ErrorMessage>
+        )}
+      </div>
 
       {(isIdle || isError) && (
         <WrapperButtons>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="primary" onClick={wrapToken}>
+          <Button
+            variant="primary"
+            disabled={
+              selectedWrapToken == null ||
+              !selectedWrapToken.bridgeAllowed ||
+              !isAmountValid ||
+              !isAboveMinAmount
+            }
+            onClick={wrapToken}
+          >
             Confirm wrapping
           </Button>
         </WrapperButtons>
       )}
-    </div>
+    </>
   );
 };
 
 export default WrapStep;
 
-export const LabelWithBalance = ({ label, amount, assetName }) => {
+export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = "" }) => {
   return (
     <LabelWithBalanceContainer>
-      <LabelText>{label} </LabelText>
+      <LabelText>{label}</LabelText>
       <BalanceContainer>
         <AnimatePresence exitBeforeEnter initial={false}>
           {amount && assetName ? (
@@ -235,6 +272,11 @@ export const LabelWithBalance = ({ label, amount, assetName }) => {
                 {` `}
                 {assetName}
               </span>
+              {tooltipMessage ? (
+                <Tooltip message={tooltipMessage} xOffset={-6}>
+                  <LucideInfo />
+                </Tooltip>
+              ) : null}
             </Balance>
           ) : (
             <LoadingBalance
