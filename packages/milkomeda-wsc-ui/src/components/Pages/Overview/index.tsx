@@ -22,7 +22,6 @@ import { convertWeiToTokens } from "../../../utils/convertWeiToTokens";
 import Button from "../../Common/Button";
 import { OrDivider } from "../../Common/Modal";
 
-console.log("amount");
 const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   const { defaultCardanoAsset, stargateInfo, setRoute, setAcceptedWSC } = useContext();
   const { selectedWrapToken } = useSelectedWrapToken();
