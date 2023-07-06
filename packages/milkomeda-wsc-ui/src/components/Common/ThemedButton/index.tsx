@@ -29,13 +29,7 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
     <Container
       className={variant}
       initial={false}
-      animate={
-        autoSize
-          ? {
-              width: bounds.width > 10 ? bounds.width : "auto",
-            }
-          : undefined
-      }
+      animate={autoSize ? { width: "100%" } : undefined}
       transition={{
         duration: duration,
         ease: [0.25, 1, 0.5, 1],
@@ -47,7 +41,7 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
         ref={contentRef}
         style={{
           whiteSpace: "nowrap",
-          width: "fit-content",
+          // width: "fit-content",
           position: "relative",
           padding: "0 12px",
         }}

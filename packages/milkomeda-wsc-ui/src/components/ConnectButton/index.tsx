@@ -85,104 +85,27 @@ const textVariants: Variants = {
   },
 };
 
-function ConnectWSCButtonInner({
-  label,
-  showAvatar,
-  separator,
-}: {
-  label?: string;
-  showAvatar?: boolean;
-  separator?: string;
-}) {
-  const context = useContext();
-
-  const { address } = useAccount();
-
-  const { chain } = useNetwork();
-  const defaultLabel = "Connect WSC";
-
-  return (
-    <AnimatePresence initial={false}>
-      {address ? (
-        <TextContainer
-          key="connectedText"
-          initial={"initial"}
-          animate={"animate"}
-          exit={"exit"}
-          variants={addressVariants}
-          style={{
-            height: 40,
-            //padding: !showAvatar ? '0 5px' : undefined,
-          }}
-        >
-          <div
-            style={{
-              position: "relative",
-              paddingRight: showAvatar ? 1 : 0,
-            }}
-          >
-            <AnimatePresence initial={false}>
-              <Balance />
-              {/*<TextContainer*/}
-              {/*  key="ckTruncatedAddress"*/}
-              {/*  initial={"initial"}*/}
-              {/*  animate={"animate"}*/}
-              {/*  exit={"exit"}*/}
-              {/*  variants={textVariants}*/}
-              {/*  style={{*/}
-              {/*    position: "relative",*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  {truncateEthAddress(address, separator)}{" "}*/}
-              {/*</TextContainer>*/}
-            </AnimatePresence>
-          </div>
-        </TextContainer>
-      ) : (
-        <TextContainer
-          key="connectWalletText"
-          initial={"initial"}
-          animate={"animate"}
-          exit={"exit"}
-          variants={contentVariants}
-          style={{
-            height: 40,
-            //padding: '0 5px',
-          }}
-        >
-          {label ? label : defaultLabel}
-        </TextContainer>
-      )}
-    </AnimatePresence>
-  );
-}
+const defaultLabel = "Connect WSC";
 
 type ConnectKitButtonProps = {
   // Options
+  label?: string;
 
   // Events
   onClick?: (open: () => void) => void;
 };
 
-export function ConnectWSCButton({ onClick }: ConnectKitButtonProps) {
+export function ConnectWSCButton({ label, onClick }: ConnectKitButtonProps) {
   const isMounted = useIsMounted();
-
   const context = useContext();
-
   const { isConnected, address } = useAccount();
-  const { chain } = useNetwork();
 
   function show() {
     context.setOpen(true);
     context.setRoute(isConnected ? routes.PROFILE : routes.CONNECTORS);
   }
 
-  const separator = ["web95", "rounded", "minimal"].includes("") ? "...." : undefined;
-
   if (!isMounted) return null;
-
-  const shouldShowBalance = !chain?.unsupported;
-  const willShowBalance = address && shouldShowBalance;
 
   return (
     <ResetContainer>
@@ -195,63 +118,60 @@ export function ConnectWSCButton({ onClick }: ConnectKitButtonProps) {
           }
         }}
       >
-        {shouldShowBalance && (
-          <AnimatePresence initial={false}>
-            {willShowBalance && (
-              <motion.div
-                key={"balance"}
-                initial={{
-                  opacity: 0,
-                  x: "100%",
-                  width: 0,
-                  marginRight: 0,
-                }}
-                animate={{
-                  opacity: 1,
-                  x: 0,
-                  width: "auto",
-                  marginRight: -24,
-                  transition: {
-                    duration: 0.4,
-                    ease: [0.25, 1, 0.5, 1],
-                  },
-                }}
-                exit={{
-                  opacity: 0,
-                  x: "100%",
-                  width: 0,
-                  marginRight: 0,
-                  transition: {
-                    duration: 0.4,
-                    ease: [0.25, 1, 0.5, 1],
-                  },
+        <AnimatePresence initial={false}>
+          {address ? (
+            <motion.div
+              key={"balance"}
+              initial={{
+                opacity: 0,
+                x: "100%",
+                width: 0,
+                marginRight: 0,
+              }}
+              animate={{
+                opacity: 1,
+                x: 0,
+                width: "100%",
+                marginRight: -24,
+                transition: {
+                  duration: 0.4,
+                  ease: [0.25, 1, 0.5, 1],
+                },
+              }}
+              exit={{
+                opacity: 0,
+                x: "100%",
+                width: 0,
+                marginRight: 0,
+                transition: {
+                  duration: 0.4,
+                  ease: [0.25, 1, 0.5, 1],
+                },
+              }}
+            >
+              <ThemedButton variant={"secondary"} style={{ overflow: "hidden" }}>
+                <motion.div style={{ paddingRight: 24 }}>
+                  {context.titleModalTx || "Interact with WSC"}
+                </motion.div>
+              </ThemedButton>
+            </motion.div>
+          ) : (
+            <ThemedButton variant={"secondary"}>
+              <TextContainer
+                key="connectWalletText"
+                initial={"initial"}
+                animate={"animate"}
+                exit={"exit"}
+                variants={contentVariants}
+                style={{
+                  height: 40,
                 }}
               >
-                <ThemedButton variant={"secondary"} style={{ overflow: "hidden" }}>
-                  <motion.div style={{ paddingRight: 24 }}>
-                    {context.titleModalTx || "Start your WSC journey"}
-                  </motion.div>
-                </ThemedButton>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
-        <ThemedButton
-          style={
-            shouldShowBalance && address
-              ? {
-                  /** Special fix for the retro theme... not happy about this one */
-                  boxShadow: "var(--ck-connectbutton-balance-connectbutton-box-shadow)",
-                  borderRadius: "var(--ck-connectbutton-balance-connectbutton-border-radius)",
-                  overflow: "hidden",
-                }
-              : {
-                  overflow: "hidden",
-                }
-          }
-        >
-          <ConnectWSCButtonInner separator={separator} />
-        </ThemedButton>
+                {label ? label : defaultLabel}
+              </TextContainer>
+            </ThemedButton>
+          )}
+        </AnimatePresence>
       </ThemeContainer>
     </ResetContainer>
   );

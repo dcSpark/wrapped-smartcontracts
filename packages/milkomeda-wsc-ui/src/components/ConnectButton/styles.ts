@@ -9,6 +9,7 @@ export const TextContainer = styled(motion.div)`
   align-items: center;
   justify-content: center;
   white-space: nowrap;
+  width: 100%;
 `;
 
 export const ChainContainer = styled(motion.div)`

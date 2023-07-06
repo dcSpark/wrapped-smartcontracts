@@ -9,6 +9,7 @@ export const Container = styled(motion.div)<{
   justify-content: flex-start;
   position: relative;
   height: 40px;
+  width: 100%;
   padding: 0;
   line-height: 0;
   letter-spacing: -0.2px;
@@ -84,6 +85,8 @@ export const ThemeContainer = styled.button`
   margin: 0;
   background: none;
   border-radius: var(--ck-border-radius);
+
+  width: 100%;
 
   &:disabled {
     pointer-events: none;
