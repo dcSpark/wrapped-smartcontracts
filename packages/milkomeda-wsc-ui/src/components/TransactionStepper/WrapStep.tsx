@@ -26,6 +26,7 @@ import { OrDivider } from "../Common/Modal";
 import { RetryIconCircle } from "../../assets/icons";
 import Tooltip from "../Common/Tooltip";
 import { states } from "../ConnectModal/ConnectWithInjector";
+import { LOCK_ADA } from "../Pages/Overview";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -95,7 +96,7 @@ const WrapStep = ({ nextStep }) => {
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
-      if (response === TxPendingStatus.Confirmed) {
+      if (response === TxStatus.Confirmed) {
         setTxHash(null);
         setTimeout(() => {
           nextStep();
@@ -110,11 +111,17 @@ const WrapStep = ({ nextStep }) => {
     setTxStatus(TxStatus.Init);
 
     try {
-      const txHash = await wscProvider?.wrap(
-        undefined,
-        selectedWrapToken.unit,
-        defaultCardanoAsset.amount
-      );
+      const wrapAmount = convertWeiToTokens({
+        valueWei: defaultCardanoAsset?.amount,
+        token: {
+          decimals: defaultCardanoAsset?.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
+        },
+      }).dp(0, BigNumber.ROUND_UP);
+
+      if (!wrapAmount) {
+        throw new Error("Invalid wrap amount");
+      }
+      const txHash = await wscProvider?.wrap(undefined, selectedWrapToken.unit, +wrapAmount);
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
     } catch (err) {
@@ -133,16 +140,27 @@ const WrapStep = ({ nextStep }) => {
         })
       : null;
 
+  const formattedAmount =
+    defaultCardanoAsset != null &&
+    selectedWrapToken != null &&
+    convertWeiToTokens({
+      valueWei: defaultCardanoAsset.amount,
+      token: {
+        decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken.decimals,
+      },
+    }).dp(2);
+
   const isAmountValid =
-    selectedWrapToken != null && defaultCardanoAsset != null && fee != null
-      ? new BigNumber(defaultCardanoAsset.amount).plus(fee).lte(selectedWrapToken?.quantity)
+    selectedWrapToken != null && defaultCardanoAsset != null && fee != null && formattedAmount
+      ? formattedAmount.plus(fee).lte(selectedWrapToken?.quantity)
       : false;
 
   const isAboveMinAmount =
     stargateInfo != null &&
     selectedWrapToken != null &&
     defaultCardanoAsset != null &&
-    new BigNumber(defaultCardanoAsset.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
+    formattedAmount &&
+    formattedAmount.gte(stargateInfo?.stargateMinNativeTokenFromL1);
 
   return (
     <>
@@ -157,9 +175,7 @@ const WrapStep = ({ nextStep }) => {
           <BalancesWrapper>
             <LabelWithBalance
               label="You're moving:"
-              amount={
-                defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-              }
+              amount={defaultCardanoAsset != null && formattedAmount && formattedAmount.toFixed()}
               assetName={selectedWrapToken?.assetName}
             />
             <LabelWithBalance
@@ -174,7 +190,8 @@ const WrapStep = ({ nextStep }) => {
               amount={
                 fee &&
                 defaultCardanoAsset != null &&
-                new BigNumber(defaultCardanoAsset.amount).plus(fee).toFixed()
+                formattedAmount &&
+                formattedAmount.plus(fee).toFixed()
               }
               assetName={selectedWrapToken?.assetName}
             />
@@ -183,14 +200,12 @@ const WrapStep = ({ nextStep }) => {
           <BalancesWrapper>
             <LabelWithBalance
               label="You'll transfer:"
-              amount={
-                defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-              }
+              amount={defaultCardanoAsset != null && formattedAmount && formattedAmount.toFixed()}
               assetName={selectedWrapToken?.assetName}
             />
             <LabelWithBalance
               label=""
-              amount={fee?.plus(new BigNumber(3))?.toFixed()}
+              amount={fee?.plus(new BigNumber(LOCK_ADA))?.toFixed()}
               assetName={defaultSymbol}
             />
           </BalancesWrapper>
@@ -218,12 +233,14 @@ const WrapStep = ({ nextStep }) => {
         {selectedWrapToken != null && !isAmountValid && (
           <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
         )}
-        {selectedWrapToken != null && !isAboveMinAmount && (
-          <ErrorMessage role="alert">
-            Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
-            {defaultSymbol}
-          </ErrorMessage>
-        )}
+        {selectedWrapToken != null &&
+          selectedWrapToken.unit === "lovelace" &&
+          !isAboveMinAmount && (
+            <ErrorMessage role="alert">
+              Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
+              {defaultSymbol}
+            </ErrorMessage>
+          )}
         {isError && (
           <ErrorMessage role="alert">
             Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
@@ -237,10 +254,7 @@ const WrapStep = ({ nextStep }) => {
           <Button
             variant="primary"
             disabled={
-              selectedWrapToken == null ||
-              !selectedWrapToken.bridgeAllowed ||
-              !isAmountValid ||
-              !isAboveMinAmount
+              selectedWrapToken == null || !selectedWrapToken.bridgeAllowed || !isAmountValid
             }
             onClick={wrapToken}
           >

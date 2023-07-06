@@ -58,8 +58,6 @@ const ConnectModal = () => {
 
   const showInfoButton = closeable && context.route === routes.STEPPER;
 
-  console.log(context.acceptedWSC, "acce");
-
   return (
     <Modal
       open={context.open}

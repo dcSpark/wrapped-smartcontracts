@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { routes, useContext } from "../../ConnectWSC";
-
-import { useConnect, useDisconnect, useAccount, useNetwork } from "wagmi";
 
 import { ModalBody, ModalContent, OverviewContent } from "../../Common/Modal/styles";
 
@@ -24,11 +22,21 @@ import { convertWeiToTokens } from "../../../utils/convertWeiToTokens";
 import Button from "../../Common/Button";
 import { OrDivider } from "../../Common/Modal";
 
+console.log("amount");
 const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   const { defaultCardanoAsset, stargateInfo, setRoute, setAcceptedWSC } = useContext();
   const { selectedWrapToken } = useSelectedWrapToken();
 
-  const amount = defaultCardanoAsset && new BigNumber(defaultCardanoAsset.amount);
+  const amount =
+    defaultCardanoAsset != null &&
+    selectedWrapToken != null &&
+    convertWeiToTokens({
+      valueWei: defaultCardanoAsset.amount,
+      token: {
+        decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
+      },
+    }).dp(2);
+
   const wrappingFee =
     stargateInfo &&
     convertWeiToTokens({
@@ -43,7 +51,7 @@ const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   const adaLocked = new BigNumber(LOCK_ADA);
   const evmEstimatedFee = new BigNumber(EVM_ESTIMATED_FEE);
   const tranferTotalAmount =
-    amount != null &&
+    amount &&
     bridgeFees != null &&
     stargateInfo != null &&
     amount.plus(bridgeFees).plus(adaLocked).plus(evmEstimatedFee);
@@ -52,7 +60,7 @@ const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
     tranferTotalAmount &&
     defaultCardanoAsset != null &&
     selectedWrapToken != null &&
-    new BigNumber(tranferTotalAmount).lte(selectedWrapToken?.quantity);
+    new BigNumber(tranferTotalAmount).lte(selectedWrapToken.quantity);
 
   const isAboveMinAmount =
     stargateInfo != null &&
@@ -68,15 +76,13 @@ const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
         <ModalBody>
           <OverviewDescription>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua.
+            incididunt ut labore et dolore magna aliqua.`
           </OverviewDescription>
 
           <BalancesWrapper>
             <LabelWithBalance
               label="You're moving:"
-              amount={
-                defaultCardanoAsset != null && new BigNumber(defaultCardanoAsset.amount).toFixed()
-              }
+              amount={defaultCardanoAsset != null && amount && amount.toFixed()}
               assetName={
                 defaultCardanoAsset?.unit === "lovelace" ? "TADA" : selectedWrapToken?.assetName
               }
@@ -126,16 +132,18 @@ const Overview: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
           {selectedWrapToken != null && !isAmountValid && (
             <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
           )}
-          {selectedWrapToken != null && !isAboveMinAmount && (
-            <ErrorMessage role="alert">
-              Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
-              {defaultSymbol}
-            </ErrorMessage>
-          )}
+          {selectedWrapToken != null &&
+            selectedWrapToken.unit === "lovelace" &&
+            !isAboveMinAmount && (
+              <ErrorMessage role="alert">
+                Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
+                {defaultSymbol}
+              </ErrorMessage>
+            )}
         </ModalBody>
         <Button
           variant="primary"
-          disabled={!stargateInfo}
+          disabled={!stargateInfo || !isAmountValid}
           style={{ marginTop: 20 }}
           onClick={() => {
             setRoute(routes.STEPPER);

@@ -142,7 +142,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const { connector: activeConnector } = useAccount();
   const [wscProvider, setWscProvider] = React.useState<WSCLib | null>(null);
   const [originTokens, setOriginTokens] = useState<OriginAmount[]>([]);
-  console.log(originTokens);
   const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [destinationBalance, setDestinationBalance] = useState("");
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
