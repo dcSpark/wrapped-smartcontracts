@@ -1,3 +1,4 @@
+import React from "react";
 export const Flint = ({ ...props }) => (
   <svg width="60" height="60" viewBox="0 0 60 60" fill="none" {...props}>
     <path
@@ -15,12 +16,7 @@ export const Eternl = ({ ...props }) => (
     <div id="in-page-channel-node-id" />
     <rect width="30" height="30" fill="url(#pattern0)" />
     <defs>
-      <pattern
-        id="pattern0"
-        patternContentUnits="objectBoundingBox"
-        width="1"
-        height="1"
-      >
+      <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
         <use xlinkHref="#image0_1331_21520" transform="scale(0.0078125)" />
       </pattern>
       <image
@@ -34,7 +30,7 @@ export const Eternl = ({ ...props }) => (
 );
 
 export const PlaceHolder = () => {
-  return <div style={{ width: 80, height: 80, background: '#555' }}></div>;
+  return <div style={{ width: 80, height: 80, background: "#555" }}></div>;
 };
 
 export default {

@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { routes, useContext } from "../ConnectWSC";

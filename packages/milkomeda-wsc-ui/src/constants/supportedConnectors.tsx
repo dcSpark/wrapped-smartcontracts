@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
-import Logos from '../assets/logos';
-import { isEternl, isFlint } from '../utils';
+import React from "react";
+import { ReactNode } from "react";
+import Logos from "../assets/logos";
+import { isEternl, isFlint } from "../utils";
 
 let supportedConnectors: {
   id: string;
@@ -22,24 +23,24 @@ let supportedConnectors: {
   defaultConnect?: () => any;
 }[] = [];
 
-if (typeof window != 'undefined') {
+if (typeof window != "undefined") {
   interface IDictionary {
     [index: string]: string;
   }
 
   supportedConnectors = [
     {
-      id: 'flint-wsc',
-      name: 'WSC Flint',
+      id: "flint-wsc",
+      name: "WSC Flint",
       logos: {
         default: <Logos.Flint background />,
         mobile: <Logos.Flint background />,
         transparent: (
           <div
             style={{
-              transform: 'scale(0.86)',
-              position: 'relative',
-              width: '100%',
+              transform: "scale(0.86)",
+              position: "relative",
+              width: "100%",
             }}
           >
             <Logos.Flint />
@@ -48,7 +49,7 @@ if (typeof window != 'undefined') {
         connectorButton: (
           <div
             style={{
-              transform: 'scale(1.1)',
+              transform: "scale(1.1)",
             }}
           >
             <Logos.Flint />
@@ -56,40 +57,39 @@ if (typeof window != 'undefined') {
         ),
       },
       logoBackground:
-        'linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))',
+        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
         chrome:
-          'https://chrome.google.com/webstore/detail/flint-wallet/hnhobjmcibchnmglfbldbfabcgaknlkj',
-        firefox: '',
+          "https://chrome.google.com/webstore/detail/flint-wallet/hnhobjmcibchnmglfbldbfabcgaknlkj",
+        firefox: "",
         brave:
-          'https://chrome.google.com/webstore/detail/flint-wallet/hnhobjmcibchnmglfbldbfabcgaknlkj',
-        edge: '',
+          "https://chrome.google.com/webstore/detail/flint-wallet/hnhobjmcibchnmglfbldbfabcgaknlkj",
+        edge: "",
       } as IDictionary,
       appUrls: {
-        download: '',
-        website: 'https://flint-wallet.com/',
-        android:
-          'https://play.google.com/store/apps/details?id=io.dcspark.flintwallet',
-        ios: 'https://apps.apple.com/us/app/dcspark-flint-wallet/id1619660885',
+        download: "",
+        website: "https://flint-wallet.com/",
+        android: "https://play.google.com/store/apps/details?id=io.dcspark.flintwallet",
+        ios: "https://apps.apple.com/us/app/dcspark-flint-wallet/id1619660885",
       } as IDictionary,
       extensionIsInstalled: () => {
         return isFlint();
       },
     },
     {
-      id: 'etrnal-wsc',
-      name: 'WSC Eternl',
+      id: "etrnal-wsc",
+      name: "WSC Eternl",
       logos: {
         default: <Logos.Eternl background />,
         mobile: <Logos.Eternl background />,
         transparent: (
           <div
             style={{
-              transform: 'scale(0.86)',
-              position: 'relative',
-              width: '100%',
+              transform: "scale(0.86)",
+              position: "relative",
+              width: "100%",
             }}
           >
             <Logos.Eternl />
@@ -98,7 +98,7 @@ if (typeof window != 'undefined') {
         connectorButton: (
           <div
             style={{
-              transform: 'scale(1.1)',
+              transform: "scale(1.1)",
             }}
           >
             <Logos.Eternl />
@@ -106,23 +106,23 @@ if (typeof window != 'undefined') {
         ),
       },
       logoBackground:
-        'linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))',
+        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
         chrome:
-          'https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related',
-        firefox: '',
+          "https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related",
+        firefox: "",
         brave:
-          'https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related',
-        edge: '',
+          "https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related",
+        edge: "",
       } as IDictionary,
       appUrls: {
         download:
-          'https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related',
-        website: 'https://eternl.io/',
-        android: '',
-        ios: '',
+          "https://chrome.google.com/webstore/detail/eternl/kmhcihpebfmpgmihbkipmjlmmioameka/related",
+        website: "https://eternl.io/",
+        android: "",
+        ios: "",
       } as IDictionary,
       extensionIsInstalled: () => {
         return isEternl();

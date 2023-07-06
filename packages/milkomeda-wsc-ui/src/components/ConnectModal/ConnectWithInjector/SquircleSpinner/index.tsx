@@ -1,12 +1,6 @@
-import {
-  LogoContainer,
-  Logo,
-  Spinner,
-  SpinnerContainer,
-  ExpiringSpinner,
-} from './styles';
-
-import { AnimatePresence } from 'framer-motion';
+import { LogoContainer, Logo, Spinner, SpinnerContainer, ExpiringSpinner } from "./styles";
+import React from "react";
+import { AnimatePresence } from "framer-motion";
 
 const SquircleSpinner = ({
   logo,
@@ -18,9 +12,7 @@ const SquircleSpinner = ({
   countdown?: boolean;
 }) => {
   return (
-    <LogoContainer
-      transition={{ duration: 0.5, ease: [0.175, 0.885, 0.32, 0.98] }}
-    >
+    <LogoContainer transition={{ duration: 0.5, ease: [0.175, 0.885, 0.32, 0.98] }}>
       <Logo>{logo}</Logo>
       <SpinnerContainer>
         <AnimatePresence>
@@ -51,13 +43,7 @@ const SquircleSpinner = ({
           )}
         </AnimatePresence>
       </SpinnerContainer>
-      <svg
-        aria-hidden="true"
-        width="102"
-        height="102"
-        viewBox="0 0 102 102"
-        fill="none"
-      >
+      <svg aria-hidden="true" width="102" height="102" viewBox="0 0 102 102" fill="none">
         <rect
           x="7.57895"
           y="7.57895"

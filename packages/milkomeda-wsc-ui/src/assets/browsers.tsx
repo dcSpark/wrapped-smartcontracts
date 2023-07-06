@@ -1,3 +1,4 @@
+import React from "react";
 /**
  * TODO: Move hex colors into css variables for p3 support
  */
@@ -13,10 +14,7 @@ const Chrome = (
   >
     <g filter="url(#filter0_ii_927_5781)">
       <g clipPath="url(#clip0_927_5781)">
-        <path
-          d="M1.58771 0V12.2727H6.06498L10.0002 5.45455H20.0002V0H1.58771Z"
-          fill="#DB4437"
-        />
+        <path d="M1.58771 0V12.2727H6.06498L10.0002 5.45455H20.0002V0H1.58771Z" fill="#DB4437" />
         <path
           d="M1.58771 0V12.2727H6.06498L10.0002 5.45455H20.0002V0H1.58771Z"
           fill="url(#paint0_linear_927_5781)"
@@ -55,18 +53,12 @@ const Chrome = (
           d="M9.9996 5.45459L13.9371 12.2728L9.51892 20H19.9996V5.45459H9.9996Z"
           fill="url(#paint3_linear_927_5781)"
         />
-        <path
-          d="M1.58691 0V12.2727H6.06419L9.99941 5.45455H19.9994V0H1.58691Z"
-          fill="#DB4437"
-        />
+        <path d="M1.58691 0V12.2727H6.06419L9.99941 5.45455H19.9994V0H1.58691Z" fill="#DB4437" />
         <path
           d="M1.58691 0V12.2727H6.06419L9.99941 5.45455H19.9994V0H1.58691Z"
           fill="url(#paint4_linear_927_5781)"
         />
-        <path
-          d="M10 5.45459V7.83527L18.9091 5.45459H10Z"
-          fill="url(#paint5_radial_927_5781)"
-        />
+        <path d="M10 5.45459V7.83527L18.9091 5.45459H10Z" fill="url(#paint5_radial_927_5781)" />
         <path
           d="M0 19.9998H9.51932L11.9318 15.9089L13.9375 12.2726H6.0625L0 1.87256V19.9998Z"
           fill="#0F9D58"
@@ -134,12 +126,7 @@ const Chrome = (
         colorInterpolationFilters="sRGB"
       >
         <feFlood floodOpacity={0} result="BackgroundImageFix" />
-        <feBlend
-          mode="normal"
-          in="SourceGraphic"
-          in2="BackgroundImageFix"
-          result="shape"
-        />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -149,15 +136,8 @@ const Chrome = (
         <feOffset dy="0.235294" />
         <feGaussianBlur stdDeviation="0.235294" />
         <feComposite in2="hardAlpha" operator="arithmetic" k2={-1} k3={1} />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"
-        />
-        <feBlend
-          mode="normal"
-          in2="shape"
-          result="effect1_innerShadow_927_5781"
-        />
+        <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0" />
+        <feBlend mode="normal" in2="shape" result="effect1_innerShadow_927_5781" />
         <feColorMatrix
           in="SourceAlpha"
           type="matrix"
@@ -167,10 +147,7 @@ const Chrome = (
         <feOffset dy="-0.235294" />
         <feGaussianBlur stdDeviation="0.235294" />
         <feComposite in2="hardAlpha" operator="arithmetic" k2={-1} k3={1} />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0"
-        />
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.12 0" />
         <feBlend
           mode="normal"
           in2="effect1_innerShadow_927_5781"

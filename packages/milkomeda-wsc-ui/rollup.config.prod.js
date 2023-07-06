@@ -14,6 +14,7 @@ export default [
     plugins: [
       peerDepsExternal(),
       typescript({
+        tsconfigOverride: { compilerOptions: { jsx: "react" } },
         useTsconfigDeclarationDir: true,
         exclude: "node_modules/**",
       }),

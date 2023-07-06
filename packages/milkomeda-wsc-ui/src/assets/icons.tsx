@@ -1,3 +1,5 @@
+import React from "react";
+
 export const Scan = ({ ...props }) => (
   <svg
     aria-hidden="true"
@@ -209,15 +211,15 @@ export const AuthIcon = ({ ...props }) => (
     {...props}
     style={{
       zIndex: 2,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'absolute',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      position: "absolute",
       bottom: 0,
       right: 0,
-      background: '#34C759',
+      background: "#34C759",
       borderRadius: 10,
-      boxShadow: '0 0 0 1.5px var(--background)',
+      boxShadow: "0 0 0 1.5px var(--background)",
       width: 10,
       height: 10,
       ...props?.style,
