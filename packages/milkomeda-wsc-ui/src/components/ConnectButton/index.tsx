@@ -90,12 +90,13 @@ const defaultLabel = "Connect WSC";
 type ConnectKitButtonProps = {
   // Options
   label?: string;
+  disabled?: boolean;
 
   // Events
   onClick?: (open: () => void) => void;
 };
 
-export function ConnectWSCButton({ label, onClick }: ConnectKitButtonProps) {
+export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKitButtonProps) {
   const isMounted = useIsMounted();
   const context = useContext();
   const { isConnected, address } = useAccount();
@@ -121,6 +122,7 @@ export function ConnectWSCButton({ label, onClick }: ConnectKitButtonProps) {
             show();
           }
         }}
+        disabled={disabled}
       >
         <AnimatePresence initial={false}>
           {address ? (
