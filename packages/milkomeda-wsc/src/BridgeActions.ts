@@ -76,9 +76,9 @@ class BridgeActions {
       const stargateMin = this.stargateGeneric.stargateMinNativeTokenFromL1();
       if (tokenId === "lovelace") {
         const startgateMinLovelace = BigInt(stargateMin) * BigInt(10 ** 6);
-        if (amount < startgateMinLovelace)
-          throw new Error("Amount is less than the minimum required");
         const amountLovelace = BigInt(amount);
+        if (amountLovelace < startgateMinLovelace)
+          throw new Error("Amount is less than the minimum required");
         const amountWithFees =
           amountLovelace + BigInt(this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo());
         payload = { lovelace: amountWithFees };
