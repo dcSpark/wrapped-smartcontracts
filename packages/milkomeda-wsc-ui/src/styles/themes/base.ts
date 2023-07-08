@@ -97,6 +97,9 @@ export default {
     "--ck-focus-color": "#1A88F8",
     "--ck-spinner-color": "var(--ck-focus-color)",
     "--ck-copytoclipboard-stroke": "#CCCCCC",
+
+    "--ck-stepper-background-circle": "rgb(104 104 116)",
+    "--ck-stepper-current-background-circle": "rgb(48 48 52)",
   },
   dark: {
     "--ck-connectbutton-font-size": "15px",
@@ -177,5 +180,8 @@ export default {
 
     "--ck-qr-dot-color": "#ffffff",
     "--ck-qr-border-color": "#3d3d3d",
+
+    "--ck-stepper-background-circle": "rgb(48 48 52)",
+    "--ck-stepper-current-background-circle": "rgb(64 64 90)",
   },
 };

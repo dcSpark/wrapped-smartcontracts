@@ -9,7 +9,7 @@ export const StepperStepLabelContainer = styled(motion.div)`
   align-items: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "flex-start")};
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
   &[aria-current="step"] {
-    color: rgb(48, 48, 52);
+    color: var(--ck-body-color);
   }
 `;
 export const StepperStepOptionalLabel = styled(motion.span)`
@@ -122,7 +122,7 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
-  background: rgb(104 104 116);
+  background: var(--ck-stepper-background-circle);
   font-weight: 500;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -134,7 +134,7 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   }
 
   &[aria-current="step"] {
-    background: rgb(48, 48, 52);
+    background: var(--ck-stepper-current-background-circle);
   }
 
   &:hover {

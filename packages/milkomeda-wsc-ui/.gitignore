@@ -19,3 +19,4 @@ tsconfig.tsbuildinfo
 
 npm-debug.log*
 .rpt2_cache
+.yalc

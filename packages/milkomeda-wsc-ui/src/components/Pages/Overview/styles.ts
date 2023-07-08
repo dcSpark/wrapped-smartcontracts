@@ -8,7 +8,7 @@ export const Balance = styled(motion.div)`
   min-width: 150px;
   text-align: left;
   span {
-    color: rgb(55 55 55);
+    color: var(--ck-body-color)
     font-size: 1.125rem;
   }
 `;

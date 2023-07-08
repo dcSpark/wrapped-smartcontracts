@@ -9,20 +9,21 @@ export const StepNormalHeight = styled.div`
 export const StepTitle = styled.h1`
   font-size: 1.25rem;
   text-align: center;
-  color: rgb(55 55 55);
+  color: var(--ck-body-color);
+
   margin-bottom: 10px;
 `;
 export const StepDescription = styled.p`
   font-size: 1rem;
   text-align: center;
-  color: rgb(153 153 153);
+  color: var(--ck-body-color-muted);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
 export const OverviewDescription = styled.p`
   font-size: 1rem;
   text-align: center;
-  color: rgb(153 153 153);
+  color: var(--ck-body-color-muted);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
@@ -77,7 +78,7 @@ export const WrapperButtons = styled.div`
 export const TransactionCompleteContainer = styled.div`
   position: relative;
   padding: 30px 0;
-  color: rgb(55 55 55);
+  color: var(--ck-body-color);
   h1 {
     font-size: 1.25rem;
   }

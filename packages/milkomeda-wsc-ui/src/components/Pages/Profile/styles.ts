@@ -44,10 +44,10 @@ export const Balance = styled(motion.div)`
   svg {
     width: 18px;
     height: 18px;
-    color: rgb(153 153 153);
+    color: var(--ck-body-color-muted);
   }
   span {
-    color: rgb(55 55 55);
+    color: var(--ck-body-color);
     font-size: 1.125rem;
   }
 `;
