@@ -61,6 +61,7 @@ const UnwrapStep = ({ nextStep }) => {
     },
     txHash != null ? 4000 : null
   );
+  console.log(tokens, "tokens");
 
   useEffect(() => {
     const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress);
