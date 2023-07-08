@@ -3,6 +3,7 @@ import {
   ErrorMessage,
   SpinnerWrapper,
   StepDescription,
+  StepLargeHeight,
   StepTitle,
   SuccessWrapper,
 } from "./styles";
@@ -61,7 +62,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
 
   return (
     <>
-      <div>
+      <StepLargeHeight>
         <StepTitle>Token Allowance: Lacus suspendisse faucibus</StepTitle>
         <StepDescription style={{ marginBottom: 30 }}>
           Porttitor rhoncus dolor purus non. Id cursus metus aliquam eleifend mi in nulla posuere
@@ -80,7 +81,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
             <span>You've successfully approved the bridge to spend your tokens.</span>
           </SuccessWrapper>
         )}
-      </div>
+      </StepLargeHeight>
       {isSuccess || isLoadingTx ? null : (
         <Button disabled={!write} variant="primary" onClick={() => write?.()}>
           Grant token allowance

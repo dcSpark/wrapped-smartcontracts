@@ -3,6 +3,7 @@ import {
   ErrorMessage,
   SpinnerWrapper,
   StepDescription,
+  StepLargeHeight,
   StepTitle,
   SuccessWrapper,
 } from "./styles";
@@ -44,7 +45,7 @@ const ActionExecutionStep = ({ nextStep }) => {
   const isError = executionTxStatus === "error";
   return (
     <>
-      <div>
+      <StepLargeHeight>
         <StepTitle>Executing Actions: sed do eiusmod tempor incididunt ut labore</StepTitle>
         <StepDescription>
           Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
@@ -67,7 +68,7 @@ const ActionExecutionStep = ({ nextStep }) => {
             Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
           </ErrorMessage>
         )}
-      </div>
+      </StepLargeHeight>
       <Button variant="primary" onClick={onWSCAction}>
         Execute Action
       </Button>

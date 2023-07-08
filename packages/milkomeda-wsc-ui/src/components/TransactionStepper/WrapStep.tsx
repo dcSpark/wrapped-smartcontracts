@@ -12,7 +12,6 @@ import {
   SpinnerWrapper,
   StepDescription,
   StepLargeHeight,
-  StepNormalHeight,
   StepTitle,
   SuccessWrapper,
   WrapperButtons,
