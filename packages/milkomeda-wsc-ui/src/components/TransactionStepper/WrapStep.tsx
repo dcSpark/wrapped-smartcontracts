@@ -175,7 +175,7 @@ const WrapStep = ({ nextStep }) => {
               txHash={txHash}
             />
             <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
-              Continues
+              Continue
             </Button>
           </>
         )}
