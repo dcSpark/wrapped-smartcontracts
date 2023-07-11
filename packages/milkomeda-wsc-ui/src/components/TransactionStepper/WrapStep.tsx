@@ -1,6 +1,6 @@
 import { useContext } from "../ConnectWSC";
 import React from "react";
-import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
+import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { AnimatePresence } from "framer-motion";
 import { Balance, BalanceContainer, LoadingBalance } from "../Pages/Profile/styles";
 import BigNumber from "bignumber.js";
@@ -108,24 +108,23 @@ const WrapStep = ({ nextStep }) => {
     setTxStatus(TxStatus.Init);
 
     try {
-      const wrapAmount = convertWeiToTokens({
-        valueWei: defaultCardanoAsset?.amount,
-        token: {
-          decimals: defaultCardanoAsset?.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
-        },
-      }).dp(0, BigNumber.ROUND_UP);
-
-      const wrapAmountWithAdaLocked =
-        defaultCardanoAsset?.unit === "lovelace" ? wrapAmount.plus(adaLocked) : wrapAmount;
+      const wrapAmount =
+        defaultCardanoAsset?.unit === "lovelace"
+          ? convertTokensToWei({
+              value: defaultCardanoAsset?.amount / 10 ** 18, // unscaled value
+              token: { decimals: 6 },
+            })
+              .dp(0)
+              .plus(adaLocked) // set ADA LOCKED
+          : convertWeiToTokens({
+              valueWei: defaultCardanoAsset?.amount,
+              token: { decimals: selectedWrapToken?.decimals },
+            }).dp(0, BigNumber.ROUND_UP);
 
       if (!wrapAmount) {
         throw new Error("Invalid wrap amount");
       }
-      const txHash = await wscProvider?.wrap(
-        undefined,
-        selectedWrapToken.unit,
-        +wrapAmountWithAdaLocked
-      );
+      const txHash = await wscProvider?.wrap(undefined, selectedWrapToken.unit, +wrapAmount);
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
     } catch (err) {
