@@ -77,7 +77,7 @@ const Tooltip: React.FC<TooltipProps> = ({
         style={
           open === undefined
             ? {
-                cursor: "help",
+                cursor: "pointer",
               }
             : {}
         }

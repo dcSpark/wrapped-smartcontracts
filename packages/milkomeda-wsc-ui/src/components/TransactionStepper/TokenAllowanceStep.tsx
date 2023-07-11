@@ -5,15 +5,13 @@ import {
   StepDescription,
   StepLargeHeight,
   StepTitle,
-  SuccessWrapper,
 } from "./styles";
 import { erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { useContext } from "../ConnectWSC";
 import Button from "../Common/Button";
-import { CheckCircle2 } from "lucide-react";
 import { Spinner } from "../Common/Spinner";
-import { DEFAULT_STEP_TIMEOUT } from "./constants";
 import { ethers } from "ethers";
+import { SuccessMessage } from "./WrapStep";
 
 const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
@@ -51,14 +49,9 @@ const TokenAllowanceStep = ({ nextStep }) => {
   } = useWaitForTransaction({
     hash: data?.hash,
     enabled: !!data?.hash,
-    onSuccess: () => {
-      setTimeout(() => {
-        nextStep();
-      }, DEFAULT_STEP_TIMEOUT);
-    },
   });
 
-  const isLoadingTx = isPreparingLoading || isWritingContract || isWaitingForTxLoading;
+  const isLoadingTx = isWritingContract || isWaitingForTxLoading;
 
   return (
     <>
@@ -68,6 +61,12 @@ const TokenAllowanceStep = ({ nextStep }) => {
           Porttitor rhoncus dolor purus non. Id cursus metus aliquam eleifend mi in nulla posuere
           sollicitudin. Lacus suspendisse faucibus interdum posuere lorem.
         </StepDescription>
+        {isPreparingLoading && (
+          <SpinnerWrapper>
+            <Spinner />
+            <span>Preparing transaction</span>
+          </SpinnerWrapper>
+        )}
         {isLoadingTx && (
           <SpinnerWrapper>
             <Spinner />
@@ -75,15 +74,21 @@ const TokenAllowanceStep = ({ nextStep }) => {
           </SpinnerWrapper>
         )}
         {isError && <ErrorMessage role="alert">Ups, something went wrong.</ErrorMessage>}
+
         {isSuccess && (
-          <SuccessWrapper>
-            <CheckCircle2 />
-            <span>You've successfully approved the bridge to spend your tokens.</span>
-          </SuccessWrapper>
+          <>
+            <SuccessMessage
+              message="You've successfully approved token allowance."
+              // txHash={txHash}
+            />
+            <Button variant="primary" onClick={nextStep}>
+              Continue
+            </Button>
+          </>
         )}
       </StepLargeHeight>
-      {isSuccess || isLoadingTx ? null : (
-        <Button disabled={!write} variant="primary" onClick={() => write?.()}>
+      {!isSuccess && (
+        <Button disabled={!write || isLoadingTx} variant="primary" onClick={() => write?.()}>
           Grant token allowance
         </Button>
       )}

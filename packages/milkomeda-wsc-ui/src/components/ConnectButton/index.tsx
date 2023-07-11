@@ -107,7 +107,7 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
       context.setRoute(routes.CONNECTORS);
       return;
     }
-    context.setRoute(context.acceptedWSC ? routes.STEPPER : routes.OVERVIEW);
+    context.setRoute(routes.STEPPER);
   }
 
   if (!isMounted) return null;

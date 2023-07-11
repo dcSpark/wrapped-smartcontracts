@@ -298,8 +298,6 @@ const Modal: React.FC<ModalProps> = ({
         return "download";
       case routes.ONBOARDING:
         return "onboarding";
-      case routes.OVERVIEW:
-        return "Summary";
       case routes.STEPPER:
         return context.titleModalTx ?? "Wrapped Smart Contract";
 

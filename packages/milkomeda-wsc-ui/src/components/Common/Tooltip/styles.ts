@@ -12,6 +12,7 @@ export const TooltipContainer = styled(motion.div)<{ $size: TooltipSizeProps }>`
   --shadow: var(--ck-tooltip-shadow);
   z-index: 2147483647;
   position: absolute;
+  max-width: 400px;
   top: 0;
   left: 0;
   display: flex;
@@ -23,7 +24,6 @@ export const TooltipContainer = styled(motion.div)<{ $size: TooltipSizeProps }>`
     --ck-tooltip-border-radius,
     ${(props) => (props.$size === "small" ? 11 : 14)}px
   );
-  border-radius: ;
   padding: 10px 16px 10px 12px;
   font-size: 14px;
   line-height: 19px;

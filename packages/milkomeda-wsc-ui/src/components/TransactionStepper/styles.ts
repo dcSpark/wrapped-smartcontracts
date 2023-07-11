@@ -60,12 +60,23 @@ export const SpinnerWrapper = styled.div`
 `;
 export const SuccessWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: 12px;
   padding: 20px 0 40px;
+  color: var(--ck-body-color);
+  p {
+    margin: 0;
+  }
   svg {
     color: rgb(14, 117, 55);
+  }
+`;
+export const SuccessWrapperMessage = styled.div`
+  display: flex;
+  gap: 8px;
+  a {
+    display: inline-flex;
   }
 `;
 export const WrapperButtons = styled.div`
@@ -89,5 +100,16 @@ export const TransactionCompleteContainer = styled.div`
     width: 50px;
     height: 50px;
     color: rgb(14, 117, 55);
+  }
+`;
+
+export const TransactionExternalLink = styled.a`
+  color: inherit;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  svg {
+    color: var(--ck-body-color);
   }
 `;

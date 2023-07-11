@@ -5,13 +5,11 @@ import {
   StepDescription,
   StepLargeHeight,
   StepTitle,
-  SuccessWrapper,
 } from "./styles";
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import { Spinner } from "../Common/Spinner";
-import { CheckCircle2 } from "lucide-react";
-import { DEFAULT_STEP_TIMEOUT } from "./constants";
+import { SuccessMessage } from "./WrapStep";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const { wscActionRef } = useContext();
@@ -28,9 +26,6 @@ const ActionExecutionStep = ({ nextStep }) => {
     try {
       await wscActionRef.current();
       setExecutionTxStatus("success");
-      setTimeout(() => {
-        nextStep();
-      }, DEFAULT_STEP_TIMEOUT);
     } catch (err) {
       setExecutionTxStatus("error");
 
@@ -58,10 +53,12 @@ const ActionExecutionStep = ({ nextStep }) => {
           </SpinnerWrapper>
         )}
         {isSuccess && (
-          <SuccessWrapper>
-            <CheckCircle2 />
-            <span>Transaction has been successfully executed!</span>
-          </SuccessWrapper>
+          <>
+            <SuccessMessage message="Transaction has been successfully executed." />
+            <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
+              Continue
+            </Button>
+          </>
         )}
         {isError && (
           <ErrorMessage role="alert">

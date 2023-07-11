@@ -6,19 +6,20 @@ import {
   StepDescription,
   StepLargeHeight,
   StepTitle,
-  SuccessWrapper,
 } from "./styles";
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import useInterval from "../../hooks/useInterval";
-import { defaultSymbol, LabelWithBalance, TxStatus } from "./WrapStep";
+import { LabelWithBalance, SuccessMessage, TxStatus } from "./WrapStep";
 import BigNumber from "bignumber.js";
 import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { Spinner } from "../Common/Spinner";
-import { CheckCircle2 } from "lucide-react";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
-import { DEFAULT_STEP_TIMEOUT } from "./constants";
-import { LOCK_ADA } from "../Pages/Overview";
+import {
+  DEFAULT_SYMBOL,
+  LOCK_ADA,
+  TX_STATUS_CHECK_INTERVAL,
+} from "../../constants/transactionFees";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -26,7 +27,7 @@ const statusUnwrapMessages = {
   [TxStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
   [TxStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
   [TxStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
-  [TxStatus.Confirmed]: "Your asset has been successfully unwrapped!",
+  [TxStatus.Confirmed]: "Your asset has been successfully unwrapped.",
 };
 
 const UnwrapStep = ({ nextStep }) => {
@@ -34,7 +35,7 @@ const UnwrapStep = ({ nextStep }) => {
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
-  const [txHash, setTxHash] = React.useState<null | string | undefined>(null);
+  const [txHash, setTxHash] = React.useState<string | undefined>();
   const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === TxStatus.Idle;
@@ -49,26 +50,19 @@ const UnwrapStep = ({ nextStep }) => {
 
   useInterval(
     async () => {
-      if (!wscProvider || txHash == null) return;
+      if (!wscProvider || txHash == null || txStatus !== TxStatus.Confirmed) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
-      if (response === TxStatus.Confirmed) {
-        setTxHash(null);
-        setTimeout(() => {
-          nextStep();
-        }, DEFAULT_STEP_TIMEOUT);
-      }
     },
-    txHash != null ? 4000 : null
+    txHash != null && txStatus !== TxStatus.Confirmed ? TX_STATUS_CHECK_INTERVAL : null
   );
-  console.log(tokens, "tokens");
 
   useEffect(() => {
     const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress);
     if (!selectedToken) return;
     setSelectedUnwrapToken(selectedToken);
   }, [tokens, evmTokenAddress]);
-  console.log(tokens);
+
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider) return;
     setTxStatus(TxStatus.Init);
@@ -113,7 +107,7 @@ const UnwrapStep = ({ nextStep }) => {
             }
             assetName={selectedUnwrapToken?.symbol}
           />
-          <LabelWithBalance label="" amount={LOCK_ADA} assetName={defaultSymbol} />
+          <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
         </BalancesWrapper>
 
         {isLoading && (
@@ -130,11 +124,17 @@ const UnwrapStep = ({ nextStep }) => {
             Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
           </ErrorMessage>
         )}
+
         {isSuccess && (
-          <SuccessWrapper>
-            <CheckCircle2 />
-            <span>{statusUnwrapMessages[TxPendingStatus.Confirmed]}</span>
-          </SuccessWrapper>
+          <>
+            <SuccessMessage
+              message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
+              txHash={txHash}
+            />
+            <Button variant="primary" onClick={nextStep}>
+              Continue
+            </Button>
+          </>
         )}
       </StepLargeHeight>
       {(isIdle || isError) && (

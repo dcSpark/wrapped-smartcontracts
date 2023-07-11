@@ -25,11 +25,7 @@ const ConnectModal = () => {
     context.acceptedWSC;
 
   const onBack = () => {
-    if (context.route === routes.OVERVIEW) {
-      context.setRoute(routes.STEPPER);
-    } else {
-      context.setRoute(routes.CONNECTORS);
-    }
+    context.setRoute(routes.CONNECTORS);
   };
 
   const pages: any = {
@@ -39,7 +35,6 @@ const ConnectModal = () => {
     mobileConnectors: <MobileConnectors />,
     connect: <ConnectUsing connectorId={context.connector} />,
     profile: <Profile />,
-    overview: <Overview />,
   };
 
   function hide() {

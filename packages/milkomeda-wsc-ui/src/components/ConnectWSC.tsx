@@ -27,7 +27,6 @@ export const routes = {
   CONNECT: "connect",
   DOWNLOAD: "download",
   STEPPER: "profile",
-  OVERVIEW: "overview",
 };
 
 type Connector = any;
