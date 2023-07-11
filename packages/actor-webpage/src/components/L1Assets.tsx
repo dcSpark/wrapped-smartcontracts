@@ -35,7 +35,8 @@ const L1Assets: React.FC<L1AssetsProps> = ({ tokens, wrap }) => {
     try {
       console.log("Moving token", token.unit, "with amount", tokenAmounts.get(token.unit));
       const tokenNormalized = new BigNumber(tokenAmounts.get(token.unit) || "0").multipliedBy(10 ** token.decimals);
-      await wrap(undefined, token.unit, tokenNormalized);
+      const wrapAmount = token.unit === 'lovelace' ? tokenNormalized : new BigNumber(tokenAmounts.get(token.unit) || "0")
+      await wrap(undefined, token.unit, wrapAmount);
       updateTokenAmount(token.unit, "");
       toast.success("You have moved the token to L2 successfully");
     } catch (error) {
