@@ -144,7 +144,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [destinationBalance, setDestinationBalance] = useState("");
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
-  console.log(stargateInfo, "stargateInfo");
   const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
   const [evmTokenAddress, setEvmTokenAddress] = useState("");
   const [stepTxDirection, setStepTxDirection] = useState<StepTxDirection>("buy");
