@@ -79,7 +79,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
           <>
             <SuccessMessage
               message="You've successfully approved token allowance."
-              // txHash={txHash}
+              // txHash={txHash} // TODO: add txHash
             />
             <Button variant="primary" onClick={nextStep}>
               Continue
@@ -87,8 +87,8 @@ const TokenAllowanceStep = ({ nextStep }) => {
           </>
         )}
       </StepLargeHeight>
-      {!isSuccess && (
-        <Button disabled={!write || isLoadingTx} variant="primary" onClick={() => write?.()}>
+      {(!isLoadingTx || isError) && (
+        <Button disabled={!write} variant="primary" onClick={() => write?.()}>
           Grant token allowance
         </Button>
       )}
