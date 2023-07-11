@@ -113,18 +113,17 @@ const WrapStep = ({ nextStep }) => {
           ? convertTokensToWei({
               value: defaultCardanoAsset?.amount / 10 ** 18, // unscaled value
               token: { decimals: 6 },
-            })
-              .dp(0)
-              .plus(adaLocked) // set ADA LOCKED
+            }).plus(+adaLocked * 10 ** 6) // ADA LOCKED in lovelace
           : convertWeiToTokens({
               valueWei: defaultCardanoAsset?.amount,
               token: { decimals: selectedWrapToken?.decimals },
             }).dp(0, BigNumber.ROUND_UP);
 
-      if (!wrapAmount) {
-        throw new Error("Invalid wrap amount");
-      }
-      const txHash = await wscProvider?.wrap(undefined, selectedWrapToken.unit, +wrapAmount);
+      const txHash = await wscProvider?.wrap(
+        undefined,
+        selectedWrapToken.unit,
+        wrapAmount.toNumber()
+      );
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
     } catch (err) {
