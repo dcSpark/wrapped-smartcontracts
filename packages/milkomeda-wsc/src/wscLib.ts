@@ -27,6 +27,7 @@ import {
   TxPendingStatus,
 } from "./WSCLibTypes";
 import { AlgoPendingManager } from "./AlgoPendingManager";
+import { GenericStargate } from "./GenericStargate";
 
 export class WSCLib {
   wscProvider!: MilkomedaProvider;
@@ -230,6 +231,29 @@ export class WSCLib {
       return await this.origin_getADABalance(address);
     } else {
       return await this.origin_getAlgoBalance(address);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async stargateObject(): Promise<any> {
+    let stargate: GenericStargate;
+    if (this.isCardano()) {
+      const resp = await CardanoPendingManager.fetchFromStargate(
+        MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+      );
+      stargate = new GenericStargate(resp);
+    } else {
+      const resp = await AlgoPendingManager.fetchFromStargate(
+        MilkomedaConstants.getMilkomedaStargateUrl(this.network)
+      );
+      stargate = new GenericStargate(resp);
+    }
+
+    return {
+      stargateMinNativeTokenFromL1: stargate.stargateMinNativeTokenFromL1(),
+      fromNativeTokenInLoveLaceOrMicroAlgo: stargate.fromNativeTokenInLoveLaceOrMicroAlgo(),
+      stargateNativeTokenFeeToL1: stargate.stargateNativeTokenFeeToL1(),
+      stargateMinNativeTokenToL1: stargate.stargateMinNativeTokenToL1(), 
     }
   }
 
