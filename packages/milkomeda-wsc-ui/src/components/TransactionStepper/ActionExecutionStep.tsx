@@ -35,6 +35,7 @@ const ActionExecutionStep = ({ nextStep }) => {
     }
   };
 
+  const isIdle = executionTxStatus === "idle";
   const isLoading = executionTxStatus === "pending";
   const isSuccess = executionTxStatus === "success";
   const isError = executionTxStatus === "error";
@@ -66,9 +67,11 @@ const ActionExecutionStep = ({ nextStep }) => {
           </ErrorMessage>
         )}
       </StepLargeHeight>
-      <Button variant="primary" onClick={onWSCAction}>
-        Execute Action
-      </Button>
+      {(isIdle || isError) && (
+        <Button variant="primary" onClick={onWSCAction}>
+          Execute Action
+        </Button>
+      )}
     </>
   );
 };
