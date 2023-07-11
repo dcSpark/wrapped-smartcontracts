@@ -253,8 +253,8 @@ export class WSCLib {
       stargateMinNativeTokenFromL1: stargate.stargateMinNativeTokenFromL1(),
       fromNativeTokenInLoveLaceOrMicroAlgo: stargate.fromNativeTokenInLoveLaceOrMicroAlgo(),
       stargateNativeTokenFeeToL1: stargate.stargateNativeTokenFeeToL1(),
-      stargateMinNativeTokenToL1: stargate.stargateMinNativeTokenToL1(), 
-    }
+      stargateMinNativeTokenToL1: stargate.stargateMinNativeTokenToL1(),
+    };
   }
 
   //
