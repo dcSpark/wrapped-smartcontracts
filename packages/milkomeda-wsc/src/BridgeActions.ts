@@ -69,7 +69,7 @@ class BridgeActions {
     tokenId: string,
     destination: string,
     amount: number,
-    overrideFee = 0
+    feeOverrideAmount = 0
   ): Promise<string> => {
     if (
       this.network === MilkomedaNetworkName.C1Mainnet ||
@@ -86,12 +86,12 @@ class BridgeActions {
           throw new Error("Amount is less than the minimum required");
         const amountWithFees =
           amountLovelace +
-          BigInt(overrideFee || this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo());
+          BigInt(feeOverrideAmount || this.stargateGeneric.fromNativeTokenInLoveLaceOrMicroAlgo());
         payload = { lovelace: amountWithFees };
       } else {
         payload = {
           lovelace: BigInt(
-            overrideFee || this.stargateGeneric.nativeTokenToLovelaceOrMicroAlgo(stargateMin)
+            feeOverrideAmount || this.stargateGeneric.nativeTokenToLovelaceOrMicroAlgo(stargateMin)
           ),
           [tokenId]: BigInt(amount),
         };

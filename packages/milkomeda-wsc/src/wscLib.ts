@@ -440,10 +440,10 @@ export class WSCLib {
     destination: string | undefined,
     assetId: string,
     amount: number,
-    overrideFee = 0
+    feeOverrideAmount = 0
   ): Promise<string> {
     if (this.isCardano()) {
-      return await this.ada_wrap(destination, assetId, amount, overrideFee);
+      return await this.ada_wrap(destination, assetId, amount, feeOverrideAmount);
     } else {
       return await this.algo_wrap(destination, assetId, amount);
     }
@@ -453,7 +453,7 @@ export class WSCLib {
     destination: string | undefined,
     assetId: string,
     amount: number,
-    overrideFee = 0
+    feeOverrideAmount = 0
   ): Promise<string> {
     const targetAddress = destination || (await this.eth_getAccount());
     const stargate = await CardanoPendingManager.fetchFromStargate(
@@ -469,7 +469,7 @@ export class WSCLib {
       bridgeAddress,
       this.network
     );
-    return await bridgeActions.wrap(assetId, targetAddress, amount, overrideFee);
+    return await bridgeActions.wrap(assetId, targetAddress, amount, feeOverrideAmount);
   }
 
   async algo_wrap(
