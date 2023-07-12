@@ -10,7 +10,11 @@ export class CardanoWSCConnector extends Connector {
   name;
   #provider;
   #sdk;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   #previousEVMProvider;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   #previousCardanoProvider;
   constructor({ chains, options: options_ }) {
     const options = {
