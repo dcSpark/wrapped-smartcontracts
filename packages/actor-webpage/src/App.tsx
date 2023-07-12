@@ -5,7 +5,12 @@ import Summary from "./components/Summary";
 import Header from "./components/Header";
 import { Activity } from "../../milkomeda-wsc/src/Activity";
 import BigNumber from "bignumber.js";
-import { EVMTokenBalance, MilkomedaNetworkName, PendingTx, TxPendingStatus } from "milkomeda-wsc/build/WSCLibTypes";
+import {
+  EVMTokenBalance,
+  MilkomedaNetworkName,
+  PendingTx,
+  TxPendingStatus,
+} from "milkomeda-wsc/build/WSCLibTypes";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import "./App.css";
 
@@ -28,9 +33,10 @@ const App: React.FC = () => {
     destination: string | undefined,
     assetId: string,
     amount: BigNumber,
+    additionalFee?: number,
   ) => {
     // TODO: check that amount.toNumber() is correct
-    return wscLib2.wrap(destination, assetId, amount.toNumber());
+    return wscLib2.wrap(destination, assetId, amount.toNumber(), additionalFee);
   };
 
   const unwrapWrapper = async (
@@ -95,7 +101,7 @@ const App: React.FC = () => {
     if (!cardanoConnected) {
       const network = MilkomedaNetworkName.C1Devnet;
       const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, option, {
-        oracleUrl: process.env.REACT_APP_WSC_ORACLE,
+        oracleUrl: process.env.WSC_ORACLE,
         blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
         jsonRpcProviderUrl: undefined,
       });
@@ -170,7 +176,11 @@ const App: React.FC = () => {
       />
       {(algorandConnected || cardanoConnected) && (
         <div>
-          <Summary originAddress={originAddress} originBalance={originBalance} isCardano={cardanoConnected}/>
+          <Summary
+            originAddress={originAddress}
+            originBalance={originBalance}
+            isCardano={cardanoConnected}
+          />
           <WrappedSmartContractWalletAssets
             connected={algorandConnected || cardanoConnected}
             address={address}

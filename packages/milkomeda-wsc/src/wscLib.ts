@@ -436,9 +436,14 @@ export class WSCLib {
     });
   }
 
-  async wrap(destination: string | undefined, assetId: string, amount: number): Promise<string> {
+  async wrap(
+    destination: string | undefined,
+    assetId: string,
+    amount: number,
+    lovelaceFee?: number
+  ): Promise<string> {
     if (this.isCardano()) {
-      return await this.ada_wrap(destination, assetId, amount);
+      return await this.ada_wrap(destination, assetId, amount, lovelaceFee);
     } else {
       return await this.algo_wrap(destination, assetId, amount);
     }
@@ -447,7 +452,8 @@ export class WSCLib {
   async ada_wrap(
     destination: string | undefined,
     assetId: string,
-    amount: number
+    amount: number,
+    lovelaceFee?: number
   ): Promise<string> {
     const targetAddress = destination || (await this.eth_getAccount());
     const stargate = await CardanoPendingManager.fetchFromStargate(
@@ -463,7 +469,7 @@ export class WSCLib {
       bridgeAddress,
       this.network
     );
-    return await bridgeActions.wrap(assetId, targetAddress, amount);
+    return await bridgeActions.wrap(assetId, targetAddress, amount, lovelaceFee);
   }
 
   async algo_wrap(
