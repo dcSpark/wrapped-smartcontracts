@@ -5,6 +5,7 @@ export const EVM_ESTIMATED_FEE = 0.01;
 export const DEFAULT_SYMBOL = "TADA";
 export const LOVELACE_UNIT = "lovelace";
 
-export const BRIDGE_URL = "https://bridge-explorer.milkomeda.com/cardano-devnet";
+export const BRIDGE_EXPLORER_URL = "https://bridge-explorer.milkomeda.com/cardano-devnet";
+export const EVM_EXPLORER_URL = "https://explorer-devnet-cardano-evm.c1.milkomeda.com";
 
 export const TX_STATUS_CHECK_INTERVAL = 4000;

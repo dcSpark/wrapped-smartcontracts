@@ -13,7 +13,7 @@ import { Spinner } from "../Common/Spinner";
 import { ethers } from "ethers";
 import { SuccessMessage } from "./WrapStep";
 
-const bridgeAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
+const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const TokenAllowanceStep = ({ nextStep }) => {
   const { tokens } = useContext();
@@ -29,7 +29,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
     abi: erc20ABI,
     functionName: "approve",
     args: [
-      bridgeAddress,
+      BRIDGE_ADDRESS,
       selectedToken != null
         ? ethers.utils.parseUnits(selectedToken?.balance, selectedToken?.decimals)
         : ethers.BigNumber.from(0),
@@ -40,7 +40,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
     },
   });
 
-  const { data, write, isLoading: isWritingContract } = useContractWrite(config);
+  const { data, write, isLoading: isWritingContract, isIdle } = useContractWrite(config);
 
   const {
     isLoading: isWaitingForTxLoading,
@@ -77,17 +77,15 @@ const TokenAllowanceStep = ({ nextStep }) => {
 
         {isSuccess && (
           <>
-            <SuccessMessage
-              message="You've successfully approved token allowance."
-              // txHash={txHash} // TODO: add txHash
-            />
+            <SuccessMessage message="You've successfully approved token allowance." />
             <Button variant="primary" onClick={nextStep}>
               Continue
             </Button>
           </>
         )}
       </StepLargeHeight>
-      {(!isLoadingTx || isError) && (
+
+      {(isIdle || isError) && (
         <Button disabled={!write} variant="primary" onClick={() => write?.()}>
           Grant token allowance
         </Button>

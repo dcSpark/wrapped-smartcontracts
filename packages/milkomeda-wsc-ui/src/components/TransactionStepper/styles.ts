@@ -93,6 +93,9 @@ export const TransactionCompleteContainer = styled.div`
   h1 {
     font-size: 1.25rem;
   }
+  h3 {
+    color: inherit;
+  }
   p {
     font-size: 1rem;
   }

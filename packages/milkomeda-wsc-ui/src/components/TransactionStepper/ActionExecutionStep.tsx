@@ -10,9 +10,12 @@ import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
+import { BRIDGE_EXPLORER_URL, EVM_EXPLORER_URL } from "../../constants/transactionFees";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const { wscActionRef } = useContext();
+  const [evmTxHash, setEvmTxHash] = React.useState<string | undefined>();
+
   const [executionTxStatus, setExecutionTxStatus] = React.useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
@@ -24,7 +27,8 @@ const ActionExecutionStep = ({ nextStep }) => {
     setExecutionTxStatus("pending");
 
     try {
-      await wscActionRef.current();
+      const hash = await wscActionRef.current();
+      setEvmTxHash(hash);
       setExecutionTxStatus("success");
     } catch (err) {
       setExecutionTxStatus("error");
@@ -55,7 +59,10 @@ const ActionExecutionStep = ({ nextStep }) => {
         )}
         {isSuccess && (
           <>
-            <SuccessMessage message="Transaction has been successfully executed." />
+            <SuccessMessage
+              message="Transaction has been successfully executed."
+              href={`${EVM_EXPLORER_URL}/tx/${evmTxHash}`}
+            />
             <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
               Continue
             </Button>

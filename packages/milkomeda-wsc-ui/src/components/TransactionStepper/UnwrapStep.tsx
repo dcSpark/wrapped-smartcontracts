@@ -6,7 +6,6 @@ import {
   StepDescription,
   StepLargeHeight,
   StepTitle,
-  TransactionCompleteContainer,
 } from "./styles";
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
@@ -17,11 +16,11 @@ import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { Spinner } from "../Common/Spinner";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import {
+  BRIDGE_EXPLORER_URL,
   DEFAULT_SYMBOL,
   LOCK_ADA,
   TX_STATUS_CHECK_INTERVAL,
 } from "../../constants/transactionFees";
-import Confetti from "react-confetti";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -32,15 +31,14 @@ const statusUnwrapMessages = {
   [TxStatus.Confirmed]: "Your asset has been successfully unwrapped.",
 };
 
-const UnwrapStep = ({ nextStep, resetSteps }) => {
+const UnwrapStep = ({ nextStep }) => {
   const { wscProvider, tokens, stargateInfo, evmTokenAddress } = useContext();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
-  const { setOpen } = useContext();
+  const [txHash, setTxHash] = React.useState<string | undefined>();
 
-  const [txHash, setTxHash] = React.useState<string | undefined>("asdasdsa");
-  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Confirmed);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
   const isIdle = txStatus === TxStatus.Idle;
   const isLoading =
@@ -133,28 +131,11 @@ const UnwrapStep = ({ nextStep, resetSteps }) => {
           <>
             <SuccessMessage
               message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
-              txHash={txHash}
+              href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
             />
-            <>
-              <TransactionCompleteContainer>
-                <h3>Congratulations! You have successfully completed the entire process.</h3>
-              </TransactionCompleteContainer>
-              <Confetti
-                recycle={false}
-                style={{ position: "absolute", inset: 0, width: "100%" }}
-                initialVelocityX={10}
-                initialVelocityY={10}
-              />
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setOpen(false);
-                  resetSteps();
-                }}
-              >
-                Close
-              </Button>
-            </>
+            <Button variant="primary" onClick={nextStep}>
+              Finish
+            </Button>
           </>
         )}
       </StepLargeHeight>

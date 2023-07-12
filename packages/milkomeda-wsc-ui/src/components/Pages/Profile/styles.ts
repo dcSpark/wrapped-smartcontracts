@@ -31,6 +31,13 @@ export const StepperTransactionContent = styled(motion.div)`
   justify-content: space-between;
   padding: 16px;
 `;
+export const StepperTransactionSuccess = styled(motion.div)`
+  padding: 16px;
+  h1 {
+    font-size: 1.25rem;
+    color: var(--ck-body-color);
+  }
+`;
 
 export const BalanceContainer = styled(motion.div)`
   position: relative;

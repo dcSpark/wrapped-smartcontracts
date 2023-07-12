@@ -23,9 +23,8 @@ import useInterval from "../../hooks/useInterval";
 import { CheckCircle2, LucideInfo } from "lucide-react";
 
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
-import { OrDivider } from "../Common/Modal";
 import Tooltip from "../Common/Tooltip";
-import { BRIDGE_URL, TX_STATUS_CHECK_INTERVAL } from "../../constants/transactionFees";
+import { BRIDGE_EXPLORER_URL, TX_STATUS_CHECK_INTERVAL } from "../../constants/transactionFees";
 import Overview from "../Pages/Overview";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
@@ -77,9 +76,9 @@ export const useSelectedWrapToken = () => {
 const WrapStep = ({ nextStep }) => {
   const { setOpen, defaultCardanoAsset } = useContext();
   const { wscProvider } = useContext();
-  const [txHash, setTxHash] = React.useState<undefined | string>(undefined);
   const { selectedWrapToken } = useSelectedWrapToken();
   const { wrappingFee, adaLocked } = useTransactionFees();
+  const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
@@ -95,7 +94,6 @@ const WrapStep = ({ nextStep }) => {
 
   useInterval(
     async () => {
-      console.log("interval wrap");
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
@@ -128,6 +126,7 @@ const WrapStep = ({ nextStep }) => {
       setTxStatus(TxStatus.Pending);
     } catch (err) {
       setTxStatus(TxStatus.Error);
+
       if (err instanceof Error) {
         setTxStatusError(err.message);
       }
@@ -170,9 +169,9 @@ const WrapStep = ({ nextStep }) => {
           <>
             <SuccessMessage
               message={statusWrapMessages[TxPendingStatus.Confirmed]}
-              txHash={txHash}
+              href={`${BRIDGE_EXPLORER_URL}/wrap/${txHash}`}
             />
-            <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
+            <Button variant="primary" onClick={nextStep}>
               Continue
             </Button>
           </>
@@ -245,22 +244,18 @@ export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = ""
   );
 };
 
-export const SuccessMessage = ({ message, txHash }: { message: string; txHash?: string }) => {
+export const SuccessMessage = ({ message, href }: { message: string; href?: string }) => {
   return (
     <SuccessWrapper>
       <CheckCircle2 />
       <SuccessWrapperMessage>
         <p>{message} </p>
-        {txHash && (
+        {href && (
           <p>
             {" "}
             View on{" "}
-            <TransactionExternalLink
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`${BRIDGE_URL}/wrap/${txHash}`}
-            >
-              Bridge Explorer <ExternalLinkIcon />
+            <TransactionExternalLink target="_blank" rel="noopener noreferrer" href={href}>
+              Explorer <ExternalLinkIcon />
             </TransactionExternalLink>
           </p>
         )}
