@@ -16,14 +16,14 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
 
   const amount =
-    defaultCardanoAsset != null &&
-    selectedWrapToken != null &&
-    convertWeiToTokens({
-      valueWei: defaultCardanoAsset.amount,
-      token: {
-        decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
-      },
-    }).dp(2);
+    defaultCardanoAsset && selectedWrapToken && defaultCardanoAsset.unit === "lovelace"
+      ? convertWeiToTokens({
+          valueWei: defaultCardanoAsset.amount,
+          token: {
+            decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
+          },
+        }).dp(2)
+      : defaultCardanoAsset && new BigNumber(+defaultCardanoAsset.amount).dp(4);
 
   const tranferTotalAmount =
     amount &&
@@ -85,6 +85,9 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
               label="You'll transfer:"
               amount={tranferTotalAmount && amount?.toFixed()}
               assetName={selectedWrapToken?.assetName}
+              tooltipMessage={`Note that tReserveCoin is a cardano token, eg: ${amount?.toFixed()} tReserveCoin is ${amount?.dividedBy(
+                10 ** (selectedWrapToken?.decimals ?? 0)
+              )} RC `}
             />
             <LabelWithBalance
               label=""

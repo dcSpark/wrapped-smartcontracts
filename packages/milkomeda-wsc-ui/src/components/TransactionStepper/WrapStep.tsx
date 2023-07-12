@@ -112,10 +112,7 @@ const WrapStep = ({ nextStep }) => {
               value: defaultCardanoAsset?.amount / 10 ** 18, // unscaled value
               token: { decimals: 6 },
             }).plus(+adaLocked * 10 ** 6) // ADA LOCKED in lovelace
-          : convertWeiToTokens({
-              valueWei: defaultCardanoAsset?.amount,
-              token: { decimals: selectedWrapToken?.decimals },
-            }).dp(0, BigNumber.ROUND_UP);
+          : new BigNumber(defaultCardanoAsset?.amount);
 
       const txHash = await wscProvider?.wrap(
         undefined,
