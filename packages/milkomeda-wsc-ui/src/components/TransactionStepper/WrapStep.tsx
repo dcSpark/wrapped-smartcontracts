@@ -77,7 +77,7 @@ const WrapStep = ({ nextStep }) => {
   const { setOpen, defaultCardanoAsset } = useContext();
   const { wscProvider } = useContext();
   const { selectedWrapToken } = useSelectedWrapToken();
-  const { wrappingFee, adaLocked, unwrappingFee } = useTransactionFees();
+  const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee } = useTransactionFees();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
@@ -114,10 +114,11 @@ const WrapStep = ({ nextStep }) => {
             })
               .plus(+adaLocked * 10 ** 6) // ADA LOCKED in lovelace
               .plus(unwrappingFee.multipliedBy(10 ** 6)) // lovelace unwrapping fee
+              .plus(evmEstimatedFee.multipliedBy(10 ** 6)) // lovelace evm fee
+              .dp(0, BigNumber.ROUND_UP)
           : new BigNumber(defaultCardanoAsset?.amount);
 
-      console.log(defaultCardanoAsset, wrapAmount.toNumber(), "sswrapAmount");
-
+      console.log(wrapAmount, "wrapAmount");
       const txHash = await wscProvider?.wrap(
         undefined,
         selectedWrapToken.unit,

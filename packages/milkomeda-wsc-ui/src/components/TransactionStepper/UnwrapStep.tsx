@@ -36,7 +36,6 @@ const UnwrapStep = ({ nextStep }) => {
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
-  console.log(tokens, "tokens");
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);

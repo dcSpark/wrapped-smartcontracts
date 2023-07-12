@@ -1,6 +1,6 @@
 export const BRIDGE_FEE = 1.1;
 export const LOCK_ADA = 3;
-export const EVM_ESTIMATED_FEE = 0.01;
+export const EVM_ESTIMATED_FEE = 0.1;
 
 export const DEFAULT_SYMBOL = "TADA";
 export const LOVELACE_UNIT = "lovelace";
