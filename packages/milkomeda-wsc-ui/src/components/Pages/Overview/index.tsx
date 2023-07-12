@@ -1,5 +1,5 @@
 import React from "react";
-import { routes, useContext } from "../../ConnectWSC";
+import { useContext } from "../../ConnectWSC";
 
 import { OverviewContent } from "../../Common/Modal/styles";
 
@@ -12,18 +12,19 @@ import { useTransactionFees } from "../../../hooks/useTransactionFees";
 import { DEFAULT_SYMBOL } from "../../../constants/transactionFees";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
-  const { defaultCardanoAsset, stargateInfo, setRoute, setAcceptedWSC } = useContext();
+  const { defaultCardanoAsset, stargateInfo } = useContext();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
 
+  if (defaultCardanoAsset == null) {
+    throw new Error("set your defaultCardanoAsset");
+  }
   const amount =
-    defaultCardanoAsset && selectedWrapToken && defaultCardanoAsset.unit === "lovelace"
+    defaultCardanoAsset?.unit === "lovelace"
       ? convertWeiToTokens({
           valueWei: defaultCardanoAsset.amount,
-          token: {
-            decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken?.decimals,
-          },
-        }).dp(2)
-      : defaultCardanoAsset && new BigNumber(+defaultCardanoAsset.amount).dp(4);
+          token: { decimals: 18 },
+        }).dp(2, BigNumber.ROUND_UP)
+      : new BigNumber(+defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
 
   const tranferTotalAmount =
     amount &&
@@ -33,14 +34,12 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
 
   const isAmountValid =
     tranferTotalAmount &&
-    defaultCardanoAsset != null &&
     selectedWrapToken != null &&
     new BigNumber(tranferTotalAmount).lte(selectedWrapToken.quantity);
 
   const isAboveMinAmount =
     stargateInfo != null &&
     selectedWrapToken != null &&
-    defaultCardanoAsset != null &&
     new BigNumber(defaultCardanoAsset.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
 
   return (
