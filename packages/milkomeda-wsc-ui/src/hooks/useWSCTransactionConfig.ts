@@ -21,15 +21,19 @@ export const useWSCTransactionConfig = ({
   });
 
   useEffect(() => {
-    if (!defaultCardanoToken) return;
-    if (!evmTokenAddress) return;
-    if (!stepTxDirection) return;
-
     context.setDefaultCardanoAsset(defaultCardanoToken);
+  }, [defaultCardanoToken?.amount, defaultCardanoToken?.unit]);
+
+  useEffect(() => {
     context.setEvmTokenAddress(evmTokenAddress);
+  }, [evmTokenAddress]);
+
+  useEffect(() => {
     context.setStepTxDirection(stepTxDirection);
-    if (titleModal) {
-      context.setTitleModalTx(titleModal);
-    }
-  }, [defaultCardanoToken?.amount, defaultCardanoToken?.unit, evmTokenAddress, stepTxDirection]);
+  }, [stepTxDirection]);
+
+  useEffect(() => {
+    if (!titleModal) return;
+    context.setTitleModalTx(titleModal);
+  }, [titleModal]);
 };
