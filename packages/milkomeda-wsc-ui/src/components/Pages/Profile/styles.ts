@@ -7,7 +7,7 @@ export const StepperTransactionContainer = styled(motion.div)`
   width: 100%;
   flex-direction: column;
   gap: 16px;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-right: 20px;
   padding-left: 20px;
   --ck-primary-button-background: rgb(55, 55, 55);
@@ -29,7 +29,7 @@ export const StepperTransactionContent = styled(motion.div)`
   flex-direction: column;
   gap: 16px;
   justify-content: space-between;
-  padding: 16px;
+  padding: 0 16px;
 `;
 export const StepperTransactionSuccess = styled(motion.div)`
   padding: 16px;

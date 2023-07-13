@@ -7,7 +7,7 @@ import { useContext } from "../ConnectWSC";
 import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { OverviewContent } from "../Common/Modal/styles";
 import { BalancesWrapper, ErrorMessage } from "./styles";
-import { DEFAULT_SYMBOL, LOVELACE_UNIT } from "../../constants/transactionFees";
+import { DEFAULT_SYMBOL, LOVELACE_UNIT } from "../../constants/transaction";
 import { OrDivider } from "../Common/Modal";
 
 const Overview = () => {

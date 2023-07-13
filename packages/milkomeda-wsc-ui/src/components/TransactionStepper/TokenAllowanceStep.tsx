@@ -12,6 +12,7 @@ import Button from "../Common/Button";
 import { Spinner } from "../Common/Spinner";
 import { ethers } from "ethers";
 import { SuccessMessage } from "./WrapStep";
+import { EVM_EXPLORER_URL } from "../../constants/transaction";
 
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
@@ -52,14 +53,16 @@ const TokenAllowanceStep = ({ nextStep }) => {
   });
 
   const isLoadingTx = isWritingContract || isWaitingForTxLoading;
+  console.log(data?.hash, "data?.hash");
 
   return (
     <>
       <StepLargeHeight>
-        <StepTitle>Token Allowance: Lacus suspendisse faucibus</StepTitle>
+        <StepTitle>Token Allowance</StepTitle>
         <StepDescription style={{ marginBottom: 30 }}>
-          Porttitor rhoncus dolor purus non. Id cursus metus aliquam eleifend mi in nulla posuere
-          sollicitudin. Lacus suspendisse faucibus interdum posuere lorem.
+          Authorize the seamless transfer of your assets between the EVM and Mainchain networks.
+          Perform a token allowance transaction to enable the subsequent unwrapping and secure
+          transfer of the asset back to your Mainchain wallet.
         </StepDescription>
         {isPreparingLoading && (
           <SpinnerWrapper>
@@ -77,7 +80,11 @@ const TokenAllowanceStep = ({ nextStep }) => {
 
         {isSuccess && (
           <>
-            <SuccessMessage message="You've successfully approved token allowance." />
+            <SuccessMessage
+              message="You've successfully approved token allowance."
+              href={`${EVM_EXPLORER_URL}/tx/${data?.hash}`}
+              viewLabel="EVM Explorer"
+            />
             <Button variant="primary" onClick={nextStep}>
               Continue
             </Button>

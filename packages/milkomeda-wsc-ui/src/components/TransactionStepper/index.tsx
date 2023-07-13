@@ -78,48 +78,44 @@ const TransactionStepper = () => {
           </StepperStep>
         ))}
       </Stepper>
-      <SuccessStep activeStep={activeStep} resetSteps={resetSteps} steps={steps} />
+      {activeStep === steps.length && <SuccessStep resetSteps={resetSteps} />}
     </StepperTransactionContainer>
   );
 };
 export default TransactionStepper;
 
-const SuccessStep = ({ activeStep, steps, resetSteps }) => {
+const SuccessStep = ({ resetSteps }) => {
   const { setOpen } = useContext();
 
   return (
     <StepperTransactionSuccess>
-      {activeStep === steps.length && (
-        <div>
-          <StepTitle style={{ marginBottom: 30 }}>Congratulations!</StepTitle>
-          <StepDescription>
-            You have successfully completed the entire process interacting with WSCs.
-          </StepDescription>
+      <StepTitle style={{ marginBottom: 30 }}>Congratulations!</StepTitle>
+      <StepDescription>
+        Congratulations! Your assets has been unwrapped from the EVM and securely returned to your
+        Mainchain Wallet. You can now manage and utilize your assets on the Mainchain blockchain
+        with ease.
+      </StepDescription>
 
-          <Button
-            variant="primary"
-            onClick={() => {
-              setOpen(false);
-              resetSteps();
-            }}
-          >
-            Close
-          </Button>
-          <Confetti
-            recycle={false}
-            tweenDuration={6000}
-            onConfettiComplete={() => {
-              setOpen(false);
-              resetSteps();
-            }}
-            style={{ position: "absolute", inset: 0, width: "100%" }}
-            initialVelocityX={10}
-            initialVelocityY={10}
-          />
-        </div>
-      )}
+      <Button
+        variant="primary"
+        onClick={() => {
+          setOpen(false);
+          resetSteps();
+        }}
+      >
+        Close
+      </Button>
+      <Confetti
+        recycle={false}
+        tweenDuration={6000}
+        onConfettiComplete={() => {
+          setOpen(false);
+          resetSteps();
+        }}
+        style={{ position: "absolute", inset: 0, width: "100%" }}
+        initialVelocityX={10}
+        initialVelocityY={10}
+      />
     </StepperTransactionSuccess>
   );
 };
-
-//https://bridge-explorer.milkomeda.com/cardano-mainnet/search/tx?query=0xea228841fb53b0b1857c8b60055039216c7e80e8524e559bf9e038c444ea0abd

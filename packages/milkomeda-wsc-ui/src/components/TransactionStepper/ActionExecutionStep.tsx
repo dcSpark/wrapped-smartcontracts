@@ -10,7 +10,7 @@ import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
-import { BRIDGE_EXPLORER_URL, EVM_EXPLORER_URL } from "../../constants/transactionFees";
+import { EVM_EXPLORER_URL } from "../../constants/transaction";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const { wscActionRef } = useContext();
@@ -46,10 +46,11 @@ const ActionExecutionStep = ({ nextStep }) => {
   return (
     <>
       <StepLargeHeight>
-        <StepTitle>Executing Actions: sed do eiusmod tempor incididunt ut labore</StepTitle>
+        <StepTitle>Action execution</StepTitle>
         <StepDescription>
-          Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
-          interdum velit laoreet.
+          Effortlessly execute your desired action within the EVM DApp environment by exchanging
+          your wrapped tokens for the specific asset you wish to transact with. Enjoy a seamless
+          transaction experience within the EVM DApp using Wrapped Smart Contracts!
         </StepDescription>
         {isLoading && (
           <SpinnerWrapper>
@@ -62,6 +63,7 @@ const ActionExecutionStep = ({ nextStep }) => {
             <SuccessMessage
               message="Transaction has been successfully executed."
               href={`${EVM_EXPLORER_URL}/tx/${evmTxHash}`}
+              viewLabel="EVM Explorer"
             />
             <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
               Continue

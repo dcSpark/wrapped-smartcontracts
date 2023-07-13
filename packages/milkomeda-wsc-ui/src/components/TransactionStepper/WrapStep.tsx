@@ -9,6 +9,7 @@ import {
   LabelText,
   LabelWithBalanceContainer,
   SpinnerWrapper,
+  StepDescription,
   StepLargeHeight,
   StepTitle,
   SuccessWrapper,
@@ -24,21 +25,19 @@ import { CheckCircle2, LucideInfo } from "lucide-react";
 
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import Tooltip from "../Common/Tooltip";
-import { BRIDGE_EXPLORER_URL, TX_STATUS_CHECK_INTERVAL } from "../../constants/transactionFees";
+import {
+  BRIDGE_EXPLORER_URL,
+  DEFAULT_SYMBOL,
+  TX_STATUS_CHECK_INTERVAL,
+  TxStatus,
+} from "../../constants/transaction";
 import Overview from "../Pages/Overview";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
+import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
-};
-
-export const TxStatus = {
-  ...TxPendingStatus,
-  Idle: "Idle" as const,
-  Init: "Init" as const,
-  Pending: "Pending" as const,
-  Error: "Error" as const,
 };
 
 const statusWrapMessages = {
@@ -56,6 +55,8 @@ export const useSelectedWrapToken = () => {
 
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
 
+  const adaToken = originTokens.find((t) => t.unit === "lovelace");
+
   React.useEffect(() => {
     if (!defaultCardanoAsset) return;
     const loadOriginToken = async () => {
@@ -70,27 +71,31 @@ export const useSelectedWrapToken = () => {
     loadOriginToken();
   }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
 
-  return { selectedWrapToken };
+  return { selectedWrapToken, adaToken };
 };
 
 const WrapStep = ({ nextStep }) => {
-  const { setOpen, defaultCardanoAsset } = useContext();
-  const { wscProvider } = useContext();
-  const { selectedWrapToken } = useSelectedWrapToken();
-  const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee } = useTransactionFees();
-  const [txHash, setTxHash] = React.useState<string | undefined>();
+  const { setOpen, defaultCardanoAsset, stargateInfo } = useContext();
+  const { wscProvider, stepTxDirection } = useContext();
+  const { selectedWrapToken, adaToken } = useSelectedWrapToken();
+  const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
+    useTransactionFees();
 
-  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
-  const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
-  const isIdle = txStatus === TxStatus.Idle;
-  const isLoading =
-    txStatus === TxStatus.Init ||
-    txStatus === TxStatus.Pending ||
-    txStatus === TxStatus.WaitingL1Confirmation ||
-    txStatus === TxStatus.WaitingBridgeConfirmation ||
-    txStatus === TxStatus.WaitingL2Confirmation;
-  const isError = txStatus === TxStatus.Error;
-  const isSuccess = txStatus === TxStatus.Confirmed;
+  if (!defaultCardanoAsset) {
+    throw new Error("please set your default cardano asset");
+  }
+
+  const {
+    txStatus,
+    txStatusError,
+    setTxStatusError,
+    setTxStatus,
+    isIdle,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useTransactionStatus();
+  const [txHash, setTxHash] = React.useState<string | undefined>();
 
   useInterval(
     async () => {
@@ -102,23 +107,22 @@ const WrapStep = ({ nextStep }) => {
   );
 
   const wrapToken = async () => {
-    if (!selectedWrapToken || !defaultCardanoAsset || !unwrappingFee) return;
+    if (!selectedWrapToken || !unwrappingFee || !defaultCardanoAsset) return;
     setTxStatus(TxStatus.Init);
 
     try {
       const wrapAmount =
-        defaultCardanoAsset?.unit === "lovelace"
+        defaultCardanoAsset.unit === "lovelace"
           ? convertTokensToWei({
-              value: defaultCardanoAsset?.amount / 10 ** 18, // unscaled value
+              value: defaultCardanoAsset.amount / 10 ** 18, // unscaled value
               token: { decimals: 6 },
             })
-              .plus(+adaLocked * 10 ** 6) // ADA LOCKED in lovelace
+              .plus(+adaLocked * 10 ** 6) //  lovelace ADA LOCKED
               .plus(unwrappingFee.multipliedBy(10 ** 6)) // lovelace unwrapping fee
               .plus(evmEstimatedFee.multipliedBy(10 ** 6)) // lovelace evm fee
               .dp(0, BigNumber.ROUND_UP)
-          : new BigNumber(defaultCardanoAsset?.amount);
+          : new BigNumber(defaultCardanoAsset.amount);
 
-      console.log(wrapAmount, "wrapAmount");
       const txHash = await wscProvider?.wrap(
         undefined,
         selectedWrapToken.unit,
@@ -136,35 +140,61 @@ const WrapStep = ({ nextStep }) => {
   };
 
   const formattedAmount =
-    defaultCardanoAsset != null &&
-    selectedWrapToken != null &&
-    convertWeiToTokens({
-      valueWei: defaultCardanoAsset.amount,
-      token: {
-        decimals: defaultCardanoAsset.unit === "lovelace" ? 18 : selectedWrapToken.decimals,
-      },
-    }).dp(2);
+    defaultCardanoAsset.unit === "lovelace"
+      ? convertWeiToTokens({
+          valueWei: defaultCardanoAsset.amount,
+          token: { decimals: 18 },
+        }).dp(2, BigNumber.ROUND_UP)
+      : new BigNumber(defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
 
-  const isAmountValid =
-    selectedWrapToken != null &&
-    defaultCardanoAsset != null &&
-    wrappingFee != null &&
-    formattedAmount
-      ? formattedAmount.plus(wrappingFee).lte(selectedWrapToken?.quantity)
-      : false;
+  const isAmountValid = React.useMemo(() => {
+    if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken) return false;
+    if (stepTxDirection === "buy") {
+      return formattedAmount
+        .plus(bridgeFees)
+        .plus(+adaLocked)
+        .plus(evmEstimatedFee)
+        .lte(selectedWrapToken.quantity);
+    }
+    if (stepTxDirection === "sell") {
+      const adaAmount = convertTokensToWei({
+        value: adaToken?.quantity,
+        token: { decimals: adaToken?.decimals },
+      });
+      return (
+        bridgeFees.plus(adaLocked).plus(evmEstimatedFee).lte(adaAmount) &&
+        formattedAmount.lte(selectedWrapToken.quantity)
+      );
+    }
+  }, [formattedAmount, wrappingFee, bridgeFees, selectedWrapToken]);
 
   return (
     <>
       <StepLargeHeight>
-        <StepTitle>Wrap Tokens</StepTitle>
+        <StepTitle>Wrapping</StepTitle>
+        <StepDescription>
+          Easily facilitate transactions with Wrapped Smart Contracts by converting your Mainchain
+          assets into Milkomeda assets.
+        </StepDescription>
         <Overview selectedWrapToken={selectedWrapToken} />
+
+        {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
+          <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
+        )}
+        {selectedWrapToken != null && !isAmountValid && (
+          <ErrorMessage role="alert">
+            Error: Insufficient balance. Please verify you have enough funds to cover the
+            transaction.
+          </ErrorMessage>
+        )}
+
         {isLoading && (
           <>
             <SpinnerWrapper>
               <Spinner />
               <span>{statusWrapMessages[txStatus]}</span>
             </SpinnerWrapper>
-            <p>Wrapping transaction may take a few minutes (~3m).</p>
+            <p>Wrapping transaction may take a few minutes (~4m).</p>
           </>
         )}
         {isSuccess && (
@@ -172,6 +202,7 @@ const WrapStep = ({ nextStep }) => {
             <SuccessMessage
               message={statusWrapMessages[TxPendingStatus.Confirmed]}
               href={`${BRIDGE_EXPLORER_URL}/wrap/${txHash}`}
+              viewLabel="Milkomeda Bridge Explorer"
             />
             <Button variant="primary" onClick={nextStep}>
               Continue
@@ -246,20 +277,28 @@ export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = ""
   );
 };
 
-export const SuccessMessage = ({ message, href }: { message: string; href?: string }) => {
+export const SuccessMessage = ({
+  message,
+  href,
+  viewLabel = "Explorer",
+}: {
+  message: string;
+  href?: string;
+  viewLabel?: string;
+}) => {
   return (
     <SuccessWrapper>
       <CheckCircle2 />
       <SuccessWrapperMessage>
-        <p>{message} </p>
+        <span>{message} </span>
         {href && (
-          <p>
+          <span>
             {" "}
             View on{" "}
             <TransactionExternalLink target="_blank" rel="noopener noreferrer" href={href}>
-              Explorer <ExternalLinkIcon />
+              {viewLabel} <ExternalLinkIcon />
             </TransactionExternalLink>
-          </p>
+          </span>
         )}
       </SuccessWrapperMessage>
     </SuccessWrapper>

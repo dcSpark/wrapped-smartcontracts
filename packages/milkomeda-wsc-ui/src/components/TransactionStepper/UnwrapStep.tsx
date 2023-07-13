@@ -10,9 +10,9 @@ import {
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import useInterval from "../../hooks/useInterval";
-import { LabelWithBalance, SuccessMessage, TxStatus } from "./WrapStep";
+import { LabelWithBalance, SuccessMessage } from "./WrapStep";
 import BigNumber from "bignumber.js";
-import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
+import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { Spinner } from "../Common/Spinner";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import {
@@ -20,7 +20,11 @@ import {
   DEFAULT_SYMBOL,
   LOCK_ADA,
   TX_STATUS_CHECK_INTERVAL,
-} from "../../constants/transactionFees";
+  TxStatus,
+} from "../../constants/transaction";
+import { OrDivider } from "../Common/Modal";
+import { useTransactionFees } from "../../hooks/useTransactionFees";
+import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -32,23 +36,24 @@ const statusUnwrapMessages = {
 };
 
 const UnwrapStep = ({ nextStep }) => {
-  const { wscProvider, tokens, stargateInfo, evmTokenAddress } = useContext();
+  const { wscProvider, stepTxDirection, destinationBalance, tokens, evmTokenAddress } =
+    useContext();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
   const [txHash, setTxHash] = React.useState<string | undefined>();
+  const { unwrappingFee } = useTransactionFees();
 
-  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
-  const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
-  const isIdle = txStatus === TxStatus.Idle;
-  const isLoading =
-    txStatus === TxStatus.Init ||
-    txStatus === TxStatus.Pending ||
-    txStatus === TxStatus.WaitingL1Confirmation ||
-    txStatus === TxStatus.WaitingBridgeConfirmation ||
-    txStatus === TxStatus.WaitingL2Confirmation;
-  const isError = txStatus === TxStatus.Error;
-  const isSuccess = txStatus === TxStatus.Confirmed;
+  const {
+    txStatus,
+    txStatusError,
+    setTxStatusError,
+    setTxStatus,
+    isIdle,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useTransactionStatus();
 
   useInterval(
     async () => {
@@ -66,14 +71,26 @@ const UnwrapStep = ({ nextStep }) => {
   }, [tokens, evmTokenAddress]);
 
   const unwrapToken = async () => {
-    if (!selectedUnwrapToken || !wscProvider) return;
+    if (!selectedUnwrapToken || !wscProvider || !destinationBalance) return;
     setTxStatus(TxStatus.Init);
+
+    const unwrapOptions = {
+      destination: undefined,
+      assetId: evmTokenAddress,
+      amount:
+        stepTxDirection === "buy"
+          ? new BigNumber(selectedUnwrapToken.balance)
+          : convertTokensToWei({
+              value: new BigNumber(destinationBalance).dp(6).toFixed(),
+              token: { decimals: 18 },
+            }),
+    };
 
     try {
       const txHash = await wscProvider.unwrap(
-        undefined,
-        selectedUnwrapToken.contractAddress,
-        new BigNumber(selectedUnwrapToken.balance)
+        unwrapOptions.destination,
+        unwrapOptions.assetId,
+        unwrapOptions.amount
       );
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
@@ -86,30 +103,47 @@ const UnwrapStep = ({ nextStep }) => {
     }
   };
 
-  const fee =
-    stargateInfo != null ? new BigNumber(stargateInfo?.stargateNativeTokenFeeToL1) : null;
-
   return (
     <>
       <StepLargeHeight>
-        <StepTitle>Unwrap Tokens: Liberating Assets from Wrapper Chains</StepTitle>
+        <StepTitle>Unwrapping</StepTitle>
         <StepDescription>
-          Non enim praesent elementum facilisis leo vel fringilla. Convallis convallis tellus id
-          interdum velit laoreet.
+          Initiate the unwrapping process to retrieve your assets. Wrapped Smart Contracts will
+          seamlessly interact with the Milkomeda Bridge. Once bridge confirmations are complete,
+          your assets will be securely returned to your Mainchain wallet. (edited)
         </StepDescription>
         <BalancesWrapper>
           <LabelWithBalance
-            label="You'll transfer:"
-            amount={
-              selectedUnwrapToken?.balance &&
-              convertWeiToTokens({
-                valueWei: selectedUnwrapToken?.balance,
-                token: selectedUnwrapToken,
-              }).toFixed()
-            }
-            assetName={selectedUnwrapToken?.symbol}
+            label="Bridge fees:"
+            amount={unwrappingFee?.toFixed()}
+            assetName={DEFAULT_SYMBOL}
+            tooltipMessage="This fee is paid to the bridge for unwrapping your token."
           />
-          <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+          <OrDivider />
+
+          {stepTxDirection === "buy" ? (
+            <>
+              <LabelWithBalance
+                label="You'll transfer:"
+                amount={
+                  selectedUnwrapToken?.balance &&
+                  convertWeiToTokens({
+                    valueWei: selectedUnwrapToken?.balance,
+                    token: selectedUnwrapToken,
+                  }).toFixed()
+                }
+                assetName={selectedUnwrapToken?.symbol}
+              />
+              <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+            </>
+          ) : (
+            <LabelWithBalance
+              label="You'll transfer:"
+              amount={destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()}
+              assetName={DEFAULT_SYMBOL}
+              tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
+            />
+          )}
         </BalancesWrapper>
 
         {isLoading && (
@@ -118,7 +152,7 @@ const UnwrapStep = ({ nextStep }) => {
               <Spinner />
               <span>{statusUnwrapMessages[txStatus]}</span>
             </SpinnerWrapper>
-            <p>Unwrapping transaction may take a few minutes (~2m).</p>
+            <p>Unwrapping transaction may take a few minutes (~3m).</p>
           </>
         )}
         {isError && (
@@ -132,6 +166,7 @@ const UnwrapStep = ({ nextStep }) => {
             <SuccessMessage
               message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
               href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+              viewLabel="Milkomeda Bridge Explorer"
             />
             <Button variant="primary" onClick={nextStep}>
               Finish

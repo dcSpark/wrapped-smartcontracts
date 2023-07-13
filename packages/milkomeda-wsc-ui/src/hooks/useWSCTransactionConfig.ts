@@ -31,5 +31,5 @@ export const useWSCTransactionConfig = ({
     if (titleModal) {
       context.setTitleModalTx(titleModal);
     }
-  }, [defaultCardanoToken?.amount, defaultCardanoToken?.amount, evmTokenAddress, stepTxDirection]);
+  }, [defaultCardanoToken?.amount, defaultCardanoToken?.unit, evmTokenAddress, stepTxDirection]);
 };

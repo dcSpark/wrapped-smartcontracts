@@ -1,3 +1,5 @@
+import { TxPendingStatus } from "milkomeda-wsc";
+
 export const BRIDGE_FEE = 1.1;
 export const LOCK_ADA = 3;
 export const EVM_ESTIMATED_FEE = 0.1;
@@ -9,3 +11,11 @@ export const BRIDGE_EXPLORER_URL = "https://bridge-explorer.milkomeda.com/cardan
 export const EVM_EXPLORER_URL = "https://explorer-devnet-cardano-evm.c1.milkomeda.com";
 
 export const TX_STATUS_CHECK_INTERVAL = 4000;
+
+export const TxStatus = {
+  ...TxPendingStatus,
+  Idle: "Idle" as const,
+  Init: "Init" as const,
+  Pending: "Pending" as const,
+  Error: "Error" as const,
+};

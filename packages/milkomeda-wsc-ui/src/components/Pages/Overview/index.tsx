@@ -4,12 +4,12 @@ import { useContext } from "../../ConnectWSC";
 import { OverviewContent } from "../../Common/Modal/styles";
 
 import BigNumber from "bignumber.js";
-import { BalancesWrapper, ErrorMessage } from "../../TransactionStepper/styles";
+import { BalancesWrapper } from "../../TransactionStepper/styles";
 import { LabelWithBalance, WrapToken } from "../../TransactionStepper/WrapStep";
 import { convertWeiToTokens } from "../../../utils/convertWeiToTokens";
 import { OrDivider } from "../../Common/Modal";
 import { useTransactionFees } from "../../../hooks/useTransactionFees";
-import { DEFAULT_SYMBOL } from "../../../constants/transactionFees";
+import { DEFAULT_SYMBOL } from "../../../constants/transaction";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
   const { defaultCardanoAsset, stargateInfo } = useContext();
@@ -19,7 +19,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
     throw new Error("set your defaultCardanoAsset");
   }
   const amount =
-    defaultCardanoAsset?.unit === "lovelace"
+    defaultCardanoAsset.unit === "lovelace"
       ? convertWeiToTokens({
           valueWei: defaultCardanoAsset.amount,
           token: { decimals: 18 },
@@ -32,26 +32,14 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
     stargateInfo != null &&
     amount.plus(bridgeFees).plus(adaLocked).plus(evmEstimatedFee);
 
-  const isAmountValid =
-    tranferTotalAmount &&
-    selectedWrapToken != null &&
-    new BigNumber(tranferTotalAmount).lte(selectedWrapToken.quantity);
-
-  const isAboveMinAmount =
-    stargateInfo != null &&
-    selectedWrapToken != null &&
-    new BigNumber(defaultCardanoAsset.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
-
   return (
     <OverviewContent>
       <BalancesWrapper>
         <LabelWithBalance
           label="You're moving:"
-          amount={defaultCardanoAsset != null && amount && amount.toFixed()}
+          amount={amount?.toFixed()}
           assetName={
-            defaultCardanoAsset?.unit === "lovelace"
-              ? DEFAULT_SYMBOL
-              : selectedWrapToken?.assetName
+            defaultCardanoAsset.unit === "lovelace" ? DEFAULT_SYMBOL : selectedWrapToken?.assetName
           }
         />
         <LabelWithBalance
@@ -96,18 +84,6 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           </>
         )}
       </BalancesWrapper>
-      {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
-        <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
-      )}
-      {selectedWrapToken != null && !isAmountValid && (
-        <ErrorMessage role="alert">Error: Amount exceeds your current balance</ErrorMessage>
-      )}
-      {selectedWrapToken != null && selectedWrapToken.unit === "lovelace" && !isAboveMinAmount && (
-        <ErrorMessage role="alert">
-          Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
-          {DEFAULT_SYMBOL}
-        </ErrorMessage>
-      )}
     </OverviewContent>
   );
 };

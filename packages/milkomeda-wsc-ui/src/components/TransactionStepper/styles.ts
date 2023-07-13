@@ -53,7 +53,7 @@ export const SpinnerWrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 20px 0 40px;
+  padding: 20px 0 35px;
   svg {
     color: #f07d00;
   }
@@ -73,8 +73,7 @@ export const SuccessWrapper = styled.div`
   }
 `;
 export const SuccessWrapperMessage = styled.div`
-  display: flex;
-  gap: 8px;
+  text-align: left;
   a {
     display: inline-flex;
   }
