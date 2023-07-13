@@ -128,18 +128,18 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 0.15s;
 
+  &[aria-current="step"] {
+    background: var(--ck-stepper-current-background-circle);
+  }
+
   &[data-highlighted="true"] {
     background-color: rgb(14, 117, 55);
     color: white;
   }
 
-  &[aria-current="step"] {
-    background: var(--ck-stepper-current-background-circle);
-  }
-
-  &:hover {
-    background-color: rgba(24, 24, 27, 0.9);
-  }
+  //&:hover {
+  //  background-color: rgba(24, 24, 27, 0.9);
+  //}
 
   ${({ $isCompletedStep }) =>
     $isCompletedStep &&

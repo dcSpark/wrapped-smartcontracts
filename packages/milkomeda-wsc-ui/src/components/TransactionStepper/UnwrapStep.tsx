@@ -25,6 +25,7 @@ import {
 import { OrDivider } from "../Common/Modal";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
+import { SuccessStep } from "./index";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -35,8 +36,8 @@ const statusUnwrapMessages = {
   [TxStatus.Confirmed]: "Your asset has been successfully unwrapped.",
 };
 
-const UnwrapStep = ({ nextStep }) => {
-  const { wscProvider, stepTxDirection, destinationBalance, tokens, evmTokenAddress } =
+const UnwrapStep = ({ onFinish, resetSteps }) => {
+  const { wscProvider, stepTxDirection, destinationBalance, tokens, evmTokenAddress, setOpen } =
     useContext();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
@@ -60,6 +61,10 @@ const UnwrapStep = ({ nextStep }) => {
       if (!wscProvider || txHash == null) return;
       const response = await wscProvider.getTxStatus(txHash);
       setTxStatus(response);
+      if (response === TxStatus.Confirmed) {
+        onFinish();
+        return;
+      }
     },
     txHash != null && txStatus !== TxStatus.Confirmed ? TX_STATUS_CHECK_INTERVAL : null
   );
@@ -113,45 +118,49 @@ const UnwrapStep = ({ nextStep }) => {
   return (
     <>
       <StepLargeHeight>
-        <StepTitle>Unwrapping</StepTitle>
-        <StepDescription>
-          Initiate the unwrapping process to retrieve your assets. Wrapped Smart Contracts will
-          seamlessly interact with the Milkomeda Bridge. Once bridge confirmations are complete,
-          your assets will be securely returned to your Mainchain wallet. (edited)
-        </StepDescription>
-        <BalancesWrapper>
-          <LabelWithBalance
-            label="Bridge fees:"
-            amount={unwrappingFee?.toFixed()}
-            assetName={DEFAULT_SYMBOL}
-            tooltipMessage="This fee is paid to the bridge for unwrapping your token."
-          />
-          <OrDivider />
-
-          {stepTxDirection === "buy" ? (
-            <>
+        {!isSuccess && (
+          <>
+            <StepTitle>Unwrapping</StepTitle>
+            <StepDescription>
+              Initiate the unwrapping process to retrieve your assets. Wrapped Smart Contracts will
+              seamlessly interact with the Milkomeda Bridge. Once bridge confirmations are
+              complete, your assets will be securely returned to your Mainchain wallet.
+            </StepDescription>
+            <BalancesWrapper>
               <LabelWithBalance
-                label="You'll transfer:"
-                amount={
-                  selectedUnwrapToken?.balance &&
-                  convertWeiToTokens({
-                    valueWei: selectedUnwrapToken?.balance,
-                    token: selectedUnwrapToken,
-                  }).toFixed()
-                }
-                assetName={selectedUnwrapToken?.symbol}
+                label="Bridge fees:"
+                amount={unwrappingFee?.toFixed()}
+                assetName={DEFAULT_SYMBOL}
+                tooltipMessage="This fee is paid to the bridge for unwrapping your token."
               />
-              <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
-            </>
-          ) : (
-            <LabelWithBalance
-              label="You'll transfer:"
-              amount={destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()}
-              assetName={DEFAULT_SYMBOL}
-              tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
-            />
-          )}
-        </BalancesWrapper>
+              <OrDivider />
+
+              {stepTxDirection === "buy" ? (
+                <>
+                  <LabelWithBalance
+                    label="You'll transfer:"
+                    amount={
+                      selectedUnwrapToken?.balance &&
+                      convertWeiToTokens({
+                        valueWei: selectedUnwrapToken?.balance,
+                        token: selectedUnwrapToken,
+                      }).toFixed()
+                    }
+                    assetName={selectedUnwrapToken?.symbol}
+                  />
+                  <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+                </>
+              ) : (
+                <LabelWithBalance
+                  label="You'll transfer:"
+                  amount={destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()}
+                  assetName={DEFAULT_SYMBOL}
+                  tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
+                />
+              )}
+            </BalancesWrapper>
+          </>
+        )}
 
         {isLoading && (
           <>
@@ -170,13 +179,20 @@ const UnwrapStep = ({ nextStep }) => {
 
         {isSuccess && (
           <>
+            <SuccessStep />
             <SuccessMessage
               message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
               href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
-            <Button variant="primary" onClick={nextStep}>
-              Finish
+            <Button
+              variant="primary"
+              onClick={() => {
+                setOpen(false);
+                resetSteps();
+              }}
+            >
+              Close
             </Button>
           </>
         )}

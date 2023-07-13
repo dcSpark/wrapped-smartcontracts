@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useStepper } from "../Common/Stepper/use-stepper";
 import {
   StepperTransactionContainer,
@@ -13,13 +13,13 @@ import UnwrapStep from "./UnwrapStep";
 import TokenAllowanceStep from "./TokenAllowanceStep";
 import { useContext } from "../ConnectWSC";
 import Confetti from "react-confetti";
-import Button from "../Common/Button";
 import { StepDescription, StepTitle } from "./styles";
 
 const TransactionStepper = () => {
   const { nextStep, activeStep, resetSteps } = useStepper({
     initialStep: 0,
   });
+  const [isWSCTransactionSuccess, setIsWSCTransactionSuccess] = React.useState(false);
   const { stepTxDirection } = useContext();
 
   const steps = useMemo(() => {
@@ -40,7 +40,13 @@ const TransactionStepper = () => {
 
           {
             label: "Milkomeda Unwrapping",
-            children: <UnwrapStep nextStep={nextStep} />,
+            children: (
+              <UnwrapStep
+                onFinish={() => setIsWSCTransactionSuccess(true)}
+                resetSteps={resetSteps}
+              />
+            ),
+            isCompletedStep: isWSCTransactionSuccess,
           },
         ]
       : [
@@ -56,13 +62,18 @@ const TransactionStepper = () => {
             label: "Action Execution",
             children: <ActionExecutionStep nextStep={nextStep} />,
           },
-
           {
             label: "Milkomeda Unwrapping",
-            children: <UnwrapStep nextStep={nextStep} />,
+            children: (
+              <UnwrapStep
+                onFinish={() => setIsWSCTransactionSuccess(true)}
+                resetSteps={resetSteps}
+              />
+            ),
+            isCompletedStep: isWSCTransactionSuccess,
           },
         ];
-  }, [stepTxDirection]);
+  }, [stepTxDirection, isWSCTransactionSuccess]);
 
   return (
     <StepperTransactionContainer>
@@ -78,15 +89,12 @@ const TransactionStepper = () => {
           </StepperStep>
         ))}
       </Stepper>
-      {activeStep === steps.length && <SuccessStep resetSteps={resetSteps} />}
     </StepperTransactionContainer>
   );
 };
 export default TransactionStepper;
 
-const SuccessStep = ({ resetSteps }) => {
-  const { setOpen } = useContext();
-
+export const SuccessStep = () => {
   return (
     <StepperTransactionSuccess>
       <StepTitle style={{ marginBottom: 30 }}>Congratulations!</StepTitle>
@@ -95,23 +103,9 @@ const SuccessStep = ({ resetSteps }) => {
         Mainchain Wallet. You can now manage and utilize your assets on the Mainchain blockchain
         with ease.
       </StepDescription>
-
-      <Button
-        variant="primary"
-        onClick={() => {
-          setOpen(false);
-          resetSteps();
-        }}
-      >
-        Close
-      </Button>
       <Confetti
         recycle={false}
         tweenDuration={6000}
-        onConfettiComplete={() => {
-          setOpen(false);
-          resetSteps();
-        }}
         style={{ position: "absolute", inset: 0, width: "100%" }}
         initialVelocityX={10}
         initialVelocityY={10}

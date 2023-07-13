@@ -2,7 +2,7 @@ import { TxStatus } from "../constants/transaction";
 import React from "react";
 
 export const useTransactionStatus = () => {
-  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Idle);
+  const [txStatus, setTxStatus] = React.useState<keyof typeof TxStatus>(TxStatus.Confirmed);
   const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
 
   const isIdle = txStatus === TxStatus.Idle;

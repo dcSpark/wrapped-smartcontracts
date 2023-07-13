@@ -53,7 +53,6 @@ const TokenAllowanceStep = ({ nextStep }) => {
   });
 
   const isLoadingTx = isWritingContract || isWaitingForTxLoading;
-  console.log(data?.hash, "data?.hash");
 
   return (
     <>

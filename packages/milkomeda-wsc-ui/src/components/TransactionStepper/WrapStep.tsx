@@ -155,7 +155,8 @@ const WrapStep = ({ nextStep }) => {
       : new BigNumber(defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
 
   const isAmountValid = React.useMemo(() => {
-    if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken) return false;
+    if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading)
+      return false;
     if (stepTxDirection === "buy") {
       return formattedAmount
         .plus(bridgeFees)

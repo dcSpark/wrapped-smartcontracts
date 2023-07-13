@@ -10,7 +10,7 @@ export const LOVELACE_UNIT = "lovelace";
 export const BRIDGE_EXPLORER_URL = "https://bridge-explorer.milkomeda.com/cardano-devnet";
 export const EVM_EXPLORER_URL = "https://explorer-devnet-cardano-evm.c1.milkomeda.com";
 
-export const TX_STATUS_CHECK_INTERVAL = 4000;
+export const TX_STATUS_CHECK_INTERVAL = 5000;
 
 export const TxStatus = {
   ...TxPendingStatus,
