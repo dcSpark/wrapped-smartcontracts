@@ -65,8 +65,15 @@ const UnwrapStep = ({ nextStep }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress);
-    if (!selectedToken) return;
+    const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress) ?? {
+      balance: "0",
+      contractAddress: evmTokenAddress,
+      decimals: evmTokenAddress === "" ? "18" : "0",
+      name: "",
+      symbol: "",
+      type: "string",
+    };
+
     setSelectedUnwrapToken(selectedToken);
   }, [tokens, evmTokenAddress]);
 

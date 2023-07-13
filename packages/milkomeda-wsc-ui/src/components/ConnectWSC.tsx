@@ -53,8 +53,8 @@ export type WSCContext = {
   tokens: EVMTokenBalance[];
   stargateInfo: StargateInfo | null;
   destinationBalance: string;
-  originBalance: string;
-  pendingTxs: PendingTx[];
+  // originBalance: string;
+  // pendingTxs: PendingTx[];
   originAddress: string;
   address: string;
 };
@@ -151,8 +151,8 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   const wscActionRef = useRef<WSCAction | null>(null);
 
-  const [originBalance, setOriginBalance] = useState("");
-  const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
+  // const [originBalance, setOriginBalance] = useState("");
+  // const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
   const [originAddress, setOriginAddress] = useState("");
   const [address, setAddress] = useState("");
 
@@ -171,7 +171,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
         const tokenBalances = await provider.getTokenBalances();
         const destinationBalance = await provider.eth_getBalance();
         const stargate = await provider.stargateObject();
-        const pendingTxs = await provider.getPendingTransactions();
+        // const pendingTxs = await provider.getPendingTransactions();
         const originAddress = await provider.origin_getAddress();
         const address = await provider.eth_getAccount();
 
@@ -180,7 +180,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
         setTokens(tokenBalances ?? []);
         setDestinationBalance(destinationBalance);
         setStargateInfo(stargate);
-        setPendingTxs(pendingTxs ?? []);
+        // setPendingTxs(pendingTxs ?? []);
         setOriginAddress(originAddress);
         setAddress(address);
       } catch (e) {
@@ -202,14 +202,14 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     const destinationBalance = await wscProvider.eth_getBalance();
     setDestinationBalance(destinationBalance);
 
-    const originBalance = await wscProvider.origin_getNativeBalance();
-    setOriginBalance(originBalance);
-
-    const pendingTxs = await wscProvider.getPendingTransactions();
-    setPendingTxs(pendingTxs ?? []);
+    // const originBalance = await wscProvider.origin_getNativeBalance();
+    // setOriginBalance(originBalance);
+    //
+    // const pendingTxs = await wscProvider.getPendingTransactions();
+    // setPendingTxs(pendingTxs ?? []);
   }, [wscProvider]);
 
-  useInterval(updateWalletData, wscProvider != null ? 4000 : null);
+  useInterval(updateWalletData, wscProvider != null ? 5000 : null);
 
   useEffect(() => setErrorMessage(null), [route, open]);
 
@@ -232,8 +232,8 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     stargateInfo,
     tokens,
     destinationBalance,
-    originBalance,
-    pendingTxs,
+    // originBalance,
+    // pendingTxs,
     originAddress,
     address,
     //

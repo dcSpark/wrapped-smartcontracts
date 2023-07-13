@@ -60,8 +60,15 @@ export const useSelectedWrapToken = () => {
   React.useEffect(() => {
     if (!defaultCardanoAsset) return;
     const loadOriginToken = async () => {
-      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit);
-      if (!token) return;
+      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit) ?? {
+        unit: "lovelace",
+        quantity: "0",
+        decimals: defaultCardanoAsset.unit === "lovelace" ? 6 : 0,
+        bridgeAllowed: true,
+        assetName: DEFAULT_SYMBOL,
+        fingerprint: undefined,
+      };
+
       const defaultToken = {
         ...token,
         quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
@@ -75,7 +82,7 @@ export const useSelectedWrapToken = () => {
 };
 
 const WrapStep = ({ nextStep }) => {
-  const { setOpen, defaultCardanoAsset, stargateInfo } = useContext();
+  const { setOpen, defaultCardanoAsset } = useContext();
   const { wscProvider, stepTxDirection } = useContext();
   const { selectedWrapToken, adaToken } = useSelectedWrapToken();
   const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
@@ -166,7 +173,7 @@ const WrapStep = ({ nextStep }) => {
         formattedAmount.lte(selectedWrapToken.quantity)
       );
     }
-  }, [formattedAmount, wrappingFee, bridgeFees, selectedWrapToken]);
+  }, [stepTxDirection, formattedAmount, wrappingFee, bridgeFees, selectedWrapToken]);
 
   return (
     <>
