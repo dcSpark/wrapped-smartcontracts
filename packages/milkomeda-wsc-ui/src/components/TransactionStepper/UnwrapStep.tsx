@@ -126,39 +126,43 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               seamlessly interact with the Milkomeda Bridge. Once bridge confirmations are
               complete, your assets will be securely returned to your Mainchain wallet.
             </StepDescription>
-            <BalancesWrapper>
-              <LabelWithBalance
-                label="Bridge fees:"
-                amount={unwrappingFee?.toFixed()}
-                assetName={DEFAULT_SYMBOL}
-                tooltipMessage="This fee is paid to the bridge for unwrapping your token."
-              />
-              <OrDivider />
+            {!isLoading && (
+              <BalancesWrapper>
+                <LabelWithBalance
+                  label="Bridge fees:"
+                  amount={unwrappingFee?.toFixed()}
+                  assetName={DEFAULT_SYMBOL}
+                  tooltipMessage="This fee is paid to the bridge for unwrapping your token."
+                />
+                <OrDivider />
 
-              {stepTxDirection === "buy" ? (
-                <>
+                {stepTxDirection === "buy" ? (
+                  <>
+                    <LabelWithBalance
+                      label="You'll transfer:"
+                      amount={
+                        selectedUnwrapToken?.balance &&
+                        convertWeiToTokens({
+                          valueWei: selectedUnwrapToken?.balance,
+                          token: selectedUnwrapToken,
+                        }).toFixed()
+                      }
+                      assetName={selectedUnwrapToken?.symbol}
+                    />
+                    <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+                  </>
+                ) : (
                   <LabelWithBalance
                     label="You'll transfer:"
                     amount={
-                      selectedUnwrapToken?.balance &&
-                      convertWeiToTokens({
-                        valueWei: selectedUnwrapToken?.balance,
-                        token: selectedUnwrapToken,
-                      }).toFixed()
+                      destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()
                     }
-                    assetName={selectedUnwrapToken?.symbol}
+                    assetName={DEFAULT_SYMBOL}
+                    tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
                   />
-                  <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
-                </>
-              ) : (
-                <LabelWithBalance
-                  label="You'll transfer:"
-                  amount={destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()}
-                  assetName={DEFAULT_SYMBOL}
-                  tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
-                />
-              )}
-            </BalancesWrapper>
+                )}
+              </BalancesWrapper>
+            )}
           </>
         )}
 

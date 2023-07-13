@@ -155,8 +155,7 @@ const WrapStep = ({ nextStep }) => {
       : new BigNumber(defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
 
   const isAmountValid = React.useMemo(() => {
-    if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading)
-      return false;
+    if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading) return;
     if (stepTxDirection === "buy") {
       return formattedAmount
         .plus(bridgeFees)
@@ -189,7 +188,7 @@ const WrapStep = ({ nextStep }) => {
         {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
           <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
         )}
-        {selectedWrapToken != null && !isAmountValid && (
+        {selectedWrapToken != null && isAmountValid === false && (
           <ErrorMessage role="alert">
             Error: Insufficient balance. Please verify you have enough funds to cover the
             transaction.
