@@ -139,6 +139,7 @@ const WrapStep = ({ nextStep }) => {
       setTxStatus(TxStatus.Pending);
     } catch (err) {
       setTxStatus(TxStatus.Error);
+      console.error(err);
 
       if (err instanceof Error) {
         setTxStatusError(err.message);
