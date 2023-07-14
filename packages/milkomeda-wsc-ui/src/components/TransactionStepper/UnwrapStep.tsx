@@ -179,7 +179,9 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               <Spinner />
               <span>{statusUnwrapMessages[txStatus]}</span>
             </SpinnerWrapper>
-            <p>Unwrapping transaction may take a few minutes (~3m).</p>
+            <p style={{ marginBottom: 30 }}>
+              Unwrapping transaction may take a few minutes (~3m).
+            </p>
           </>
         )}
         {isError && (
@@ -207,7 +209,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </Button>
           </>
         )}
-        {txHash && (
+        {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
           <>
             <Alert icon={<AlertTriangleIcon />}>
               <span>
@@ -224,7 +226,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               You may proceed to close this modal and continue using the app.
             </Alert>
 
-            <Button style={{ marginTop: 20 }} variant="primary" onClick={resetSteps}>
+            <Button style={{ marginTop: 40 }} variant="primary" onClick={resetSteps}>
               Continue using the app
             </Button>
           </>
