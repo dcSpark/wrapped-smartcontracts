@@ -114,8 +114,13 @@ const WrapStep = ({ nextStep }) => {
   );
 
   const wrapToken = async () => {
-    if (!selectedWrapToken || !unwrappingFee || !defaultCardanoAsset) return;
+    if (!selectedWrapToken || !unwrappingFee || !defaultCardanoAsset || !wrappingFee) return;
     setTxStatus(TxStatus.Init);
+    const totalFees = adaLocked
+      .multipliedBy(10 ** 6) // lovelace ADA LOCKED
+      .plus(unwrappingFee.multipliedBy(10 ** 6)) // lovelace unwrapping fee
+      .plus(evmEstimatedFee.multipliedBy(10 ** 6)) // lovelace evm fee
+      .plus(wrappingFee.multipliedBy(10 ** 6)); // lovelace wrapping fee
 
     try {
       const wrapAmount =
@@ -124,16 +129,16 @@ const WrapStep = ({ nextStep }) => {
               value: defaultCardanoAsset.amount / 10 ** 18, // unscaled value
               token: { decimals: 6 },
             })
-              .plus(+adaLocked * 10 ** 6) //  lovelace ADA LOCKED
-              .plus(unwrappingFee.multipliedBy(10 ** 6)) // lovelace unwrapping fee
-              .plus(evmEstimatedFee.multipliedBy(10 ** 6)) // lovelace evm fee
+              .plus(totalFees)
+              .minus(wrappingFee.multipliedBy(10 ** 6)) // wrapping fee is already included
               .dp(0, BigNumber.ROUND_UP)
           : new BigNumber(defaultCardanoAsset.amount);
 
       const txHash = await wscProvider?.wrap(
         undefined,
         selectedWrapToken.unit,
-        wrapAmount.toNumber()
+        wrapAmount.toNumber(),
+        defaultCardanoAsset.unit !== "lovelace" ? totalFees.toNumber() : 0
       );
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);

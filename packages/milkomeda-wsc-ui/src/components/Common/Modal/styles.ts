@@ -72,7 +72,6 @@ export const PageContent = styled(motion.div)`
 `;
 export const OverviewContent = styled(motion.div)`
   max-width: 100%;
-  width: 400px;
   margin: auto;
 `;
 export const MainPageContent = styled(motion.div)`

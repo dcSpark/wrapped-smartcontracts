@@ -12,7 +12,7 @@ export const TooltipContainer = styled(motion.div)<{ $size: TooltipSizeProps }>`
   --shadow: var(--ck-tooltip-shadow);
   z-index: 2147483647;
   position: absolute;
-  max-width: 400px;
+  max-width: 350px;
   top: 0;
   left: 0;
   display: flex;

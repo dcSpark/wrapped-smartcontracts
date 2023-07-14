@@ -15,16 +15,15 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
   const { defaultCardanoAsset, stargateInfo } = useContext();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
 
-  if (defaultCardanoAsset == null) {
-    throw new Error("set your defaultCardanoAsset");
-  }
-  const amount =
-    defaultCardanoAsset.unit === "lovelace"
+  const amount = React.useMemo(() => {
+    if (!defaultCardanoAsset) return;
+    return defaultCardanoAsset.unit === "lovelace"
       ? convertWeiToTokens({
           valueWei: defaultCardanoAsset.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
       : new BigNumber(+defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
+  }, [defaultCardanoAsset]);
 
   const tranferTotalAmount =
     amount &&
@@ -39,8 +38,17 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           label="You're moving:"
           amount={amount?.toFixed()}
           assetName={
-            defaultCardanoAsset.unit === "lovelace" ? DEFAULT_SYMBOL : selectedWrapToken?.assetName
+            bridgeFees
+              ? defaultCardanoAsset?.unit === "lovelace"
+                ? DEFAULT_SYMBOL
+                : selectedWrapToken?.assetName
+              : null
           }
+          {...(defaultCardanoAsset?.unit !== "lovelace" && {
+            tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
+              10 ** (selectedWrapToken?.decimals ?? 0)
+            )} RC `,
+          })}
         />
         <LabelWithBalance
           label="Bridge fees:"
@@ -72,9 +80,6 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
               label="You'll transfer:"
               amount={tranferTotalAmount && amount?.toFixed()}
               assetName={selectedWrapToken?.assetName}
-              tooltipMessage={`Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
-                10 ** (selectedWrapToken?.decimals ?? 0)
-              )} RC `}
             />
             <LabelWithBalance
               label=""
