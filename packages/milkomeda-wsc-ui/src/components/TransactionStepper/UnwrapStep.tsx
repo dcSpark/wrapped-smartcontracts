@@ -6,6 +6,7 @@ import {
   StepDescription,
   StepLargeHeight,
   StepTitle,
+  TransactionExternalLink,
 } from "./styles";
 import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
@@ -26,6 +27,8 @@ import { OrDivider } from "../Common/Modal";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { SuccessStep } from "./index";
+import Alert from "../Common/Alert";
+import { AlertTriangleIcon } from "lucide-react";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -63,6 +66,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       setTxStatus(response);
       if (response === TxStatus.Confirmed) {
         onFinish();
+        setTxHash(undefined);
         return;
       }
     },
@@ -200,7 +204,30 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </Button>
           </>
         )}
+        {txHash && (
+          <>
+            <Alert icon={<AlertTriangleIcon />}>
+              <span>
+                If your transaction is taking longer to process, you can check its status{" "}
+              </span>
+              <TransactionExternalLink
+                style={{ display: "inline" }}
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+              >
+                here in the Milkomeda Bridge Explorer.
+              </TransactionExternalLink>{" "}
+              You may proceed to close this modal and continue using the app.
+            </Alert>
+
+            <Button style={{ marginTop: 20 }} variant="primary" onClick={resetSteps}>
+              Continue using the app
+            </Button>
+          </>
+        )}
       </StepLargeHeight>
+
       {(isIdle || isError) && (
         <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
           Confirm Unwrapping
