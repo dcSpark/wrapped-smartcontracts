@@ -9,6 +9,7 @@ const cardanoAddressTReserveCoin =
 const buyOptions = {
   defaultCardanoToken: {
     unit: "lovelace", //default lovelace
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     amount: 10178117048345515637, // 10.17 mADA -> 10 MOR
   },
