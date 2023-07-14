@@ -9,6 +9,7 @@ const cardanoAddressTReserveCoin =
 const buyOptions = {
   defaultCardanoToken: {
     unit: "lovelace", //default lovelace
+    // @ts-ignore
     amount: 10178117048345515637, // 10.17 mADA -> 10 MOR
   },
   evmTokenAddress: reserveCoinAddress,
@@ -28,7 +29,7 @@ const sellOptions = {
 const Home: NextPage = () => {
   const promiseFunction = () => fetch("https://jsonplaceholder.typicode.com/posts/1");
 
-  useWSCTransactionConfig({ ...sellOptions, wscActionCallback: promiseFunction });
+  useWSCTransactionConfig({ ...buyOptions, wscActionCallback: promiseFunction });
 
   return (
     <div
