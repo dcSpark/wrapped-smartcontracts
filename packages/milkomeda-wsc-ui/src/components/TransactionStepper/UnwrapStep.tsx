@@ -77,8 +77,8 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   useEffect(() => {
     const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress) ?? {
       balance: "0",
-      contractAddress: evmTokenAddress,
-      decimals: evmTokenAddress === "" ? "18" : "0",
+      contractAddress: stepTxDirection === "buy" ? evmTokenAddress : "",
+      decimals: stepTxDirection === "buy" ? "0" : "18",
       name: "",
       symbol: "",
       type: "string",
@@ -93,7 +93,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
     const unwrapOptions = {
       destination: undefined,
-      assetId: evmTokenAddress,
+      assetId: stepTxDirection === "buy" ? evmTokenAddress : "",
       amount:
         stepTxDirection === "buy"
           ? new BigNumber(selectedUnwrapToken.balance)

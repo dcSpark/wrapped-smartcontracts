@@ -17,8 +17,7 @@ import { EVM_EXPLORER_URL } from "../../constants/transaction";
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const TokenAllowanceStep = ({ nextStep }) => {
-  const { tokens } = useContext();
-  const { evmTokenAddress } = useContext();
+  const { tokens, evmTokenAddress } = useContext();
 
   const selectedToken = useMemo(
     () => tokens.find((t) => t.contractAddress === evmTokenAddress),
