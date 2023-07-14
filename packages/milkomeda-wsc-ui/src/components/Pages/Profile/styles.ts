@@ -44,7 +44,6 @@ export const BalanceContainer = styled(motion.div)`
 `;
 export const Balance = styled(motion.div)`
   position: relative;
-  min-width: 150px;
   text-align: left;
   display: flex;
   gap: 9px;
@@ -63,8 +62,7 @@ const PlaceholderKeyframes = keyframes`
   100%{ background-position: -100% 0; }
 `;
 export const LoadingBalance = styled(motion.div)`
-  min-width: 150px;
-  margin: 0 auto;
+  max-width: 150px;
   position: relative;
   overflow: hidden;
   border-radius: 10px;

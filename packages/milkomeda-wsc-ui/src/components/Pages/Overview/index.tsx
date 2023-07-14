@@ -72,7 +72,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
               label="You'll transfer:"
               amount={tranferTotalAmount && amount?.toFixed()}
               assetName={selectedWrapToken?.assetName}
-              tooltipMessage={`Note that tReserveCoin is a cardano token, eg: ${amount?.toFixed()} tReserveCoin is ${amount?.dividedBy(
+              tooltipMessage={`Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
                 10 ** (selectedWrapToken?.decimals ?? 0)
               )} RC `}
             />

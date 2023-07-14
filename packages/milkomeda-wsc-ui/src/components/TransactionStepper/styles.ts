@@ -30,18 +30,19 @@ export const OverviewDescription = styled.p`
 
 export const BalancesWrapper = styled.div`
   display: flex;
+  grid-gap: 20px;
   flex-direction: column;
   gap: 20px;
   margin-bottom: 30px;
 `;
 export const LabelWithBalanceContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
   gap: 20px;
   justify-content: center;
 `;
 export const LabelText = styled.div`
-  min-width: 150px;
   text-align: right;
 `;
 export const ErrorMessage = styled.div`

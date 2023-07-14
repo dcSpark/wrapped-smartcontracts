@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import {
   BalancesWrapper,
   ErrorMessage,
+  LabelText,
   SpinnerWrapper,
   StepDescription,
   StepLargeHeight,
@@ -142,8 +143,10 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
                 {stepTxDirection === "buy" ? (
                   <>
+                    <LabelText style={{ alignSelf: "center" }}>You'll transfer</LabelText>
+
                     <LabelWithBalance
-                      label="You'll transfer:"
+                      label="Token:"
                       amount={
                         selectedUnwrapToken?.balance &&
                         convertWeiToTokens({
@@ -153,7 +156,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       }
                       assetName={selectedUnwrapToken?.symbol}
                     />
-                    <LabelWithBalance label="" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+                    <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
                   </>
                 ) : (
                   <LabelWithBalance
