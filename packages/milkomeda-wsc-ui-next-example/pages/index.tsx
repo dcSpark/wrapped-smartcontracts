@@ -28,7 +28,7 @@ const sellOptions = {
 const Home: NextPage = () => {
   const promiseFunction = () => fetch("https://jsonplaceholder.typicode.com/posts/1");
 
-  useWSCTransactionConfig({ ...buyOptions, wscActionCallback: promiseFunction });
+  useWSCTransactionConfig({ ...sellOptions, wscActionCallback: promiseFunction });
 
   return (
     <div

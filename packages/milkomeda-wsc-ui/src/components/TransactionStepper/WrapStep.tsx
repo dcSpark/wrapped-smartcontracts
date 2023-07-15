@@ -71,7 +71,10 @@ export const useSelectedWrapToken = () => {
 
       const defaultToken = {
         ...token,
-        quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
+        quantity:
+          token.unit === "lovelace"
+            ? convertWeiToTokens({ valueWei: token.quantity, token })
+            : new BigNumber(token.quantity),
       };
       setSelectedWrapToken(defaultToken);
     };

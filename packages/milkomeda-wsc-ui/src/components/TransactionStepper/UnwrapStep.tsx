@@ -226,7 +226,14 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               You may proceed to close this modal and continue using the app.
             </Alert>
 
-            <Button style={{ marginTop: 40 }} variant="primary" onClick={resetSteps}>
+            <Button
+              style={{ marginTop: 40 }}
+              variant="primary"
+              onClick={() => {
+                resetSteps();
+                setOpen(false);
+              }}
+            >
               Continue using the app
             </Button>
           </>
