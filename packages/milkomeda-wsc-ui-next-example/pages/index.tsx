@@ -26,9 +26,10 @@ const buyOptions = {
 const sellOptions = {
   defaultCardanoToken: {
     unit: cardanoAddressTReserveCoin,
-    amount: 10000, // amount: 0.01 MOR - 0010000 ReserveCoin -> ~ 0.009 mADA
+    amount: 1000000, // amount: 0.01 MOR - 0010000 ReserveCoin -> ~ 0.009 mADA
+    // amount: 10000, // amount: 0.01 MOR - 0010000 ReserveCoin -> ~ 0.009 mADA
   },
-  evmTokenAddress: "", // default to mTADA
+  evmTokenAddress: reserveCoinAddress, // default to mTADA
   stepTxDirection: "sell" as StepTxDirection,
   titleModal: "Sell Reserve Coin",
 };
@@ -53,14 +54,26 @@ const Home: NextPage = () => {
           wscSmartContractInfo: {
             address: DJED_ADDRESS,
             abi: djedABI.abi as any,
-            functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+            functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI
             args: [
-              account,
+              1000000,
+              "0xb839b4c203dbda1bd53adc82e197e449655b84e9",
               "0000000000000000000000000",
-              "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
+              "0x0232556c83791b8291e9b23bfea7d67405bd9839",
             ],
           },
+          // wscSmartContractInfo: {
+          //   address: DJED_ADDRESS,
+          //   abi: djedABI.abi as any,
+          //   functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+          //   args: [
+          //     account,
+          //     "0000000000000000000000000",
+          //     "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
+          //   ],
+          // },
         }}
+        //     .sellReserveCoins(amount, account, FEE_UI_UNSCALED, UI)
       >
         <ConnectWSCButton />
       </TransactionConfigWSCProvider>

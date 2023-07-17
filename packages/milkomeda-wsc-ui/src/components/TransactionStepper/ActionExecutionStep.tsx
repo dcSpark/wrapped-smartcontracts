@@ -76,8 +76,6 @@ const ActionExecutionStep = ({ nextStep }) => {
   const { prepareContractWriteQuery, contractWriteQuery, waitForTransactionQuery } =
     useWriteSmartContract(wscSmartContractInfo);
 
-  console.log(prepareContractWriteQuery, "prepareContractWriteQuery");
-
   const [executionTxStatus, setExecutionTxStatus] = React.useState<
     "idle" | "pending" | "success" | "error"
   >("idle");
