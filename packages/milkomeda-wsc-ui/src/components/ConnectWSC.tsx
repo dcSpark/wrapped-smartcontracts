@@ -265,7 +265,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     { value },
     <ThemeProvider theme={defaultTheme}>
       {children}
-      <ConnectWSCModal />
+      {/*<ConnectWSCModal />*/}
     </ThemeProvider>
   );
 };

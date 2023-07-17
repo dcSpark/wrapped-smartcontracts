@@ -1,6 +1,13 @@
 import type { NextPage } from "next";
 import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui";
 import { StepTxDirection } from "milkomeda-wsc-ui-test-beta/build/components/ConnectWSC";
+import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
+import { useState } from "react";
+
+import djedABI from "../abi/djed.json";
+import { useAccount } from "wagmi";
+
+const DJED_ADDRESS = "0xc4c0669ea7bff70a6cfa5905a0ba487fc181dc37";
 
 const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 const cardanoAddressTReserveCoin =
@@ -27,7 +34,9 @@ const sellOptions = {
 };
 const Home: NextPage = () => {
   const promiseFunction = () => fetch("https://jsonplaceholder.typicode.com/posts/1");
+  const { address: account } = useAccount();
 
+  const [address, setAddress] = useState("1112");
   useWSCTransactionConfig({ ...sellOptions, wscActionCallback: promiseFunction });
 
   return (
@@ -39,9 +48,36 @@ const Home: NextPage = () => {
         height: "100vh",
       }}
     >
-      <ConnectWSCButton />
+      <TransactionConfigWSCProvider
+        options={{
+          wscSmartContractInfo: {
+            address: DJED_ADDRESS,
+            abi: djedABI.abi as any,
+            functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+            args: [
+              account,
+              "0000000000000000000000000",
+              "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
+            ],
+          },
+        }}
+      >
+        <ConnectWSCButton />
+      </TransactionConfigWSCProvider>
+
+      <button
+        onClick={() => {
+          setAddress("0x66c34c454f8089820c44e0785ee9635c425c9128");
+        }}
+      >
+        update
+      </button>
     </div>
   );
 };
 
 export default Home;
+
+// function WSCButton() {
+//   return <ConnectWSCButton />;
+// }

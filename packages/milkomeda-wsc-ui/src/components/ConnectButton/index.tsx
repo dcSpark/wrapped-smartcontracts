@@ -9,6 +9,7 @@ import { AnimatePresence, Variants, motion } from "framer-motion";
 import { Balance } from "../BalanceButton";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { ResetContainer } from "../../styles";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const contentVariants: Variants = {
   initial: {
