@@ -28,9 +28,13 @@ const customizeDeployedActorYulCode = async (path: string) => {
 
   yulCodeLines.splice(deployedActorIndex + 3, 0, prefixCode);
 
-  const memoryInitIndex =
+  const memoryguardIndex =
     deployedActorIndex +
     yulCodeLines.slice(deployedActorIndex).findIndex((line) => line.match(/memoryguard/g)?.length);
+
+  const memoryInitIndex =
+    memoryguardIndex +
+    yulCodeLines.slice(memoryguardIndex).findIndex((line) => line.match(/mstore/g)?.length);
 
   yulCodeLines.splice(memoryInitIndex + 1, 0, memoryInitSuffixCode);
 
