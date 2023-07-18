@@ -25,7 +25,6 @@ const buyOptions: TransactionConfigWSCOptions = {
     amount: 10000000, // amountUnscaled
   },
   titleModal: "Buy Reserve Coin",
-  stepTxDirection: "buy",
   evmTokenAddress: reserveCoinAddress,
   wscSmartContractInfo: {
     address: DJED_ADDRESS,
@@ -37,7 +36,7 @@ const buyOptions: TransactionConfigWSCOptions = {
       "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
     ],
     overrides: {
-      value: ethers.BigNumber.from("10178117048345515637"), // parse strint
+      value: ethers.BigNumber.from("10178117048345515637"),
     },
   },
 };
@@ -54,7 +53,6 @@ const sellOptions: TransactionConfigWSCOptions = {
     // amount: 977761210430239846,
   },
   titleModal: "Sell Reserve Coin",
-  stepTxDirection: "sell",
   evmTokenAddress: reserveCoinAddress,
   wscSmartContractInfo: {
     address: DJED_ADDRESS,

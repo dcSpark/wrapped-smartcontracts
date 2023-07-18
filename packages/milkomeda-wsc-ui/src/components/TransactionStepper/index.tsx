@@ -15,16 +15,20 @@ import { useContext } from "../ConnectWSC";
 import Confetti from "react-confetti";
 import { StepDescription, StepTitle } from "./styles";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import { LOVELACE_UNIT } from "../../constants/transaction";
 
 const TransactionStepper = () => {
   const { nextStep, activeStep, resetSteps } = useStepper({
     initialStep: 0,
   });
   const [isWSCTransactionSuccess, setIsWSCTransactionSuccess] = React.useState(false);
-  const { options } = useTransactionConfigWSC();
+  const {
+    options: { defaultWrapToken },
+  } = useTransactionConfigWSC();
+  const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
 
   const steps = useMemo(() => {
-    return options.stepTxDirection === "buy"
+    return isWrappingNativeTokenFirst
       ? [
           {
             label: "Cardano Wrapping",
@@ -74,7 +78,7 @@ const TransactionStepper = () => {
             isCompletedStep: isWSCTransactionSuccess,
           },
         ];
-  }, [options.stepTxDirection, isWSCTransactionSuccess]);
+  }, [isWrappingNativeTokenFirst, isWSCTransactionSuccess]);
 
   return (
     <StepperTransactionContainer>

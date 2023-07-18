@@ -21,6 +21,7 @@ import {
   BRIDGE_EXPLORER_URL,
   DEFAULT_SYMBOL,
   LOCK_ADA,
+  LOVELACE_UNIT,
   TX_STATUS_CHECK_INTERVAL,
   TxStatus,
 } from "../../constants/transaction";
@@ -44,8 +45,11 @@ const statusUnwrapMessages = {
 const UnwrapStep = ({ onFinish, resetSteps }) => {
   const { wscProvider, destinationBalance, tokens, setOpen } = useContext();
   const {
-    options: { stepTxDirection, defaultUnwrapToken },
+    options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();
+
+  const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
+
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
@@ -82,8 +86,8 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   useEffect(() => {
     const selectedToken = tokens.find((t) => t.contractAddress === defaultUnwrapToken.unit) ?? {
       balance: "0",
-      contractAddress: stepTxDirection === "buy" ? defaultUnwrapToken.unit : "",
-      decimals: stepTxDirection === "buy" ? "0" : "18",
+      contractAddress: isWrappingNativeTokenFirst ? defaultUnwrapToken.unit : "",
+      decimals: isWrappingNativeTokenFirst ? "0" : "18",
       name: "",
       symbol: DEFAULT_SYMBOL,
       type: "string",
@@ -91,15 +95,14 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
     const defaultToken = {
       ...selectedToken,
-      balance:
-        stepTxDirection === "buy"
-          ? new BigNumber(defaultUnwrapToken.amount).toString()
-          : convertWeiToTokens({
-              valueWei: defaultUnwrapToken.amount,
-              token: { decimals: 18 },
-            })
-              .dp(6)
-              .toFixed(),
+      balance: isWrappingNativeTokenFirst
+        ? new BigNumber(defaultUnwrapToken.amount).toString()
+        : convertWeiToTokens({
+            valueWei: defaultUnwrapToken.amount,
+            token: { decimals: 18 },
+          })
+            .dp(6)
+            .toFixed(),
     };
 
     setSelectedUnwrapToken(defaultToken);
@@ -111,17 +114,16 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
     const unwrapOptions = {
       destination: undefined,
-      assetId: stepTxDirection === "buy" ? selectedUnwrapToken.contractAddress : undefined,
-      amount:
-        stepTxDirection === "buy"
-          ? new BigNumber(defaultUnwrapToken.amount)
-          : convertTokensToWei({
-              value: selectedUnwrapToken.balance,
-              token: { decimals: 6 },
-            })
-              .plus(adaLocked.multipliedBy(10 ** 6))
-              .plus(unwrappingFee?.multipliedBy(10 ** 6))
-              .plus(0.05 * 10 ** 6),
+      assetId: isWrappingNativeTokenFirst ? selectedUnwrapToken.contractAddress : undefined,
+      amount: isWrappingNativeTokenFirst
+        ? new BigNumber(defaultUnwrapToken.amount)
+        : convertTokensToWei({
+            value: selectedUnwrapToken.balance,
+            token: { decimals: 6 },
+          })
+            .plus(adaLocked.multipliedBy(10 ** 6))
+            .plus(unwrappingFee?.multipliedBy(10 ** 6))
+            .plus(0.05 * 10 ** 6),
     };
 
     console.log(unwrapOptions, "unwrapOptions", unwrapOptions.amount.toFixed());
@@ -156,7 +158,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </StepDescription>
             {!isLoading && (
               <BalancesWrapper>
-                {stepTxDirection === "buy" ? null : (
+                {isWrappingNativeTokenFirst ? null : (
                   <>
                     <LabelWithBalance
                       label="Received:"
@@ -185,7 +187,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                   </>
                 )}
 
-                {stepTxDirection === "buy" ? (
+                {isWrappingNativeTokenFirst ? (
                   <>
                     <LabelText style={{ alignSelf: "center" }}>You'll transfer</LabelText>
 

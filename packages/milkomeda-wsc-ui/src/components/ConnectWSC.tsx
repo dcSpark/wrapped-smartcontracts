@@ -44,8 +44,6 @@ type StargateInfo = {
   stargateNativeTokenFeeToL1: number;
 };
 
-export type StepTxDirection = "buy" | "sell";
-
 export type WSCContext = {
   wscProvider: WSCLib | null;
   originTokens: OriginAmount[];

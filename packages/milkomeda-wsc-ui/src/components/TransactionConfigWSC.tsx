@@ -1,7 +1,7 @@
 import React, { createContext, createElement } from "react";
 import ConnectWSCModal from "./ConnectModal";
 import { PrepareWriteContractConfig, PrepareWriteContractResult } from "@wagmi/core";
-import { DefaultToken, StepTxDirection } from "./ConnectWSC";
+import { DefaultToken } from "./ConnectWSC";
 
 type ContextValue = TransactionConfigWSCProviderProps;
 
@@ -19,7 +19,6 @@ export type WscSmartContractInfo = {
 export type TransactionConfigWSCOptions = {
   wscSmartContractInfo: WscSmartContractInfo;
   titleModal?: string;
-  stepTxDirection?: StepTxDirection;
   evmTokenAddress: string;
   defaultWrapToken: DefaultToken;
   defaultUnwrapToken: DefaultToken;

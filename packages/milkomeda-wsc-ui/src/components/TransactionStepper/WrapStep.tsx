@@ -28,6 +28,7 @@ import Tooltip from "../Common/Tooltip";
 import {
   BRIDGE_EXPLORER_URL,
   DEFAULT_SYMBOL,
+  LOVELACE_UNIT,
   TX_STATUS_CHECK_INTERVAL,
   TxStatus,
 } from "../../constants/transaction";
@@ -91,8 +92,9 @@ const WrapStep = ({ nextStep }) => {
   const { setOpen } = useContext();
   const { wscProvider } = useContext();
   const {
-    options: { defaultWrapToken, stepTxDirection },
+    options: { defaultWrapToken },
   } = useTransactionConfigWSC();
+  const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
   const { selectedWrapToken, adaToken } = useSelectedWrapToken();
   const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
     useTransactionFees();
@@ -171,14 +173,7 @@ const WrapStep = ({ nextStep }) => {
 
   const isAmountValid = React.useMemo(() => {
     if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading) return;
-    if (stepTxDirection === "buy") {
-      return formattedAmount
-        .plus(bridgeFees)
-        .plus(+adaLocked)
-        .plus(evmEstimatedFee)
-        .lte(selectedWrapToken.quantity);
-    }
-    if (stepTxDirection === "sell") {
+    if (!isWrappingNativeTokenFirst) {
       const adaAmount = convertTokensToWei({
         value: adaToken?.quantity,
         token: { decimals: adaToken?.decimals },
@@ -188,7 +183,12 @@ const WrapStep = ({ nextStep }) => {
         formattedAmount.lte(selectedWrapToken.quantity)
       );
     }
-  }, [stepTxDirection, formattedAmount, wrappingFee, bridgeFees, selectedWrapToken]);
+    return formattedAmount
+      .plus(bridgeFees)
+      .plus(+adaLocked)
+      .plus(evmEstimatedFee)
+      .lte(selectedWrapToken.quantity);
+  }, [isWrappingNativeTokenFirst, formattedAmount, wrappingFee, bridgeFees, selectedWrapToken]);
 
   return (
     <>

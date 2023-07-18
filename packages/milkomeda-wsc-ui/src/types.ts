@@ -1,1 +1,1 @@
-export type { DefaultToken, StepTxDirection } from "./components/ConnectWSC";
+export type { DefaultToken } from "./components/ConnectWSC";
