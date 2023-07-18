@@ -30,9 +30,7 @@ const customizeDeployedActorYulCode = async (path: string) => {
 
   const memoryInitIndex =
     deployedActorIndex +
-    yulCodeLines
-      .slice(deployedActorIndex)
-      .findIndex((line) => line.match(/mstore\(64, 128\)/g)?.length);
+    yulCodeLines.slice(deployedActorIndex).findIndex((line) => line.match(/memoryguard/g)?.length);
 
   yulCodeLines.splice(memoryInitIndex + 1, 0, memoryInitSuffixCode);
 
