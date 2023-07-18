@@ -3,7 +3,6 @@ import React, { createContext, createElement, useEffect, useState, useCallback }
 
 import defaultTheme from "../styles/defaultTheme";
 
-import ConnectWSCModal from "./ConnectModal";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
@@ -57,6 +56,7 @@ type ContextValue = {
   setConnector: React.Dispatch<React.SetStateAction<Connector>>;
   errorMessage: Error;
   debugMode?: boolean;
+  isWSCProviderConnected?: boolean;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
@@ -201,7 +201,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     pendingTxs,
     originAddress,
     address,
-
+    isWSCProviderConnected: wscProvider != null,
     // Other configuration
     errorMessage,
 

@@ -72,8 +72,8 @@ export const useModal = ({ onConnect, onDisconnect }: UseModalProps = {}) => {
       }
     },
     // Disconnected Routes
-    openOnboarding: () => gotoAndOpen(routes.ONBOARDING),
+    // openOnboarding: () => gotoAndOpen(routes.ONBOARDING),
     // Connected Routes
-    openProfile: () => gotoAndOpen(routes.STEPPER),
+    // openProfile: () => gotoAndOpen(routes.STEPPER),
   };
 };
