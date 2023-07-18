@@ -91,8 +91,7 @@ const ActionExecutionStep = ({ nextStep }) => {
         <Button
           variant="primary"
           disabled={!contractWriteQuery?.write}
-          // @ts-ignore
-          onClick={() => contractWriteQuery?.write()}
+          onClick={() => contractWriteQuery?.write?.()}
         >
           Execute Action
         </Button>
