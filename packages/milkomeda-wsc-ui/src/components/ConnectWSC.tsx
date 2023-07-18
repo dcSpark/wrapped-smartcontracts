@@ -34,7 +34,7 @@ type Error = string | React.ReactNode | null;
 
 export type DefaultToken = {
   unit: string;
-  amount: number;
+  amount: string;
 };
 
 type StargateInfo = {

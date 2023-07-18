@@ -137,7 +137,7 @@ const WrapStep = ({ nextStep }) => {
       const wrapAmount =
         defaultWrapToken.unit === "lovelace"
           ? convertTokensToWei({
-              value: defaultWrapToken.amount / 10 ** 18, // unscaled value
+              value: new BigNumber(defaultWrapToken.amount).dividedBy(10 ** 18), // unscaled value
               token: { decimals: 6 },
             })
               .plus(totalFees)

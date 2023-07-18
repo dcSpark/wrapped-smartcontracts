@@ -3,7 +3,6 @@ import { ConnectWSCButton } from "milkomeda-wsc-ui";
 import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
 
 import djedABI from "../abi/djed.json";
-import { useAccount } from "wagmi";
 import { TransactionConfigWSCOptions } from "milkomeda-wsc-ui-test-beta/build/components/TransactionConfigWSC";
 import { ethers } from "ethers";
 
@@ -18,11 +17,11 @@ const account = "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb";
 const buyOptions: TransactionConfigWSCOptions = {
   defaultWrapToken: {
     unit: "lovelace",
-    amount: 10178117048345515637, // 10.17 mADA -> 10 MOR
+    amount: "10178117048345515637", // 10.17 mADA -> 10 MOR
   },
   defaultUnwrapToken: {
     unit: reserveCoinAddress,
-    amount: 10000000, // amountUnscaled
+    amount: "10000000", // amountUnscaled
   },
   titleModal: "Buy Reserve Coin",
   evmTokenAddress: reserveCoinAddress,
@@ -45,11 +44,11 @@ const buyOptions: TransactionConfigWSCOptions = {
 const sellOptions: TransactionConfigWSCOptions = {
   defaultWrapToken: {
     unit: cardanoAddressTReserveCoin,
-    amount: 1000000, // 1 MOR
+    amount: "1000000", // 1 MOR
   },
   defaultUnwrapToken: {
     unit: "",
-    amount: 977761210430239846,
+    amount: "977761210430239846",
     // amount: 977761210430239846,
   },
   titleModal: "Sell Reserve Coin",
@@ -59,20 +58,18 @@ const sellOptions: TransactionConfigWSCOptions = {
     abi: djedABI.abi as any,
     functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI
     args: [
-      1000000,
+      "1000000",
       "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb",
       "0000000000000000000000000",
       "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
     ],
     overrides: {
-      value: 0,
+      value: ethers.BigNumber.from("0"),
     },
   },
 };
 
 const Home: NextPage = () => {
-  const { address: account } = useAccount();
-
   return (
     <div
       style={{
@@ -90,7 +87,3 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-// function WSCButton() {
-//   return <ConnectWSCButton />;
-// }
