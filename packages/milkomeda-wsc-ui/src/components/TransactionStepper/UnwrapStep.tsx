@@ -190,7 +190,6 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                 {isWrappingNativeTokenFirst ? (
                   <>
                     <LabelText style={{ alignSelf: "center" }}>You'll transfer</LabelText>
-
                     <LabelWithBalance
                       label="Token:"
                       amount={

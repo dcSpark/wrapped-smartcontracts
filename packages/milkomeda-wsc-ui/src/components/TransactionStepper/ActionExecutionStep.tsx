@@ -7,13 +7,12 @@ import {
   StepTitle,
 } from "./styles";
 import Button from "../Common/Button";
-import { useContext } from "../ConnectWSC";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { ethers } from "ethers";
-import { useTransactionConfigWSC, EvmContractRequest } from "../TransactionConfigWSC";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
