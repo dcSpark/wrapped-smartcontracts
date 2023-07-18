@@ -11,6 +11,7 @@ export const useWSCProvider = (): WSCContext => {
     pendingTxs,
     originAddress,
     address,
+    isWSCConnected,
   } = useContext();
 
   return {
@@ -23,5 +24,6 @@ export const useWSCProvider = (): WSCContext => {
     pendingTxs,
     originAddress,
     address,
+    isWSCConnected,
   };
 };

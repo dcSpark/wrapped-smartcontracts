@@ -45,6 +45,7 @@ export type WSCContext = {
   pendingTxs: PendingTx[];
   originAddress: string;
   address: string;
+  isWSCConnected: boolean;
 };
 
 type ContextValue = {
@@ -56,7 +57,7 @@ type ContextValue = {
   setConnector: React.Dispatch<React.SetStateAction<Connector>>;
   errorMessage: Error;
   debugMode?: boolean;
-  isWSCProviderConnected?: boolean;
+  isWSCConnected?: boolean;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
@@ -127,12 +128,13 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   // const [algorandConnected, setAlgorandConnected] = useState(false);
   // const [cardanoConnected, setCardanoConnected] = useState(false);
   // const [network, setNetwork] = useState(null);
+  const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
 
   useEffect(() => {
-    if (!activeConnector?.id?.includes("wsc")) return;
+    if (!isWSCConnected) return;
     const loadWscProvider = async () => {
       try {
-        const provider = await activeConnector.getProvider();
+        const provider = await activeConnector?.getProvider();
         if (!provider) return;
         const originTokens = await provider.origin_getTokenBalances();
         const tokenBalances = await provider.getTokenBalances();
@@ -201,7 +203,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     pendingTxs,
     originAddress,
     address,
-    isWSCProviderConnected: wscProvider != null,
+    isWSCConnected,
     // Other configuration
     errorMessage,
 
