@@ -7,7 +7,7 @@ type ContextValue = TransactionConfigWSCProviderProps;
 
 export const TransactionConfigWSCContext = createContext<ContextValue | null>(null);
 
-export type WscSmartContractInfo = {
+export type EvmContractRequest = {
   address: string;
   abi: PrepareWriteContractResult["abi"];
   functionName: string;
@@ -17,7 +17,7 @@ export type WscSmartContractInfo = {
 };
 
 export type TransactionConfigWSCOptions = {
-  wscSmartContractInfo: WscSmartContractInfo;
+  evmContractRequest: EvmContractRequest;
   titleModal?: string;
   evmTokenAddress: string;
   defaultWrapToken: DefaultToken;

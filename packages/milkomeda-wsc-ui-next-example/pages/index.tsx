@@ -26,7 +26,7 @@ const buyOptions: TransactionConfigWSCOptions = {
   },
   titleModal: "Buy Reserve Coin",
   evmTokenAddress: reserveCoinAddress,
-  wscSmartContractInfo: {
+  evmContractRequest: {
     address: DJED_ADDRESS,
     abi: djedABI.abi as any,
     functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
@@ -54,7 +54,7 @@ const sellOptions: TransactionConfigWSCOptions = {
   },
   titleModal: "Sell Reserve Coin",
   evmTokenAddress: reserveCoinAddress,
-  wscSmartContractInfo: {
+  evmContractRequest: {
     address: DJED_ADDRESS,
     abi: djedABI.abi as any,
     functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI

@@ -13,23 +13,23 @@ import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { ethers } from "ethers";
-import { useTransactionConfigWSC, WscSmartContractInfo } from "../TransactionConfigWSC";
+import { useTransactionConfigWSC, EvmContractRequest } from "../TransactionConfigWSC";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
-    options: { wscSmartContractInfo },
+    options: { evmContractRequest },
   } = useTransactionConfigWSC();
-  console.log(wscSmartContractInfo, "wscSmartContractInfo");
+  console.log(evmContractRequest, "evmContractRequest");
 
   const prepareContractWriteQuery = usePrepareContractWrite({
-    address: wscSmartContractInfo.address as `0x${string}`,
-    abi: wscSmartContractInfo.abi,
-    functionName: wscSmartContractInfo.functionName as any,
-    args: wscSmartContractInfo.args,
-    enabled: wscSmartContractInfo.enabled,
+    address: evmContractRequest.address as `0x${string}`,
+    abi: evmContractRequest.abi,
+    functionName: evmContractRequest.functionName as any,
+    args: evmContractRequest.args,
+    enabled: evmContractRequest.enabled,
     overrides: {
       gasLimit: ethers.BigNumber.from(1_000_000),
-      ...wscSmartContractInfo.overrides,
+      ...evmContractRequest.overrides,
     },
   });
   console.log(prepareContractWriteQuery, "prepareContractWriteQuery");
