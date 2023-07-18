@@ -23,7 +23,7 @@ contract Actor {
     uint256 private constant G_REFUND_CALL = 6_800;
     // Cost of other opcodes than call after calling last gasleft()
     // It is dependent on the optimizer outcome
-    uint256 private constant G_REFUND_OVERHEAD = 236;
+    uint256 private constant G_REFUND_OVERHEAD = 269;
     // Gas reserve for refund
     uint256 private constant G_REFUND_RESERVE = 15_000;
 
@@ -36,6 +36,7 @@ contract Actor {
     L1Type private l1Type;
 
     event Response(bool success);
+    event DebugResponse(bool success, bytes data);
 
     /**
      * @param _mainchainAddress Mainchain address of the user
@@ -57,6 +58,20 @@ contract Actor {
      * @param key CIP-8 signature public key
      */
     function execute(bytes calldata signature, bytes calldata key) external {
+        _execute(signature, key, false);
+    }
+
+    /**
+     * @dev Same as execute, but returns the response data from the destination contract in the event.
+     *
+     * @param signature CIP-8 signature
+     * @param key CIP-8 signature public key
+     */
+    function debug(bytes calldata signature, bytes calldata key) external {
+        _execute(signature, key, true);
+    }
+
+    function _execute(bytes calldata signature, bytes calldata key, bool debugMode) internal {
         // First transaction can be executed by factory with `deployAndExecute`
         require(
             (nonce == 0 && msg.sender == actorFactory) || msg.sender == tx.origin,
@@ -100,12 +115,24 @@ contract Actor {
 
         nonce++;
 
-        // Leave enough gas for refund
-        (bool destCallSuccess, ) = to.call{value: value, gas: gasleft() - G_REFUND_RESERVE}(
-            payload
-        );
+        // Destination could respond with huge amount of data which could cause OOG,
+        // therefore we don't load the response data to the memory.
+        if (debugMode) {
+            // Leave enough gas for refund
+            (bool destCallSuccess, bytes memory responseData) = to.call{
+                value: value,
+                gas: gasleft() - G_REFUND_RESERVE
+            }(payload);
 
-        emit Response(destCallSuccess);
+            emit DebugResponse(destCallSuccess, responseData);
+        } else {
+            // Leave enough gas for refund
+            (bool destCallSuccess, ) = to.call{value: value, gas: gasleft() - G_REFUND_RESERVE}(
+                payload
+            );
+
+            emit Response(destCallSuccess);
+        }
 
         // G_REFUND_OVERHEAD is an adhoc solution to calculate precise refund
         // should be changed in future to calculate precise gas usage of the transfer
