@@ -10,20 +10,24 @@ import { convertWeiToTokens } from "../../../utils/convertWeiToTokens";
 import { OrDivider } from "../../Common/Modal";
 import { useTransactionFees } from "../../../hooks/useTransactionFees";
 import { DEFAULT_SYMBOL } from "../../../constants/transaction";
+import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
-  const { defaultCardanoAsset, stargateInfo } = useContext();
+  const { stargateInfo } = useContext();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
+  const {
+    options: { defaultWrapToken },
+  } = useTransactionConfigWSC();
 
   const amount = React.useMemo(() => {
-    if (!defaultCardanoAsset) return;
-    return defaultCardanoAsset.unit === "lovelace"
+    if (!defaultWrapToken) return;
+    return defaultWrapToken.unit === "lovelace"
       ? convertWeiToTokens({
-          valueWei: defaultCardanoAsset.amount,
+          valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(+defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
-  }, [defaultCardanoAsset]);
+      : new BigNumber(+defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
+  }, [defaultWrapToken]);
 
   const tranferTotalAmount =
     amount &&
@@ -39,12 +43,12 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           amount={amount?.toFixed()}
           assetName={
             bridgeFees
-              ? defaultCardanoAsset?.unit === "lovelace"
+              ? defaultWrapToken?.unit === "lovelace"
                 ? DEFAULT_SYMBOL
                 : selectedWrapToken?.assetName
               : null
           }
-          {...(defaultCardanoAsset?.unit !== "lovelace" && {
+          {...(defaultWrapToken?.unit !== "lovelace" && {
             tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
               10 ** (selectedWrapToken?.decimals ?? 0)
             )} RC `,
@@ -68,7 +72,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           assetName={DEFAULT_SYMBOL}
         />
         <OrDivider />
-        {defaultCardanoAsset?.unit === "lovelace" ? (
+        {defaultWrapToken?.unit === "lovelace" ? (
           <LabelWithBalance
             label="You'll transfer:"
             amount={tranferTotalAmount && tranferTotalAmount?.toFixed()}

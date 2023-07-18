@@ -1,34 +1,79 @@
 import type { NextPage } from "next";
-import { ConnectWSCButton, useWSCTransactionConfig } from "milkomeda-wsc-ui";
-import { StepTxDirection } from "milkomeda-wsc-ui-test-beta/build/components/ConnectWSC";
+import { ConnectWSCButton } from "milkomeda-wsc-ui";
+import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
+
+import djedABI from "../abi/djed.json";
+import { useAccount } from "wagmi";
+import { TransactionConfigWSCOptions } from "milkomeda-wsc-ui-test-beta/build/components/TransactionConfigWSC";
+import { ethers } from "ethers";
+
+const DJED_ADDRESS = "0xc4c0669ea7bff70a6cfa5905a0ba487fc181dc37";
 
 const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
 const cardanoAddressTReserveCoin =
   "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
 
-const buyOptions = {
-  defaultCardanoToken: {
-    unit: "lovelace", //default lovelace
+const account = "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb";
+
+const buyOptions: TransactionConfigWSCOptions = {
+  defaultWrapToken: {
+    unit: "lovelace",
     amount: 10178117048345515637, // 10.17 mADA -> 10 MOR
   },
-  evmTokenAddress: reserveCoinAddress,
-  stepTxDirection: "buy" as StepTxDirection,
-  titleModal: "Buy Reserve Coin",
-};
-
-const sellOptions = {
-  defaultCardanoToken: {
-    unit: cardanoAddressTReserveCoin,
-    amount: 10000, // amount: 0.01 MOR - 0010000 ReserveCoin -> ~ 0.009 mADA
+  defaultUnwrapToken: {
+    unit: reserveCoinAddress,
+    amount: 10000000, // amountUnscaled
   },
-  evmTokenAddress: "", // default to mTADA
-  stepTxDirection: "sell" as StepTxDirection,
-  titleModal: "Sell Reserve Coin",
+  titleModal: "Buy Reserve Coin",
+  stepTxDirection: "buy",
+  evmTokenAddress: reserveCoinAddress,
+  wscSmartContractInfo: {
+    address: DJED_ADDRESS,
+    abi: djedABI.abi as any,
+    functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
+    args: [
+      "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb",
+      "0000000000000000000000000",
+      "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
+    ],
+    overrides: {
+      value: ethers.BigNumber.from("10178117048345515637"), // parse strint
+    },
+  },
 };
-const Home: NextPage = () => {
-  const promiseFunction = () => fetch("https://jsonplaceholder.typicode.com/posts/1");
+``;
 
-  useWSCTransactionConfig({ ...sellOptions, wscActionCallback: promiseFunction });
+const sellOptions: TransactionConfigWSCOptions = {
+  defaultWrapToken: {
+    unit: cardanoAddressTReserveCoin,
+    amount: 1000000, // 1 MOR
+  },
+  defaultUnwrapToken: {
+    unit: "",
+    amount: 977761210430239846,
+    // amount: 977761210430239846,
+  },
+  titleModal: "Sell Reserve Coin",
+  stepTxDirection: "sell",
+  evmTokenAddress: reserveCoinAddress,
+  wscSmartContractInfo: {
+    address: DJED_ADDRESS,
+    abi: djedABI.abi as any,
+    functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI
+    args: [
+      1000000,
+      "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb",
+      "0000000000000000000000000",
+      "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
+    ],
+    overrides: {
+      value: 0,
+    },
+  },
+};
+
+const Home: NextPage = () => {
+  const { address: account } = useAccount();
 
   return (
     <div
@@ -39,9 +84,15 @@ const Home: NextPage = () => {
         height: "100vh",
       }}
     >
-      <ConnectWSCButton />
+      <TransactionConfigWSCProvider options={buyOptions}>
+        <ConnectWSCButton />
+      </TransactionConfigWSCProvider>
     </div>
   );
 };
 
 export default Home;
+
+// function WSCButton() {
+//   return <ConnectWSCButton />;
+// }

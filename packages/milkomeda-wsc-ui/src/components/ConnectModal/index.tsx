@@ -10,7 +10,6 @@ import MobileConnectors from "../Pages/MobileConnectors";
 import ConnectUsing from "./ConnectUsing";
 import DownloadApp from "../Pages/DownloadApp";
 import Profile from "../Pages/Profile";
-import Overview from "../Pages/Overview";
 
 const ConnectModal = () => {
   const context = useContext();
@@ -19,10 +18,7 @@ const ConnectModal = () => {
   const closeable = context.route !== routes.STEPPER && context.route !== routes.CONNECT;
 
   const showBackButton =
-    closeable &&
-    context.route !== routes.CONNECTORS &&
-    context.route !== routes.STEPPER &&
-    context.acceptedWSC;
+    closeable && context.route !== routes.CONNECTORS && context.route !== routes.STEPPER;
 
   const onBack = () => {
     context.setRoute(routes.CONNECTORS);
@@ -39,7 +35,6 @@ const ConnectModal = () => {
 
   function hide() {
     context.setOpen(false);
-    context.setAcceptedWSC(false); // reset tx summary
   }
 
   useEffect(() => {

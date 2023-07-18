@@ -14,16 +14,17 @@ import TokenAllowanceStep from "./TokenAllowanceStep";
 import { useContext } from "../ConnectWSC";
 import Confetti from "react-confetti";
 import { StepDescription, StepTitle } from "./styles";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const TransactionStepper = () => {
   const { nextStep, activeStep, resetSteps } = useStepper({
     initialStep: 0,
   });
   const [isWSCTransactionSuccess, setIsWSCTransactionSuccess] = React.useState(false);
-  const { stepTxDirection } = useContext();
+  const { options } = useTransactionConfigWSC();
 
   const steps = useMemo(() => {
-    return stepTxDirection === "buy"
+    return options.stepTxDirection === "buy"
       ? [
           {
             label: "Cardano Wrapping",
@@ -73,7 +74,7 @@ const TransactionStepper = () => {
             isCompletedStep: isWSCTransactionSuccess,
           },
         ];
-  }, [stepTxDirection, isWSCTransactionSuccess]);
+  }, [options.stepTxDirection, isWSCTransactionSuccess]);
 
   return (
     <StepperTransactionContainer>

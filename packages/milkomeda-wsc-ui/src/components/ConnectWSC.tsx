@@ -32,7 +32,7 @@ export const routes = {
 type Connector = any;
 type Error = string | React.ReactNode | null;
 
-export type DefaultCardanoAsset = {
+export type DefaultToken = {
   unit: string;
   amount: number;
 };
@@ -43,7 +43,6 @@ type StargateInfo = {
   stargateMinNativeTokenToL1: number;
   stargateNativeTokenFeeToL1: number;
 };
-export type WSCAction = () => Promise<any>;
 
 export type StepTxDirection = "buy" | "sell";
 
@@ -58,17 +57,7 @@ export type WSCContext = {
   originAddress: string;
   address: string;
 };
-export type WSCConfig = {
-  defaultCardanoAsset: DefaultCardanoAsset | null;
-  setDefaultCardanoAsset: React.Dispatch<React.SetStateAction<DefaultCardanoAsset | null>>;
-  evmTokenAddress: string;
-  setEvmTokenAddress: React.Dispatch<React.SetStateAction<string>>;
-  wscActionRef: React.MutableRefObject<WSCAction | null>;
-  stepTxDirection: StepTxDirection;
-  setStepTxDirection: React.Dispatch<React.SetStateAction<StepTxDirection>>;
-  titleModalTx: string;
-  setTitleModalTx: React.Dispatch<React.SetStateAction<string>>;
-};
+
 type ContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,15 +66,11 @@ type ContextValue = {
   connector: string;
   setConnector: React.Dispatch<React.SetStateAction<Connector>>;
   errorMessage: Error;
-  acceptedWSC: boolean;
-  setAcceptedWSC: React.Dispatch<React.SetStateAction<boolean>>;
-  // options?: ConnectWSCOptions;
   debugMode?: boolean;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
-  WSCContext &
-  WSCConfig;
+  WSCContext;
 
 export const Context = createContext<ContextValue | null>(null);
 
@@ -134,8 +119,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [connector, setConnector] = useState<string>("");
   const [route, setRoute] = useState<string>(routes.CONNECTORS);
   const [errorMessage, setErrorMessage] = useState<Error>("");
-  // to skip overview page if user accepted
-  const [acceptedWSC, setAcceptedWSC] = useState(false);
 
   // wsc connector
   const { connector: activeConnector } = useAccount();
@@ -144,12 +127,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
   const [destinationBalance, setDestinationBalance] = useState("");
   const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
-  const [defaultCardanoAsset, setDefaultCardanoAsset] = useState<DefaultCardanoAsset | null>(null);
-  const [evmTokenAddress, setEvmTokenAddress] = useState("");
-  const [stepTxDirection, setStepTxDirection] = useState<StepTxDirection>("buy");
-  const [titleModalTx, setTitleModalTx] = useState<string>("");
-
-  const wscActionRef = useRef<WSCAction | null>(null);
 
   const [originBalance, setOriginBalance] = useState("");
   const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
@@ -224,8 +201,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     connector,
     setConnector,
     onConnect,
-    acceptedWSC,
-    setAcceptedWSC,
     // wsc provider
     wscProvider,
     originTokens,
@@ -236,16 +211,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     pendingTxs,
     originAddress,
     address,
-    //
-    defaultCardanoAsset,
-    setDefaultCardanoAsset,
-    evmTokenAddress,
-    setEvmTokenAddress,
-    wscActionRef,
-    stepTxDirection,
-    setStepTxDirection,
-    titleModalTx,
-    setTitleModalTx,
+
     // Other configuration
     errorMessage,
 
@@ -265,7 +231,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     { value },
     <ThemeProvider theme={defaultTheme}>
       {children}
-      <ConnectWSCModal />
+      {/*<ConnectWSCModal />*/}
     </ThemeProvider>
   );
 };

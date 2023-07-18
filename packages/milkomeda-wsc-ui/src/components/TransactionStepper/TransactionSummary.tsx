@@ -9,19 +9,23 @@ import { OverviewContent } from "../Common/Modal/styles";
 import { BalancesWrapper, ErrorMessage } from "./styles";
 import { DEFAULT_SYMBOL, LOVELACE_UNIT } from "../../constants/transaction";
 import { OrDivider } from "../Common/Modal";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const Overview = () => {
-  const { defaultCardanoAsset, stargateInfo, setRoute, setAcceptedWSC } = useContext();
+  const { stargateInfo, setRoute } = useContext();
+  const {
+    options: { defaultWrapToken },
+  } = useTransactionConfigWSC();
   const { selectedWrapToken } = useSelectedWrapToken();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
 
   const amount =
-    defaultCardanoAsset != null &&
+    defaultWrapToken != null &&
     selectedWrapToken != null &&
     convertWeiToTokens({
-      valueWei: defaultCardanoAsset.amount,
+      valueWei: defaultWrapToken.amount,
       token: {
-        decimals: defaultCardanoAsset.unit === LOVELACE_UNIT ? 18 : selectedWrapToken?.decimals,
+        decimals: defaultWrapToken.unit === LOVELACE_UNIT ? 18 : selectedWrapToken?.decimals,
       },
     }).dp(2);
 
@@ -33,24 +37,24 @@ const Overview = () => {
 
   const isAmountValid =
     tranferTotalAmount &&
-    defaultCardanoAsset != null &&
+    defaultWrapToken != null &&
     selectedWrapToken != null &&
     new BigNumber(tranferTotalAmount).lte(selectedWrapToken.quantity);
 
   const isAboveMinAmount =
     stargateInfo != null &&
     selectedWrapToken != null &&
-    defaultCardanoAsset != null &&
-    new BigNumber(defaultCardanoAsset.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
+    defaultWrapToken != null &&
+    new BigNumber(defaultWrapToken.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
 
   return (
     <OverviewContent>
       <BalancesWrapper>
         <LabelWithBalance
           label="You're moving:"
-          amount={defaultCardanoAsset != null && amount && amount.toFixed()}
+          amount={defaultWrapToken != null && amount && amount.toFixed()}
           assetName={
-            defaultCardanoAsset?.unit === LOVELACE_UNIT
+            defaultWrapToken?.unit === LOVELACE_UNIT
               ? DEFAULT_SYMBOL
               : selectedWrapToken?.assetName
           }
@@ -73,7 +77,7 @@ const Overview = () => {
           assetName={DEFAULT_SYMBOL}
         />
         <OrDivider />
-        {defaultCardanoAsset?.unit === LOVELACE_UNIT ? (
+        {defaultWrapToken?.unit === LOVELACE_UNIT ? (
           <LabelWithBalance
             label="You'll transfer:"
             amount={tranferTotalAmount && tranferTotalAmount?.toFixed()}

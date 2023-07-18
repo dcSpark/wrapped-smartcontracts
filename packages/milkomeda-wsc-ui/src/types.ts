@@ -1,1 +1,1 @@
-export type { DefaultCardanoAsset, StepTxDirection, WSCAction } from "./components/ConnectWSC";
+export type { DefaultToken, StepTxDirection } from "./components/ConnectWSC";

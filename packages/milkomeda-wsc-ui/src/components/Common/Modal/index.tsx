@@ -33,6 +33,7 @@ import usePrevious from "../../../hooks/usePrevious";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { AuthIcon } from "../../../assets/icons";
 import FitText from "../FitText";
+import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 
 const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
   <div style={{ position: "relative" }}>
@@ -180,7 +181,7 @@ const Modal: React.FC<ModalProps> = ({
 }) => {
   const context = useContext();
   const mobile = isMobile();
-
+  const { options } = useTransactionConfigWSC();
   const connector = supportedConnectors.find((x) => x.id === context.connector);
 
   const [state, setOpen] = useTransition({
@@ -299,7 +300,7 @@ const Modal: React.FC<ModalProps> = ({
       case routes.ONBOARDING:
         return "onboarding";
       case routes.STEPPER:
-        return context.titleModalTx ?? "Wrapped Smart Contract";
+        return options.titleModal ?? "Wrapped Smart Contract";
 
       default:
         return "";

@@ -9,6 +9,7 @@ import { AnimatePresence, Variants, motion } from "framer-motion";
 import { Balance } from "../BalanceButton";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { ResetContainer } from "../../styles";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const contentVariants: Variants = {
   initial: {
@@ -99,6 +100,7 @@ type ConnectKitButtonProps = {
 export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKitButtonProps) {
   const isMounted = useIsMounted();
   const context = useContext();
+  const { options } = useTransactionConfigWSC();
   const { isConnected, address } = useAccount();
 
   function show() {
@@ -157,7 +159,7 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
             >
               <ThemedButton variant={"secondary"} style={{ overflow: "hidden" }}>
                 <motion.div style={{ paddingRight: 24 }}>
-                  {context.titleModalTx || "Interact with WSC"}
+                  {options.titleModal ?? "Interact with WSC"}
                 </motion.div>
               </ThemedButton>
             </motion.div>
