@@ -1,12 +1,11 @@
 import React from "react";
-import { Chain, useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import useIsMounted from "../../hooks/useIsMounted";
 
 import { TextContainer } from "./styles";
 import { routes, useContext } from "../ConnectWSC";
 
 import { AnimatePresence, Variants, motion } from "framer-motion";
-import { Balance } from "../BalanceButton";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { ResetContainer } from "../../styles";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
@@ -33,54 +32,6 @@ const contentVariants: Variants = {
     position: "absolute",
     transition: {
       duration: 0.4,
-      ease: [0.25, 1, 0.5, 1],
-    },
-  },
-};
-
-const addressVariants: Variants = {
-  initial: {
-    zIndex: 2,
-    opacity: 0,
-    x: "100%",
-  },
-  animate: {
-    x: 0.2,
-    opacity: 1,
-    transition: {
-      duration: 0.4,
-      ease: [0.25, 1, 0.5, 1],
-    },
-  },
-  exit: {
-    zIndex: 1,
-    x: "100%",
-    opacity: 0,
-    pointerEvents: "none",
-    position: "absolute",
-    transition: {
-      duration: 0.4,
-      ease: [0.25, 1, 0.5, 1],
-    },
-  },
-};
-
-const textVariants: Variants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: 1,
-    transition: {
-      duration: 0.3,
-      ease: [0.25, 1, 0.5, 1],
-    },
-  },
-  exit: {
-    position: "absolute",
-    opacity: 0,
-    transition: {
-      duration: 0.3,
       ease: [0.25, 1, 0.5, 1],
     },
   },

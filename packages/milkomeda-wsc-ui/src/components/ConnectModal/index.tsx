@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { routes, useContext } from "../ConnectWSC";
 import Modal from "../Common/Modal";
 
@@ -47,7 +47,7 @@ const ConnectModal = () => {
     }
   }, [isConnected]);
 
-  const showInfoButton = closeable && context.route === routes.STEPPER;
+  // const showInfoButton = closeable && context.route === routes.STEPPER;
 
   return (
     <Modal

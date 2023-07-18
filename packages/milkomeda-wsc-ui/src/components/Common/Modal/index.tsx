@@ -5,7 +5,7 @@ import { AnimatePresence, motion, Variants } from "framer-motion";
 import { ResetContainer } from "../../../styles";
 import Portal from "../Portal";
 
-import { flattenChildren, isMobile } from "../../../utils";
+import { isMobile } from "../../../utils";
 
 import {
   Container,
@@ -31,53 +31,53 @@ import FocusTrap from "../../../hooks/useFocusTrap";
 import { supportedConnectors } from "../../../index";
 import usePrevious from "../../../hooks/usePrevious";
 import { useNetwork, useSwitchNetwork } from "wagmi";
-import { AuthIcon } from "../../../assets/icons";
+
 import FitText from "../FitText";
 import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 
-const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
-  <div style={{ position: "relative" }}>
-    {isSignedIn ? (
-      <AuthIcon
-        style={{
-          bottom: -1,
-          right: -1,
-        }}
-      />
-    ) : (
-      <div
-        style={{
-          zIndex: 2,
-          position: "absolute",
-          top: -2,
-          right: -2,
-          background: "#1A88F8",
-          borderRadius: 8,
-          boxShadow: "0 0 0 2px var(--ck-body-background)",
-          width: 8,
-          height: 8,
-        }}
-      />
-    )}
-    <svg
-      aria-hidden="true"
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ overflow: "visible" }}
-    >
-      <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
-      <path
-        d="M16.5 16.775C14.8618 15.0649 12.5552 14 10 14C7.44477 14 5.13825 15.0649 3.5 16.775"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <circle cx="10" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  </div>
-);
+// const ProfileIcon = ({ isSignedIn }: { isSignedIn?: boolean }) => (
+//   <div style={{ position: "relative" }}>
+//     {isSignedIn ? (
+//       <AuthIcon
+//         style={{
+//           bottom: -1,
+//           right: -1,
+//         }}
+//       />
+//     ) : (
+//       <div
+//         style={{
+//           zIndex: 2,
+//           position: "absolute",
+//           top: -2,
+//           right: -2,
+//           background: "#1A88F8",
+//           borderRadius: 8,
+//           boxShadow: "0 0 0 2px var(--ck-body-background)",
+//           width: 8,
+//           height: 8,
+//         }}
+//       />
+//     )}
+//     <svg
+//       aria-hidden="true"
+//       width="20"
+//       height="20"
+//       viewBox="0 0 20 20"
+//       fill="none"
+//       xmlns="http://www.w3.org/2000/svg"
+//       style={{ overflow: "visible" }}
+//     >
+//       <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" />
+//       <path
+//         d="M16.5 16.775C14.8618 15.0649 12.5552 14 10 14C7.44477 14 5.13825 15.0649 3.5 16.775"
+//         stroke="currentColor"
+//         strokeWidth="2"
+//       />
+//       <circle cx="10" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
+//     </svg>
+//   </div>
+// );
 export const InfoIcon = ({ ...props }) => (
   <svg
     aria-hidden="true"
@@ -516,8 +516,8 @@ const Page: React.FC<PageProps> = ({
   children,
   open,
   initial,
-  prevDepth,
-  currentDepth,
+  // prevDepth,
+  // currentDepth,
   enterAnim,
   exitAnim,
 }) => {

@@ -29,11 +29,7 @@ const buyOptions: TransactionConfigWSCOptions = {
     address: DJED_ADDRESS,
     abi: djedABI.abi as any,
     functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
-    args: [
-      "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb",
-      "0000000000000000000000000",
-      "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
-    ],
+    args: [account, "0000000000000000000000000", "0x0232556C83791b8291E9b23BfEa7d67405Bd9839"],
     overrides: {
       value: ethers.BigNumber.from("10178117048345515637"),
     },
@@ -59,7 +55,7 @@ const sellOptions: TransactionConfigWSCOptions = {
     functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI
     args: [
       "1000000",
-      "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb",
+      account,
       "0000000000000000000000000",
       "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
     ],
