@@ -11,7 +11,6 @@ import WrapStep from "./WrapStep";
 import ActionExecutionStep from "./ActionExecutionStep";
 import UnwrapStep from "./UnwrapStep";
 import TokenAllowanceStep from "./TokenAllowanceStep";
-import { useContext } from "../ConnectWSC";
 import Confetti from "react-confetti";
 import { StepDescription, StepTitle } from "./styles";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";

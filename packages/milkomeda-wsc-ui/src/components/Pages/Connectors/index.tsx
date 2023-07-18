@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useContext, routes } from "../../ConnectWSC";
 import supportedConnectors from "../../../constants/supportedConnectors";
 

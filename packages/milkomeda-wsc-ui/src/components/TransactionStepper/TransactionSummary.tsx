@@ -12,7 +12,7 @@ import { OrDivider } from "../Common/Modal";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const Overview = () => {
-  const { stargateInfo, setRoute } = useContext();
+  const { stargateInfo } = useContext();
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();

@@ -43,7 +43,7 @@ const statusUnwrapMessages = {
 };
 
 const UnwrapStep = ({ onFinish, resetSteps }) => {
-  const { wscProvider, destinationBalance, tokens, setOpen } = useContext();
+  const { wscProvider, tokens, setOpen } = useContext();
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();

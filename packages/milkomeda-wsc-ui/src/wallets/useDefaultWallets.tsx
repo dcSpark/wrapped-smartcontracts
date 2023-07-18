@@ -4,8 +4,6 @@ import { WalletProps } from "./wallet";
 import { useConnect } from "wagmi";
 
 function useDefaultWallets(): WalletProps[] | any {
-  const { connectors } = useConnect();
-
   const defaultWallets: string[] = [];
 
   // define the order of the wallets

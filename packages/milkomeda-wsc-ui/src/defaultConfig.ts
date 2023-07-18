@@ -2,7 +2,6 @@ import { Connector, configureChains, ChainProviderFn } from "wagmi";
 import { Chain } from "wagmi/chains";
 
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { publicProvider } from "wagmi/providers/public";
 import { CardanoWSCConnector } from "./wsc-cardano-connector";
 // import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi"; //TODO: fix this
 

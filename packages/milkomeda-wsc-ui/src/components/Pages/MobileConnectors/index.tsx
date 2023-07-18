@@ -8,19 +8,6 @@ import { routes, useContext } from "../../ConnectWSC";
 import { WalletProps } from "../../../wallets/wallet";
 import CopyToClipboard from "../../Common/CopyToClipboard";
 
-import { Spinner } from "../../Common/Spinner";
-
-const MoreIcon = (
-  <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M30 42V19M19 30.5H42"
-      stroke="var(--ck-body-color-muted)"
-      strokeWidth="3"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
 const MobileConnectors: React.FC = () => {
   const context = useContext();
 

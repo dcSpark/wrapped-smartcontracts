@@ -1,4 +1,4 @@
-import { Theme, ThemeMode, CustomTheme } from "./types";
+import { Theme, CustomTheme } from "./types";
 
 const defaultLightTheme: Theme = {
   font: {

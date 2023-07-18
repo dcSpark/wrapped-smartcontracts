@@ -1,7 +1,6 @@
 import { keyframes } from "styled-components";
 import styled from "../../../styles/styled";
 import { motion } from "framer-motion";
-import defaultTheme from "../../../constants/defaultTheme";
 
 export const Balance = styled(motion.div)`
   position: relative;
