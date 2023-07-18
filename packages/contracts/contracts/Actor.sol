@@ -21,8 +21,8 @@ contract Actor {
     uint256 private constant G_GAS_OPCODE = 2;
     // Cost of call opcode
     uint256 private constant G_REFUND_CALL = 6_800;
-    // Cost of other opcodes than call after calling las gasleft()
-    uint256 private constant G_REFUND_OVERHEAD = 236;
+    // Cost of other opcodes than call after calling last gasleft()
+    uint256 private constant G_REFUND_OVERHEAD = 340;
     // Gas reserve for refund
     uint256 private constant G_REFUND_RESERVE = 15_000;
 
@@ -118,12 +118,11 @@ contract Actor {
     /**
      * @dev The logic to store tx.gasLimit is injected at the beginning of the contract bytecode mid compilation.
      */
-    function getProvidedGasLimit() internal view returns (uint256) {
+    function getProvidedGasLimit() internal pure returns (uint256) {
         uint256 remainingGasLimit;
-        bytes32 storageSlot = keccak256("tx.gasLimit");
 
         assembly {
-            remainingGasLimit := sload(storageSlot)
+            remainingGasLimit := mload(0x80)
         }
 
         return remainingGasLimit + G_GAS_OPCODE;

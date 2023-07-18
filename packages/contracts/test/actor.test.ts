@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import type { Actor, Counter, InfiniteLoop } from "../typechain-types";
+import type { Actor, Counter, InfiniteLoop, Utils } from "../typechain-types";
 import { ResponseEvent } from "../typechain-types/Actor";
 import {
   encodePayload,
@@ -19,6 +19,7 @@ describe("Actor", () => {
   let actor: Actor;
   let counter: Counter;
   let infiniteLoop: InfiniteLoop;
+  let utils: Utils;
 
   before(async () => {
     const factory = await getActorFactory();
@@ -42,13 +43,35 @@ describe("Actor", () => {
     const infiniteLoopFactory = await ethers.getContractFactory("InfiniteLoop");
     infiniteLoop = await infiniteLoopFactory.deploy();
 
+    const utilsFactory = await ethers.getContractFactory("Utils");
+    utils = await utilsFactory.deploy();
+
     await Promise.all([
       depositGasTx.wait(),
       deployTx.wait(),
       counter.deployed(),
       infiniteLoop.deployed(),
+      utils.deployed(),
     ]);
   });
+
+  it("should transfer ether to actor from smart contract", async () => {
+    // Arrange
+    const actorBeforeBalance = await ethers.provider.getBalance(actorAddress);
+    const amount = ethers.utils.parseEther("10");
+
+    // Act
+    const tx = await utils.sendEtherTo(actor.address, { value: amount, gasLimit: 40_000 });
+
+    await tx.wait();
+
+    // Assert
+    expect(await ethers.provider.getBalance(actorAddress)).to.equal(
+      actorBeforeBalance.add(amount)
+    );
+  });
+
+  // return;
 
   it("should send ether", async () => {
     // Arrange
