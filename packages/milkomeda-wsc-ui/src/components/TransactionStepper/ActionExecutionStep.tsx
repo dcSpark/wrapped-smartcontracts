@@ -11,98 +11,42 @@ import { useContext } from "../ConnectWSC";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
-import { erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { ethers } from "ethers";
 import { useTransactionConfigWSC, WscSmartContractInfo } from "../TransactionConfigWSC";
-import BigNumber from "bignumber.js";
 
-export function getCallParameters(args): any {
-  return {
-    accessList: args.accessList,
-    account: args.account,
-    blockNumber: args.blockNumber,
-    blockTag: args.blockTag,
-    data: args.data,
-    gas: args.gas,
-    gasPrice: args.gasPrice,
-    maxFeePerGas: args.maxFeePerGas,
-    maxPriorityFeePerGas: args.maxPriorityFeePerGas,
-    nonce: args.nonce,
-    to: args.to,
-    value: args.value,
-  };
-}
+const ActionExecutionStep = ({ nextStep }) => {
+  const {
+    options: { wscSmartContractInfo },
+  } = useTransactionConfigWSC();
+  console.log(wscSmartContractInfo, "wscSmartContractInfo");
 
-export const useWriteSmartContract = ({
-  address,
-  abi,
-  functionName,
-  args = [],
-  overrides,
-  enabled,
-}: WscSmartContractInfo) => {
   const prepareContractWriteQuery = usePrepareContractWrite({
-    address: address as `0x${string}`,
-    abi: abi,
-    functionName: functionName as any,
-    args: args,
-    enabled: enabled,
-    overrides: { gasLimit: ethers.BigNumber.from(500000), ...overrides },
+    address: wscSmartContractInfo.address as `0x${string}`,
+    abi: wscSmartContractInfo.abi,
+    functionName: wscSmartContractInfo.functionName as any,
+    args: wscSmartContractInfo.args,
+    enabled: wscSmartContractInfo.enabled,
+    overrides: {
+      gasLimit: ethers.BigNumber.from(1_000_000),
+      ...wscSmartContractInfo.overrides,
+    },
   });
+  console.log(prepareContractWriteQuery, "prepareContractWriteQuery");
 
   const contractWriteQuery = useContractWrite(prepareContractWriteQuery.config);
+  console.log(contractWriteQuery, "contractWriteQuery");
 
   const waitForTransactionQuery = useWaitForTransaction({
     hash: contractWriteQuery.data?.hash,
     enabled: !!contractWriteQuery.data?.hash,
   });
 
-  return { prepareContractWriteQuery, contractWriteQuery, waitForTransactionQuery };
-};
+  const isIdle = contractWriteQuery.isIdle;
+  const isLoading = contractWriteQuery.isLoading || waitForTransactionQuery.isLoading;
+  const isSuccess = waitForTransactionQuery.isSuccess;
+  const isError = waitForTransactionQuery.isError;
 
-// const useContract = ({ address, abi, functionName, args = [], overrides, enabled }) => {};
-// const getContractConfig = ({ address, abi, functionName, args = [], overrides, enabled }) => {
-//   return { address, abi, functionName, args = [], overrides, enabled };
-// };
-
-const ActionExecutionStep = ({ nextStep }) => {
-  const { wscActionRef } = useContext();
-  const [evmTxHash, setEvmTxHash] = React.useState<string | undefined>();
-  const {
-    options: { wscSmartContractInfo },
-  } = useTransactionConfigWSC();
-  console.log(wscSmartContractInfo, "wscSmartContractInfo");
-
-  const { prepareContractWriteQuery, contractWriteQuery, waitForTransactionQuery } =
-    useWriteSmartContract(wscSmartContractInfo);
-
-  const [executionTxStatus, setExecutionTxStatus] = React.useState<
-    "idle" | "pending" | "success" | "error"
-  >("idle");
-
-  const [txStatusError, setTxStatusError] = React.useState<string | null>(null);
-
-  const onWSCAction = async () => {
-    if (wscActionRef?.current === null) return;
-    setExecutionTxStatus("pending");
-
-    try {
-      const hash = await wscActionRef.current();
-      setEvmTxHash(hash);
-      setExecutionTxStatus("success");
-    } catch (err) {
-      setExecutionTxStatus("error");
-
-      if (err instanceof Error) {
-        setTxStatusError(err.message);
-      }
-    }
-  };
-
-  const isIdle = executionTxStatus === "idle";
-  const isLoading = executionTxStatus === "pending";
-  const isSuccess = executionTxStatus === "success";
-  const isError = executionTxStatus === "error";
   return (
     <>
       <StepLargeHeight>
@@ -112,40 +56,45 @@ const ActionExecutionStep = ({ nextStep }) => {
           your wrapped tokens for the specific asset you wish to transact with. Enjoy a seamless
           transaction experience within the EVM DApp using Wrapped Smart Contracts!
         </StepDescription>
-        <button
-          onClick={() => {
-            // @ts-ignore
-            contractWriteQuery?.write();
-          }}
-        >
-          Submit
-        </button>
+
+        {prepareContractWriteQuery.isLoading && (
+          <SpinnerWrapper>
+            <Spinner />
+            <span>Preparing transaction</span>
+          </SpinnerWrapper>
+        )}
         {isLoading && (
           <SpinnerWrapper>
             <Spinner />
             <span>Executing transaction</span>
           </SpinnerWrapper>
         )}
+        {isError && (
+          <ErrorMessage role="alert">
+            Ups, something went wrong.{" "}
+            {waitForTransactionQuery.error ? `Error: ${waitForTransactionQuery.error}` : ""}{" "}
+          </ErrorMessage>
+        )}
         {isSuccess && (
           <>
             <SuccessMessage
               message="Transaction has been successfully executed."
-              href={`${EVM_EXPLORER_URL}/tx/${evmTxHash}`}
+              href={`${EVM_EXPLORER_URL}/tx/${contractWriteQuery?.data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <Button variant="primary" disabled={!isSuccess} onClick={nextStep}>
+            <Button variant="primary" onClick={nextStep}>
               Continue
             </Button>
           </>
         )}
-        {isError && (
-          <ErrorMessage role="alert">
-            Ups, something went wrong. {txStatusError ? `Error: ${txStatusError}` : ""}{" "}
-          </ErrorMessage>
-        )}
       </StepLargeHeight>
       {(isIdle || isError) && (
-        <Button variant="primary" onClick={onWSCAction}>
+        <Button
+          variant="primary"
+          disabled={!contractWriteQuery?.write}
+          // @ts-ignore
+          onClick={() => contractWriteQuery?.write()}
+        >
           Execute Action
         </Button>
       )}

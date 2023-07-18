@@ -30,6 +30,7 @@ import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { SuccessStep } from "./index";
 import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -41,13 +42,17 @@ const statusUnwrapMessages = {
 };
 
 const UnwrapStep = ({ onFinish, resetSteps }) => {
-  const { wscProvider, stepTxDirection, destinationBalance, tokens, evmTokenAddress, setOpen } =
-    useContext();
+  const { wscProvider, destinationBalance, tokens, setOpen } = useContext();
+  const {
+    options: { stepTxDirection, defaultUnwrapToken },
+  } = useTransactionConfigWSC();
   const [selectedUnwrapToken, setSelectedUnwrapToken] = React.useState<EVMTokenBalance | null>(
     null
   );
   const [txHash, setTxHash] = React.useState<string | undefined>();
-  const { unwrappingFee } = useTransactionFees();
+  const { unwrappingFee, adaLocked } = useTransactionFees();
+
+  console.log(selectedUnwrapToken, "selectedUnwrapToken");
 
   const {
     txStatus,
@@ -75,38 +80,56 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.contractAddress === evmTokenAddress) ?? {
+    const selectedToken = tokens.find((t) => t.contractAddress === defaultUnwrapToken.unit) ?? {
       balance: "0",
-      contractAddress: stepTxDirection === "buy" ? evmTokenAddress : "",
+      contractAddress: stepTxDirection === "buy" ? defaultUnwrapToken.unit : "",
       decimals: stepTxDirection === "buy" ? "0" : "18",
       name: "",
-      symbol: "",
+      symbol: DEFAULT_SYMBOL,
       type: "string",
     };
 
-    setSelectedUnwrapToken(selectedToken);
-  }, [tokens, evmTokenAddress]);
+    const defaultToken = {
+      ...selectedToken,
+      balance:
+        stepTxDirection === "buy"
+          ? new BigNumber(defaultUnwrapToken.amount).toString()
+          : convertWeiToTokens({
+              valueWei: defaultUnwrapToken.amount,
+              token: { decimals: 18 },
+            })
+              .dp(6)
+              .toFixed(),
+    };
+
+    setSelectedUnwrapToken(defaultToken);
+  }, [tokens, defaultUnwrapToken.unit]);
 
   const unwrapToken = async () => {
-    if (!selectedUnwrapToken || !wscProvider || !destinationBalance) return;
+    if (!selectedUnwrapToken || !wscProvider || !unwrappingFee) return;
     setTxStatus(TxStatus.Init);
 
     const unwrapOptions = {
       destination: undefined,
-      assetId: stepTxDirection === "buy" ? evmTokenAddress : "",
+      assetId: stepTxDirection === "buy" ? selectedUnwrapToken.contractAddress : undefined,
       amount:
         stepTxDirection === "buy"
-          ? new BigNumber(selectedUnwrapToken.balance)
+          ? new BigNumber(defaultUnwrapToken.amount)
           : convertTokensToWei({
-              value: new BigNumber(destinationBalance).dp(6).toFixed(),
-              token: { decimals: 18 },
-            }),
+              value: selectedUnwrapToken.balance,
+              token: { decimals: 6 },
+            })
+              .plus(adaLocked.multipliedBy(10 ** 6))
+              .plus(unwrappingFee?.multipliedBy(10 ** 6))
+              .plus(0.05 * 10 ** 6),
     };
+
+    console.log(unwrapOptions, "unwrapOptions", unwrapOptions.amount.toFixed());
 
     try {
       const txHash = await wscProvider.unwrap(
         unwrapOptions.destination,
-        unwrapOptions.assetId,
+        unwrapOptions.assetId!,
         unwrapOptions.amount
       );
       setTxHash(txHash);
@@ -133,13 +156,34 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </StepDescription>
             {!isLoading && (
               <BalancesWrapper>
-                <LabelWithBalance
-                  label="Bridge fees:"
-                  amount={unwrappingFee?.toFixed()}
-                  assetName={DEFAULT_SYMBOL}
-                  tooltipMessage="This fee is paid to the bridge for unwrapping your token."
-                />
-                <OrDivider />
+                {stepTxDirection === "buy" ? null : (
+                  <>
+                    <LabelWithBalance
+                      label="Received:"
+                      amount={
+                        selectedUnwrapToken &&
+                        convertTokensToWei({
+                          value: selectedUnwrapToken.balance,
+                          token: { decimals: 6 },
+                        })
+                          .dividedBy(10 ** 6)
+                          .toFixed()
+                      }
+                      assetName={DEFAULT_SYMBOL}
+                    />
+                    <LabelWithBalance
+                      label="Bridge Lock-up:"
+                      amount={LOCK_ADA}
+                      assetName={DEFAULT_SYMBOL}
+                    />
+                    <LabelWithBalance
+                      label="Bridge fees:"
+                      amount={unwrappingFee?.toFixed()}
+                      assetName={unwrappingFee && DEFAULT_SYMBOL}
+                      tooltipMessage="This fee is paid to the bridge for unwrapping your token."
+                    />
+                  </>
+                )}
 
                 {stepTxDirection === "buy" ? (
                   <>
@@ -150,23 +194,34 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       amount={
                         selectedUnwrapToken?.balance &&
                         convertWeiToTokens({
-                          valueWei: selectedUnwrapToken?.balance,
+                          valueWei: selectedUnwrapToken.balance,
                           token: selectedUnwrapToken,
                         }).toFixed()
                       }
-                      assetName={selectedUnwrapToken?.symbol}
+                      assetName={unwrappingFee && selectedUnwrapToken?.symbol}
                     />
                     <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
                   </>
                 ) : (
-                  <LabelWithBalance
-                    label="You'll transfer:"
-                    amount={
-                      destinationBalance && new BigNumber(destinationBalance).dp(6).toFixed()
-                    }
-                    assetName={DEFAULT_SYMBOL}
-                    tooltipMessage={`Note that we'll wrap your entire ${DEFAULT_SYMBOL} balance. If you want to unwrap a different amount, please visit our unwrapping dapp`}
-                  />
+                  <>
+                    <OrDivider />
+                    <LabelWithBalance
+                      label="You'll transfer:"
+                      amount={
+                        selectedUnwrapToken &&
+                        unwrappingFee &&
+                        convertTokensToWei({
+                          value: selectedUnwrapToken.balance,
+                          token: { decimals: 6 },
+                        })
+                          .plus(adaLocked.multipliedBy(10 ** 6))
+                          .plus(unwrappingFee?.multipliedBy(10 ** 6))
+                          .dividedBy(10 ** 6)
+                          .toFixed()
+                      }
+                      assetName={DEFAULT_SYMBOL}
+                    />
+                  </>
                 )}
               </BalancesWrapper>
             )}

@@ -35,6 +35,7 @@ import Overview from "../Pages/Overview";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -51,19 +52,21 @@ const statusWrapMessages = {
 
 export const useSelectedWrapToken = () => {
   const { originTokens } = useContext();
-  const { defaultCardanoAsset } = useContext();
+  const {
+    options: { defaultWrapToken },
+  } = useTransactionConfigWSC();
 
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
 
   const adaToken = originTokens.find((t) => t.unit === "lovelace");
 
   React.useEffect(() => {
-    if (!defaultCardanoAsset) return;
+    if (!defaultWrapToken) return;
     const loadOriginToken = async () => {
-      const token = originTokens.find((t) => t.unit === defaultCardanoAsset.unit) ?? {
+      const token = originTokens.find((t) => t.unit === defaultWrapToken.unit) ?? {
         unit: "lovelace",
         quantity: "0",
-        decimals: defaultCardanoAsset.unit === "lovelace" ? 6 : 0,
+        decimals: defaultWrapToken.unit === "lovelace" ? 6 : 0,
         bridgeAllowed: true,
         assetName: DEFAULT_SYMBOL,
         fingerprint: undefined,
@@ -79,19 +82,22 @@ export const useSelectedWrapToken = () => {
       setSelectedWrapToken(defaultToken);
     };
     loadOriginToken();
-  }, [defaultCardanoAsset?.amount, defaultCardanoAsset?.unit, originTokens, setSelectedWrapToken]);
+  }, [defaultWrapToken?.amount, defaultWrapToken?.unit, originTokens, setSelectedWrapToken]);
 
   return { selectedWrapToken, adaToken };
 };
 
 const WrapStep = ({ nextStep }) => {
-  const { setOpen, defaultCardanoAsset } = useContext();
-  const { wscProvider, stepTxDirection } = useContext();
+  const { setOpen } = useContext();
+  const { wscProvider } = useContext();
+  const {
+    options: { defaultWrapToken, stepTxDirection },
+  } = useTransactionConfigWSC();
   const { selectedWrapToken, adaToken } = useSelectedWrapToken();
   const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
     useTransactionFees();
 
-  if (!defaultCardanoAsset) {
+  if (!defaultWrapToken) {
     throw new Error("please set your default cardano asset");
   }
 
@@ -117,7 +123,7 @@ const WrapStep = ({ nextStep }) => {
   );
 
   const wrapToken = async () => {
-    if (!selectedWrapToken || !unwrappingFee || !defaultCardanoAsset || !wrappingFee) return;
+    if (!selectedWrapToken || !unwrappingFee || !defaultWrapToken || !wrappingFee) return;
     setTxStatus(TxStatus.Init);
     const totalFees = adaLocked
       .multipliedBy(10 ** 6) // lovelace ADA LOCKED
@@ -127,21 +133,21 @@ const WrapStep = ({ nextStep }) => {
 
     try {
       const wrapAmount =
-        defaultCardanoAsset.unit === "lovelace"
+        defaultWrapToken.unit === "lovelace"
           ? convertTokensToWei({
-              value: defaultCardanoAsset.amount / 10 ** 18, // unscaled value
+              value: defaultWrapToken.amount / 10 ** 18, // unscaled value
               token: { decimals: 6 },
             })
               .plus(totalFees)
               .minus(wrappingFee.multipliedBy(10 ** 6)) // wrapping fee is already included
               .dp(0, BigNumber.ROUND_UP)
-          : new BigNumber(defaultCardanoAsset.amount);
+          : new BigNumber(defaultWrapToken.amount);
 
       const txHash = await wscProvider?.wrap(
         undefined,
         selectedWrapToken.unit,
         wrapAmount.toNumber(),
-        defaultCardanoAsset.unit !== "lovelace" ? totalFees.toNumber() : 0
+        defaultWrapToken.unit !== "lovelace" ? totalFees.toNumber() : 0
       );
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
@@ -156,12 +162,12 @@ const WrapStep = ({ nextStep }) => {
   };
 
   const formattedAmount =
-    defaultCardanoAsset.unit === "lovelace"
+    defaultWrapToken.unit === "lovelace"
       ? convertWeiToTokens({
-          valueWei: defaultCardanoAsset.amount,
+          valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(defaultCardanoAsset.amount).dp(4, BigNumber.ROUND_UP);
+      : new BigNumber(defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
 
   const isAmountValid = React.useMemo(() => {
     if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading) return;

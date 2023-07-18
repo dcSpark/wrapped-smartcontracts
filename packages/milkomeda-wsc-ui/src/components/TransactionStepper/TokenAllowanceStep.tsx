@@ -13,21 +13,23 @@ import { Spinner } from "../Common/Spinner";
 import { ethers } from "ethers";
 import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
+import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const TokenAllowanceStep = ({ nextStep }) => {
-  const { tokens, evmTokenAddress } = useContext();
+  const { tokens } = useContext();
+  const { options } = useTransactionConfigWSC();
 
   const selectedToken = useMemo(
-    () => tokens.find((t) => t.contractAddress === evmTokenAddress),
-    [tokens, evmTokenAddress]
+    () => tokens.find((t) => t.contractAddress === options.evmTokenAddress),
+    [tokens, options.evmTokenAddress]
   );
 
   console.log("selectedToken", selectedToken);
 
   const { config, isLoading: isPreparingLoading } = usePrepareContractWrite({
-    address: evmTokenAddress as `0x${string}`,
+    address: options.evmTokenAddress as `0x${string}`,
     abi: erc20ABI,
     functionName: "approve",
     args: [
