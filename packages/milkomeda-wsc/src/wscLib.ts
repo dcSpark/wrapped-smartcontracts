@@ -567,14 +567,17 @@ export class WSCLib {
           return TxPendingStatus.WaitingL1Confirmation;
         }
 
-        const evmPending = await pendingMngr.getEVMPendingTxs();
-        if (evmPending.some((tx) => tx.hash === txHash)) {
-          return TxPendingStatus.WaitingBridgeConfirmation;
-        }
+        // const evmPending = await pendingMngr.getEVMPendingTxs();
+        // if (evmPending.some((tx) => tx.hash === txHash)) {
+        //   return TxPendingStatus.WaitingBridgeConfirmation;
+        // }
 
         const isConfirmed = await pendingMngr.isMilkomedaTxBridgeConfirmed(txHash);
         if (isConfirmed) {
           return TxPendingStatus.Confirmed;
+        } else {
+          // TODO: temporary fix til indexer is fixed
+          return TxPendingStatus.WaitingBridgeConfirmation;
         }
         throw new Error("Not found");
       } else {

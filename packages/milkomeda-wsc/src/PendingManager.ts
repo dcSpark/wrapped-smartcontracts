@@ -21,9 +21,11 @@ export class PendingManager {
   }
 
   async isMilkomedaTxBridgeConfirmed(txHash: string): Promise<boolean | null> {
-    const txRequest = await MilkomedaNetwork.searchMilkomedaTxInBridge(this.network, txHash);
-    if (!txRequest) return null;
-    return txRequest.executed_timestamp != null && !txRequest.invalidated;
+    // const txRequest = await MilkomedaNetwork.searchMilkomedaTxInBridge(this.network, txHash);
+    // if (!txRequest) return null;
+    // return txRequest.executed_timestamp != null && !txRequest.invalidated;
+    // TODO: temporary fix til indexer is fixed
+    return await MilkomedaNetwork.searchMilkomedaTxInBridgeTemporary(this.network, txHash);
   }
 
   async getEVMPendingTxs(): Promise<PendingTx[]> {

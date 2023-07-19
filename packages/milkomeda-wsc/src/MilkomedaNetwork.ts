@@ -46,6 +46,46 @@ export interface BridgeRequestsResponse {
   };
 }
 
+// TODO: temporary fix til indexer is fixed
+export interface BridgeUnwrapRequestsResponse {
+  unwrapping_details: {
+    request_id: string;
+    block_number: number;
+    block_id: string;
+    from: string;
+    to: string;
+    transaction_id: string;
+    block_timestamp: number;
+    invalidated: boolean;
+  };
+  unwrapping_transaction: {
+    request_id: string;
+    mainchain_tx_id: string;
+    raw_transaction: string;
+    creator: string;
+    block_number: number;
+    block_id: string;
+    confirmed_block_number: number;
+    confirmed_block_id: string;
+    confirmed_timestamp: number;
+    executed_block_number: number;
+    executed_block_id: number;
+    executed_timestamp: number;
+    transaction_id: string;
+    block_timestamp: number;
+  };
+  unwrapping_votes: {
+    id: string;
+    request_id: string;
+    voter: string;
+    witness: string;
+    block_number: number;
+    block_id: string;
+    transaction_id: string;
+    timestamp: number;
+  }[];
+}
+
 export class MilkomedaNetwork {
   //
   // Milkomeda Bridge
@@ -110,6 +150,19 @@ export class MilkomedaNetwork {
     } else {
       return data.requests[0];
     }
+  }
+
+  // TODO: temporary fix til indexer is fixed
+  static async searchMilkomedaTxInBridgeTemporary(
+    network: string,
+    hash: string
+  ): Promise<boolean> {
+    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/unwrapping_requests?tx_id=${hash}`;
+    const response = await fetch(url);
+    const data: BridgeUnwrapRequestsResponse = await response.json();
+    const atLeast3Voters = (data?.unwrapping_votes ?? []).length >= 3;
+    const hasMainchainTxId = (data?.unwrapping_transaction?.mainchain_tx_id ?? "") !== "";
+    return atLeast3Voters && hasMainchainTxId;
   }
 
   static async fetchBridgeAssets(network: string): Promise<BridgeAsset[]> {
