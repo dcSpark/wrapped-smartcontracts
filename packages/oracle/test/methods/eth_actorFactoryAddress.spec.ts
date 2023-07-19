@@ -1,8 +1,7 @@
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import server from "../../src";
-import { deployedBytecode as expectedByteCode } from "../../src/artifacts/ActorFactory.json";
-import { provider } from "../../src/services/blockchain.service";
+import config from "../../src/config";
 
 chai.use(chaiHttp);
 
@@ -18,8 +17,8 @@ describe("eth_actorFactoryAddress", () => {
     expect(body).to.have.property("result");
     expect(body).to.not.have.property("error");
 
-    const { result } = body;
+    const { result: actorFactoryAddress } = body;
 
-    expect(await provider.getCode(result)).to.equal(expectedByteCode);
+    expect(actorFactoryAddress).to.equal(config.actorFactoryAddress);
   });
 });

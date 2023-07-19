@@ -1,33 +1,23 @@
-import type { Artifacts } from "hardhat/types";
-import { task } from "hardhat/config";
 import { exec } from "child_process";
 import { readFile, writeFile } from "fs/promises";
+import { task } from "hardhat/config";
+import type { Artifacts } from "hardhat/types";
 
-// const codeToPrepend = `
-//   let gas_limit := gas()
-//   let ptr := memoryguard(128)
-
-//   mstore(ptr, gas_limit)
-//   mstore(64, add(ptr, 32))
-// `;
-
-/**
- * @dev This code is prepended to the deployed Actor bytecode to store the gas limit in storage.
- */
-const codeToPrepend = `
+const prefixCode = `
   let gas_limit := gas()
-          
-  mstore(0, "tx.gasLimit")
-  let storage_slot := keccak256(0, 11)
-  mstore(0, 0)
+`.trim();
 
-  sstore(storage_slot, gas_limit)
-`;
+const memoryInitSuffixCode = `
+  let ptr := mload(0x40)
+
+  mstore(ptr, gas_limit)
+  mstore(0x40, add(ptr, 0x20))
+`.trim();
 
 /**
  * @dev Finds the yul subobject and injects the code.
  */
-const prependDeployedActorYulCode = async (path: string) => {
+const customizeDeployedActorYulCode = async (path: string) => {
   const yulCode = await readFile(path, "utf8");
 
   const yulCodeLines = yulCode.split("\n");
@@ -36,7 +26,17 @@ const prependDeployedActorYulCode = async (path: string) => {
     (line) => line.match(/object "Actor_.*_deployed/g)?.length
   );
 
-  yulCodeLines.splice(deployedActorIndex + 2, 0, codeToPrepend);
+  yulCodeLines.splice(deployedActorIndex + 3, 0, prefixCode);
+
+  const memoryguardIndex =
+    deployedActorIndex +
+    yulCodeLines.slice(deployedActorIndex).findIndex((line) => line.match(/memoryguard/g)?.length);
+
+  const memoryInitIndex =
+    memoryguardIndex +
+    yulCodeLines.slice(memoryguardIndex).findIndex((line) => line.match(/mstore/g)?.length);
+
+  yulCodeLines.splice(memoryInitIndex + 1, 0, memoryInitSuffixCode);
 
   await writeFile(path, yulCodeLines.join("\n"), "utf8");
 };
@@ -137,8 +137,8 @@ task("compile")
       "solc --ir-optimized --optimize --overwrite -o artifacts.yul ./contracts/ActorFactory.sol"
     );
 
-    await prependDeployedActorYulCode("artifacts.yul/Actor_opt.yul");
-    await prependDeployedActorYulCode("artifacts.yul/ActorFactory_opt.yul");
+    await customizeDeployedActorYulCode("artifacts.yul/Actor_opt.yul");
+    await customizeDeployedActorYulCode("artifacts.yul/ActorFactory_opt.yul");
 
     const actorBytecode = await compileYulToBytecode("artifacts.yul/Actor_opt.yul");
     const actorFactoryBytecode = await compileYulToBytecode("artifacts.yul/ActorFactory_opt.yul");
