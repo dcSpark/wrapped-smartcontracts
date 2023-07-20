@@ -109,10 +109,10 @@ export const SuccessStep = () => {
       </StepDescription>
       <Confetti
         recycle={false}
-        tweenDuration={6000}
-        style={{ position: "absolute", inset: 0, width: "100%" }}
+        numberOfPieces={500}
         initialVelocityX={10}
         initialVelocityY={10}
+        style={{ position: "absolute", inset: 0, width: "100%" }}
       />
     </StepperTransactionSuccess>
   );

@@ -203,7 +203,7 @@ const WrapStep = ({ nextStep }) => {
         {selectedWrapToken != null && !selectedWrapToken.bridgeAllowed && (
           <ErrorMessage role="alert">Error: Bridge doesn't allow this token</ErrorMessage>
         )}
-        {selectedWrapToken != null && isAmountValid === false && (
+        {isIdle && selectedWrapToken != null && isAmountValid === false && (
           <ErrorMessage role="alert">
             Error: Insufficient balance. Please verify you have enough funds to cover the
             transaction.

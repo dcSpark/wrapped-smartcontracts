@@ -26,8 +26,6 @@ const TokenAllowanceStep = ({ nextStep }) => {
     [tokens, options.evmTokenAddress]
   );
 
-  console.log("selectedToken", selectedToken);
-
   const { config, isLoading: isPreparingLoading } = usePrepareContractWrite({
     address: options.evmTokenAddress as `0x${string}`,
     abi: erc20ABI,
@@ -43,7 +41,6 @@ const TokenAllowanceStep = ({ nextStep }) => {
       gasLimit: ethers.BigNumber.from(500000),
     },
   });
-  console.log(config, "config");
 
   const { data, write, isLoading: isWritingContract, isIdle } = useContractWrite(config);
 

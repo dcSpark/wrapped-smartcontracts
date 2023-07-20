@@ -56,8 +56,6 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const [txHash, setTxHash] = React.useState<string | undefined>();
   const { unwrappingFee, adaLocked } = useTransactionFees();
 
-  console.log(selectedUnwrapToken, "selectedUnwrapToken");
-
   const {
     txStatus,
     txStatusError,
@@ -122,15 +120,13 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             token: { decimals: 6 },
           })
             .plus(adaLocked.multipliedBy(10 ** 6))
-            .plus(unwrappingFee?.multipliedBy(10 ** 6))
-            .plus(0.05 * 10 ** 6),
+            .plus(unwrappingFee?.multipliedBy(10 ** 6)),
     };
-
-    console.log(unwrapOptions, "unwrapOptions", unwrapOptions.amount.toFixed());
 
     try {
       const txHash = await wscProvider.unwrap(
         unwrapOptions.destination,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         unwrapOptions.assetId!,
         unwrapOptions.amount
       );
@@ -158,7 +154,13 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </StepDescription>
             {!isLoading && (
               <BalancesWrapper>
-                {isWrappingNativeTokenFirst ? null : (
+                {isWrappingNativeTokenFirst ? (
+                  <LabelWithBalance
+                    label="Bridge Lock-up:"
+                    amount={LOCK_ADA}
+                    assetName={DEFAULT_SYMBOL}
+                  />
+                ) : (
                   <>
                     <LabelWithBalance
                       label="Received:"
@@ -189,6 +191,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
                 {isWrappingNativeTokenFirst ? (
                   <>
+                    <OrDivider />
                     <LabelText style={{ alignSelf: "center" }}>You'll transfer</LabelText>
                     <LabelWithBalance
                       label="Token:"
