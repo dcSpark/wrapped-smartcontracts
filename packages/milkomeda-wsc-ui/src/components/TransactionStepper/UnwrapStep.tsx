@@ -74,7 +74,6 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       setTxStatus(response);
       if (response === TxStatus.Confirmed) {
         onFinish();
-        setTxHash(undefined);
         return;
       }
     },
