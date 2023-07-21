@@ -1,5 +1,6 @@
 // export * as Types from "./types";
 export { default as getDefaultConfig } from "./defaultConfig";
+export * from "./types";
 
 export { useModal } from "./hooks/useModal";
 

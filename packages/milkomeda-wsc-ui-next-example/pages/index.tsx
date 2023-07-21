@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import { ConnectWSCButton } from "milkomeda-wsc-ui";
 import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
+import type { TransactionConfigWSCOptions } from "milkomeda-wsc-ui";
 
 import djedABI from "../abi/djed.json";
-import { TransactionConfigWSCOptions } from "milkomeda-wsc-ui-test-beta/build/components/TransactionConfigWSC";
 import { ethers } from "ethers";
 
 const DJED_ADDRESS = "0xc4c0669ea7bff70a6cfa5905a0ba487fc181dc37";
