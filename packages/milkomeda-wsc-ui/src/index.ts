@@ -11,6 +11,7 @@ export {
 } from "./components/TransactionConfigWSC";
 export { ConnectWSCButton } from "./components/ConnectButton";
 export { useWSCProvider } from "./hooks/useWSCProvider";
+export { WSCInterface } from "./components/WSCInterface";
 export { default as supportedConnectors } from "./constants/supportedConnectors";
 
 // Hooks

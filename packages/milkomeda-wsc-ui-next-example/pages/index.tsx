@@ -1,10 +1,11 @@
 import type { NextPage } from "next";
-import { ConnectWSCButton } from "milkomeda-wsc-ui";
+import { ConnectWSCButton, useWSCProvider } from "milkomeda-wsc-ui";
 import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
 import type { TransactionConfigWSCOptions } from "milkomeda-wsc-ui";
 
 import djedABI from "../abi/djed.json";
 import { ethers } from "ethers";
+import Link from "next/link";
 
 const DJED_ADDRESS = "0xc4c0669ea7bff70a6cfa5905a0ba487fc181dc37";
 
@@ -66,6 +67,7 @@ const sellOptions: TransactionConfigWSCOptions = {
 };
 
 const Home: NextPage = () => {
+  const { isWSCConnected } = useWSCProvider();
   return (
     <div
       style={{
@@ -77,6 +79,7 @@ const Home: NextPage = () => {
     >
       <TransactionConfigWSCProvider options={buyOptions}>
         <ConnectWSCButton />
+        {isWSCConnected && <Link href="/option-a">Check Option A</Link>}
       </TransactionConfigWSCProvider>
     </div>
   );
