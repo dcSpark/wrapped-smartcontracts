@@ -1,6 +1,10 @@
 import { expect } from "chai";
 import { ethers } from "ethers";
-import { actorFactory, getActorAddress, isActorDeployed } from "../../src/services/actor.service";
+import {
+  getActorAddress,
+  getActorFactory,
+  isActorDeployed,
+} from "../../src/services/actor.service";
 import { wallet } from "../../src/services/blockchain.service";
 
 describe("ActorService", () => {
@@ -13,7 +17,7 @@ describe("ActorService", () => {
 
     expect(await isActorDeployed(actorAddress)).to.be.false;
 
-    const tx = await actorFactory.connect(wallet).deploy(mainchainAddress, salt);
+    const tx = await getActorFactory().connect(wallet).deploy(mainchainAddress, salt);
 
     await tx.wait();
 
