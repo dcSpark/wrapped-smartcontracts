@@ -1,12 +1,12 @@
 import cors from "cors";
 import express, { Request, Response } from "express";
 import {
-  createJSONRPCErrorResponse,
   JSONRPCErrorCode,
   JSONRPCErrorException,
   JSONRPCRequest,
   JSONRPCServer,
   JSONRPCServerMiddlewareNext,
+  createJSONRPCErrorResponse,
 } from "json-rpc-2.0";
 import config from "./config";
 import methods from "./methods";

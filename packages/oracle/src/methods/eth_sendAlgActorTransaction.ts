@@ -2,13 +2,14 @@ import algosdk from "algosdk";
 import { ethers } from "ethers";
 import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
 import { z } from "zod";
+import latestActorVersion from "../../actor-latest-version.json";
 import config from "../config";
 import { MINIMAL_GAS_LIMIT } from "../const";
 import {
-  actorFactory,
   attachActor,
   decodePayload,
   getActorAddress,
+  getActorFactory,
   isActorDeployed,
 } from "../services/actor.service";
 import { verifySignature } from "../services/algorand.service";
@@ -19,6 +20,7 @@ import validationMiddleware from "./validationMiddleware";
 const validateTransaction = async (
   signature: Buffer,
   key: Buffer,
+  actorVersion: number | undefined | null,
   salt?: ethers.BytesLike
 ): Promise<{
   actorAddress: string;
@@ -43,7 +45,11 @@ const validateTransaction = async (
 
   const { from, to, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
-  const actorAddress = await getActorAddress(mainchainAddress, salt);
+  const actorAddress = await getActorAddress(
+    mainchainAddress,
+    salt,
+    actorVersion ?? latestActorVersion
+  );
 
   if (from !== actorAddress) {
     throw new JSONRPCErrorException(
@@ -94,6 +100,17 @@ const validateTransaction = async (
 const SignedTransactionSchema = z.object({
   key: z.string().transform((key) => Buffer.from(key, "hex")),
   signature: z.string().transform((signature) => Buffer.from(signature, "hex")),
+  actorVersion: z
+    .number()
+    .optional()
+    .nullable()
+    .refine(
+      (actorVersion) =>
+        actorVersion === undefined || actorVersion === null || actorVersion <= latestActorVersion,
+      {
+        message: "Invalid actor version",
+      }
+    ),
 });
 
 const InputSchema = z.union([
@@ -107,15 +124,15 @@ const InputSchema = z.union([
   ]),
 ]);
 
-const eth_sendAlgActorTransaction = async ([{ signature, key }, salt]: z.infer<
+const eth_sendAlgActorTransaction = async ([{ signature, key, actorVersion }, salt]: z.infer<
   typeof InputSchema
 >) => {
   // Pre-validate transaction to not waste gas on invalid transactions
   const { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed } =
-    await validateTransaction(signature, key, salt);
+    await validateTransaction(signature, key, actorVersion, salt);
 
   if (isDeployed) {
-    const actor = attachActor(actorAddress);
+    const actor = attachActor(actorAddress, actorVersion ?? latestActorVersion);
 
     const tx = config.actorDebugMode
       ? await actor.connect(wallet).debug(signature, key, { gasLimit, gasPrice })
@@ -123,7 +140,7 @@ const eth_sendAlgActorTransaction = async ([{ signature, key }, salt]: z.infer<
 
     return tx.hash;
   } else {
-    const tx = await actorFactory
+    const tx = await getActorFactory(actorVersion ?? latestActorVersion)
       .connect(wallet)
       .deployAndExecute(mainchainAddress, ethers.constants.HashZero, signature, key, gasLimit, {
         gasLimit: ethers.BigNumber.from(gasLimit).add(1_000_000),

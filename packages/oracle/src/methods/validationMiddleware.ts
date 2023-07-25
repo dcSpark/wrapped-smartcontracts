@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 
 const validationMiddleware = <T, R>(
   parse: (params: unknown) => T | Promise<T>,
-  method: (params: T) => Promise<R>
+  method: (params: T) => Promise<R> | R
 ): SimpleJSONRPCMethod => {
   return async (params: unknown) => {
     try {

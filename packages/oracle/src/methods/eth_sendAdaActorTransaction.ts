@@ -3,13 +3,14 @@ import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
 import { ethers } from "ethers";
 import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
 import { z } from "zod";
+import latestActorVersion from "../../actor-latest-version.json";
 import config from "../config";
 import { MINIMAL_GAS_LIMIT } from "../const";
 import {
-  actorFactory,
   attachActor,
   decodePayload,
   getActorAddress,
+  getActorFactory,
   isActorDeployed,
 } from "../services/actor.service";
 import { provider, wallet } from "../services/blockchain.service";
@@ -20,6 +21,7 @@ import validationMiddleware from "./validationMiddleware";
 const validateTransaction = async (
   coseSign1: COSESign1,
   coseKey: COSEKey,
+  actorVersion: number | undefined | null,
   salt?: ethers.BytesLike
 ): Promise<{
   actorAddress: string;
@@ -42,7 +44,11 @@ const validateTransaction = async (
 
   const { from, to, nonce, value, gasLimit, gasPrice } = decodePayload(payload);
 
-  const actorAddress = await getActorAddress(mainchainAddress.to_bech32(), salt);
+  const actorAddress = await getActorAddress(
+    mainchainAddress.to_bech32(),
+    salt,
+    actorVersion ?? latestActorVersion
+  );
 
   if (from !== actorAddress) {
     throw new JSONRPCErrorException(
@@ -93,6 +99,17 @@ const validateTransaction = async (
 const SignedTransactionSchema = z.object({
   key: z.string().transform((key) => Buffer.from(key, "hex")),
   signature: z.string().transform((signature) => Buffer.from(signature, "hex")),
+  actorVersion: z
+    .number()
+    .optional()
+    .nullable()
+    .refine(
+      (actorVersion) =>
+        actorVersion === undefined || actorVersion === null || actorVersion <= latestActorVersion,
+      {
+        message: "Invalid actor version",
+      }
+    ),
 });
 
 const InputSchema = z.union([
@@ -106,7 +123,7 @@ const InputSchema = z.union([
   ]),
 ]);
 
-const eth_sendAdaActorTransaction = async ([{ signature, key }, salt]: z.infer<
+const eth_sendAdaActorTransaction = async ([{ signature, key, actorVersion }, salt]: z.infer<
   typeof InputSchema
 >) => {
   const coseSign1 = COSESign1.from_bytes(signature);
@@ -114,18 +131,19 @@ const eth_sendAdaActorTransaction = async ([{ signature, key }, salt]: z.infer<
 
   // Pre-validate transaction to not waste gas on invalid transactions
   const { actorAddress, mainchainAddress, gasLimit, gasPrice, isDeployed } =
-    await validateTransaction(coseSign1, coseKey, salt);
+    await validateTransaction(coseSign1, coseKey, actorVersion, salt);
 
   if (isDeployed) {
-    const actor = attachActor(actorAddress);
+    const actor = attachActor(actorAddress, actorVersion ?? latestActorVersion);
 
-    const tx = config.actorDebugMode
-      ? await actor.connect(wallet).debug(signature, key, { gasLimit, gasPrice })
-      : await actor.connect(wallet).execute(signature, key, { gasLimit, gasPrice });
+    const tx =
+      config.actorDebugMode && Object.hasOwnProperty.call(actor, "debug")
+        ? await actor.connect(wallet).debug(signature, key, { gasLimit, gasPrice })
+        : await actor.connect(wallet).execute(signature, key, { gasLimit, gasPrice });
 
     return tx.hash;
   } else {
-    const tx = await actorFactory
+    const tx = await getActorFactory(actorVersion ?? latestActorVersion)
       .connect(wallet)
       .deployAndExecute(
         mainchainAddress.to_bech32(),
