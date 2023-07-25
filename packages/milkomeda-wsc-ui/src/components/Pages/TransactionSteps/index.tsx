@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useContext } from "../../ConnectWSC";
 
-import { useConnect, useDisconnect, useAccount, useNetwork } from "wagmi";
+import { useConnect, useDisconnect, useAccount } from "wagmi";
 
 import { ModalBody, ModalContent, MainPageContent } from "../../Common/Modal/styles";
 
 import TransactionStepper from "../../TransactionStepper";
 
-const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
+const TransactionSteps: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   const context = useContext();
 
   const { reset } = useConnect();
@@ -46,4 +46,4 @@ const Profile: React.FC<{ closeModal?: () => void }> = ({ closeModal }) => {
   );
 };
 
-export default Profile;
+export default TransactionSteps;

@@ -102,6 +102,8 @@ export const StepperContainer = styled(motion.div)<{ $isVertical?: boolean }>`
   gap: 16px;
   text-align: center;
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
+  padding-left: 40px;
+  padding-right: 40px;
 `;
 export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>`
   display: flex;

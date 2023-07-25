@@ -17,7 +17,7 @@ export const routes = {
   MOBILECONNECTORS: "mobileConnectors",
   CONNECT: "connect",
   DOWNLOAD: "download",
-  STEPPER: "profile",
+  STEPPER: "steps",
 };
 
 type Connector = any;

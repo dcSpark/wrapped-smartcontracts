@@ -40,12 +40,9 @@ import { TxPendingStatus } from "milkomeda-wsc";
 import { statusWrapMessages, SuccessMessage } from "../TransactionStepper/WrapStep";
 import { truncateEthAddress } from "../../utils";
 import { statusUnwrapMessages } from "../TransactionStepper/UnwrapStep";
-import { SuccessStep } from "../TransactionStepper";
 
 export const WSCInterface = () => {
-  const [activeStep, setActiveStep] = useState(0);
   const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
-
   const isOriginBalanceNotZero = originBalance != null && +originBalance !== 0;
   const isDestinationBalanceNotZero = destinationBalance != null && +destinationBalance !== 0;
   const steps = [
@@ -67,20 +64,15 @@ export const WSCInterface = () => {
   return (
     <ResetContainer>
       <Container>
-        <div style={{ padding: "0 30px" }}>
+        <div style={{ paddingBottom: "20px" }}>
           <Stepper
-            activeStep={activeStep}
+            activeStep={!isDestinationBalanceNotZero ? 1 : !isOriginBalanceNotZero ? 0 : 2}
             successIcon={<CheckCircle2 />}
             errorIcon={<XCircle />}
             labelOrientation="vertical"
           >
             {steps.map((step, index) => (
-              <StepperStep
-                isCurrentStep={index === activeStep}
-                index={index}
-                key={index}
-                {...step}
-              />
+              <StepperStep index={index} key={index} {...step} />
             ))}
           </Stepper>
         </div>

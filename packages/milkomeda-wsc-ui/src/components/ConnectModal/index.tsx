@@ -9,7 +9,7 @@ import Connectors from "../Pages/Connectors";
 import MobileConnectors from "../Pages/MobileConnectors";
 import ConnectUsing from "./ConnectUsing";
 import DownloadApp from "../Pages/DownloadApp";
-import Profile from "../Pages/Profile";
+import TransactionSteps from "../Pages/TransactionSteps";
 
 const ConnectModal = () => {
   const context = useContext();
@@ -24,13 +24,13 @@ const ConnectModal = () => {
     context.setRoute(routes.CONNECTORS);
   };
 
-  const pages: any = {
+  const pages = {
     onboarding: <Onboarding />,
     download: <DownloadApp connectorId={context.connector} />,
     connectors: <Connectors />,
     mobileConnectors: <MobileConnectors />,
     connect: <ConnectUsing connectorId={context.connector} />,
-    profile: <Profile />,
+    steps: <TransactionSteps />,
   };
 
   function hide() {

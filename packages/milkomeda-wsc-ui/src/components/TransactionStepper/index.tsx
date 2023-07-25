@@ -4,7 +4,7 @@ import {
   StepperTransactionContainer,
   StepperTransactionContent,
   StepperTransactionSuccess,
-} from "../Pages/Profile/styles";
+} from "../Pages/TransactionSteps/styles";
 import { Stepper, StepperStep } from "../Common/Stepper";
 import { CheckCircle2, XCircle } from "lucide-react";
 import WrapStep from "./WrapStep";

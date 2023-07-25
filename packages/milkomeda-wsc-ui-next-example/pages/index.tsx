@@ -74,13 +74,14 @@ const Home: NextPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        gap: 40,
         height: "100vh",
       }}
     >
       <TransactionConfigWSCProvider options={buyOptions}>
         <ConnectWSCButton />
-        {isWSCConnected && <Link href="/wsc-interface">Check WSC Interface</Link>}
       </TransactionConfigWSCProvider>
+      {isWSCConnected && <Link href="/wsc-interface">Check WSC Interface</Link>}
     </div>
   );
 };

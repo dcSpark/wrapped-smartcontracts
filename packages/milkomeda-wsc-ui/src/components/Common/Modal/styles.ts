@@ -510,6 +510,38 @@ export const InfoButton = styled(motion.button)`
   }
 `;
 
+export const MilkomedaLink = styled(motion.a)`
+  z-index: 3;
+  position: absolute;
+  inset: 0;
+  width: 100%; // FireFox fix
+  transform: translateX(-1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  padding: 0;
+  margin: 0;
+  box-shadow: var(--box-shadow);
+  color: var(--ck-body-action-color);
+  background: var(--ck-body-background);
+  transition: background-color 200ms ease, transform 100ms ease;
+  /* will-change: transform; */
+  svg {
+    display: block;
+    position: relative;
+  }
+  &:enabled {
+    cursor: pointer;
+    &:hover {
+      background: var(--ck-body-background-secondary);
+    }
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+`;
+
 export const Container = styled(motion.div)`
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   --duration: 200ms;

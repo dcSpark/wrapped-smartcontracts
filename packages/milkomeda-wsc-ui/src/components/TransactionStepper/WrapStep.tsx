@@ -2,7 +2,7 @@ import { useContext } from "../ConnectWSC";
 import React from "react";
 import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { AnimatePresence } from "framer-motion";
-import { Balance, BalanceContainer, LoadingBalance } from "../Pages/Profile/styles";
+import { Balance, BalanceContainer, LoadingBalance } from "../Pages/TransactionSteps/styles";
 import BigNumber from "bignumber.js";
 import {
   ErrorMessage,
