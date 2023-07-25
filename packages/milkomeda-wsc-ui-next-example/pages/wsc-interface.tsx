@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useWSCProvider } from "milkomeda-wsc-ui";
 import { WSCInterface } from "milkomeda-wsc-ui";
 
-const OptionA: NextPage = () => {
+const WscInterface: NextPage = () => {
   const { isWSCConnected } = useWSCProvider();
   return (
     <div
@@ -13,11 +13,9 @@ const OptionA: NextPage = () => {
         height: "100vh",
       }}
     >
-      <div style={{ maxWidth: 600, width: "100%", margin: "0 auto" }}>
-        {isWSCConnected && <WSCInterface />}
-      </div>
+      {isWSCConnected && <WSCInterface />}
     </div>
   );
 };
 
-export default OptionA;
+export default WscInterface;

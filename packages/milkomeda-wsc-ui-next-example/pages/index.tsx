@@ -79,7 +79,7 @@ const Home: NextPage = () => {
     >
       <TransactionConfigWSCProvider options={buyOptions}>
         <ConnectWSCButton />
-        {isWSCConnected && <Link href="/option-a">Check Option A</Link>}
+        {isWSCConnected && <Link href="/wsc-interface">Check WSC Interface</Link>}
       </TransactionConfigWSCProvider>
     </div>
   );
