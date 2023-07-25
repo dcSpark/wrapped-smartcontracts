@@ -19,7 +19,9 @@ export const StepperStepOptionalLabel = styled(motion.span)`
 `;
 export const StepperSteLabelDescription = styled(motion.span)`
   font-size: 0.875rem;
-  color: rgb(113, 113, 122);
+  color: var(--ck-body-color-muted);
+  height: 0;
+  margin-top: -10px;
 `;
 export const StepperStepConnectorContainer = styled(motion.div)`
   margin-left: 24px;

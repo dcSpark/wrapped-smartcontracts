@@ -42,7 +42,7 @@ export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
 };
 
-const statusWrapMessages = {
+export const statusWrapMessages = {
   [TxStatus.Init]: "Confirm Wrapping",
   [TxStatus.Pending]: "Wrapping your token",
   [TxStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
@@ -303,13 +303,21 @@ export const SuccessMessage = ({
   message,
   href,
   viewLabel = "Explorer",
+  disableGutters = false,
 }: {
   message: string;
   href?: string;
   viewLabel?: string;
+  disableGutters?: boolean;
 }) => {
   return (
-    <SuccessWrapper>
+    <SuccessWrapper
+      {...(disableGutters && {
+        style: {
+          padding: "10px 0",
+        },
+      })}
+    >
       <CheckCircle2 />
       <SuccessWrapperMessage>
         <span>{message} </span>

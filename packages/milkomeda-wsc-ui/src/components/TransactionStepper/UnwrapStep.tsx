@@ -33,7 +33,7 @@ import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 
-const statusUnwrapMessages = {
+export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
   [TxStatus.Pending]: "Unwrapping your token",
   [TxStatus.WaitingL1Confirmation]: "Waiting for L1 confirmation",
