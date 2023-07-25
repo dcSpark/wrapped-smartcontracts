@@ -1,23 +1,19 @@
+import { PeraWalletConnect } from "@perawallet/connect";
+import algosdk from "algosdk";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
-import { PeraWalletConnect } from "@perawallet/connect";
-import CardanoPendingManager, {
-  OriginAmount,
-  ADAStargateApiResponse,
-} from "./CardanoPendingManger";
-import { MilkomedaConstants } from "./MilkomedaConstants";
 import type { MilkomedaProvider } from "milkomeda-wsc-provider";
-import {
-  adaFingerprint,
-  assetNameFromBlockfrostId,
-  getFingerprintFromBlockfrost,
-  getFingerprintFromBridge,
-} from "./utils";
-import BridgeActions from "./BridgeActions";
-import { MilkomedaNetwork } from "./MilkomedaNetwork";
 import { Activity, ActivityManager, ActivityStatus } from "./Activity";
-import BigNumber from "bignumber.js";
-import algosdk from "algosdk";
+import { AlgoPendingManager } from "./AlgoPendingManager";
+import BridgeActions from "./BridgeActions";
+import CardanoPendingManager, {
+  ADAStargateApiResponse,
+  OriginAmount,
+} from "./CardanoPendingManger";
+import { GenericStargate } from "./GenericStargate";
+import { MilkomedaConstants } from "./MilkomedaConstants";
+import { MilkomedaNetwork } from "./MilkomedaNetwork";
 import {
   EVMTokenBalance,
   MilkomedaNetworkName,
@@ -26,8 +22,12 @@ import {
   TransactionResponse,
   TxPendingStatus,
 } from "./WSCLibTypes";
-import { AlgoPendingManager } from "./AlgoPendingManager";
-import { GenericStargate } from "./GenericStargate";
+import {
+  adaFingerprint,
+  assetNameFromBlockfrostId,
+  getFingerprintFromBlockfrost,
+  getFingerprintFromBridge,
+} from "./utils";
 
 export class WSCLib {
   wscProvider!: MilkomedaProvider;
@@ -141,7 +141,7 @@ export class WSCLib {
     (window.cardano as any) = { ...walletProvider, ...window.cardano[walletName] };
   }
 
-  async inject(): Promise<WSCLib> {
+  async inject(actorVersion?: number): Promise<WSCLib> {
     let injector: typeof import("milkomeda-wsc-provider");
     if (!this.wscProvider) {
       injector = await import("milkomeda-wsc-provider");
@@ -156,7 +156,7 @@ export class WSCLib {
     } else {
       throw new Error("Invalid wallet");
     }
-    await this.wscProvider.setup();
+    await this.wscProvider.setup(actorVersion);
 
     if (this.isCardano()) {
       await this.loadLucid();

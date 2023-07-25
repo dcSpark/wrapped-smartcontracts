@@ -53,7 +53,11 @@ const eth_sendTransaction: CustomMethod = async (
     const { from, to, value, data, nonce, gas: gasLimit, gasPrice: gasPriceArg } = transaction;
 
     const actorNonce =
-      nonce ?? (await provider.oracleRequest({ method: "eth_getActorNonce", params: [from] }));
+      nonce ??
+      (await provider.oracleRequest({
+        method: "eth_getActorNonce",
+        params: [from, provider.actorVersion],
+      }));
 
     if (actorNonce === undefined) {
       throw new ProviderRpcError("Invalid nonce", JSON_RPC_ERROR_CODES.INVALID_PARAMS);
@@ -117,7 +121,7 @@ const eth_sendTransaction: CustomMethod = async (
 
     return await provider.oracleRequest({
       method: "eth_sendAlgActorTransaction",
-      params: [l2TxPayload, salt].filter(Boolean),
+      params: [{ ...l2TxPayload, actorVersion: provider.actorVersion }, salt].filter(Boolean),
     });
   } catch (e) {
     if (e instanceof ProviderRpcError) {
