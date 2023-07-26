@@ -38,8 +38,10 @@ import useInterval from "../../hooks/useInterval";
 import { ErrorMessage, TransactionExternalLink } from "../TransactionStepper/styles";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { statusWrapMessages, SuccessMessage } from "../TransactionStepper/WrapStep";
-import { truncateEthAddress } from "../../utils";
+import { truncateCardanoAddress, truncateEthAddress } from "../../utils";
 import { statusUnwrapMessages } from "../TransactionStepper/UnwrapStep";
+import { MilkomedaLink } from "../Common/Modal/styles";
+import { MilkomedaIcon } from "../Common/Modal";
 
 export const WSCInterface = () => {
   const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
@@ -63,8 +65,33 @@ export const WSCInterface = () => {
 
   return (
     <ResetContainer>
-      <Container>
-        <div style={{ paddingBottom: "20px" }}>
+      <Container style={{ position: "relative" }}>
+        <div
+          style={{
+            position: "absolute",
+            top: 23,
+            left: 20,
+            width: 32,
+            height: 32,
+          }}
+        >
+          <MilkomedaLink
+            key="infoButton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.1,
+              delay: 0,
+            }}
+            href="https://milkomeda.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <MilkomedaIcon />
+          </MilkomedaLink>
+        </div>
+        <div style={{ padding: "30px 0 0" }}>
           <Stepper
             activeStep={!isDestinationBalanceNotZero ? 1 : !isOriginBalanceNotZero ? 0 : 2}
             successIcon={<CheckCircle2 />}
@@ -152,11 +179,25 @@ function About() {
       </Text>
       <List className="about-items">
         {[
-          "User Action: The user initiates an action on a dApp while on the main blockchain. This request is translated into specific parameters for a proxy smart contract.",
-          "Proxy Deployment and Execution: A proxy smart contract, reflecting the user's intent, is deployed on the sidechain. The proxy contract then interacts with the appropriate smart contract on the sidechain to execute the desired action.",
-          "Result Processing: The outcome from the sidechain smart contract execution is relayed back to the user on the main blockchain. The user's state is updated, and they see the results of their action on the dApp, all while staying on the main blockchain.",
-        ].map((text) => (
-          <li key={text}>{text}</li>
+          {
+            subtitle: "User Action:",
+            description:
+              "The user initiates an action on a dApp while on the main blockchain. This request is translated into specific parameters for a proxy smart contract.",
+          },
+          {
+            subtitle: "Proxy Deployment and Execution:",
+            description:
+              "A proxy smart contract, reflecting the user's intent, is deployed on the sidechain. The proxy contract then interacts with the appropriate smart contract on the sidechain to execute the desired action.",
+          },
+          {
+            subtitle: "Result Processing:",
+            description:
+              "The outcome from the sidechain smart contract execution is relayed back to the user on the main blockchain. The user's state is updated, and they see the results of their action on the dApp, all while staying on the main blockchain.",
+          },
+        ].map(({ subtitle, description }) => (
+          <li key={subtitle}>
+            <span style={{ fontWeight: 500 }}>{subtitle}</span> {description}
+          </li>
         ))}
       </List>
       <a className="about-link" href="http://example.com/my-article-link" target="_blank">
@@ -194,7 +235,7 @@ function Cardano() {
       <Title>Assets in Your Cardano Wallet</Title>
       <div style={{ maxWidth: "80%", margin: "auto", marginBottom: 20, fontSize: "0.875rem" }}>
         <CopyToClipboard string={originAddress}>
-          <span style={{ wordBreak: "break-all" }}>{originAddress}</span>
+          <span style={{ wordBreak: "break-all" }}>{truncateCardanoAddress(originAddress)}</span>
         </CopyToClipboard>
       </div>
       {originTokens.length === 0 && <Text style={{ textAlign: "center" }}>No tokens found.</Text>}
@@ -264,7 +305,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
   return (
     <ListItem>
       <Row>
-        <Label>Balance: </Label>
+        <Label style={{ paddingLeft: "16px" }}>Balance: </Label>
         <Value>
           {token.unit === "lovelace"
             ? convertWeiToTokens({
@@ -317,7 +358,6 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
   );
 };
 
-const pendingTxs = [];
 function Pending() {
   const { pendingTxs } = useWSCProvider();
 
@@ -369,7 +409,6 @@ function Pending() {
 const mADATokenAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 function WSCWallet() {
   const { address, wscProvider, destinationBalance, tokens } = useWSCProvider();
-  console.log(tokens, "tokens");
   const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
 
   React.useEffect(() => {
@@ -389,8 +428,8 @@ function WSCWallet() {
           [
             {
               decimals: 6, // already scaled
-              name: "",
-              symbol: "ADA",
+              name: "ADA",
+              symbol: "",
               contractAddress: mADATokenAddress,
               balance: convertTokensToWei({
                 value: new BigNumber(destinationBalance).dp(6),
@@ -412,9 +451,7 @@ function AmountInput({ label, onMax, value, onChange, id }) {
       <label htmlFor={id}>{label}</label>
       <InputContainer>
         <input type="text" value={value} onChange={onChange} id={id} placeholder="Enter amount" />
-        <button className="button-primary-small" onClick={onMax}>
-          MAX
-        </button>
+        <button onClick={onMax}>MAX</button>
       </InputContainer>
     </AmountInputContainer>
   );
@@ -476,13 +513,24 @@ function WSCAssetItem({ token, allowedTokensMap }) {
   return (
     <ListItem>
       <Row>
+        <Label>Token</Label>
+        <Value>
+          {token.name} {token.symbol && `(${token.symbol?.toUpperCase()})`}
+        </Value>
+        {token.contractAddress !== mADATokenAddress &&
+          !allowedTokensMap?.[token.contractAddress] && (
+            <Tooltip message="Token is not supported by the bridge" xOffset={-6}>
+              <LucideInfo />
+            </Tooltip>
+          )}
+      </Row>
+      <Row>
         <Label>Balance</Label>
         <Value>
           {convertWeiToTokens({
             valueWei: token.balance,
             token: token,
           }).toFixed()}{" "}
-          {token.name} ({token.symbol?.toUpperCase()})
         </Value>
         {token.contractAddress !== mADATokenAddress &&
           !allowedTokensMap?.[token.contractAddress] && (

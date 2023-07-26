@@ -94,12 +94,13 @@ export default {
     "--ck-qr-border-color": "#f7f6f8",
 
     /** Misc. */
-    "--ck-focus-color": "#1A88F8",
+    "--ck-focus-color": "rgb(255, 152, 40)",
     "--ck-spinner-color": "var(--ck-focus-color)",
     "--ck-copytoclipboard-stroke": "#CCCCCC",
 
     "--ck-stepper-background-circle": "rgb(104 104 116)",
     "--ck-stepper-current-background-circle": "rgb(48 48 52)",
+    "--ck-stepper-separator": "#F6F7F9",
   },
   dark: {
     "--ck-connectbutton-font-size": "15px",
@@ -144,7 +145,7 @@ export default {
     /** Tertiary Button */
     "--ck-tertiary-button-background": "#424242",
 
-    "--ck-focus-color": "#1A88F8",
+    "--ck-focus-color": "#rgb(255, 152, 40)",
 
     "--ck-overlay-background": "rgba(0,0,0,0.4)",
     "--ck-body-color": "#ffffff",
@@ -183,5 +184,6 @@ export default {
 
     "--ck-stepper-background-circle": "rgb(48 48 52)",
     "--ck-stepper-current-background-circle": "rgb(64 64 90)",
+    "--ck-stepper-separator": "#383838",
   },
 };

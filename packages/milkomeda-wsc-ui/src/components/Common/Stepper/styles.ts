@@ -8,6 +8,8 @@ export const StepperStepLabelContainer = styled(motion.div)`
   flex-direction: column;
   align-items: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "flex-start")};
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
+  position: relative;
+  min-height: 80px;
   &[aria-current="step"] {
     color: var(--ck-body-color);
   }
@@ -20,8 +22,9 @@ export const StepperStepOptionalLabel = styled(motion.span)`
 export const StepperSteLabelDescription = styled(motion.span)`
   font-size: 0.875rem;
   color: var(--ck-body-color-muted);
-  height: 0;
-  margin-top: -10px;
+  position: absolute;
+  bottom: 20px;
+  white-space: nowrap;
 `;
 export const StepperStepConnectorContainer = styled(motion.div)`
   margin-left: 24px;
@@ -57,7 +60,6 @@ export const StepperStepContainer = styled(motion.div)`
   display: flex;
   flex-direction: row;
   position: relative;
-  gap: 8px;
 
   ${({ $isLastStep }) =>
     $isLastStep
@@ -96,10 +98,10 @@ export const StepperStepContainer = styled(motion.div)`
 
 export const StepperContainer = styled(motion.div)<{ $isVertical?: boolean }>`
   display: flex;
-  flex: 1 1 0%;
+  flex: 1 1 0;
   width: 100%;
   justify-content: space-between;
-  gap: 16px;
+  //gap: 16px;
   text-align: center;
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
   padding-left: 40px;
@@ -110,6 +112,8 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
   align-items: center;
   gap: 8px;
   max-width: 100px;
+  position: relative;
+  z-index: 1;
 
   ${({ $isLabelVertical }) =>
     $isLabelVertical &&
@@ -162,7 +166,11 @@ export const StepperSeparator = styled(Separator.Root)`
   height: 2px;
   min-height: auto;
   align-self: auto;
-  background-color: rgb(228, 228, 231);
+  background-color: var(--ck-stepper-separator);
+  position: absolute;
+  width: 100%;
+  top: 24px;
+  left: 45px;
   &[data-highlighted="true"] {
     background-color: rgb(14, 117, 55);
   }

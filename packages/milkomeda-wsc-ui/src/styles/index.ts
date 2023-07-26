@@ -10,110 +10,18 @@ import predefinedThemes from "./themes";
  */
 const themeGlobals = {
   default: {
-    "--ck-font-family": `-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica,
+    "--ck-font-family": `-apple-system, Helvetica,
     'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji',
     'Segoe UI Symbol'`,
     "--ck-border-radius": "20px",
     "--ck-secondary-button-border-radius": "16px",
   },
   graphics: {
-    light: {
-      "--ck-graphic-wave-stop-01": "#E8F17D",
-      "--ck-graphic-wave-stop-02": "#A8ECDE",
-      "--ck-graphic-wave-stop-03": "#7AA1F2",
-      "--ck-graphic-wave-stop-04": "#DEA1E8",
-      "--ck-graphic-wave-stop-05": "#F46D98",
-
-      "--ck-graphic-scaniconwithlogos-01": "#4E4E4E",
-      "--ck-graphic-scaniconwithlogos-02": "#272727",
-      "--ck-graphic-scaniconwithlogos-03": "#F8D74A",
-      "--ck-graphic-scaniconwithlogos-04": "#F6F7F9",
-
-      "--ck-chain-ethereum-01": "#25292E",
-      "--ck-chain-ethereum-02": "#fff",
-      "--ck-chain-ethereum-03": "#DFE0E0",
-    },
-    dark: {
-      "--ck-graphic-wave-stop-01": "#E8F17D",
-      "--ck-graphic-wave-stop-02": "#A8ECDE",
-      "--ck-graphic-wave-stop-03": "#7AA1F2",
-      "--ck-graphic-wave-stop-04": "#DEA1E8",
-      "--ck-graphic-wave-stop-05": "#F46D98",
-
-      "--ck-graphic-scaniconwithlogos-01": "#AFAFAF",
-      "--ck-graphic-scaniconwithlogos-02": "#696969",
-      "--ck-graphic-scaniconwithlogos-03": "#F8D74A",
-      "--ck-graphic-scaniconwithlogos-04": "#3D3D3D",
-
-      //'--ck-chain-ethereum-01': '#fff',
-      //'--ck-chain-ethereum-02': '#000',
-      //'--ck-chain-ethereum-03': '#000',
-    },
-  },
-  ens: {
-    light: {
-      "--ck-ens-01-start": "#FF3B30",
-      "--ck-ens-01-stop": "#FF9500",
-      "--ck-ens-02-start": "#FF9500",
-      "--ck-ens-02-stop": "#FFCC00",
-      "--ck-ens-03-start": "#FFCC00",
-      "--ck-ens-03-stop": "#34C759",
-      "--ck-ens-04-start": "#5856D6",
-      "--ck-ens-04-stop": "#AF52DE",
-      "--ck-ens-05-start": "#5AC8FA",
-      "--ck-ens-05-stop": "#007AFF",
-      "--ck-ens-06-start": "#007AFF",
-      "--ck-ens-06-stop": "#5856D6",
-      "--ck-ens-07-start": "#5856D6",
-      "--ck-ens-07-stop": "#AF52DE",
-      "--ck-ens-08-start": "#AF52DE",
-      "--ck-ens-08-stop": "#FF2D55",
-    },
-    dark: {
-      "--ck-ens-01-start": "#FF453A",
-      "--ck-ens-01-stop": "#FF9F0A",
-      "--ck-ens-02-start": "#FF9F0A",
-      "--ck-ens-02-stop": "#FFD60A",
-      "--ck-ens-03-start": "#FFD60A",
-      "--ck-ens-03-stop": "#32D74B",
-      "--ck-ens-04-start": "#32D74B",
-      "--ck-ens-04-stop": "#64D2FF",
-      "--ck-ens-05-start": "#64D2FF",
-      "--ck-ens-05-stop": "#0A84FF",
-      "--ck-ens-06-start": "#0A84FF",
-      "--ck-ens-06-stop": "#5E5CE6",
-      "--ck-ens-07-start": "#5E5CE6",
-      "--ck-ens-07-stop": "#BF5AF2",
-      "--ck-ens-08-start": "#BF5AF2",
-      "--ck-ens-08-stop": "#FF2D55",
-    },
+    light: {},
+    dark: {},
   },
   brand: {
-    "--ck-family-brand": "#1A88F8",
-    "--ck-brand-walletConnect": "#3B99FC",
-    "--ck-brand-coinbaseWallet": "#0052FF",
-    "--ck-brand-metamask": "#f6851b",
-    "--ck-brand-metamask-01": "#F6851B",
-    "--ck-brand-metamask-02": "#E2761B",
-    "--ck-brand-metamask-03": "#CD6116",
-    "--ck-brand-metamask-04": "#161616",
-    "--ck-brand-metamask-05": "#763D16",
-    "--ck-brand-metamask-06": "#D7C1B3",
-    "--ck-brand-metamask-07": "#C0AD9E",
-    "--ck-brand-metamask-08": "#E4761B",
-    "--ck-brand-metamask-09": "#233447",
-    "--ck-brand-metamask-10": "#E4751F",
-    "--ck-brand-metamask-11": "#FEF5E7",
-    "--ck-brand-metamask-12": "#E3C8AB",
-    "--ck-brand-trust-01": "#3375BB",
-    "--ck-brand-trust-02": "#ffffff",
-    "--ck-brand-trust-01b": "#ffffff", // dark Theme
-    "--ck-brand-trust-02b": "#3375BB", // dark Theme
-    "--ck-brand-argent": "#f36a3d",
-    "--ck-brand-imtoken-01": "#11C4D1",
-    "--ck-brand-imtoken-02": "#0062AD",
-    "--ck-brand-gnosisSafe": "#12FF80",
-    "--ck-brand-dawn": "#000000",
+    "--ck-family-brand": "rgb(255, 152, 40)",
   },
 };
 const themeColors = {
@@ -170,20 +78,16 @@ const themes = {
 };
 const globals = {
   brand: createCssVars(themeGlobals.brand),
-  ensLight: createCssVars(themeGlobals.ens.light),
-  ensDark: createCssVars(themeGlobals.ens.dark),
   graphicsLight: createCssVars(themeGlobals.graphics.light),
   graphicsDark: createCssVars(themeGlobals.graphics.dark),
 };
 
 const globalsLight = css`
   ${globals.brand}
-  ${globals.ensLight}
   ${globals.graphicsLight}
 `;
 const globalsDark = css`
   ${globals.brand}
-  ${globals.ensDark}
   ${globals.graphicsDark}
 `;
 
@@ -250,7 +154,7 @@ export const ResetContainer = styled(motion.div)`
       default:
         return css`
           ${globalsLight}
-          @media (prefers-color-scheme: dark) {
+          @media(prefers-color-scheme: dark) {
             ${globalsDark}
           }
         `;

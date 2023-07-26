@@ -520,11 +520,11 @@ export const MilkomedaLink = styled(motion.a)`
   align-items: center;
   justify-content: center;
   border-radius: 16px;
-  padding: 0;
   margin: 0;
   box-shadow: var(--box-shadow);
   color: var(--ck-body-action-color);
-  background: var(--ck-body-background);
+  background: white;
+  padding: 4px;
   transition: background-color 200ms ease, transform 100ms ease;
   /* will-change: transform; */
   svg {

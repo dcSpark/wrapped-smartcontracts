@@ -177,6 +177,7 @@ export const InputContainer = styled.div`
     right: 3px;
     align-self: center;
     font-size: 0.875rem;
+    cursor: pointer;
   }
 `;
 

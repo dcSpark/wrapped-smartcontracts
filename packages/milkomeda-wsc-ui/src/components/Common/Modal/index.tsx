@@ -430,7 +430,7 @@ const Modal: React.FC<ModalProps> = ({
                       <MilkomedaLink
                         disabled={inTransition}
                         key="infoButton"
-                        onClick={onInfo}
+                        // onClick={onInfo}
                         href="https://milkomeda.com"
                         target="_blank"
                         rel="noopener noreferrer"

@@ -3,7 +3,7 @@ import React from "react";
 import supportedConnectors from "../constants/supportedConnectors";
 
 const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
-const truncateTxRegex = /^(0x[a-zA-Z0-9]{6})[a-zA-Z0-9]+([a-zA-Z0-9]{6})$/;
+const truncateCardanoRegex = /^(addr_[a-zA-Z0-9]{20})[a-zA-Z0-9]+([a-zA-Z0-9]{20})$/;
 
 const truncateEthAddress = (address?: string, separator = "••••") => {
   if (!address) return "";
@@ -11,10 +11,11 @@ const truncateEthAddress = (address?: string, separator = "••••") => {
   if (!match) return address;
   return `${match[1]}${separator}${match[2]}`;
 };
-const truncateTransactionHash = (txHash?: string, separator = "••••") => {
-  if (!txHash) return "";
-  const match = txHash.match(truncateTxRegex);
-  if (!match) return txHash;
+const truncateCardanoAddress = (address?: string, separator = "••••") => {
+  // truncate cardano address to 12 characters
+  if (!address) return "";
+  const match = address.match(truncateCardanoRegex);
+  if (!match) return address;
   return `${match[1]}${separator}${match[2]}`;
 };
 
@@ -140,5 +141,5 @@ export {
   isFlint,
   isEternl,
   flattenChildren,
-  truncateTransactionHash,
+  truncateCardanoAddress,
 };
