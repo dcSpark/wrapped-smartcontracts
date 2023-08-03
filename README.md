@@ -1,5 +1,11 @@
 # Milkomeda Wrapped Smart Contracts
 
+[Shortcut Epic](https://app.shortcut.com/dcspark/epic/7930)
+
+[Proposal](https://docs.google.com/document/d/1tbhMmctw6RQKW_UUox0qOnqhOfBe7uHRO0sMx7Isaac)
+
+To show old codebase see [legacy tag](https://github.com/dcSpark/wrapped-smartcontracts/tree/legacy).
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -46,7 +52,7 @@ In the [compile task](./packages/contracts/tasks/compile.ts) the `Actor` contrac
 
 ### ActorFactory
 
-ActorFactory is a smart contract deployed on the milkomeda layer 2 that is used to deploy actors. It uses CREATE2 opcode to deterministically derive Actor address from the l1 address.
+ActorFactory is a smart contract deployed on the Milkomeda layer 2 that is used to deploy actors. It uses CREATE2 opcode to deterministically derive Actor address from the l1 address.
 
 ### L1MsgVerify
 

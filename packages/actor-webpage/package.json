@@ -39,7 +39,7 @@
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
     "lucid-cardano": "^0.10.1",
-    "milkomeda-wsc": "../milkomeda-wsc",
+    "milkomeda-wsc": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
