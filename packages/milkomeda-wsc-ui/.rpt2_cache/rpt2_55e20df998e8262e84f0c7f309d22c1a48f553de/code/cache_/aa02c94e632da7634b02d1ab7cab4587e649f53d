@@ -1,1 +1,0 @@
-{"code":"export const DEFAULT_STEP_TIMEOUT = 2000;\r\n","references":[],"dts":{"name":"/Users/paulclindo/local/dcspark/wrapped-smartcontracts/packages/milkomeda-wsc-ui/build/components/TransactionStepper/constants.d.ts","writeByteOrderMark":false,"text":"export declare const DEFAULT_STEP_TIMEOUT = 2000;\r\n"}}

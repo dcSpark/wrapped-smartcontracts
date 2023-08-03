@@ -22,33 +22,21 @@ $ yarn add milkomeda-wsc-ui
 
 ## Documentation
 
-You can find the full Milkomeda WSC documentation in the Milkomeda docs [here]().
+You can find the full Milkomeda WSC documentation in the Milkomeda docs [here](https://docs.milkomeda.com/cardano/wrapped-smart-contracts/developers/how_to_integrate).
 
 ## API Reference
 
-You can find the full API Reference in the Milkomeda WSC docs [here]().
+You can find the full API Reference in the Milkomeda WSC docs [here](https://docs.milkomeda.com/cardano/wrapped-smart-contracts/developers/how_to_integrate).
 
 ## Examples
 
-There are various runnable examples included in this repository in the [example folder]():
+There are various runnable examples included in this repository in the [example folder](../milkomeda-wsc-ui-next-example):
 
-- [Next Example (TypeScript)]()
+- [Next Example (TypeScript)](../milkomeda-wsc-ui-next-example)
 
-### Try in CodeSandbox
-
-You can try out some Milkomeda WSC examples directly in your browser through CodeSandbox:
-
-- [Next Example (TypeScript)]()
-
-
-## Contribute
-
-Before starting on anything, please have a read through our [Contribution Guidelines]().
 
 ## Twitter
 
-Follow [@milkomeda]() on Twitter for the latest updates on Milkomeda.
+Follow [@milkomeda](https://twitter.com/Milkomeda_com) on Twitter for the latest updates on Milkomeda.
 
-## License
 
-See [LICENSE]() for more information.
