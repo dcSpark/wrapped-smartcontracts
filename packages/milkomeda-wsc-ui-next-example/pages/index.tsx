@@ -37,7 +37,6 @@ const buyOptions: TransactionConfigWSCOptions = {
     },
   },
 };
-``;
 
 // const sellOptions: TransactionConfigWSCOptions = {
 //   defaultWrapToken: {
