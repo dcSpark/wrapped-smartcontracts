@@ -195,7 +195,6 @@ export const ResetContainer = styled(motion.div)`
 
   all: initial;
   text-align: left;
-  text-direction: ltr;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
