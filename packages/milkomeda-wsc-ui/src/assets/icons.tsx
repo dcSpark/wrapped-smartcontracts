@@ -8,6 +8,7 @@ export const Scan = ({ ...props }) => (
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    {...props}
   >
     <path
       fillRule="evenodd"
@@ -18,8 +19,6 @@ export const Scan = ({ ...props }) => (
     />
   </svg>
 );
-
-export const Download = ({ ...props }) => <svg />;
 
 export const ExternalLinkIcon = ({ ...props }) => (
   <svg

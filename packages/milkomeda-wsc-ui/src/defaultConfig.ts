@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import { Connector, configureChains, ChainProviderFn } from "wagmi";
 import { Chain } from "wagmi/chains";
 
@@ -74,6 +75,7 @@ type MilkomedaWSCClientProps = {
 };
 
 const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
+  /* eslint @typescript-eslint/no-explicit-any: "off" */
   let connectors: any[] = [];
 
   // Add the rest of the connectors

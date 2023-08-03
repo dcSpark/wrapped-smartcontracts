@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { StepperStepProps } from "./index";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
 
 type UseStepper = {

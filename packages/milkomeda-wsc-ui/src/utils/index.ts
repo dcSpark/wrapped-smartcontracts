@@ -96,7 +96,7 @@ const getBrowserAppUri = (connectorId: string) => {
   }
 };
 
-const isFlint = () => {
+const isFlint = (): boolean => {
   if (typeof window === "undefined") return false;
 
   const { cardano } = window;
@@ -105,7 +105,7 @@ const isFlint = () => {
   const isFlint = Boolean(cardano.flint);
   if (isFlint) return true;
 };
-const isEternl = () => {
+const isEternl = (): boolean => {
   if (typeof window === "undefined") return false;
 
   const { cardano } = window;
@@ -119,10 +119,8 @@ type ReactChildArray = ReturnType<typeof React.Children.toArray>;
 function flattenChildren(children: React.ReactNode): ReactChildArray {
   const childrenArray = React.Children.toArray(children);
   return childrenArray.reduce((flatChildren: ReactChildArray, child) => {
-    if ((child as React.ReactElement<any>).type === React.Fragment) {
-      return flatChildren.concat(
-        flattenChildren((child as React.ReactElement<any>).props.children)
-      );
+    if ((child as React.ReactElement).type === React.Fragment) {
+      return flatChildren.concat(flattenChildren((child as React.ReactElement).props.children));
     }
     flatChildren.push(child);
     return flatChildren;

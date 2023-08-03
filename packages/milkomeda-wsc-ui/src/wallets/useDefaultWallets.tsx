@@ -1,7 +1,7 @@
 import { getWallets } from "./index";
 import { WalletProps } from "./wallet";
 
-function useDefaultWallets(): WalletProps[] | any {
+function useDefaultWallets(): WalletProps[] {
   const defaultWallets: string[] = [];
 
   // define the order of the wallets

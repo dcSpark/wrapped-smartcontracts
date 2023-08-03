@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, Variants } from "framer-motion";
 import {
@@ -19,14 +20,13 @@ import {
   ModalContentContainer,
   ModalContent,
 } from "../../Common/Modal/styles";
-import { OrDivider } from "../../Common/Modal";
 import Button from "../../Common/Button";
 import Tooltip from "../../Common/Tooltip";
 import Alert from "../../Common/Alert";
 
 import CircleSpinner from "./CircleSpinner";
 
-import { RetryIconCircle, Scan } from "../../../assets/icons";
+import { RetryIconCircle } from "../../../assets/icons";
 import BrowserIcon from "../../Common/BrowserIcon";
 import { AlertIcon, TickIcon } from "../../../assets/icons";
 import { detectBrowser } from "../../../utils";
@@ -75,7 +75,7 @@ const ConnectWithInjector: React.FC<{
   connectorId: string;
   switchConnectMethod: (id?: string) => void;
   forceState?: typeof states;
-}> = ({ connectorId, switchConnectMethod, forceState }) => {
+}> = ({ connectorId, forceState }) => {
   const { connect, connectors } = useConnect({
     onMutate: (connector?: any) => {
       if (connector.connector) {
@@ -123,12 +123,9 @@ const ConnectWithInjector: React.FC<{
     },
   });
 
-  const [id, setId] = useState(connectorId);
+  const [id] = useState(connectorId);
   const [showTryAgainTooltip, setShowTryAgainTooltip] = useState(false);
   const connector = supportedConnectors.filter((c) => c.id === id)[0];
-
-  const expiryDefault = 9; // Starting at 10 causes layout shifting, better to start at 9
-  const [expiryTimer, setExpiryTimer] = useState<number>(expiryDefault);
 
   const hasExtensionInstalled = connector.extensionIsInstalled && connector.extensionIsInstalled();
 

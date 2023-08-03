@@ -1,13 +1,14 @@
 // Based on https://hiddedevries.nl/en/blog/2017-01-29-using-javascript-to-trap-focus-in-an-element
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from "react";
 
 const KEYCODE_TAB = 9;
 
 function useFocusTrap() {
+  /* eslint @typescript-eslint/no-explicit-any: "off" */
   const elRef = useRef<any>(null);
 
-  function handleFocus(e: any) {
+  function handleFocus(e: KeyboardEvent) {
     if (!elRef.current) return;
     const focusableEls = elRef.current.querySelectorAll(`
         a[href]:not(:disabled),
@@ -21,7 +22,7 @@ function useFocusTrap() {
       firstFocusableEl = focusableEls[0],
       lastFocusableEl = focusableEls[focusableEls.length - 1];
 
-    const isTabPressed = e.key === 'Tab' || e.keyCode === KEYCODE_TAB;
+    const isTabPressed = e.key === "Tab" || e.keyCode === KEYCODE_TAB;
 
     if (!isTabPressed) {
       return;
@@ -42,12 +43,12 @@ function useFocusTrap() {
 
   useEffect(() => {
     if (elRef.current) {
-      elRef.current.addEventListener('keydown', handleFocus);
+      elRef.current.addEventListener("keydown", handleFocus);
       elRef.current.focus({ preventScroll: true });
     }
     return () => {
       if (elRef.current) {
-        elRef.current.removeEventListener('keydown', handleFocus);
+        elRef.current.removeEventListener("keydown", handleFocus);
       }
     };
   }, []);
@@ -55,7 +56,7 @@ function useFocusTrap() {
   return elRef;
 }
 
-export default function FocusTrap(props: any) {
+export default function FocusTrap(props: { children: React.ReactNode }) {
   const elRef = useFocusTrap();
 
   useEffect(() => {

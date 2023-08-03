@@ -1,5 +1,7 @@
 import { useRef } from "react";
 
+/* eslint @typescript-eslint/no-explicit-any: "off" */
+
 export default function usePrevious(value: any, initial?: any) {
   const ref = useRef({ target: value, previous: initial });
 

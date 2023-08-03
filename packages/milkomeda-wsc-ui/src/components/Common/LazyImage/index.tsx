@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
 const LazyImage: React.FC<{
   src: string;
@@ -6,17 +6,12 @@ const LazyImage: React.FC<{
   width?: number;
   height?: number;
 }> = ({ src, alt, width, height }) => {
+  /* eslint @typescript-eslint/no-explicit-any: "off" */
   const imageRef = useRef<any>(null);
   const [loaded, setLoaded] = useState(true);
 
   useEffect(() => {
-    if (
-      !(
-        imageRef.current &&
-        imageRef.current.complete &&
-        imageRef.current.naturalHeight !== 0
-      )
-    ) {
+    if (!(imageRef.current && imageRef.current.complete && imageRef.current.naturalHeight !== 0)) {
       setLoaded(false);
     }
   }, [src]);
@@ -26,8 +21,8 @@ const LazyImage: React.FC<{
       style={{
         width,
         height,
-        background: 'rgba(0,0,0,0.02)',
-        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)',
+        background: "rgba(0,0,0,0.02)",
+        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.02)",
       }}
     >
       <img
@@ -37,7 +32,7 @@ const LazyImage: React.FC<{
         width={width}
         height={height}
         onLoad={() => setLoaded(true)}
-        style={{ transition: 'opacity 0.2s ease', opacity: loaded ? 1 : 0 }}
+        style={{ transition: "opacity 0.2s ease", opacity: loaded ? 1 : 0 }}
       />
     </div>
   );

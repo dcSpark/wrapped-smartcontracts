@@ -27,6 +27,7 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const [currentRoute] = useState(context.route);
 
+  /* eslint @typescript-eslint/no-explicit-any: "off" */
   const targetRef = useRef<any>(null);
   const [ref, bounds] = useMeasure({
     debounce: !ready ? 220 : 0, // fix alignment initial state

@@ -12,5 +12,5 @@ export type ButtonProps = {
   download?: boolean;
   href?: string;
   style?: React.CSSProperties;
-  onClick?: (e: any) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };

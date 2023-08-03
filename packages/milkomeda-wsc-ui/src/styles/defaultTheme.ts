@@ -61,17 +61,17 @@ const parseTheme = (theme: Theme) => {
   return theme;
 };
 
-const userPrefersDarkMode = () => {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  /*
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', (event) => {
-      userPrefersDarkMode = event.matches;
-    });
-    */
-};
+// const userPrefersDarkMode = () => {
+//   if (typeof window === "undefined") return false;
+//   return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+//   /*
+//   window
+//     .matchMedia('(prefers-color-scheme: dark)')
+//     .addEventListener('change', (event) => {
+//       userPrefersDarkMode = event.matches;
+//     });
+//     */
+// };
 // let darkMode = userPrefersDarkMode();
 //
 // if (darkMode) {

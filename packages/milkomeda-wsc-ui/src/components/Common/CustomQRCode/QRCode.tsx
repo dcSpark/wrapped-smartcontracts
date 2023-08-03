@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import QRCodeUtil from "qrcode";
 import React, { ReactElement, useMemo } from "react";
 

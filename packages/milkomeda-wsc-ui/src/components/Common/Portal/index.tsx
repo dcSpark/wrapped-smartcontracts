@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 
+/* eslint @typescript-eslint/no-explicit-any: "off" */
+
 const Portal = (props: any) => {
   props = {
     selector: "__CONNECTWSC__",

@@ -1,8 +1,6 @@
 import * as React from "react";
 import { Check, Loader2, X } from "lucide-react";
 
-import * as Separator from "@radix-ui/react-separator";
-
 import { useMediaQuery } from "./use-stepper";
 import {
   StepperContainer,

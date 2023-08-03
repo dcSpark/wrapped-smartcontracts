@@ -56,7 +56,7 @@ const KnownChain = ({ testnet, ...props }: Logo) => (
     </defs>
   </svg>
 );
-const UnknownChain = ({ testnet, ...props }: Logo) => {
+const UnknownChain = ({ ...props }: Logo) => {
   return <KnownChain testnet {...props} />;
 };
 

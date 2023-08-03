@@ -23,6 +23,7 @@ const ActionExecutionStep = ({ nextStep }) => {
   const prepareContractWriteQuery = usePrepareContractWrite({
     address: evmContractRequest.address as `0x${string}`,
     abi: evmContractRequest.abi,
+    /* eslint @typescript-eslint/no-explicit-any: "off" */
     functionName: evmContractRequest.functionName as any,
     args: evmContractRequest.args,
     enabled: evmContractRequest.enabled,

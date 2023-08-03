@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { AnimatePresence, motion, Variants } from "framer-motion";
@@ -208,7 +209,7 @@ const Modal: React.FC<ModalProps> = ({
   inline,
   onClose,
   onBack,
-  onInfo,
+  // onInfo,
 }) => {
   const context = useContext();
   const mobile = isMobile();
@@ -227,7 +228,7 @@ const Modal: React.FC<ModalProps> = ({
     context.route === routes.CONNECTORS ? 0 : context.route === routes.DOWNLOAD ? 2 : 1;
   const prevDepth = usePrevious(currentDepth, currentDepth);
 
-  const prevPage = usePrevious(pageId, pageId);
+  // const prevPage = usePrevious(pageId, pageId);
 
   useEffect(() => {
     setOpen(open);

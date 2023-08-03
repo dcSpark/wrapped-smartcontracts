@@ -14,7 +14,7 @@ const TransactionSteps: React.FC<{ closeModal?: () => void }> = ({ closeModal })
   const { disconnect } = useDisconnect();
 
   const { isConnected } = useAccount();
-  const [shouldDisconnect, setShouldDisconnect] = useState(false);
+  const [shouldDisconnect] = useState(false);
 
   useEffect(() => {
     if (!isConnected) context.setOpen(false);

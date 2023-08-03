@@ -16,11 +16,8 @@ import Logos from "../../../assets/logos";
 import wave from "../../../assets/wave";
 
 import Button from "../../Common/Button";
-import { useContext } from "../../ConnectWSC";
 
 const Introduction: React.FC = () => {
-  const context = useContext();
-
   return (
     <PageContent>
       <Graphic>

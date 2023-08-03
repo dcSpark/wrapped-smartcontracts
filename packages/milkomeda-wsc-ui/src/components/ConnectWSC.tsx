@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-explicit-any: "off" */
 import React, { createContext, createElement, useEffect, useState, useCallback } from "react";
 // import { Buffer } from "buffer";
 

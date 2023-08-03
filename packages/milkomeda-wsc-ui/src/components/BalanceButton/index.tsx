@@ -42,7 +42,7 @@ type BalanceProps = {
   hideSymbol?: boolean;
 };
 
-export const Balance: React.FC<BalanceProps> = ({ hideIcon, hideSymbol }) => {
+export const Balance: React.FC<BalanceProps> = ({ hideSymbol }) => {
   const isMounted = useIsMounted();
   const [isInitial, setIsInitial] = useState(true);
 

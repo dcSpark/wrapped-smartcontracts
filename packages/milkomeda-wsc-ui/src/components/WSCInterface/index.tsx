@@ -208,7 +208,7 @@ function About() {
 }
 
 function Cardano() {
-  const { originAddress, originTokens, wscProvider } = useWSCProvider();
+  const { originAddress, originTokens } = useWSCProvider();
 
   const [tokenAmounts, setTokenAmounts] = useState<Map<string, string>>(new Map());
 
@@ -256,16 +256,8 @@ function Cardano() {
 
 const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount }) => {
   const { wscProvider } = useWSCProvider();
-  const {
-    txStatus,
-    txStatusError,
-    setTxStatusError,
-    setTxStatus,
-    isIdle,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useTransactionStatus();
+  const { txStatus, txStatusError, setTxStatusError, setTxStatus, isLoading, isError, isSuccess } =
+    useTransactionStatus();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const moveToken = async (token) => {
@@ -461,16 +453,8 @@ function WSCAssetItem({ token, allowedTokensMap }) {
   const { wscProvider } = useWSCProvider();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
-  const {
-    txStatus,
-    txStatusError,
-    setTxStatusError,
-    setTxStatus,
-    isIdle,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useTransactionStatus();
+  const { txStatus, txStatusError, setTxStatusError, setTxStatus, isLoading, isError, isSuccess } =
+    useTransactionStatus();
 
   useInterval(
     async () => {

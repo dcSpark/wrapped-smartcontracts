@@ -40,7 +40,7 @@ const themeColors = {
  *  Automatically use p3 if available
  */
 //  TODO: Don't use :any type
-const createCssVars = (scheme: any, important?: boolean) => {
+const createCssVars = (scheme: object) => {
   return css`
     ${Object.keys(scheme).map((key) => {
       const value = scheme[key];
@@ -48,7 +48,7 @@ const createCssVars = (scheme: any, important?: boolean) => {
     })}
   `;
 };
-const createCssColors = (scheme: any, override?: boolean) => {
+const createCssColors = (scheme: object, override?: boolean) => {
   const important = override ? " !important" : "";
   return css`
     ${Object.keys(scheme).map((key) => {
@@ -145,7 +145,7 @@ export const ResetContainer = styled(motion.div)`
     }
   }}
 
-  ${(props) => {
+  ${() => {
     switch (mode) {
       case "light":
         return globalsLight;

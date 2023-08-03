@@ -12,7 +12,7 @@ export const Flint = ({ ...props }) => (
   </svg>
 );
 export const Eternl = ({ ...props }) => (
-  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" {...props}>
     <div id="in-page-channel-node-id" />
     <rect width="30" height="30" fill="url(#pattern0)" />
     <defs>

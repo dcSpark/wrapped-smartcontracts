@@ -19,8 +19,8 @@ let supportedConnectors: {
   scannable?: boolean;
   extensions?: { [key: string]: string };
   appUrls?: { [key: string]: string };
-  extensionIsInstalled?: () => any;
-  defaultConnect?: () => any;
+  extensionIsInstalled: () => boolean;
+  defaultConnect?: () => void;
 }[] = [];
 
 if (typeof window != "undefined") {

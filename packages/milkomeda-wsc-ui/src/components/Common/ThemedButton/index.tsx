@@ -24,7 +24,7 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
   duration = 0.3,
   style,
 }) => {
-  const [contentRef, bounds] = useMeasure();
+  const [contentRef] = useMeasure();
   return (
     <Container
       className={variant}
