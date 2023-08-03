@@ -15,7 +15,7 @@ const BLOCKFROST_API_KEY = "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb";
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
 const inject = async () => {
-  const provider = await import("milkomeda-wsc-provider");
+  const provider = await import("provider");
   await provider.injectCardano(ORACLE_URL, JSON_RPC_URL).setup();
 
   cml = await import("@dcspark/cardano-multiplatform-lib-browser");

@@ -11,7 +11,7 @@ The provider customizes few json-rpc methods like `eth_sendTransaction`, `eth_re
 
 ```typescript
 const oldProvider = window.ethereum;
-const provider = await import("milkomeda-wsc-provider");
+const provider = await import("provider");
 await provider.inject(oracleUrl, nodeUrl).setup();
 ```
 
@@ -45,7 +45,7 @@ If the application requires L1 assets it is necessary that they belong to the Ac
 import { ethers } from "ethers";
 import { Blockfrost, Lucid } from "lucid-cardano";
 
-const milkomedaProvider = await import("milkomeda-wsc-provider");
+const milkomedaProvider = await import("provider");
 await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
 
 const amount = 10;
@@ -78,7 +78,7 @@ const txHash = await signedTx.submit();
 ```typescript
 import { ethers } from "ethers";
 
-const milkomedaProvider = await import("milkomeda-wsc-provider");
+const milkomedaProvider = await import("provider");
 await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
 
 const amount = 10;
@@ -102,7 +102,7 @@ const receipt = await tx.wait();
 ```typescript
 import { ethers } from "ethers";
 
-const milkomedaProvider = await import("milkomeda-wsc-provider");
+const milkomedaProvider = await import("provider");
 await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
 
 const amount = 10;
