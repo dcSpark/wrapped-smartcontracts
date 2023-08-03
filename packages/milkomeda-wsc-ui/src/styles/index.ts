@@ -54,7 +54,8 @@ const createCssColors = (scheme: object, override?: boolean) => {
     ${Object.keys(scheme).map((key) => {
       const value = scheme[key];
       return value && `${key}:${value}${important};`;
-    })}
+    })};
+
     @supports (color: color(display-p3 1 1 1)) {
       ${Object.keys(scheme).map((key) => {
         const value = scheme[key];
@@ -153,8 +154,8 @@ export const ResetContainer = styled(motion.div)`
         return globalsDark;
       default:
         return css`
-          ${globalsLight}
-          @media(prefers-color-scheme: dark) {
+          ${globalsLight};
+          @media (prefers-color-scheme: dark) {
             ${globalsDark}
           }
         `;
