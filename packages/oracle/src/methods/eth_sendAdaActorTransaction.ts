@@ -3,6 +3,7 @@ import { COSEKey, COSESign1 } from "@emurgo/cardano-message-signing-nodejs";
 import { ethers } from "ethers";
 import { JSONRPCErrorCode, JSONRPCErrorException } from "json-rpc-2.0";
 import { z } from "zod";
+import config from "../config";
 import { MINIMAL_GAS_LIMIT } from "../const";
 import {
   actorFactory,
@@ -118,7 +119,9 @@ const eth_sendAdaActorTransaction = async ([{ signature, key }, salt]: z.infer<
   if (isDeployed) {
     const actor = attachActor(actorAddress);
 
-    const tx = await actor.connect(wallet).execute(signature, key, { gasLimit, gasPrice });
+    const tx = config.actorDebugMode
+      ? await actor.connect(wallet).debug(signature, key, { gasLimit, gasPrice })
+      : await actor.connect(wallet).execute(signature, key, { gasLimit, gasPrice });
 
     return tx.hash;
   } else {
