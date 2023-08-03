@@ -96,7 +96,7 @@ const getBrowserAppUri = (connectorId: string) => {
   }
 };
 
-const isFlint = (): boolean => {
+const isFlint = () => {
   if (typeof window === "undefined") return false;
 
   const { cardano } = window;
@@ -105,7 +105,7 @@ const isFlint = (): boolean => {
   const isFlint = Boolean(cardano.flint);
   if (isFlint) return true;
 };
-const isEternl = (): boolean => {
+const isEternl = () => {
   if (typeof window === "undefined") return false;
 
   const { cardano } = window;

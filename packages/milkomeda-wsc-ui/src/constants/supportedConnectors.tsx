@@ -19,7 +19,7 @@ let supportedConnectors: {
   scannable?: boolean;
   extensions?: { [key: string]: string };
   appUrls?: { [key: string]: string };
-  extensionIsInstalled: () => boolean;
+  extensionIsInstalled: () => boolean | undefined;
   defaultConnect?: () => void;
 }[] = [];
 

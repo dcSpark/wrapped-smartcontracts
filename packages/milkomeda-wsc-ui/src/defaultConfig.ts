@@ -55,6 +55,8 @@ const defaultChains = [...milkomedaChains];
 
 type DefaultConnectorsProps = {
   chains: Chain[];
+  blockfrostId: string;
+  oracleUrl: string;
 };
 
 type DefaultConfigProps = {
@@ -65,6 +67,8 @@ type DefaultConfigProps = {
   webSocketProvider?: any;
   enableWebSocketProvider?: boolean;
   stallTimeout?: number;
+  blockfrostId: string;
+  oracleUrl: string;
 };
 
 type MilkomedaWSCClientProps = {
@@ -74,7 +78,7 @@ type MilkomedaWSCClientProps = {
   webSocketProvider?: any;
 };
 
-const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
+const getDefaultConnectors = ({ chains, blockfrostId, oracleUrl }: DefaultConnectorsProps) => {
   /* eslint @typescript-eslint/no-explicit-any: "off" */
   let connectors: any[] = [];
 
@@ -85,8 +89,8 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
       chains,
       options: {
         name: "flint",
-        oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
-        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+        oracleUrl: oracleUrl,
+        blockfrostKey: blockfrostId,
         jsonRpcProviderUrl: undefined,
       },
     }),
@@ -94,8 +98,8 @@ const getDefaultConnectors = ({ chains }: DefaultConnectorsProps) => {
       chains,
       options: {
         name: "etrnal",
-        oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
-        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+        oracleUrl: oracleUrl,
+        blockfrostKey: blockfrostId,
         jsonRpcProviderUrl: undefined,
       },
     }),
@@ -112,6 +116,8 @@ const defaultConfig = ({
   stallTimeout,
   webSocketProvider,
   enableWebSocketProvider,
+  blockfrostId,
+  oracleUrl,
 }: DefaultConfigProps) => {
   const providers: ChainProviderFn[] = [];
 
@@ -136,6 +142,8 @@ const defaultConfig = ({
       connectors ??
       getDefaultConnectors({
         chains: configuredChains,
+        blockfrostId: blockfrostId,
+        oracleUrl: oracleUrl,
       }),
     provider: provider ?? configuredProvider,
     webSocketProvider: enableWebSocketProvider // Removed by default, breaks if used in Next.js – "unhandledRejection: Error: could not detect network"
