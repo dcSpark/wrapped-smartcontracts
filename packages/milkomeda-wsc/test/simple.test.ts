@@ -26,7 +26,7 @@ describe("WSCLib", () => {
   it("should unwrap tokens", async () => {
     // Mock necessary methods
     const mockGetAddress = jest.spyOn(lib, "origin_getAddress").mockResolvedValue("testAddress");
-    const mockUnwrap = jest.spyOn(BridgeActions.prototype, "unwrap").mockResolvedValue();
+    const mockUnwrap = jest.spyOn(BridgeActions.prototype, "unwrap").mockResolvedValue("testAddress");
 
     const assetId = "assetId";
     const amount = new BigNumber(100);
