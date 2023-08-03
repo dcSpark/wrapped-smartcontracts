@@ -6,7 +6,8 @@
 import { useConnect as wagmiUseConnect } from "wagmi";
 import { useContext } from "../components/ConnectWSC";
 
-export function useConnect({ ...props } = {}) {
+/* eslint @typescript-eslint/no-explicit-any: "off" */
+export function useConnect({ ...props } = {}): any {
   const context = useContext();
 
   const connectProps = {};
