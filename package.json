@@ -34,6 +34,8 @@
     "packages/oracle",
     "packages/milkomeda-wsc-provider",
     "packages/milkomeda-wsc",
-    "packages/actor-webpage"
+    "packages/actor-webpage",
+    "packages/milkomeda-wsc-ui",
+    "packages/milkomeda-wsc-ui-next-example"
   ]
 }
