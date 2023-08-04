@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { ethers } from "ethers";
 
 const loadStr = (name: string, defaultValue?: string): string => {
   const value = process.env[name] ?? defaultValue;
@@ -22,10 +23,6 @@ const loadConfig = () => {
   return Object.freeze({
     env: loadStr("NODE_ENV", "development"),
     port: loadNum("PORT", 8080),
-    actorFactoryAddress: loadStr(
-      "ACTOR_FACTORY_ADDRESS",
-      "0x0000000000000000000000000000000000111111"
-    ),
     jsonRpcProviderUrl: loadStr("JSON_RPC_PROVIDER_URL", "http://localhost:8545"),
     signerPrivateKey: loadStr(
       "SIGNER_PRIVATE_KEY",
@@ -33,6 +30,12 @@ const loadConfig = () => {
       "0x35f9400884bdd60fdd1a769ebf39fa1c5b148072e68a5b2c8bc9ac2227c192b2"
     ),
     actorDebugMode: loadBool("ACTOR_DEBUG_MODE", false),
+
+    v1ActorFactoryAddress: loadStr("V1_ACTOR_FACTORY_ADDRESS", ethers.constants.AddressZero),
+    v2ActorFactoryAddress: loadStr(
+      "V2_ACTOR_FACTORY_ADDRESS",
+      "0x0000000000000000000000000000000000111111"
+    ),
   });
 };
 

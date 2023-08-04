@@ -1,15 +1,33 @@
 import { ethers } from "ethers";
 import { z } from "zod";
+import latestActorVersion from "../../actor-latest-version.json";
 import { attachActor } from "../services/actor.service";
 import { provider } from "../services/blockchain.service";
 import validationMiddleware from "./validationMiddleware";
 
-const InputSchema = z.tuple([
-  z.string().refine((address) => ethers.utils.isAddress(address), { message: "Invalid address" }),
+const actorAddressSchema = z
+  .string()
+  .refine((address) => ethers.utils.isAddress(address), { message: "Invalid address" });
+
+const actorVersionSchema = z
+  .number()
+  .optional()
+  .nullable()
+  .refine(
+    (actorVersion) =>
+      actorVersion === undefined || actorVersion === null || actorVersion <= latestActorVersion,
+    {
+      message: "Invalid actor version",
+    }
+  );
+
+const InputSchema = z.union([
+  z.tuple([actorAddressSchema]),
+  z.tuple([actorAddressSchema, actorVersionSchema]),
 ]);
 
-const eth_getActorNonce = async ([actorAddress]: [string]) => {
-  const actor = attachActor(actorAddress);
+const eth_getActorNonce = async ([actorAddress, actorVersion]: z.infer<typeof InputSchema>) => {
+  const actor = attachActor(actorAddress, actorVersion ?? latestActorVersion);
 
   const deployedBytecode = await provider.getCode(actorAddress);
 

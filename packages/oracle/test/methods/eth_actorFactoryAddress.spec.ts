@@ -19,6 +19,6 @@ describe("eth_actorFactoryAddress", () => {
 
     const { result: actorFactoryAddress } = body;
 
-    expect(actorFactoryAddress).to.equal(config.actorFactoryAddress);
+    expect(actorFactoryAddress).to.equal(config.v2ActorFactoryAddress);
   });
 });

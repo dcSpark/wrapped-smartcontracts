@@ -1,27 +1,64 @@
 import { ethers } from "ethers";
-import { abi as actorAbi } from "../artifacts/Actor.json";
-import { abi as actorFactoryAbi } from "../artifacts/ActorFactory.json";
+
+import actorLatestVersion from "../../actor-latest-version.json";
+
+import { abi as v1ActorAbi } from "../artifacts/v1/Actor.json";
+import { abi as v1ActorFactoryAbi } from "../artifacts/v1/ActorFactory.json";
+
+import { abi as v2ActorAbi } from "../artifacts/v2/Actor.json";
+import { abi as v2ActorFactoryAbi } from "../artifacts/v2/ActorFactory.json";
+
 import config from "../config";
 import type { Actor, ActorFactory } from "../typechain-types";
 import { provider } from "./blockchain.service";
 
-export const attachActor = (actorAddress: string) => {
-  return new ethers.Contract(actorAddress, actorAbi, provider) as Actor;
+const getActorAbi = (version: number) => {
+  switch (version) {
+    case 1:
+      return v1ActorAbi;
+    case 2:
+      return v2ActorAbi;
+    default:
+      throw new Error(`Actor version ${version} is not supported`);
+  }
 };
 
-export const actorFactory = new ethers.Contract(
-  config.actorFactoryAddress,
-  actorFactoryAbi,
-  provider
-) as ActorFactory;
+export const getActorFactory = (version: number = actorLatestVersion) => {
+  switch (version) {
+    case 1:
+      return new ethers.Contract(
+        config.v1ActorFactoryAddress,
+        v1ActorFactoryAbi,
+        provider
+      ) as ActorFactory;
+    case 2:
+      return new ethers.Contract(
+        config.v2ActorFactoryAddress,
+        v2ActorFactoryAbi,
+        provider
+      ) as ActorFactory;
+    default:
+      throw new Error(`ActorFactory version ${version} is not supported`);
+  }
+};
+
+export const attachActor = (actorAddress: string, actorVersion: number = actorLatestVersion) =>
+  new ethers.Contract(actorAddress, getActorAbi(actorVersion), provider) as Actor;
 
 export const isActorDeployed = async (actorAddress: string) => {
   const code = await provider.getCode(actorAddress);
   return code !== "0x";
 };
 
-export const getActorAddress = async (mainchainAddress: string, salt?: ethers.BytesLike) =>
-  await actorFactory.getActorAddress(mainchainAddress, salt ?? ethers.constants.HashZero);
+export const getActorAddress = async (
+  mainchainAddress: string,
+  salt?: ethers.BytesLike,
+  actorVersion: number = actorLatestVersion
+) =>
+  await getActorFactory(actorVersion).getActorAddress(
+    mainchainAddress,
+    salt ?? ethers.constants.HashZero
+  );
 
 export interface ActorTransaction {
   from: string;

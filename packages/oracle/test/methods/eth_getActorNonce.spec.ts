@@ -3,10 +3,10 @@ import chaiHttp from "chai-http";
 import { ethers } from "ethers";
 import server from "../../src";
 import {
-  actorFactory,
   attachActor,
   encodePayload,
   getActorAddress,
+  getActorFactory,
 } from "../../src/services/actor.service";
 import { provider, wallet } from "../../src/services/blockchain.service";
 import cip8 from "../cip8";
@@ -52,7 +52,7 @@ describe("eth_getActorNonce", () => {
   });
 
   it("should return 0 after deploy", async () => {
-    const tx = await actorFactory.connect(wallet).deploy(mainchainAddress, salt);
+    const tx = await getActorFactory().connect(wallet).deploy(mainchainAddress, salt);
 
     await tx.wait();
 

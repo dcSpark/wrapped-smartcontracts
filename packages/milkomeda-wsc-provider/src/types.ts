@@ -27,10 +27,12 @@ export interface EthereumProvider extends NodeJS.EventEmitter {
 
 export interface MilkomedaProvider extends EthereumProvider {
   isMilkomeda: boolean;
+  actorVersion: number | undefined;
   actorFactoryAddress: string | undefined;
   peraWallet: PeraWalletConnect | undefined;
   algorandAccounts: string[];
-  setup(): Promise<void>;
+  setup(actorVersion?: number): Promise<void>;
+  changeActorVersion(actorVersion: number): Promise<void>;
   oracleRequest<T>(payload: RequestArguments): Promise<T>;
   providerRequest<T>(payload: RequestArguments): Promise<T>;
 }

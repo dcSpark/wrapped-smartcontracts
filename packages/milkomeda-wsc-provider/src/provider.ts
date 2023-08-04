@@ -19,6 +19,7 @@ class Provider extends EventEmitter implements MilkomedaProvider {
 
   public readonly isMilkomeda = true;
 
+  public actorVersion: number | undefined = undefined;
   public actorFactoryAddress: string | undefined = undefined;
 
   private nextId = 1;
@@ -43,13 +44,19 @@ class Provider extends EventEmitter implements MilkomedaProvider {
     }
   }
 
-  async setup(): Promise<void> {
+  async setup(actorVersion?: number): Promise<void> {
     this.actorFactoryAddress = await this.jsonRpcRequest(this.oracleUrl, {
       method: "eth_actorFactoryAddress",
-      params: [],
+      params: [actorVersion],
     });
 
+    this.actorVersion = actorVersion;
+
     this.emit("connect");
+  }
+
+  async changeActorVersion(actorVersion: number): Promise<void> {
+    await this.setup(actorVersion);
   }
 
   async request(payload: RequestArguments): Promise<unknown> {

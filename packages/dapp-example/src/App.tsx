@@ -7,15 +7,19 @@ const COUNTER_ADDRESS = "0000000000000000000000000000000000222222";
 
 const App = () => {
   const injectCardano = async () => {
-    const provider = await import("provider");
-    await provider.injectCardano("http://localhost:8080", "http://localhost:8545").setup();
+    const provider = await import("milkomeda-wsc-provider");
+    await provider
+      .injectCardano("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com")
+      .setup(1);
 
     alert("Injected");
   };
 
   const injectAlgorand = async () => {
-    const provider = await import("provider");
-    await provider.injectAlgorand("http://localhost:8080", "http://localhost:8545").setup();
+    const provider = await import("milkomeda-wsc-provider");
+    await provider
+      .injectAlgorand("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com")
+      .setup();
 
     alert("Injected");
   };
