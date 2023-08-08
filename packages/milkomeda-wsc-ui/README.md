@@ -34,6 +34,8 @@ There are various runnable examples included in this repository in the [example 
 
 - [Next Example (TypeScript)](../milkomeda-wsc-ui-next-example)
 
+You can play around with the Next Example [here](https://codesandbox.io/p/sandbox/milkomeda-wsc-demo-2ddjkv?file=%2FREADME.md%3A1%2C36).
+
 
 ## Twitter
 
