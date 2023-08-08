@@ -4,9 +4,10 @@
   "license": "MIT",
   "description": "A Typescript library to easily interact with Milkomeda's Wrapped Smart Contracts (WSC)",
   "author": "nicarq",
-  "exports": "./build/index.js",
-  "types": "./build/index.d.ts",
   "type": "module",
+  "main": "./build/index.js",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
   "files": [
     "build/"
   ],
