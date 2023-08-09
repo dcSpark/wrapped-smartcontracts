@@ -1,6 +1,7 @@
 import { WSCLib, MilkomedaNetworkName } from "milkomeda-wsc";
 import { Connector, ConnectorNotFoundError } from "wagmi";
 import { normalizeChainId } from "@wagmi/core";
+import { Chain } from "wagmi/chains";
 /**
  * Connector for [Cardano WSC]
  */
@@ -16,7 +17,19 @@ export class CardanoWSCConnector extends Connector {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   #previousCardanoProvider;
-  constructor({ chains, options: options_ }) {
+  constructor({
+    chains,
+    options: options_,
+  }: {
+    chains: Chain[];
+    options: {
+      name: string;
+      network?: MilkomedaNetworkName;
+      oracleUrl: string;
+      blockfrostKey: string;
+      jsonRpcProviderUrl?: string;
+    };
+  }) {
     const options = {
       id: options_.name + "-wsc",
       ...options_,

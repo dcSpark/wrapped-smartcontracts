@@ -4,7 +4,7 @@ import { Chain } from "wagmi/chains";
 
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { CardanoWSCConnector } from "./wsc-cardano-connector";
-// import { CardanoWSCConnector } from "@dcspark/cardano-wsc-wagmi"; //TODO: fix this
+import { MilkomedaNetworkName } from "milkomeda-wsc";
 
 export const milkomedaChains = [
   {
@@ -57,6 +57,7 @@ type DefaultConnectorsProps = {
   chains: Chain[];
   blockfrostId: string;
   oracleUrl: string;
+  network?: MilkomedaNetworkName;
 };
 
 type DefaultConfigProps = {
@@ -78,7 +79,12 @@ type MilkomedaWSCClientProps = {
   webSocketProvider?: any;
 };
 
-const getDefaultConnectors = ({ chains, blockfrostId, oracleUrl }: DefaultConnectorsProps) => {
+const getDefaultConnectors = ({
+  chains,
+  blockfrostId,
+  oracleUrl,
+  network,
+}: DefaultConnectorsProps) => {
   /* eslint @typescript-eslint/no-explicit-any: "off" */
   let connectors: any[] = [];
 
@@ -92,6 +98,7 @@ const getDefaultConnectors = ({ chains, blockfrostId, oracleUrl }: DefaultConnec
         oracleUrl: oracleUrl,
         blockfrostKey: blockfrostId,
         jsonRpcProviderUrl: undefined,
+        network: network ?? MilkomedaNetworkName.C1Devnet,
       },
     }),
     new CardanoWSCConnector({
@@ -101,6 +108,7 @@ const getDefaultConnectors = ({ chains, blockfrostId, oracleUrl }: DefaultConnec
         oracleUrl: oracleUrl,
         blockfrostKey: blockfrostId,
         jsonRpcProviderUrl: undefined,
+        network: network ?? MilkomedaNetworkName.C1Devnet,
       },
     }),
   ];
