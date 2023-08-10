@@ -2,8 +2,7 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 
 import { createClient, WagmiConfig } from "wagmi";
-import { ConnectWSCProvider, getDefaultConfig } from "milkomeda-wsc-ui";
-import { MilkomedaNetworkName } from "milkomeda-wsc";
+import { ConnectWSCProvider, getDefaultConfig, MilkomedaNetworkName } from "milkomeda-wsc-ui";
 
 const client = createClient(
   getDefaultConfig({
