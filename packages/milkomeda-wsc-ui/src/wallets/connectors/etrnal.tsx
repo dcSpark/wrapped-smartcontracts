@@ -5,7 +5,7 @@ import Logos from "../../assets/logos";
 
 export const etrnal = (): WalletProps => {
   return {
-    id: "etrnal-wsc",
+    id: "eternl-wsc",
     name: "Etrnal",
     logos: {
       default: <Logos.Eternl />,

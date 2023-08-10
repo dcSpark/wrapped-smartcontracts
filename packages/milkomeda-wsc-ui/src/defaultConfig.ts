@@ -58,6 +58,7 @@ type DefaultConnectorsProps = {
   blockfrostId: string;
   oracleUrl: string;
   network?: MilkomedaNetworkName;
+  cardanoWalletNames?: string[];
 };
 
 type DefaultConfigProps = {
@@ -84,6 +85,7 @@ const getDefaultConnectors = ({
   blockfrostId,
   oracleUrl,
   network,
+  cardanoWalletNames = ["flint", "eternl", "nami", "nufi", "yoroi"],
 }: DefaultConnectorsProps) => {
   /* eslint @typescript-eslint/no-explicit-any: "off" */
   let connectors: any[] = [];
@@ -91,26 +93,19 @@ const getDefaultConnectors = ({
   // Add the rest of the connectors
   connectors = [
     ...connectors,
-    new CardanoWSCConnector({
-      chains,
-      options: {
-        name: "flint",
-        oracleUrl: oracleUrl,
-        blockfrostKey: blockfrostId,
-        jsonRpcProviderUrl: undefined,
-        network: network ?? MilkomedaNetworkName.C1Devnet,
-      },
-    }),
-    new CardanoWSCConnector({
-      chains,
-      options: {
-        name: "etrnal",
-        oracleUrl: oracleUrl,
-        blockfrostKey: blockfrostId,
-        jsonRpcProviderUrl: undefined,
-        network: network ?? MilkomedaNetworkName.C1Devnet,
-      },
-    }),
+    ...cardanoWalletNames.map(
+      (walletName) =>
+        new CardanoWSCConnector({
+          chains,
+          options: {
+            name: walletName,
+            oracleUrl: oracleUrl,
+            blockfrostKey: blockfrostId,
+            jsonRpcProviderUrl: undefined,
+            network: network ?? MilkomedaNetworkName.C1Devnet,
+          },
+        })
+    ),
   ];
 
   return connectors;
