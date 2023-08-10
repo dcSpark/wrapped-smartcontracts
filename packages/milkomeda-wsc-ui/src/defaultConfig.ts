@@ -53,12 +53,15 @@ export const milkomedaChains = [
 
 const defaultChains = [...milkomedaChains];
 
+type SupportedCardanoWallets = "flint" | "eternl" | "nami" | "nufi" | "yoroi";
+
 type DefaultConnectorsProps = {
   chains: Chain[];
   blockfrostId: string;
   oracleUrl: string;
+  jsonRpcProviderUrl?: string;
   network?: MilkomedaNetworkName;
-  cardanoWalletNames?: string[];
+  cardanoWalletNames?: SupportedCardanoWallets[];
 };
 
 type DefaultConfigProps = {
@@ -84,6 +87,7 @@ const getDefaultConnectors = ({
   chains,
   blockfrostId,
   oracleUrl,
+  jsonRpcProviderUrl,
   network,
   cardanoWalletNames = ["flint", "eternl", "nami", "nufi", "yoroi"],
 }: DefaultConnectorsProps) => {
@@ -101,7 +105,7 @@ const getDefaultConnectors = ({
             name: walletName,
             oracleUrl: oracleUrl,
             blockfrostKey: blockfrostId,
-            jsonRpcProviderUrl: undefined,
+            jsonRpcProviderUrl: jsonRpcProviderUrl,
             network: network ?? MilkomedaNetworkName.C1Devnet,
           },
         })
