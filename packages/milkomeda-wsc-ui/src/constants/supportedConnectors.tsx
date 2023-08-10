@@ -178,7 +178,7 @@ if (typeof window != "undefined") {
     },
     {
       id: "nufi-wsc",
-      name: "Nufi WSC",
+      name: "NuFi WSC",
       logos: {
         default: <Logos.Nufi background />,
         mobile: <Logos.Nufi background />,
