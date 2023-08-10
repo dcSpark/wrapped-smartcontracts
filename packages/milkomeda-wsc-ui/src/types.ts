@@ -3,4 +3,3 @@ export type {
   TransactionConfigWSCOptions,
   EvmContractRequest,
 } from "./components/TransactionConfigWSC";
-export type { MilkomedaNetworkName } from "milkomeda-wsc";
