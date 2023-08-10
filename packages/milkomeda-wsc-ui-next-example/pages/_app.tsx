@@ -1,13 +1,16 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 
-import { WagmiConfig, createClient } from "wagmi";
+import { createClient, WagmiConfig } from "wagmi";
 import { ConnectWSCProvider, getDefaultConfig } from "milkomeda-wsc-ui";
+import { MilkomedaNetworkName } from "milkomeda-wsc";
 
 const client = createClient(
   getDefaultConfig({
     oracleUrl: "oracleUrl",
     blockfrostId: "blockfrostId",
+    network: MilkomedaNetworkName.C1Devnet,
+    cardanoWalletNames: ["flint", "eternl", "nami", "nufi", "yoroi"],
   })
 );
 

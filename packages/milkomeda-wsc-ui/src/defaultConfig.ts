@@ -74,6 +74,9 @@ type DefaultConfigProps = {
   stallTimeout?: number;
   blockfrostId: string;
   oracleUrl: string;
+  jsonRpcProviderUrl?: string;
+  network?: MilkomedaNetworkName;
+  cardanoWalletNames?: SupportedCardanoWallets[];
 };
 
 type MilkomedaWSCClientProps = {
@@ -125,6 +128,9 @@ const defaultConfig = ({
   enableWebSocketProvider,
   blockfrostId,
   oracleUrl,
+  jsonRpcProviderUrl,
+  network,
+  cardanoWalletNames,
 }: DefaultConfigProps) => {
   const providers: ChainProviderFn[] = [];
 
@@ -151,6 +157,9 @@ const defaultConfig = ({
         chains: configuredChains,
         blockfrostId: blockfrostId,
         oracleUrl: oracleUrl,
+        jsonRpcProviderUrl,
+        network,
+        cardanoWalletNames,
       }),
     provider: provider ?? configuredProvider,
     webSocketProvider: enableWebSocketProvider // Removed by default, breaks if used in Next.js – "unhandledRejection: Error: could not detect network"
