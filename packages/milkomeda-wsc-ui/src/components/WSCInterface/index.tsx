@@ -42,8 +42,10 @@ import { truncateCardanoAddress, truncateEthAddress } from "../../utils";
 import { statusUnwrapMessages } from "../TransactionStepper/UnwrapStep";
 import { MilkomedaLink } from "../Common/Modal/styles";
 import { MilkomedaIcon } from "../Common/Modal";
+import { useContext } from "../ConnectWSC";
 
 export const WSCInterface = () => {
+  const context = useContext();
   const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
   const isOriginBalanceNotZero = originBalance != null && +originBalance !== 0;
   const isDestinationBalanceNotZero = destinationBalance != null && +destinationBalance !== 0;
@@ -64,7 +66,7 @@ export const WSCInterface = () => {
   ];
 
   return (
-    <ResetContainer>
+    <ResetContainer $customTheme={context.customTheme}>
       <Container style={{ position: "relative" }}>
         <div
           style={{

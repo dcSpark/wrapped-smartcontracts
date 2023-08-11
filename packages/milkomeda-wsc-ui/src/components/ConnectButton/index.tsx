@@ -66,7 +66,7 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
   if (!isMounted) return null;
 
   return (
-    <ResetContainer>
+    <ResetContainer $customTheme={context.customTheme}>
       <ThemeContainer
         onClick={() => {
           if (onClick) {

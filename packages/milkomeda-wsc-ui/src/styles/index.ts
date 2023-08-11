@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { hexToP3 } from "../utils/p3";
 
 import predefinedThemes from "./themes";
+import { CustomTheme } from "../components/ConnectWSC";
 
 /**
  * Theme variables for the modal
@@ -99,7 +100,9 @@ const globalsDark = css`
 // TODO: Merge theme objects instead of overriding
 
 let mode = "auto";
-export const ResetContainer = styled(motion.div)`
+export const ResetContainer = styled(motion.div)<{
+  $customTheme?: CustomTheme;
+}>`
   ${themes.default}
 
   ${(props) => {
@@ -163,30 +166,6 @@ export const ResetContainer = styled(motion.div)`
 
 
   ${(props) => {
-    if (
-      props.$customTheme &&
-      props.$customTheme["--wsc-accent-color"] &&
-      ["light", "dark", "auto", "", undefined].includes(props.$useTheme)
-    ) {
-      const accentColor = props.$customTheme["--wsc-accent-color"];
-      const accentTextColor = props.$customTheme["--wsc-accent-text-color"] ?? "#ffffff";
-      return {
-        "--wsc-accent-color": accentColor,
-        "--wsc-accent-text-color": accentTextColor,
-        // '--wsc-connectbutton-color': accentTextColor,
-        // '--wsc-connectbutton-background': accentColor,
-        // '--wsc-connectbutton-background-hover': accentColor,
-        // '--wsc-connectbutton-background-active': LightenDarkenColor(
-        // accentColor,
-        // 20
-        // ),
-        "--wsc-secondary-button-background": accentColor,
-        "--wsc-secondary-button-hover-background": accentColor,
-        "--wsc-secondary-button-color": accentTextColor,
-        "--wsc-button-primary-color": accentTextColor,
-        "--wsc-focus-color": accentColor,
-      };
-    }
     if (props.$customTheme) {
       return createCssColors(props.$customTheme, true);
     }

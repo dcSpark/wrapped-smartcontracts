@@ -49,6 +49,8 @@ export type WSCContext = {
   isWSCConnected: boolean;
 };
 
+export type CustomTheme = Record<`--wsc-${string}`, string>;
+
 type ContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -59,6 +61,7 @@ type ContextValue = {
   errorMessage: Error;
   debugMode?: boolean;
   isWSCConnected?: boolean;
+  customTheme?: CustomTheme;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
@@ -66,9 +69,8 @@ type ContextValue = {
 
 export const Context = createContext<ContextValue | null>(null);
 
-// export type ConnectWSCOptions = NonNullable<unknown>;
-
 type ConnectKitProviderProps = {
+  customTheme?: CustomTheme;
   children?: React.ReactNode;
   debugMode?: boolean;
 } & useConnectCallbackProps;
@@ -78,6 +80,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   onConnect,
   onDisconnect,
   debugMode = false,
+  customTheme = {},
 }) => {
   // Only allow for mounting ConnectKitProvider once, so we avoid weird global
   // state collisions.
@@ -207,7 +210,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     isWSCConnected,
     // Other configuration
     errorMessage,
-
+    customTheme,
     debugMode,
     log,
     displayError: (message: string | React.ReactNode | null, code?: any) => {
@@ -222,10 +225,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   return createElement(
     Context.Provider,
     { value },
-    <ThemeProvider theme={defaultTheme}>
-      {children}
-      {/*<ConnectWSCModal />*/}
-    </ThemeProvider>
+    <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>
   );
 };
 
