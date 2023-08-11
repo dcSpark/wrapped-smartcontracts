@@ -140,7 +140,7 @@ export class MilkomedaConstants {
   static getBridgeEVMAddress(network: string): string {
     switch (network) {
       case MilkomedaNetworkName.C1Mainnet:
-        throw new Error("Need to add Bridge API URL for C1 Mainnet");
+        return "0xD0Fab4aE1ff28825aabD2A16566f89EB8948F9aB";
       case MilkomedaNetworkName.C1Devnet:
         return "0x319f10d19e21188ecf58b9a146ab0b2bfc894648";
       case MilkomedaNetworkName.A1Mainnet:
