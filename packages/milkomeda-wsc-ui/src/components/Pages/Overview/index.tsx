@@ -9,11 +9,14 @@ import { LabelWithBalance, WrapToken } from "../../TransactionStepper/WrapStep";
 import { convertWeiToTokens } from "../../../utils/convertWeiToTokens";
 import { OrDivider } from "../../Common/Modal";
 import { useTransactionFees } from "../../../hooks/useTransactionFees";
-import { DEFAULT_SYMBOL } from "../../../constants/transaction";
 import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
+import { getDefaultTokenByChainId } from "../../../utils/transactions";
+import { useNetwork } from "wagmi";
+import { LOVELACE_UNIT } from "../../../constants/transaction";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
   const { stargateInfo } = useContext();
+  const { chain } = useNetwork();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
   const {
     options: { defaultWrapToken },
@@ -21,7 +24,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
 
   const amount = React.useMemo(() => {
     if (!defaultWrapToken) return;
-    return defaultWrapToken.unit === "lovelace"
+    return defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
@@ -35,6 +38,8 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
     stargateInfo != null &&
     amount.plus(bridgeFees).plus(adaLocked).plus(evmEstimatedFee);
 
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
+
   return (
     <OverviewContent>
       <BalancesWrapper>
@@ -43,12 +48,12 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           amount={amount?.toFixed()}
           assetName={
             bridgeFees
-              ? defaultWrapToken?.unit === "lovelace"
-                ? DEFAULT_SYMBOL
+              ? defaultWrapToken?.unit === LOVELACE_UNIT
+                ? defaultSymbol
                 : selectedWrapToken?.assetName
               : null
           }
-          {...(defaultWrapToken?.unit !== "lovelace" && {
+          {...(defaultWrapToken?.unit !== LOVELACE_UNIT && {
             tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
               10 ** (selectedWrapToken?.decimals ?? 0)
             )} RC `,
@@ -57,26 +62,26 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
         <LabelWithBalance
           label="Bridge fees:"
           amount={bridgeFees?.toFixed()}
-          assetName={DEFAULT_SYMBOL}
+          assetName={defaultSymbol}
           tooltipMessage="This fee is paid to the bridge for wrapping (0.1 TADA) and unwrapping (1 TADA) your tokens."
         />
         <LabelWithBalance
           label="Bridge Lock-up:"
           amount={adaLocked?.toFixed()}
-          assetName={DEFAULT_SYMBOL}
+          assetName={defaultSymbol}
           tooltipMessage="This deposit is a temporary lock of 3 ADA in the bridge. Upon unwrapping, you will receive back the 3 ADA from the deposit."
         />
         <LabelWithBalance
           label="Estimated EVM fees"
           amount={`~${evmEstimatedFee?.toFixed()}`}
-          assetName={DEFAULT_SYMBOL}
+          assetName={defaultSymbol}
         />
         <OrDivider />
-        {defaultWrapToken?.unit === "lovelace" ? (
+        {defaultWrapToken?.unit === LOVELACE_UNIT ? (
           <LabelWithBalance
             label="You'll transfer:"
             amount={tranferTotalAmount && tranferTotalAmount?.toFixed()}
-            assetName={DEFAULT_SYMBOL}
+            assetName={defaultSymbol}
           />
         ) : (
           <>
@@ -88,7 +93,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
             <LabelWithBalance
               label=""
               amount={tranferTotalAmount && tranferTotalAmount.minus(amount)?.toFixed()}
-              assetName={DEFAULT_SYMBOL}
+              assetName={defaultSymbol}
             />
           </>
         )}

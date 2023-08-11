@@ -25,19 +25,15 @@ import { CheckCircle2, LucideInfo } from "lucide-react";
 
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import Tooltip from "../Common/Tooltip";
-import {
-  BRIDGE_EXPLORER_URL,
-  DEFAULT_SYMBOL,
-  LOVELACE_UNIT,
-  TX_STATUS_CHECK_INTERVAL,
-  TxStatus,
-} from "../../constants/transaction";
+import { LOVELACE_UNIT, TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
 import Overview from "../Pages/Overview";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
+import { useNetwork } from "wagmi";
+import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -54,30 +50,33 @@ export const statusWrapMessages = {
 
 export const useSelectedWrapToken = () => {
   const { originTokens } = useContext();
+  const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();
 
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
+
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
 
-  const adaToken = originTokens.find((t) => t.unit === "lovelace");
+  const adaToken = originTokens.find((t) => t.unit === LOVELACE_UNIT);
 
   React.useEffect(() => {
     if (!defaultWrapToken) return;
     const loadOriginToken = async () => {
       const token = originTokens.find((t) => t.unit === defaultWrapToken.unit) ?? {
-        unit: "lovelace",
+        unit: LOVELACE_UNIT,
         quantity: "0",
-        decimals: defaultWrapToken.unit === "lovelace" ? 6 : 0,
+        decimals: defaultWrapToken.unit === LOVELACE_UNIT ? 6 : 0,
         bridgeAllowed: true,
-        assetName: DEFAULT_SYMBOL,
+        assetName: defaultSymbol,
         fingerprint: undefined,
       };
 
       const defaultToken = {
         ...token,
         quantity:
-          token.unit === "lovelace"
+          token.unit === LOVELACE_UNIT
             ? convertWeiToTokens({ valueWei: token.quantity, token })
             : new BigNumber(token.quantity),
       };
@@ -92,6 +91,8 @@ export const useSelectedWrapToken = () => {
 const WrapStep = ({ nextStep }) => {
   const { setOpen } = useContext();
   const { wscProvider } = useContext();
+  const { chain } = useNetwork();
+
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();
@@ -136,7 +137,7 @@ const WrapStep = ({ nextStep }) => {
 
     try {
       const wrapAmount =
-        defaultWrapToken.unit === "lovelace"
+        defaultWrapToken.unit === LOVELACE_UNIT
           ? convertTokensToWei({
               value: new BigNumber(defaultWrapToken.amount).dividedBy(10 ** 18), // unscaled value
               token: { decimals: 6 },
@@ -150,7 +151,7 @@ const WrapStep = ({ nextStep }) => {
         undefined,
         selectedWrapToken.unit,
         wrapAmount.toNumber(),
-        defaultWrapToken.unit !== "lovelace" ? totalFees.toNumber() : 0
+        defaultWrapToken.unit !== LOVELACE_UNIT ? totalFees.toNumber() : 0
       );
       setTxHash(txHash);
       setTxStatus(TxStatus.Pending);
@@ -165,7 +166,7 @@ const WrapStep = ({ nextStep }) => {
   };
 
   const formattedAmount =
-    defaultWrapToken.unit === "lovelace"
+    defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
@@ -224,7 +225,7 @@ const WrapStep = ({ nextStep }) => {
           <>
             <SuccessMessage
               message={statusWrapMessages[TxPendingStatus.Confirmed]}
-              href={`${BRIDGE_EXPLORER_URL}/wrap/${txHash}`}
+              href={`${getBridgeExplorerUrl(chain?.id)}/wrap/${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
             <Button variant="primary" onClick={nextStep}>

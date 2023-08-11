@@ -84,7 +84,8 @@ export class CardanoWSCConnector extends Connector {
   async getChainId() {
     const provider = await this.getProvider();
     if (!provider) throw new ConnectorNotFoundError();
-    return normalizeChainId(200101);
+    const networkId = provider.network === MilkomedaNetworkName.C1Mainnet ? 2001 : 200101;
+    return normalizeChainId(networkId);
   }
   async getProvider() {
     if (!this.#provider) {

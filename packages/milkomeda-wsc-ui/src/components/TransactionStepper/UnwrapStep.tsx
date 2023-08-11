@@ -17,8 +17,6 @@ import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiTo
 import { Spinner } from "../Common/Spinner";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import {
-  BRIDGE_EXPLORER_URL,
-  DEFAULT_SYMBOL,
   LOCK_ADA,
   LOVELACE_UNIT,
   TX_STATUS_CHECK_INTERVAL,
@@ -32,6 +30,8 @@ import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
+import { useNetwork } from "wagmi";
+import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -47,6 +47,8 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();
+  const { chain } = useNetwork();
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
 
@@ -86,7 +88,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       contractAddress: isWrappingNativeTokenFirst ? defaultUnwrapToken.unit : "",
       decimals: isWrappingNativeTokenFirst ? "0" : "18",
       name: "",
-      symbol: DEFAULT_SYMBOL,
+      symbol: defaultSymbol,
       type: "string",
     };
 
@@ -157,7 +159,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                   <LabelWithBalance
                     label="Bridge Lock-up:"
                     amount={LOCK_ADA}
-                    assetName={DEFAULT_SYMBOL}
+                    assetName={defaultSymbol}
                   />
                 ) : (
                   <>
@@ -172,17 +174,17 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                           .dividedBy(10 ** 6)
                           .toFixed()
                       }
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                     <LabelWithBalance
                       label="Bridge Lock-up:"
                       amount={LOCK_ADA}
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                     <LabelWithBalance
                       label="Bridge fees:"
                       amount={unwrappingFee?.toFixed()}
-                      assetName={unwrappingFee && DEFAULT_SYMBOL}
+                      assetName={unwrappingFee && defaultSymbol}
                       tooltipMessage="This fee is paid to the bridge for unwrapping your token."
                     />
                   </>
@@ -203,7 +205,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       }
                       assetName={unwrappingFee && selectedUnwrapToken?.symbol}
                     />
-                    <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+                    <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={defaultSymbol} />
                   </>
                 ) : (
                   <>
@@ -222,7 +224,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                           .dividedBy(10 ** 6)
                           .toFixed()
                       }
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                   </>
                 )}
@@ -253,7 +255,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             <SuccessStep />
             <SuccessMessage
               message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
-              href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+              href={`${getBridgeExplorerUrl(chain?.id)}/search/tx?query=${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
             <ThemeContainer
@@ -266,6 +268,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </ThemeContainer>
           </>
         )}
+        {/*// TODO: network mainnet support */}
         {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
           <>
             <Alert icon={<AlertTriangleIcon />}>
@@ -276,7 +279,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                 style={{ display: "inline" }}
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+                href={`${getBridgeExplorerUrl(chain?.id)}/search/tx?query=${txHash}`}
               >
                 here in the Milkomeda Bridge Explorer.
               </TransactionExternalLink>{" "}

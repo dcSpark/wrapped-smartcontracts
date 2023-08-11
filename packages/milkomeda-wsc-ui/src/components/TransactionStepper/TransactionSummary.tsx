@@ -7,12 +7,15 @@ import { useContext } from "../ConnectWSC";
 import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { OverviewContent } from "../Common/Modal/styles";
 import { BalancesWrapper, ErrorMessage } from "./styles";
-import { DEFAULT_SYMBOL, LOVELACE_UNIT } from "../../constants/transaction";
+import { LOVELACE_UNIT } from "../../constants/transaction";
 import { OrDivider } from "../Common/Modal";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import { getDefaultTokenByChainId } from "../../utils/transactions";
+import { useNetwork } from "wagmi";
 
 const Overview = () => {
   const { stargateInfo } = useContext();
+  const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();
@@ -47,6 +50,8 @@ const Overview = () => {
     defaultWrapToken != null &&
     new BigNumber(defaultWrapToken.amount).gte(stargateInfo?.stargateMinNativeTokenFromL1);
 
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
+
   return (
     <OverviewContent>
       <BalancesWrapper>
@@ -54,34 +59,32 @@ const Overview = () => {
           label="You're moving:"
           amount={defaultWrapToken != null && amount && amount.toFixed()}
           assetName={
-            defaultWrapToken?.unit === LOVELACE_UNIT
-              ? DEFAULT_SYMBOL
-              : selectedWrapToken?.assetName
+            defaultWrapToken?.unit === LOVELACE_UNIT ? defaultSymbol : selectedWrapToken?.assetName
           }
         />
         <LabelWithBalance
           label="Bridge fees:"
           amount={bridgeFees?.toFixed()}
-          assetName={DEFAULT_SYMBOL}
-          tooltipMessage={`This fee is paid to the bridge for wrapping (0.1 ${DEFAULT_SYMBOL}) and unwrapping (1 ${DEFAULT_SYMBOL}) your tokens.`}
+          assetName={defaultSymbol}
+          tooltipMessage={`This fee is paid to the bridge for wrapping (0.1 ${defaultSymbol}) and unwrapping (1 ${defaultSymbol}) your tokens.`}
         />
         <LabelWithBalance
           label="Bridge Lock-up:"
           amount={adaLocked?.toFixed()}
-          assetName={DEFAULT_SYMBOL}
-          tooltipMessage={`This deposit is a temporary lock of 3 ADA in the bridge. Upon unwrapping, you will receive back the 3 ${DEFAULT_SYMBOL} from the deposit.`}
+          assetName={defaultSymbol}
+          tooltipMessage={`This deposit is a temporary lock of 3 ADA in the bridge. Upon unwrapping, you will receive back the 3 ${defaultSymbol} from the deposit.`}
         />
         <LabelWithBalance
           label="Estimated EVM fees"
           amount={`~${evmEstimatedFee?.toFixed()}`}
-          assetName={DEFAULT_SYMBOL}
+          assetName={defaultSymbol}
         />
         <OrDivider />
         {defaultWrapToken?.unit === LOVELACE_UNIT ? (
           <LabelWithBalance
             label="You'll transfer:"
             amount={tranferTotalAmount && tranferTotalAmount?.toFixed()}
-            assetName={DEFAULT_SYMBOL}
+            assetName={defaultSymbol}
           />
         ) : (
           <>
@@ -93,7 +96,7 @@ const Overview = () => {
             <LabelWithBalance
               label=""
               amount={tranferTotalAmount && tranferTotalAmount.minus(amount)?.toFixed()}
-              assetName={DEFAULT_SYMBOL}
+              assetName={defaultSymbol}
             />
           </>
         )}
@@ -109,7 +112,7 @@ const Overview = () => {
         !isAboveMinAmount && (
           <ErrorMessage role="alert">
             Error: Minimum amount to wrap is {stargateInfo?.stargateMinNativeTokenFromL1}{" "}
-            {DEFAULT_SYMBOL}
+            {defaultSymbol}
           </ErrorMessage>
         )}
     </OverviewContent>
