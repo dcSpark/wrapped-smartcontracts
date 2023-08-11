@@ -54,7 +54,7 @@ import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 //           right: -2,
 //           background: "#1A88F8",
 //           borderRadius: 8,
-//           boxShadow: "0 0 0 2px var(--ck-body-background)",
+//           boxShadow: "0 0 0 2px var(--wsc-body-background)",
 //           width: 8,
 //           height: 8,
 //         }}

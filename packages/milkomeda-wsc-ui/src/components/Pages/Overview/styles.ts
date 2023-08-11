@@ -7,7 +7,7 @@ export const Balance = styled(motion.div)`
   min-width: 150px;
   text-align: left;
   span {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
     font-size: 1.125rem;
   }
 `;
@@ -21,7 +21,7 @@ export const LoadingBalance = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: var(--ck-body-background-secondary);
+  background: var(--wsc-body-background-secondary);
   inset: 0;
   &:before {
     z-index: 4;
@@ -30,9 +30,9 @@ export const LoadingBalance = styled(motion.div)`
     inset: 0;
     background-image: linear-gradient(
       90deg,
-      var(--ck-body-background-transparent) 50%,
-      var(--ck-body-background),
-      var(--ck-body-background-transparent)
+      var(--wsc-body-background-transparent) 50%,
+      var(--wsc-body-background),
+      var(--wsc-body-background-transparent)
     );
     opacity: 0.75;
     background-size: 200% 100%;

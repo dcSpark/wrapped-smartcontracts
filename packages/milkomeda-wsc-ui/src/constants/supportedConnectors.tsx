@@ -57,7 +57,7 @@ if (typeof window != "undefined") {
         ),
       },
       logoBackground:
-        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
+        "linear-gradient(0deg, var(--wsc-brand-metamask-12), var(--wsc-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
@@ -106,7 +106,7 @@ if (typeof window != "undefined") {
         ),
       },
       logoBackground:
-        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
+        "linear-gradient(0deg, var(--wsc-brand-metamask-12), var(--wsc-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
@@ -156,7 +156,7 @@ if (typeof window != "undefined") {
         ),
       },
       logoBackground:
-        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
+        "linear-gradient(0deg, var(--wsc-brand-metamask-12), var(--wsc-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
@@ -204,7 +204,7 @@ if (typeof window != "undefined") {
         ),
       },
       logoBackground:
-        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
+        "linear-gradient(0deg, var(--wsc-brand-metamask-12), var(--wsc-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {
@@ -252,7 +252,7 @@ if (typeof window != "undefined") {
         ),
       },
       logoBackground:
-        "linear-gradient(0deg, var(--ck-brand-metamask-12), var(--ck-brand-metamask-11))",
+        "linear-gradient(0deg, var(--wsc-brand-metamask-12), var(--wsc-brand-metamask-11))",
       scannable: false,
       // defaultConnect:  () => {},
       extensions: {

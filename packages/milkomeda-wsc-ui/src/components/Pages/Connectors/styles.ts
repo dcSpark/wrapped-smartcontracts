@@ -11,9 +11,9 @@ const Shimmer = keyframes`
 
 export const InfoBox = styled.div`
   padding: 24px 24px 28px;
-  border-radius: var(--ck-tertiary-border-radius, 24px);
-  box-shadow: var(--ck-tertiary-box-shadow, none);
-  background: var(--ck-body-background-tertiary);
+  border-radius: var(--wsc-tertiary-border-radius, 24px);
+  box-shadow: var(--wsc-tertiary-box-shadow, none);
+  background: var(--wsc-body-background-tertiary);
   ${ModalBody} {
     max-width: none;
   }
@@ -42,7 +42,7 @@ export const LearnMoreButton = styled(motion.button)`
   padding: 0 16px;
   border-radius: 6px;
   background: none;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   font-size: 15px;
   line-height: 18px;
   font-weight: 500;
@@ -69,7 +69,7 @@ export const LearnMoreButton = styled(motion.button)`
     }
   }
   &:hover {
-    color: var(--ck-body-color-muted-hover);
+    color: var(--wsc-body-color-muted-hover);
     svg {
       path,
       circle {
@@ -100,33 +100,33 @@ export const ConnectorButton = styled(motion.button)`
   width: 100%;
   height: 64px;
   font-size: 17px;
-  font-weight: var(--ck-primary-button-font-weight, 500);
+  font-weight: var(--wsc-primary-button-font-weight, 500);
   line-height: 20px;
-  text-align: var(--ck-body-button-text-align, left);
+  text-align: var(--wsc-body-button-text-align, left);
   transition: 180ms ease;
   transition-property: background, color, box-shadow, transform;
   will-change: transform, box-shadow, background-color, color;
 
-  --fallback-color: var(--ck-primary-button-color);
-  --fallback-background: var(--ck-primary-button-background);
-  --fallback-box-shadow: var(--ck-primary-button-box-shadow);
-  --fallback-border-radius: var(--ck-primary-button-border-radius);
+  --fallback-color: var(--wsc-primary-button-color);
+  --fallback-background: var(--wsc-primary-button-background);
+  --fallback-box-shadow: var(--wsc-primary-button-box-shadow);
+  --fallback-border-radius: var(--wsc-primary-button-border-radius);
 
-  --color: var(--ck-primary-button-color, var(--fallback-color));
-  --background: var(--ck-primary-button-background, var(--fallback-background));
-  --box-shadow: var(--ck-primary-button-box-shadow, var(--fallback-box-shadow));
-  --border-radius: var(--ck-primary-button-border-radius, var(--fallback-border-radius));
+  --color: var(--wsc-primary-button-color, var(--fallback-color));
+  --background: var(--wsc-primary-button-background, var(--fallback-background));
+  --box-shadow: var(--wsc-primary-button-box-shadow, var(--fallback-box-shadow));
+  --border-radius: var(--wsc-primary-button-border-radius, var(--fallback-border-radius));
 
-  --hover-color: var(--ck-primary-button-hover-color, var(--color));
-  --hover-background: var(--ck-primary-button-hover-background, var(--background));
-  --hover-box-shadow: var(--ck-primary-button-hover-box-shadow, var(--box-shadow));
-  --hover-border-radius: var(--ck-primary-button-hover-border-radius, var(--border-radius));
+  --hover-color: var(--wsc-primary-button-hover-color, var(--color));
+  --hover-background: var(--wsc-primary-button-hover-background, var(--background));
+  --hover-box-shadow: var(--wsc-primary-button-hover-box-shadow, var(--box-shadow));
+  --hover-border-radius: var(--wsc-primary-button-hover-border-radius, var(--border-radius));
 
-  --active-color: var(--ck-primary-button-active-color, var(--hover-color));
-  --active-background: var(--ck-primary-button-active-background, var(--hover-background));
-  --active-box-shadow: var(--ck-primary-button-active-box-shadow, var(--hover-box-shadow));
+  --active-color: var(--wsc-primary-button-active-color, var(--hover-color));
+  --active-background: var(--wsc-primary-button-active-background, var(--hover-background));
+  --active-box-shadow: var(--wsc-primary-button-active-box-shadow, var(--hover-box-shadow));
   --active-border-radius: var(
-    --ck-primary-button-active-border-radius,
+    --wsc-primary-button-active-border-radius,
     var(--hover-border-radius)
   );
 
@@ -167,18 +167,18 @@ export const ConnectorButton = styled(motion.button)`
 `;
 export const ConnectorRecentlyUsed = styled(motion.span)`
   position: relative;
-  top: var(--ck-recent-badge-top-offset, 0.5px);
+  top: var(--wsc-recent-badge-top-offset, 0.5px);
   display: inline-block;
   padding: 10px 7px;
   line-height: 0;
   font-size: 13px;
   font-weight: 400;
-  border-radius: var(--ck-recent-badge-border-radius, var(--border-radius));
+  border-radius: var(--wsc-recent-badge-border-radius, var(--border-radius));
   color: var(
-    --ck-recent-badge-color,
-    var(--ck-accent-color, var(--ck-body-color-muted, currentColor))
+    --wsc-recent-badge-color,
+    var(--wsc-accent-color, var(--wsc-body-color-muted, currentColor))
   );
-  background: var(--ck-recent-badge-background, transparent);
+  background: var(--wsc-recent-badge-background, transparent);
   overflow: hidden;
   span {
     display: inline-block;
@@ -190,7 +190,7 @@ export const ConnectorRecentlyUsed = styled(motion.span)`
     position: absolute;
     inset: 0;
     opacity: 0.4;
-    box-shadow: var(--ck-recent-badge-box-shadow, inset 0 0 0 1px currentColor);
+    box-shadow: var(--wsc-recent-badge-box-shadow, inset 0 0 0 1px currentColor);
     border-radius: inherit;
   }
   &:after {
@@ -204,7 +204,7 @@ export const ConnectorRecentlyUsed = styled(motion.span)`
     background: linear-gradient(
       170deg,
       transparent 10%,
-      var(--ck-recent-badge-background, var(--bg)) 50%,
+      var(--wsc-recent-badge-background, var(--bg)) 50%,
       transparent 90%
     );
     animation: ${Shimmer} 2s linear infinite;
@@ -245,7 +245,7 @@ export const MobileConnectorsContainer = styled(motion.div)`
 `;
 
 export const MobileConnectorButton = styled(motion.button)`
-  --background: var(--ck-body-background-secondary);
+  --background: var(--wsc-body-background-secondary);
   cursor: pointer;
   user-select: none;
   position: relative;
@@ -275,7 +275,7 @@ export const MobileConnectorButton = styled(motion.button)`
 export const MobileConnectorLabel = styled(motion.span)`
   display: block;
   padding: 10px 0 0;
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   opacity: 0.75;
   overflow: hidden;
   white-space: nowrap;

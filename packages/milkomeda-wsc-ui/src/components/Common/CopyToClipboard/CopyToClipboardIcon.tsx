@@ -37,8 +37,8 @@ const IconContainer = styled(motion.div)<{ $clipboard?: boolean }>`
   ${(props) =>
     props.$clipboard
       ? css`
-          --color: var(--ck-focus-color) !important;
-          --bg: var(--ck-body-background);
+          --color: var(--wsc-focus-color) !important;
+          --bg: var(--wsc-body-background);
           svg {
             transition-delay: 0ms;
             path:first-child {

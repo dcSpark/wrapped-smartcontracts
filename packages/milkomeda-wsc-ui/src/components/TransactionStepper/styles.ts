@@ -9,21 +9,21 @@ export const StepNormalHeight = styled.div`
 export const StepTitle = styled.h1`
   font-size: 1.25rem;
   text-align: center;
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
 
   margin-bottom: 10px;
 `;
 export const StepDescription = styled.p`
   font-size: 1rem;
   text-align: center;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
 export const OverviewDescription = styled.p`
   font-size: 1rem;
   text-align: center;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   margin-bottom: 40px;
   line-height: 1.5;
 `;
@@ -65,7 +65,7 @@ export const SuccessWrapper = styled.div`
   justify-content: center;
   gap: 12px;
   padding: 20px 0 40px;
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   p {
     margin: 0;
   }
@@ -89,7 +89,7 @@ export const WrapperButtons = styled.div`
 export const TransactionCompleteContainer = styled.div`
   position: relative;
   padding: 30px 0;
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   h1 {
     font-size: 1.25rem;
   }
@@ -113,6 +113,6 @@ export const TransactionExternalLink = styled.a`
   align-items: center;
   gap: 8px;
   svg {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;

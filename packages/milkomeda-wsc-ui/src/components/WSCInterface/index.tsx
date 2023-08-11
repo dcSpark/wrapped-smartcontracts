@@ -369,7 +369,7 @@ function Pending() {
                 style={{
                   padding: "14px 10px",
                   borderRadius: "4px",
-                  border: "1px solid var(--ck-body-color-muted)",
+                  border: "1px solid var(--wsc-body-color-muted)",
                 }}
               >
                 <Row>

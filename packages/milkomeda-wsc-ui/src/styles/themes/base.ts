@@ -1,189 +1,191 @@
 export default {
   light: {
     /** Connect Wallet Button */
-    "--ck-connectbutton-font-size": "15px",
-    "--ck-connectbutton-color": "#373737",
-    "--ck-connectbutton-background": "#F6F7F9",
-    "--ck-connectbutton-background-secondary": "#FFFFFF",
+    "--wsc-connectbutton-font-size": "15px",
+    "--wsc-connectbutton-color": "#373737",
+    "--wsc-connectbutton-background": "#F6F7F9",
+    "--wsc-connectbutton-background-secondary": "#FFFFFF",
 
-    "--ck-connectbutton-hover-color": "#373737",
-    "--ck-connectbutton-hover-background": "#F0F2F5",
+    "--wsc-connectbutton-hover-color": "#373737",
+    "--wsc-connectbutton-hover-background": "#F0F2F5",
 
-    "--ck-connectbutton-active-color": "#373737",
-    "--ck-connectbutton-active-background": "#EAECF1",
+    "--wsc-connectbutton-active-color": "#373737",
+    "--wsc-connectbutton-active-background": "#EAECF1",
 
-    "--ck-connectbutton-balance-color": "#373737",
-    "--ck-connectbutton-balance-background": "#fff",
-    "--ck-connectbutton-balance-box-shadow": "inset 0 0 0 1px var(--ck-connectbutton-background)",
+    "--wsc-connectbutton-balance-color": "#373737",
+    "--wsc-connectbutton-balance-background": "#fff",
+    "--wsc-connectbutton-balance-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-background)",
 
-    "--ck-connectbutton-balance-hover-background": "#F6F7F9",
-    "--ck-connectbutton-balance-hover-box-shadow":
-      "inset 0 0 0 1px var(--ck-connectbutton-hover-background)",
+    "--wsc-connectbutton-balance-hover-background": "#F6F7F9",
+    "--wsc-connectbutton-balance-hover-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-hover-background)",
 
-    "--ck-connectbutton-balance-active-background": "#F0F2F5",
-    "--ck-connectbutton-balance-active-box-shadow":
-      "inset 0 0 0 1px var(--ck-connectbutton-active-background)",
+    "--wsc-connectbutton-balance-active-background": "#F0F2F5",
+    "--wsc-connectbutton-balance-active-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-active-background)",
 
     /** Primary Button */
-    "--ck-primary-button-border-radius": "16px",
-    "--ck-primary-button-color": "#373737",
-    "--ck-primary-button-background": "#F6F7F9",
-    //'--ck-primary-button-box-shadow': 'inset 0 0 0 1px #F0F0F0',
-    "--ck-primary-button-font-weight": "600",
+    "--wsc-primary-button-border-radius": "16px",
+    "--wsc-primary-button-color": "#373737",
+    "--wsc-primary-button-background": "#F6F7F9",
+    //'--wsc-primary-button-box-shadow': 'inset 0 0 0 1px #F0F0F0',
+    "--wsc-primary-button-font-weight": "600",
 
-    "--ck-primary-button-hover-color": "#373737",
-    "--ck-primary-button-hover-background": "#F0F2F5",
-    //'--ck-primary-button-hover-box-shadow': 'inset 0 0 0 2px var(--ck-focus-color)',
+    "--wsc-primary-button-hover-color": "#373737",
+    "--wsc-primary-button-hover-background": "#F0F2F5",
+    //'--wsc-primary-button-hover-box-shadow': 'inset 0 0 0 2px var(--wsc-focus-color)',
 
-    "--ck-primary-button-active-background": "#EAECF1",
+    "--wsc-primary-button-active-background": "#EAECF1",
 
     /** Secondary Button */
-    "--ck-secondary-button-border-radius": "16px",
-    "--ck-secondary-button-color": "#373737",
-    "--ck-secondary-button-background": "#F6F7F9",
-    //'--ck-secondary-button-box-shadow': '',
-    //'--ck-secondary-button-font-weight': '',
+    "--wsc-secondary-button-border-radius": "16px",
+    "--wsc-secondary-button-color": "#373737",
+    "--wsc-secondary-button-background": "#F6F7F9",
+    //'--wsc-secondary-button-box-shadow': '',
+    //'--wsc-secondary-button-font-weight': '',
 
     /** Tertiary Button */
-    "--ck-tertiary-button-background": "#FFFFFF",
+    "--wsc-tertiary-button-background": "#FFFFFF",
 
-    "--ck-secondary-button-hover-background": "#e0e4eb",
+    "--wsc-secondary-button-hover-background": "#e0e4eb",
 
     /** Modal */
-    "--ck-modal-box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.02)",
-    "--ck-overlay-background": "rgba(71, 88, 107, 0.24)",
-    "--ck-body-color": "#373737",
-    "--ck-body-color-muted": "#999999",
-    "--ck-body-color-muted-hover": "#111111",
-    "--ck-body-background": "#ffffff",
-    "--ck-body-background-transparent": "rgba(255,255,255,0)",
-    "--ck-body-background-secondary": "#f6f7f9",
-    "--ck-body-background-secondary-hover-background": "#e0e4eb",
-    "--ck-body-background-secondary-hover-outline": "#4282FF",
-    "--ck-body-background-tertiary": "#F3F4F7",
-    "--ck-body-action-color": "#999999",
-    "--ck-body-divider": "#f7f6f8",
-    "--ck-body-color-danger": "#FF4E4E",
-    "--ck-body-color-valid": "#32D74B",
-    "--ck-siwe-border": "#F0F0F0",
+    "--wsc-modal-box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.02)",
+    "--wsc-overlay-background": "rgba(71, 88, 107, 0.24)",
+    "--wsc-body-color": "#373737",
+    "--wsc-body-color-muted": "#999999",
+    "--wsc-body-color-muted-hover": "#111111",
+    "--wsc-body-background": "#ffffff",
+    "--wsc-body-background-transparent": "rgba(255,255,255,0)",
+    "--wsc-body-background-secondary": "#f6f7f9",
+    "--wsc-body-background-secondary-hover-background": "#e0e4eb",
+    "--wsc-body-background-secondary-hover-outline": "#4282FF",
+    "--wsc-body-background-tertiary": "#F3F4F7",
+    "--wsc-body-action-color": "#999999",
+    "--wsc-body-divider": "#f7f6f8",
+    "--wsc-body-color-danger": "#FF4E4E",
+    "--wsc-body-color-valid": "#32D74B",
+    "--wsc-siwe-border": "#F0F0F0",
 
     /** Disclaimer */
-    //'--ck-body-disclaimer-background': '#E3D6C9',
-    //'--ck-body-disclaimer-box-shadow': 'none',
-    "--ck-body-disclaimer-color": "#AAAAAB",
-    "--ck-body-disclaimer-link-color": "#838485",
-    "--ck-body-disclaimer-link-hover-color": "#000000",
+    //'--wsc-body-disclaimer-background': '#E3D6C9',
+    //'--wsc-body-disclaimer-box-shadow': 'none',
+    "--wsc-body-disclaimer-color": "#AAAAAB",
+    "--wsc-body-disclaimer-link-color": "#838485",
+    "--wsc-body-disclaimer-link-hover-color": "#000000",
 
     /** Tooltips */
-    "--ck-tooltip-background": "#ffffff",
-    "--ck-tooltip-background-secondary": "#ffffff",
-    "--ck-tooltip-color": "#999999",
-    "--ck-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
+    "--wsc-tooltip-background": "#ffffff",
+    "--wsc-tooltip-background-secondary": "#ffffff",
+    "--wsc-tooltip-color": "#999999",
+    "--wsc-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
 
     /** Network dropdown */
-    "--ck-dropdown-button-color": "#999999",
-    "--ck-dropdown-button-box-shadow":
+    "--wsc-dropdown-button-color": "#999999",
+    "--wsc-dropdown-button-box-shadow":
       "0 0 0 1px rgba(0,0,0,0.01), 0px 0px 7px rgba(0, 0, 0, 0.05)",
-    "--ck-dropdown-button-background": "#fff",
+    "--wsc-dropdown-button-background": "#fff",
 
-    "--ck-dropdown-button-hover-color": "#8B8B8B",
-    "--ck-dropdown-button-hover-background": "#F5F7F9",
+    "--wsc-dropdown-button-hover-color": "#8B8B8B",
+    "--wsc-dropdown-button-hover-background": "#F5F7F9",
 
     /** QR Code */
-    "--ck-qr-dot-color": "#000000",
-    "--ck-qr-border-color": "#f7f6f8",
+    "--wsc-qr-dot-color": "#000000",
+    "--wsc-qr-border-color": "#f7f6f8",
 
     /** Misc. */
-    "--ck-focus-color": "rgb(255, 152, 40)",
-    "--ck-spinner-color": "var(--ck-focus-color)",
-    "--ck-copytoclipboard-stroke": "#CCCCCC",
+    "--wsc-focus-color": "rgb(255, 152, 40)",
+    "--wsc-spinner-color": "var(--wsc-focus-color)",
+    "--wsc-copytoclipboard-stroke": "#CCCCCC",
 
-    "--ck-stepper-background-circle": "rgb(104 104 116)",
-    "--ck-stepper-current-background-circle": "rgb(48 48 52)",
-    "--ck-stepper-separator": "#F6F7F9",
+    "--wsc-stepper-background-circle": "rgb(104 104 116)",
+    "--wsc-stepper-current-background-circle": "rgb(48 48 52)",
+    "--wsc-stepper-separator": "#F6F7F9",
   },
   dark: {
-    "--ck-connectbutton-font-size": "15px",
-    "--ck-connectbutton-color": "#ffffff",
-    "--ck-connectbutton-background": "#383838",
-    "--ck-connectbutton-background-secondary": "#282828",
+    "--wsc-connectbutton-font-size": "15px",
+    "--wsc-connectbutton-color": "#ffffff",
+    "--wsc-connectbutton-background": "#383838",
+    "--wsc-connectbutton-background-secondary": "#282828",
 
-    "--ck-connectbutton-hover-background": "#404040",
+    "--wsc-connectbutton-hover-background": "#404040",
 
-    "--ck-connectbutton-active-background": "#4D4D4D",
+    "--wsc-connectbutton-active-background": "#4D4D4D",
 
-    "--ck-connectbutton-balance-color": "#fff",
-    "--ck-connectbutton-balance-background": "#282828",
-    "--ck-connectbutton-balance-box-shadow": "inset 0 0 0 1px var(--ck-connectbutton-background)",
+    "--wsc-connectbutton-balance-color": "#fff",
+    "--wsc-connectbutton-balance-background": "#282828",
+    "--wsc-connectbutton-balance-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-background)",
 
-    "--ck-connectbutton-balance-hover-background": "#383838",
-    "--ck-connectbutton-balance-hover-box-shadow":
-      "inset 0 0 0 1px var(--ck-connectbutton-hover-background)",
+    "--wsc-connectbutton-balance-hover-background": "#383838",
+    "--wsc-connectbutton-balance-hover-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-hover-background)",
 
-    "--ck-connectbutton-balance-active-background": "#404040",
-    "--ck-connectbutton-balance-active-box-shadow":
-      "inset 0 0 0 1px var(--ck-connectbutton-active-background)",
+    "--wsc-connectbutton-balance-active-background": "#404040",
+    "--wsc-connectbutton-balance-active-box-shadow":
+      "inset 0 0 0 1px var(--wsc-connectbutton-active-background)",
 
-    "--ck-primary-button-color": "#ffffff",
-    "--ck-primary-button-background": "#383838",
-    //'--ck-primary-button-box-shadow': 'inset 0 0 0 1px #3D3D3D',
-    "--ck-primary-button-border-radius": "16px",
-    "--ck-primary-button-font-weight": "600",
+    "--wsc-primary-button-color": "#ffffff",
+    "--wsc-primary-button-background": "#383838",
+    //'--wsc-primary-button-box-shadow': 'inset 0 0 0 1px #3D3D3D',
+    "--wsc-primary-button-border-radius": "16px",
+    "--wsc-primary-button-font-weight": "600",
 
-    "--ck-primary-button-hover-background": "#404040",
-    //'--ck-primary-button-hover-box-shadow': 'inset 0 0 0 2px rgba(255, 255, 255, 0.4)',
+    "--wsc-primary-button-hover-background": "#404040",
+    //'--wsc-primary-button-hover-box-shadow': 'inset 0 0 0 2px rgba(255, 255, 255, 0.4)',
 
-    //'--ck-primary-button-active-background': '#4D4D4D',
+    //'--wsc-primary-button-active-background': '#4D4D4D',
 
-    "--ck-primary-button-active-border-radius": "16px",
+    "--wsc-primary-button-active-border-radius": "16px",
 
-    "--ck-secondary-button-color": "#ffffff",
-    "--ck-secondary-button-background": "#333333",
+    "--wsc-secondary-button-color": "#ffffff",
+    "--wsc-secondary-button-background": "#333333",
 
-    "--ck-secondary-button-hover-background": "#4D4D4D",
+    "--wsc-secondary-button-hover-background": "#4D4D4D",
 
     /** Tertiary Button */
-    "--ck-tertiary-button-background": "#424242",
+    "--wsc-tertiary-button-background": "#424242",
 
-    "--ck-focus-color": "#rgb(255, 152, 40)",
+    "--wsc-focus-color": "#rgb(255, 152, 40)",
 
-    "--ck-overlay-background": "rgba(0,0,0,0.4)",
-    "--ck-body-color": "#ffffff",
-    "--ck-body-color-muted": "rgba(255, 255, 255, 0.4)",
-    "--ck-body-color-muted-hover": "rgba(255, 255, 255, 0.8)",
-    "--ck-body-background": "#2B2B2B",
-    "--ck-body-background-transparent": "rgba(0,0,0,0)",
-    "--ck-body-background-secondary": "#333333",
-    "--ck-body-background-secondary-hover-background": "#4D4D4D",
-    "--ck-body-background-secondary-hover-outline": "#ffffff",
-    "--ck-body-background-tertiary": "#333333",
-    "--ck-body-action-color": "#808080",
-    "--ck-body-divider": "#383838",
-    "--ck-body-color-danger": "#FF4E4E",
+    "--wsc-overlay-background": "rgba(0,0,0,0.4)",
+    "--wsc-body-color": "#ffffff",
+    "--wsc-body-color-muted": "rgba(255, 255, 255, 0.4)",
+    "--wsc-body-color-muted-hover": "rgba(255, 255, 255, 0.8)",
+    "--wsc-body-background": "#2B2B2B",
+    "--wsc-body-background-transparent": "rgba(0,0,0,0)",
+    "--wsc-body-background-secondary": "#333333",
+    "--wsc-body-background-secondary-hover-background": "#4D4D4D",
+    "--wsc-body-background-secondary-hover-outline": "#ffffff",
+    "--wsc-body-background-tertiary": "#333333",
+    "--wsc-body-action-color": "#808080",
+    "--wsc-body-divider": "#383838",
+    "--wsc-body-color-danger": "#FF4E4E",
 
-    "--ck-body-disclaimer-color": "#858585",
-    "--ck-body-disclaimer-link-color": "#ADADAD",
-    "--ck-body-disclaimer-link-hover-color": "#FFFFFF",
+    "--wsc-body-disclaimer-color": "#858585",
+    "--wsc-body-disclaimer-link-color": "#ADADAD",
+    "--wsc-body-disclaimer-link-hover-color": "#FFFFFF",
 
-    "--ck-modal-box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.02)",
+    "--wsc-modal-box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.02)",
 
-    "--ck-copytoclipboard-stroke": "#555555",
+    "--wsc-copytoclipboard-stroke": "#555555",
 
-    "--ck-tooltip-background": "#2B2B2B",
-    "--ck-tooltip-background-secondary": "#333333",
-    "--ck-tooltip-color": "#999999",
-    "--ck-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
+    "--wsc-tooltip-background": "#2B2B2B",
+    "--wsc-tooltip-background-secondary": "#333333",
+    "--wsc-tooltip-color": "#999999",
+    "--wsc-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
 
     /** Network dropdown */
-    "--ck-dropdown-button-color": "#6C7381",
+    "--wsc-dropdown-button-color": "#6C7381",
 
-    "--ck-spinner-color": "var(--ck-focus-color)",
+    "--wsc-spinner-color": "var(--wsc-focus-color)",
 
-    "--ck-qr-dot-color": "#ffffff",
-    "--ck-qr-border-color": "#3d3d3d",
+    "--wsc-qr-dot-color": "#ffffff",
+    "--wsc-qr-border-color": "#3d3d3d",
 
-    "--ck-stepper-background-circle": "rgb(48 48 52)",
-    "--ck-stepper-current-background-circle": "rgb(64 64 90)",
-    "--ck-stepper-separator": "#383838",
+    "--wsc-stepper-background-circle": "rgb(48 48 52)",
+    "--wsc-stepper-current-background-circle": "rgb(64 64 90)",
+    "--wsc-stepper-separator": "#383838",
   },
 };

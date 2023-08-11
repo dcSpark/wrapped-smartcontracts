@@ -10,11 +10,11 @@ export const StepperTransactionContainer = styled(motion.div)`
   padding-top: 10px;
   padding-right: 20px;
   padding-left: 20px;
-  --ck-primary-button-background: rgb(55, 55, 55);
-  --ck-primary-button-color: #ffffff;
-  --ck-primary-button-border-radius: 16px;
-  --ck-primary-button-font-weight: 600;
-  --ck-primary-button-hover-background: #404040;
+  --wsc-primary-button-background: rgb(55, 55, 55);
+  --wsc-primary-button-color: #ffffff;
+  --wsc-primary-button-border-radius: 16px;
+  --wsc-primary-button-font-weight: 600;
+  --wsc-primary-button-hover-background: #404040;
 `;
 
 export const StepperTransactionInner = styled(motion.div)`
@@ -35,7 +35,7 @@ export const StepperTransactionSuccess = styled(motion.div)`
   padding: 16px;
   h1 {
     font-size: 1.25rem;
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;
 
@@ -50,10 +50,10 @@ export const Balance = styled(motion.div)`
   svg {
     width: 18px;
     height: 18px;
-    color: var(--ck-body-color-muted);
+    color: var(--wsc-body-color-muted);
   }
   span {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
     font-size: 1.125rem;
   }
 `;
@@ -66,7 +66,7 @@ export const LoadingBalance = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: var(--ck-body-background-secondary);
+  background: var(--wsc-body-background-secondary);
   inset: 0;
   &:before {
     z-index: 4;
@@ -75,9 +75,9 @@ export const LoadingBalance = styled(motion.div)`
     inset: 0;
     background-image: linear-gradient(
       90deg,
-      var(--ck-body-background-transparent) 50%,
-      var(--ck-body-background),
-      var(--ck-body-background-transparent)
+      var(--wsc-body-background-transparent) 50%,
+      var(--wsc-body-background),
+      var(--wsc-body-background-transparent)
     );
     opacity: 0.75;
     background-size: 200% 100%;

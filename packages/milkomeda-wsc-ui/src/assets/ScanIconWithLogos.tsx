@@ -38,7 +38,7 @@ const ScanIconWithLogos: React.FC<{ logo?: React.ReactNode }> = ({ logo }) => {
         <g mask="url(#gradient-mask)">
           <path
             d="M7 14.5C7 11.4624 9.46243 9 12.5 9H31.5C34.5376 9 37 11.4624 37 14.5V47H7V14.5Z"
-            fill="var(--ck-graphic-scaniconwithlogos-04)"
+            fill="var(--wsc-graphic-scaniconwithlogos-04)"
           />
           {logo ? (
             <foreignObject x="13" y="21" width="18" height="18" rx="5">
@@ -75,17 +75,17 @@ const ScanIconWithLogos: React.FC<{ logo?: React.ReactNode }> = ({ logo }) => {
           />
           <path
             d="M15 10H29C29 11.1046 28.1046 12 27 12H17C15.8954 12 15 11.1046 15 10Z"
-            fill="var(--ck-graphic-scaniconwithlogos-01)"
+            fill="var(--wsc-graphic-scaniconwithlogos-01)"
           />
-          <rect x="1" y="47" width="43" height="5" fill="var(--ck-tooltip-background)" />
+          <rect x="1" y="47" width="43" height="5" fill="var(--wsc-tooltip-background)" />
           <rect
             x="22"
             y="1"
             width="24"
             height="24"
             rx="12"
-            fill="var(--ck-graphic-scaniconwithlogos-03)"
-            stroke="var(--ck-tooltip-background)"
+            fill="var(--wsc-graphic-scaniconwithlogos-03)"
+            stroke="var(--wsc-tooltip-background)"
             strokeWidth="2"
           />
           <rect x="34.5" y="10" width="2.5" height="2.5" rx="0.75" fill="#373737" />
@@ -130,8 +130,8 @@ const ScanIconWithLogos: React.FC<{ logo?: React.ReactNode }> = ({ logo }) => {
             y2="47"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="var(--ck-graphic-scaniconwithlogos-01)" />
-            <stop offset="1" stopColor="var(--ck-graphic-scaniconwithlogos-02)" />
+            <stop stopColor="var(--wsc-graphic-scaniconwithlogos-01)" />
+            <stop offset="1" stopColor="var(--wsc-graphic-scaniconwithlogos-02)" />
           </linearGradient>
 
           <linearGradient

@@ -11,7 +11,7 @@ export const StepperStepLabelContainer = styled(motion.div)`
   position: relative;
   min-height: 80px;
   &[aria-current="step"] {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;
 export const StepperStepOptionalLabel = styled(motion.span)`
@@ -21,7 +21,7 @@ export const StepperStepOptionalLabel = styled(motion.span)`
 `;
 export const StepperSteLabelDescription = styled(motion.span)`
   font-size: 0.875rem;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   position: absolute;
   bottom: 20px;
   white-space: nowrap;
@@ -130,14 +130,14 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
-  background: var(--ck-stepper-background-circle);
+  background: var(--wsc-stepper-background-circle);
   font-weight: 500;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 0.15s;
 
   &[aria-current="step"] {
-    background: var(--ck-stepper-current-background-circle);
+    background: var(--wsc-stepper-current-background-circle);
   }
 
   &[data-highlighted="true"] {
@@ -166,7 +166,7 @@ export const StepperSeparator = styled(Separator.Root)`
   height: 2px;
   min-height: auto;
   align-self: auto;
-  background-color: var(--ck-stepper-separator);
+  background-color: var(--wsc-stepper-separator);
   position: absolute;
   width: 100%;
   top: 24px;

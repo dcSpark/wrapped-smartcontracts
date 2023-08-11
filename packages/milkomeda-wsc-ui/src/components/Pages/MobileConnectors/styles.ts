@@ -33,7 +33,7 @@ export const WalletIcon = styled.div<{ $outline?: boolean }>`
   }
 `;
 export const WalletLabel = styled.div`
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   font-size: 13px;
   line-height: 15px;
   font-weight: 500;

@@ -10,18 +10,18 @@ import predefinedThemes from "./themes";
  */
 const themeGlobals = {
   default: {
-    "--ck-font-family": `-apple-system, Helvetica,
+    "--wsc-font-family": `-apple-system, Helvetica,
     'Apple Color Emoji', Arial, sans-serif, 'Segoe UI Emoji',
     'Segoe UI Symbol'`,
-    "--ck-border-radius": "20px",
-    "--ck-secondary-button-border-radius": "16px",
+    "--wsc-border-radius": "20px",
+    "--wsc-secondary-button-border-radius": "16px",
   },
   graphics: {
     light: {},
     dark: {},
   },
   brand: {
-    "--ck-family-brand": "rgb(255, 152, 40)",
+    "--wsc-family-brand": "rgb(255, 152, 40)",
   },
 };
 const themeColors = {
@@ -39,7 +39,6 @@ const themeColors = {
 /**
  *  Automatically use p3 if available
  */
-//  TODO: Don't use :any type
 const createCssVars = (scheme: object) => {
   return css`
     ${Object.keys(scheme).map((key) => {
@@ -166,26 +165,26 @@ export const ResetContainer = styled(motion.div)`
   ${(props) => {
     if (
       props.$customTheme &&
-      props.$customTheme["--ck-accent-color"] &&
+      props.$customTheme["--wsc-accent-color"] &&
       ["light", "dark", "auto", "", undefined].includes(props.$useTheme)
     ) {
-      const accentColor = props.$customTheme["--ck-accent-color"];
-      const accentTextColor = props.$customTheme["--ck-accent-text-color"] ?? "#ffffff";
+      const accentColor = props.$customTheme["--wsc-accent-color"];
+      const accentTextColor = props.$customTheme["--wsc-accent-text-color"] ?? "#ffffff";
       return {
-        "--ck-accent-color": accentColor,
-        "--ck-accent-text-color": accentTextColor,
-        // '--ck-connectbutton-color': accentTextColor,
-        // '--ck-connectbutton-background': accentColor,
-        // '--ck-connectbutton-background-hover': accentColor,
-        // '--ck-connectbutton-background-active': LightenDarkenColor(
+        "--wsc-accent-color": accentColor,
+        "--wsc-accent-text-color": accentTextColor,
+        // '--wsc-connectbutton-color': accentTextColor,
+        // '--wsc-connectbutton-background': accentColor,
+        // '--wsc-connectbutton-background-hover': accentColor,
+        // '--wsc-connectbutton-background-active': LightenDarkenColor(
         // accentColor,
         // 20
         // ),
-        "--ck-secondary-button-background": accentColor,
-        "--ck-secondary-button-hover-background": accentColor,
-        "--ck-secondary-button-color": accentTextColor,
-        "--ck-button-primary-color": accentTextColor,
-        "--ck-focus-color": accentColor,
+        "--wsc-secondary-button-background": accentColor,
+        "--wsc-secondary-button-hover-background": accentColor,
+        "--wsc-secondary-button-color": accentTextColor,
+        "--wsc-button-primary-color": accentTextColor,
+        "--wsc-focus-color": accentColor,
       };
     }
     if (props.$customTheme) {
@@ -213,7 +212,7 @@ export const ResetContainer = styled(motion.div)`
 
   &,
   * {
-    font-family: var(--ck-font-family);
+    font-family: var(--wsc-font-family);
     box-sizing: border-box;
     outline: none;
     border: none;
@@ -235,6 +234,6 @@ export const ResetContainer = styled(motion.div)`
   }
   a:focus-visible,
   button:focus-visible {
-    outline: 2px solid var(--ck-focus-color);
+    outline: 2px solid var(--wsc-focus-color);
   }
 `;
