@@ -137,7 +137,7 @@ if (typeof window != "undefined") {
         transparent: (
           <div
             style={{
-              transform: "scale(0.86)",
+              transform: "scale(0.60)",
               position: "relative",
               width: "100%",
             }}
@@ -233,7 +233,7 @@ if (typeof window != "undefined") {
         transparent: (
           <div
             style={{
-              transform: "scale(0.86)",
+              transform: "scale(0.6)",
               position: "relative",
               width: "100%",
             }}

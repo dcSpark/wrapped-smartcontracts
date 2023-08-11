@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import styled from "../../../styles/styled";
 import { css } from "styled-components";
 import * as Separator from "@radix-ui/react-separator";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const StepperStepLabelContainer = styled(motion.div)`
   display: flex;
@@ -46,6 +47,10 @@ export const StepperStepConnectorContainer = styled(motion.div)`
     css`
       border-color: rgb(14, 117, 55);
     `}
+
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: 10px;
+  }
 `;
 
 export const StepperStepConnectorLast = styled(motion.div)`
@@ -106,6 +111,10 @@ export const StepperContainer = styled(motion.div)<{ $isVertical?: boolean }>`
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
   padding-left: 40px;
   padding-right: 40px;
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 `;
 export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>`
   display: flex;
@@ -120,6 +129,10 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
     css`
       flex-direction: column;
     `}
+
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    max-width: 100%;
+  }
 `;
 export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: boolean }>`
   height: 48px;
@@ -131,6 +144,7 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   justify-content: center;
   font-size: 0.875rem;
   background: var(--wsc-stepper-background-circle);
+  box-shadow: var(--wsc-stepper-box-shadown-circle, none);
   font-weight: 500;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -141,13 +155,9 @@ export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: bool
   }
 
   &[data-highlighted="true"] {
-    background-color: rgb(14, 117, 55);
-    color: white;
+    background-color: var(--wsc-stepper-highlighted-background-circle, rgb(14, 117, 55));
+    color: var(--wsc-stepper-highlighted-text-circle, white);
   }
-
-  //&:hover {
-  //  background-color: rgba(24, 24, 27, 0.9);
-  //}
 
   ${({ $isCompletedStep }) =>
     $isCompletedStep &&
@@ -172,6 +182,6 @@ export const StepperSeparator = styled(Separator.Root)`
   top: 24px;
   left: 45px;
   &[data-highlighted="true"] {
-    background-color: rgb(14, 117, 55);
+    background-color: var(--wsc-stepper-highlighted-background-circle, rgb(14, 117, 55));
   }
 `;

@@ -70,18 +70,6 @@ export default {
 
   "--wsc-spinner-color": "var(--wsc-focus-color)",
 
-  "--wsc-dropdown-button-color": "#999999",
-  "--wsc-dropdown-button-box-shadow":
-    "0 0 0 1px rgba(0, 0, 0, 0.01), 0px 0px 7px rgba(0, 0, 0, 0.05)",
-  "--wsc-dropdown-button-background": "#fff",
-
-  "--wsc-dropdown-button-hover-color": "#8B8B8B",
-  "--wsc-dropdown-button-hover-background": "#DEE1ED",
-  "--wsc-dropdown-button-hover-box-shadow": "0px 0px 7px rgba(0, 0, 0, 0.05)",
-
-  "--wsc-dropdown-color": "#757A8E",
-  "--wsc-dropdown-box-shadow": "0 0 0 1px rgba(0, 0, 0, 0.01), 0px 0px 7px rgba(0, 0, 0, 0.05)",
-
   "--wsc-alert-color": "#9196A1",
   "--wsc-alert-background": "#F6F8FA",
   "--wsc-alert-box-shadow": "inset 0 0 0 1px rgba(0, 0, 0, 0.04)",
@@ -94,8 +82,6 @@ export default {
   "--wsc-recent-badge-color": "#79809C",
   "--wsc-recent-badge-background": "#F4F4F8",
   "--wsc-recent-badge-box-shadow": "none",
-
-  "--wsc-siwe-border": "#DFE4EC",
 
   "--wsc-graphic-primary-background": "#fff",
   "--wsc-graphic-compass-background": "#fff",

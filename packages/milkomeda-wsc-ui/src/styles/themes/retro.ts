@@ -78,24 +78,6 @@ export default {
 
   "--wsc-spinner-color": "#1A88F8",
 
-  "--wsc-dropdown-button-color": "#000",
-  "--wsc-dropdown-button-box-shadow": "-2px 2px 0 2px #000000,  0 0 0 2px #000000",
-  "--wsc-dropdown-button-background": "#ffffff",
-  "--wsc-dropdown-button-hover-background": "#F3EDE8",
-  "--wsc-dropdown-button-hover-box-shadow": "-2px 2px 0 0 #000000,  0 0 0 2px #000000",
-
-  "--wsc-dropdown-pending-color": "rgba(0, 0, 0, 0.5)",
-  "--wsc-dropdown-active-color": "#FFFFFF",
-  "--wsc-dropdown-active-static-color": "rgba(0, 0, 0, 0.5)",
-  "--wsc-dropdown-active-background": "#3B99FC",
-  "--wsc-dropdown-active-box-shadow": "inset 0 0 0 2px #000000",
-  "--wsc-dropdown-active-border-radius": "8px",
-
-  "--wsc-dropdown-color": "rgba(0, 0, 0, 0.5)",
-  "--wsc-dropdown-background": "#FFFFFF",
-  "--wsc-dropdown-box-shadow": "-4px 4px 0 0 #000000, inset 0 0 0 2px #000000",
-  "--wsc-dropdown-border-radius": "8px",
-
   "--wsc-alert-color": "rgba(0, 0, 0, 0.5)",
   "--wsc-alert-background": " #F5F5F5",
   "--wsc-alert-border-radius": "8px",
@@ -128,6 +110,4 @@ export default {
   '--wsc-graphic-globe-lines': '#808080',
   '--wsc-graphic-globe-box-shadow': '6px -6px 0 2px #000000, 0 0 0 2px #000000',
   */
-
-  "--wsc-siwe-border": "#8E8985",
 };

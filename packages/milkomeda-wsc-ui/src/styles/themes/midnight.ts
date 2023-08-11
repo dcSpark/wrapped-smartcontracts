@@ -68,19 +68,6 @@ export default {
 
   "--wsc-spinner-color": "var(--wsc-focus-color)",
 
-  "--wsc-dropdown-button-color": "#6C7381",
-  "--wsc-dropdown-button-box-shadow": "inset 0 0 0 1px rgba(255, 255, 255, 0.05)",
-  "--wsc-dropdown-button-background": "#313235",
-
-  "--wsc-dropdown-pending-color": "#8B8F97",
-  "--wsc-dropdown-active-color": "#FFF",
-  "--wsc-dropdown-active-static-color": "#FFF",
-  "--wsc-dropdown-active-background": "rgba(255, 255, 255, 0.07)",
-  "--wsc-dropdown-color": "#8B8F97",
-  "--wsc-dropdown-background": "#313235",
-  "--wsc-dropdown-box-shadow": "inset 0 0 0 1px rgba(255, 255, 255, 0.03)",
-  "--wsc-dropdown-border-radius": "8px",
-
   "--wsc-alert-color": "#8B8F97",
   "--wsc-alert-background": "#404145",
   "--wsc-alert-box-shadow": "inset 0 0 0 1px rgba(255, 255, 255, 0.02)",

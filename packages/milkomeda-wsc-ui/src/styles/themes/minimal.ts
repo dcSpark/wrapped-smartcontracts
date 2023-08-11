@@ -33,14 +33,6 @@ export default {
 
   "--wsc-secondary-button-hover-box-shadow": "inset 0 0 0 1px #111111",
 
-  "--wsc-dropdown-button-color": "#999999",
-  "--wsc-dropdown-button-box-shadow":
-    "0 0 0 1px rgba(0, 0, 0, 0.01), 0px 0px 7px rgba(0, 0, 0, 0.05)",
-  "--wsc-dropdown-button-background": "#fff",
-
-  "--wsc-dropdown-button-hover-color": "#8B8B8B",
-  "--wsc-dropdown-button-hover-background": "#E7E7E7",
-
   "--wsc-focus-color": "#1A88F8",
   "--wsc-modal-box-shadow": `0px 3px 16px rgba(0, 0, 0, 0.08)`,
   "--wsc-body-color": "#111111",
@@ -76,10 +68,6 @@ export default {
 
   "--wsc-spinner-color": "var(--wsc-focus-color)",
 
-  "--wsc-dropdown-active-border-radius": "0",
-  "--wsc-dropdown-box-shadow": "0px 2px 15px rgba(0, 0, 0, 0.15)",
-  "--wsc-dropdown-border-radius": "0",
-
   "--wsc-alert-color": "rgba(17, 17, 17, 0.4)",
   "--wsc-alert-background": "#fff",
   "--wsc-alert-box-shadow": "inset 0 0 0 1px #EBEBEB",
@@ -113,6 +101,4 @@ export default {
   '--wsc-graphic-globe-lines': '#ffffff',
   '--wsc-graphic-globe-box-shadow': 'inset 0 0 0 1px #EBEBEB',
   */
-
-  "--wsc-siwe-border": "#EBEBEB",
 };

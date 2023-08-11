@@ -111,24 +111,6 @@ export default {
 
   "--wsc-spinner-color": "var(--wsc-focus-color)",
 
-  "--wsc-dropdown-button-color": "#999999",
-  "--wsc-dropdown-button-box-shadow":
-    "0 0 0 1px #A0A0A0, 1px 1px 0px rgba(255, 255, 255, 0.75), -1px -1px 0px rgba(0, 0, 0, 0.05), inset -1px -2px 2px rgba(0, 0, 0, 0.2)",
-  "--wsc-dropdown-button-background": "linear-gradient(180deg, #FFFFFF 0%, #F0F0EA 100%), #F5F5F1",
-  "--wsc-dropdown-button-hover-background":
-    "linear-gradient(0deg, #FFFFFF 0%, #F0F0EA 100%), #F5F5F1",
-
-  "--wsc-dropdown-pending-color": "#ACA899",
-  "--wsc-dropdown-active-color": "#FFFFFF",
-  "--wsc-dropdown-active-static-color": "#ACA899",
-  "--wsc-dropdown-active-background": "#3F69BF",
-  "--wsc-dropdown-active-border-radius": "0",
-  "--wsc-dropdown-active-inset": "-12px",
-  "--wsc-dropdown-color": "#ACA899",
-  "--wsc-dropdown-background": "#FFFFFF",
-  "--wsc-dropdown-box-shadow": "inset 0 0 0 1px #ACA899, 2px 2px 7px rgba(0, 0, 0, 0.15)",
-  "--wsc-dropdown-border-radius": "0",
-
   "--wsc-alert-color": "#ACA899",
   "--wsc-alert-background": "linear-gradient(180deg, #FBFBFB 0%, #EFEFEE 100%)",
   "--wsc-alert-box-shadow":
@@ -161,6 +143,4 @@ export default {
   '--wsc-graphic-globe-box-shadow':
     ' 0 0 0 1px #999A9E, 1px 1px 0px rgba(255, 255, 255, 0.75), -1px -1px 0px rgba(0, 0, 0, 0.05), inset 0px 0px 0px 0px #97B9EC',
     */
-
-  "--wsc-siwe-border": "#919B9C",
 };

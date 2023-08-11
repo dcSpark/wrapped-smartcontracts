@@ -66,7 +66,6 @@ export default {
     "--wsc-body-divider": "#f7f6f8",
     "--wsc-body-color-danger": "#FF4E4E",
     "--wsc-body-color-valid": "#32D74B",
-    "--wsc-siwe-border": "#F0F0F0",
 
     /** Disclaimer */
     //'--wsc-body-disclaimer-background': '#E3D6C9',
@@ -81,27 +80,21 @@ export default {
     "--wsc-tooltip-color": "#999999",
     "--wsc-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
 
-    /** Network dropdown */
-    "--wsc-dropdown-button-color": "#999999",
-    "--wsc-dropdown-button-box-shadow":
-      "0 0 0 1px rgba(0,0,0,0.01), 0px 0px 7px rgba(0, 0, 0, 0.05)",
-    "--wsc-dropdown-button-background": "#fff",
-
-    "--wsc-dropdown-button-hover-color": "#8B8B8B",
-    "--wsc-dropdown-button-hover-background": "#F5F7F9",
-
     /** QR Code */
     "--wsc-qr-dot-color": "#000000",
     "--wsc-qr-border-color": "#f7f6f8",
 
     /** Misc. */
     "--wsc-focus-color": "rgb(255, 152, 40)",
-    "--wsc-spinner-color": "var(--wsc-focus-color)",
+    "--wsc-spinner-color": "#f07d00",
     "--wsc-copytoclipboard-stroke": "#CCCCCC",
 
     "--wsc-stepper-background-circle": "rgb(104 104 116)",
     "--wsc-stepper-current-background-circle": "rgb(48 48 52)",
     "--wsc-stepper-separator": "#F6F7F9",
+
+    "--wsc-stepper-highlighted-background-circle": "rgb(14, 117, 55)",
+    "--wsc-stepper-highlighted-text-circle": "#fff",
   },
   dark: {
     "--wsc-connectbutton-font-size": "15px",
@@ -176,10 +169,7 @@ export default {
     "--wsc-tooltip-color": "#999999",
     "--wsc-tooltip-shadow": "0px 2px 10px rgba(0, 0, 0, 0.08)",
 
-    /** Network dropdown */
-    "--wsc-dropdown-button-color": "#6C7381",
-
-    "--wsc-spinner-color": "var(--wsc-focus-color)",
+    "--wsc-spinner-color": "#f07d00",
 
     "--wsc-qr-dot-color": "#ffffff",
     "--wsc-qr-border-color": "#3d3d3d",
