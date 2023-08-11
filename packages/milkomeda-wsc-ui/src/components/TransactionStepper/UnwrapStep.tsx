@@ -9,7 +9,6 @@ import {
   StepTitle,
   TransactionExternalLink,
 } from "./styles";
-import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import useInterval from "../../hooks/useInterval";
 import { LabelWithBalance, SuccessMessage } from "./WrapStep";
@@ -32,6 +31,7 @@ import { SuccessStep } from "./index";
 import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -256,15 +256,14 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
-            <Button
-              variant="primary"
+            <ThemeContainer
               onClick={() => {
                 setOpen(false);
                 resetSteps();
               }}
             >
-              Close
-            </Button>
+              <ThemedButton variant="primary">Close</ThemedButton>
+            </ThemeContainer>
           </>
         )}
         {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
@@ -284,24 +283,23 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               You may proceed to close this modal and continue using the app.
             </Alert>
 
-            <Button
-              style={{ marginTop: 40 }}
-              variant="primary"
+            <ThemeContainer
               onClick={() => {
                 resetSteps();
                 setOpen(false);
               }}
+              style={{ marginTop: 40 }}
             >
-              Continue using the app
-            </Button>
+              <ThemedButton variant="primary">Continue using the app</ThemedButton>
+            </ThemeContainer>
           </>
         )}
       </StepLargeHeight>
 
       {(isIdle || isError) && (
-        <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
-          Confirm Unwrapping
-        </Button>
+        <ThemeContainer onClick={unwrapToken} disabled={!selectedUnwrapToken}>
+          <ThemedButton variant="primary">Confirm Unwrapping</ThemedButton>
+        </ThemeContainer>
       )}
     </>
   );

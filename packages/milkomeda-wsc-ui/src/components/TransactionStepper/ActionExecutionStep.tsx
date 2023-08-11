@@ -6,13 +6,13 @@ import {
   StepLargeHeight,
   StepTitle,
 } from "./styles";
-import Button from "../Common/Button";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
 import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { ethers } from "ethers";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
@@ -82,20 +82,19 @@ const ActionExecutionStep = ({ nextStep }) => {
               href={`${EVM_EXPLORER_URL}/tx/${contractWriteQuery?.data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <Button variant="primary" onClick={nextStep}>
-              Continue
-            </Button>
+            <ThemeContainer onClick={nextStep}>
+              <ThemedButton variant="primary">Continue</ThemedButton>
+            </ThemeContainer>
           </>
         )}
       </StepLargeHeight>
       {(isIdle || isError) && (
-        <Button
-          variant="primary"
+        <ThemeContainer
           disabled={!contractWriteQuery?.write}
           onClick={() => contractWriteQuery?.write?.()}
         >
-          Execute Action
-        </Button>
+          <ThemedButton variant="primary">Execute Action</ThemedButton>
+        </ThemeContainer>
       )}
     </>
   );

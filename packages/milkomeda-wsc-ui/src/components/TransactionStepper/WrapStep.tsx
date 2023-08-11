@@ -37,6 +37,7 @@ import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -241,16 +242,21 @@ const WrapStep = ({ nextStep }) => {
 
       {(isIdle || isError) && (
         <WrapperButtons>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button
-            variant="primary"
+          <ThemeContainer
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
+            <ThemedButton variant="secondary">Cancel</ThemedButton>
+          </ThemeContainer>
+          <ThemeContainer
             disabled={
               selectedWrapToken == null || !selectedWrapToken.bridgeAllowed || !isAmountValid
             }
             onClick={wrapToken}
           >
-            Confirm wrapping
-          </Button>
+            <ThemedButton variant="primary">Confirm Wrapping</ThemedButton>
+          </ThemeContainer>
         </WrapperButtons>
       )}
     </>

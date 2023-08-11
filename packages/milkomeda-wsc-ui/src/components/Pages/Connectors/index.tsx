@@ -75,7 +75,7 @@ const Wallets: React.FC = () => {
               <ModalBody>connectorsScreen_p</ModalBody>
             </ModalContent>
             <InfoBoxButtons>
-              <Button variant={"tertiary"} onClick={() => context.setRoute(routes.ONBOARDING)}>
+              <Button variant="tertiary" onClick={() => context.setRoute(routes.ONBOARDING)}>
                 getWallet
               </Button>
             </InfoBoxButtons>

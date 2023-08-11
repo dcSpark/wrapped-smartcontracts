@@ -8,12 +8,12 @@ import {
 } from "./styles";
 import { erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
 import { useContext } from "../ConnectWSC";
-import Button from "../Common/Button";
 import { Spinner } from "../Common/Spinner";
 import { ethers } from "ethers";
 import { SuccessMessage } from "./WrapStep";
 import { EVM_EXPLORER_URL } from "../../constants/transaction";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
@@ -85,17 +85,17 @@ const TokenAllowanceStep = ({ nextStep }) => {
               href={`${EVM_EXPLORER_URL}/tx/${data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <Button variant="primary" onClick={nextStep}>
-              Continue
-            </Button>
+            <ThemeContainer onClick={nextStep}>
+              <ThemedButton variant="primary">Continue</ThemedButton>
+            </ThemeContainer>
           </>
         )}
       </StepLargeHeight>
 
       {(isIdle || isError) && (
-        <Button disabled={!write} variant="primary" onClick={() => write?.()}>
-          Grant token allowance
-        </Button>
+        <ThemeContainer disabled={!write} onClick={() => write?.()}>
+          <ThemedButton variant="primary">Grant token allowance</ThemedButton>
+        </ThemeContainer>
       )}
     </>
   );

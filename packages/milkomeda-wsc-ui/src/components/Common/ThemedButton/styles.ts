@@ -8,7 +8,7 @@ export const Container = styled(motion.div)<{
   align-items: center;
   justify-content: flex-start;
   position: relative;
-  height: 40px;
+  height: 42px;
   width: 100%;
   padding: 0;
   line-height: 0;
