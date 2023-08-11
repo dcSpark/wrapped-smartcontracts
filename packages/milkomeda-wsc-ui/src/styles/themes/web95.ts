@@ -16,11 +16,11 @@ export default {
   "--wsc-connectbutton-active-background":
     "linear-gradient(180deg, #F0F0EA 0%, #FFFFFF 50%, #F0F0EA 100%) 100% 100% / 200% 200%, #F5F5F1",
 
-  "--wsc-connectbutton-balance-color": "#373737",
-  "--wsc-connectbutton-balance-background": "#fff",
-  "--wsc-connectbutton-balance-box-shadow": "0 0 0 1px #E4E7E7",
-  "--wsc-connectbutton-balance-hover-box-shadow": "0 0 0 1px #d7dbdb",
-  "--wsc-connectbutton-balance-active-box-shadow": "0 0 0 1px #bbc0c0",
+  "--wsc-connectbutton-secondary-color": "#373737",
+  "--wsc-connectbutton-secondary-background": "#fff",
+  "--wsc-connectbutton-secondary-box-shadow": "0 0 0 1px #E4E7E7",
+  "--wsc-connectbutton-secondary-hover-box-shadow": "0 0 0 1px #d7dbdb",
+  "--wsc-connectbutton-secondary-active-box-shadow": "0 0 0 1px #bbc0c0",
 
   "--wsc-focus-color": "#1A88F8",
   "--wsc-overlay-background": "rgba(0, 127,  128, 0.8)",

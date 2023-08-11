@@ -12,11 +12,11 @@ export default {
   "--wsc-connectbutton-hover-background": "#414144",
   "--wsc-connectbutton-active-background": "#4C4D4F",
 
-  "--wsc-connectbutton-balance-color": "#ffffff",
-  "--wsc-connectbutton-balance-background": "#1F2023",
-  "--wsc-connectbutton-balance-box-shadow": "inset 0 0 0 1px #313235",
-  "--wsc-connectbutton-balance-hover-background": "#313235",
-  "--wsc-connectbutton-balance-active-background": "#414144",
+  "--wsc-connectbutton-secondary-color": "#ffffff",
+  "--wsc-connectbutton-secondary-background": "#1F2023",
+  "--wsc-connectbutton-secondary-box-shadow": "inset 0 0 0 1px #313235",
+  "--wsc-connectbutton-secondary-hover-background": "#313235",
+  "--wsc-connectbutton-secondary-active-background": "#414144",
 
   "--wsc-primary-button-border-radius": "8px",
   "--wsc-primary-button-color": "#ffffff",

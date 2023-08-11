@@ -12,17 +12,17 @@ export default {
     "--wsc-connectbutton-active-color": "#373737",
     "--wsc-connectbutton-active-background": "#EAECF1",
 
-    "--wsc-connectbutton-balance-color": "#373737",
-    "--wsc-connectbutton-balance-background": "#fff",
-    "--wsc-connectbutton-balance-box-shadow":
+    "--wsc-connectbutton-secondary-color": "#373737",
+    "--wsc-connectbutton-secondary-background": "#fff",
+    "--wsc-connectbutton-secondary-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-background)",
 
-    "--wsc-connectbutton-balance-hover-background": "#F6F7F9",
-    "--wsc-connectbutton-balance-hover-box-shadow":
+    "--wsc-connectbutton-secondary-hover-background": "#F6F7F9",
+    "--wsc-connectbutton-secondary-hover-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-hover-background)",
 
-    "--wsc-connectbutton-balance-active-background": "#F0F2F5",
-    "--wsc-connectbutton-balance-active-box-shadow":
+    "--wsc-connectbutton-secondary-active-background": "#F0F2F5",
+    "--wsc-connectbutton-secondary-active-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-active-background)",
 
     /** Primary Button */
@@ -113,17 +113,17 @@ export default {
 
     "--wsc-connectbutton-active-background": "#4D4D4D",
 
-    "--wsc-connectbutton-balance-color": "#fff",
-    "--wsc-connectbutton-balance-background": "#282828",
-    "--wsc-connectbutton-balance-box-shadow":
+    "--wsc-connectbutton-secondary-color": "#fff",
+    "--wsc-connectbutton-secondary-background": "#282828",
+    "--wsc-connectbutton-secondary-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-background)",
 
-    "--wsc-connectbutton-balance-hover-background": "#383838",
-    "--wsc-connectbutton-balance-hover-box-shadow":
+    "--wsc-connectbutton-secondary-hover-background": "#383838",
+    "--wsc-connectbutton-secondary-hover-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-hover-background)",
 
-    "--wsc-connectbutton-balance-active-background": "#404040",
-    "--wsc-connectbutton-balance-active-box-shadow":
+    "--wsc-connectbutton-secondary-active-background": "#404040",
+    "--wsc-connectbutton-secondary-active-box-shadow":
       "inset 0 0 0 1px var(--wsc-connectbutton-active-background)",
 
     "--wsc-primary-button-color": "#ffffff",

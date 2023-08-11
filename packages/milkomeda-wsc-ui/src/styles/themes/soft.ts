@@ -11,11 +11,11 @@ export default {
   "--wsc-connectbutton-hover-box-shadow":
     "inset 0 0 0 1px #E9EAEC, 0px 2px 4px rgba(0, 0, 0, 0.02)",
 
-  "--wsc-connectbutton-balance-color": "#373737",
-  "--wsc-connectbutton-balance-background": "#F6F7F9",
-  "--wsc-connectbutton-balance-box-shadow": "none",
+  "--wsc-connectbutton-secondary-color": "#373737",
+  "--wsc-connectbutton-secondary-background": "#F6F7F9",
+  "--wsc-connectbutton-secondary-box-shadow": "none",
 
-  "--wsc-connectbutton-balance-hover-background": "#f1f1f3",
+  "--wsc-connectbutton-secondary-hover-background": "#f1f1f3",
 
   "--wsc-primary-button-border-radius": "12px",
   "--wsc-primary-button-color": "#414451",

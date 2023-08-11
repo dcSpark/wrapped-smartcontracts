@@ -17,11 +17,11 @@ export default {
   "--wsc-connectbutton-active-background": "#D4D8E8",
   "--wsc-connectbutton-active-box-shadow": "inset 0 0 0 1px #D4D8E8",
 
-  "--wsc-connectbutton-balance-color": "#373737",
-  "--wsc-connectbutton-balance-background": "#F6F7F9",
-  "--wsc-connectbutton-balance-box-shadow": "none",
+  "--wsc-connectbutton-secondary-color": "#373737",
+  "--wsc-connectbutton-secondary-background": "#F6F7F9",
+  "--wsc-connectbutton-secondary-box-shadow": "none",
 
-  "--wsc-connectbutton-balance-hover-background": "#f1f1f3",
+  "--wsc-connectbutton-secondary-hover-background": "#f1f1f3",
 
   "--wsc-primary-button-border-radius": "16px",
   "--wsc-primary-button-color": "#151C3B",

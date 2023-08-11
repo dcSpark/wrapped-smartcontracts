@@ -13,14 +13,14 @@ export default {
 
   "--wsc-connectbutton-hover-background": "#F9FAFB",
 
-  "--wsc-connectbutton-balance-color": "#414451",
-  "--wsc-connectbutton-balance-background": "#F9FAFB",
-  "--wsc-connectbutton-balance-box-shadow": "0 2px 0 0 #DFE4EC, 0px 2px 4px rgba(0, 0, 0, 0.02)",
+  "--wsc-connectbutton-secondary-color": "#414451",
+  "--wsc-connectbutton-secondary-background": "#F9FAFB",
+  "--wsc-connectbutton-secondary-box-shadow": "0 2px 0 0 #DFE4EC, 0px 2px 4px rgba(0, 0, 0, 0.02)",
 
-  "--wsc-connectbutton-balance-hover-background": "#F5F7F9",
-  "--wsc-connectbutton-balance-hover-box-shadow":
+  "--wsc-connectbutton-secondary-hover-background": "#F5F7F9",
+  "--wsc-connectbutton-secondary-hover-box-shadow":
     "0 2px 0 0 #DFE4EC, 0px 2px 4px rgba(0, 0, 0, 0.02)",
-  "--wsc-connectbutton-balance-active-box-shadow":
+  "--wsc-connectbutton-secondary-active-box-shadow":
     "0 0 0 0 #DFE4EC, 0px 2px 4px rgba(0, 0, 0, 0.02)",
 
   "--wsc-connectbutton-active-background": "#F5F7F9",

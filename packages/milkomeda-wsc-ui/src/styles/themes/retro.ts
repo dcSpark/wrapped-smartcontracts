@@ -13,15 +13,15 @@ export default {
 
   "--wsc-connectbutton-active-box-shadow": "0 0 0 0 #000000, inset 0 0 0 2px #000000",
 
-  "--wsc-connectbutton-balance-color": "#000000",
-  "--wsc-connectbutton-balance-background": "#F3EDE8",
-  "--wsc-connectbutton-balance-box-shadow": "-4px 4px 0px #000000, inset 0 0 0 2px #000000",
-  "--wsc-connectbutton-balance-hover-background": "#eee5dd",
+  "--wsc-connectbutton-secondary-color": "#000000",
+  "--wsc-connectbutton-secondary-background": "#F3EDE8",
+  "--wsc-connectbutton-secondary-box-shadow": "-4px 4px 0px #000000, inset 0 0 0 2px #000000",
+  "--wsc-connectbutton-secondary-hover-background": "#eee5dd",
 
-  "--wsc-connectbutton-balance-connectbutton-box-shadow":
+  "--wsc-connectbutton-secondary-connectbutton-box-shadow":
     "-4px 8px 0px -4px #000000, inset 0 0 0 2px #000000",
 
-  "--wsc-connectbutton-balance-connectbutton-border-radius": "0px 8px 8px 0",
+  "--wsc-connectbutton-secondary-connectbutton-border-radius": "0px 8px 8px 0",
 
   "--wsc-primary-button-color": "#373737",
   "--wsc-primary-button-background": "#ffffff",

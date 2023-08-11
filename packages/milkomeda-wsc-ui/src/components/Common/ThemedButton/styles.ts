@@ -44,33 +44,33 @@ export const Container = styled(motion.div)<{
     );
   }
   &.secondary {
-    --color: var(--wsc-connectbutton-balance-color);
-    --background: var(--wsc-connectbutton-balance-background);
-    --box-shadow: var(--wsc-connectbutton-balance-box-shadow);
+    --color: var(--wsc-connectbutton-secondary-color);
+    --background: var(--wsc-connectbutton-secondary-background);
+    --box-shadow: var(--wsc-connectbutton-secondary-box-shadow);
     --border-radius: var(
-      --wsc-connectbutton-balance-border-radius,
+      --wsc-connectbutton-secondary-border-radius,
       var(--wsc-connectbutton-border-radius, 12px)
     );
 
-    --hover-color: var(--wsc-connectbutton-balance-hover-color, var(--color));
-    --hover-background: var(--wsc-connectbutton-balance-hover-background, var(--background));
-    --hover-box-shadow: var(--wsc-connectbutton-balance-hover-box-shadow, var(--box-shadow));
+    --hover-color: var(--wsc-connectbutton-secondary-hover-color, var(--color));
+    --hover-background: var(--wsc-connectbutton-secondary-hover-background, var(--background));
+    --hover-box-shadow: var(--wsc-connectbutton-secondary-hover-box-shadow, var(--box-shadow));
     --hover-border-radius: var(
-      --wsc-connectbutton-balance-hover-border-radius,
+      --wsc-connectbutton-secondary-hover-border-radius,
       var(--border-radius)
     );
 
-    --active-color: var(--wsc-connectbutton-balance-active-color, var(--hover-color));
+    --active-color: var(--wsc-connectbutton-secondary-active-color, var(--hover-color));
     --active-background: var(
-      --wsc-connectbutton-balance-active-background,
+      --wsc-connectbutton-secondary-active-background,
       var(--hover-background)
     );
     --active-box-shadow: var(
-      --wsc-connectbutton-balance-active-box-shadow,
+      --wsc-connectbutton-secondary-active-box-shadow,
       var(--hover-box-shadow)
     );
     --active-border-radius: var(
-      --wsc-connectbutton-balance-active-border-radius,
+      --wsc-connectbutton-secondary-active-border-radius,
       var(--hover-border-radius)
     );
   }
