@@ -46,9 +46,9 @@ export const StepperStepConnectorContainer = styled(motion.div)`
     $isCompletedStep &&
     css`
       border-color: rgb(14, 117, 55);
-    `}
+    `};
 
-  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+  @media only screen and(max-width: ${defaultTheme.mobileWidth}px) {
     min-height: 10px;
   }
 `;
@@ -128,7 +128,7 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
     $isLabelVertical &&
     css`
       flex-direction: column;
-    `}
+    `};
 
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
     max-width: 100%;

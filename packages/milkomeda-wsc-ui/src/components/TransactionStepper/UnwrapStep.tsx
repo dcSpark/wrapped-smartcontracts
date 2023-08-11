@@ -268,7 +268,6 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             </ThemeContainer>
           </>
         )}
-        {/*// TODO: network mainnet support */}
         {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
           <>
             <Alert icon={<AlertTriangleIcon />}>
