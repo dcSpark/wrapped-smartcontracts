@@ -6,7 +6,6 @@ export const AlertContainer = styled(motion.div)`
   display: flex;
   gap: 8px;
   position: relative;
-  border-radius: 9px;
   margin: 0 auto;
   padding: 10px;
   text-align: left;

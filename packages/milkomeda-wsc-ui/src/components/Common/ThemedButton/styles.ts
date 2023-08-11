@@ -95,7 +95,6 @@ export const ThemeContainer = styled.button`
 
   display: flex;
   flex-wrap: nowrap;
-  background: none;
   cursor: pointer;
   * {
     cursor: pointer;
