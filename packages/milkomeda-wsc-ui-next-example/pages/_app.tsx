@@ -16,7 +16,13 @@ const client = createClient(
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={client}>
-      <ConnectWSCProvider>
+      <ConnectWSCProvider
+        customTheme={{
+          "--wsc-connectbutton-secondary-background": "red",
+          "--wsc-body-background": "green",
+          "--wsc-primary-button-background": "blue",
+        }}
+      >
         <Component {...pageProps} />
       </ConnectWSCProvider>
     </WagmiConfig>
