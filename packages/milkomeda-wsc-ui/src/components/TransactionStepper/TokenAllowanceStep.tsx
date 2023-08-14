@@ -30,7 +30,10 @@ const TokenAllowanceStep = ({ nextStep }) => {
   const { chain } = useNetwork();
 
   const selectedToken = useMemo(
-    () => tokens.find((t) => t.contractAddress === options.evmTokenAddress),
+    () =>
+      tokens.find(
+        (t) => t.contractAddress.toLowerCase() === options.evmTokenAddress.toLowerCase()
+      ),
     [tokens, options.evmTokenAddress]
   );
 
@@ -51,7 +54,7 @@ const TokenAllowanceStep = ({ nextStep }) => {
     ],
     enabled: !!selectedToken,
     overrides: {
-      gasLimit: ethers.BigNumber.from(500000),
+      gasLimit: ethers.BigNumber.from(500_000),
     },
   });
 

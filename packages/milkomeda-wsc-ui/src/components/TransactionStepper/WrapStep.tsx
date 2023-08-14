@@ -64,7 +64,9 @@ export const useSelectedWrapToken = () => {
   React.useEffect(() => {
     if (!defaultWrapToken) return;
     const loadOriginToken = async () => {
-      const token = originTokens.find((t) => t.unit === defaultWrapToken.unit) ?? {
+      const token = originTokens.find(
+        (t) => t.unit.toLowerCase() === defaultWrapToken.unit.toLowerCase()
+      ) ?? {
         unit: LOVELACE_UNIT,
         quantity: "0",
         decimals: defaultWrapToken.unit === LOVELACE_UNIT ? 6 : 0,

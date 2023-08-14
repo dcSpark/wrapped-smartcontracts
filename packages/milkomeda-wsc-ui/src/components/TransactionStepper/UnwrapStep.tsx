@@ -83,7 +83,9 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.contractAddress === defaultUnwrapToken.unit) ?? {
+    const selectedToken = tokens.find(
+      (t) => t.contractAddress.toLowerCase() === defaultUnwrapToken.unit.toLowerCase()
+    ) ?? {
       balance: "0",
       contractAddress: isWrappingNativeTokenFirst ? defaultUnwrapToken.unit : "",
       decimals: isWrappingNativeTokenFirst ? "0" : "18",
