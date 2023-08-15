@@ -6,8 +6,8 @@ import { ConnectWSCProvider, getDefaultConfig, MilkomedaNetworkName } from "milk
 
 const client = createClient(
   getDefaultConfig({
-    oracleUrl: "oracleUrl",
-    blockfrostId: "blockfrostId",
+    oracleUrl: "https://wsc-server-devnet.c1.milkomeda.com",
+    blockfrostId: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
     network: MilkomedaNetworkName.C1Devnet,
     cardanoWalletNames: ["flint", "eternl", "nami", "nufi", "yoroi"],
   })
