@@ -349,14 +349,7 @@ const Modal: React.FC<ModalProps> = ({
         }}
       >
         {!inline && <BackgroundOverlay $active={rendered} onClick={onClose} />}
-        <Container
-          style={dimensionsCSS}
-          initial={false}
-          transition={{
-            ease: [0.2555, 0.1111, 0.2555, 1.0001],
-            duration: !positionInside && state !== "entered" ? 0 : 0.24,
-          }}
-        >
+        <Container style={dimensionsCSS} initial={false}>
           <div
             style={{
               pointerEvents: inTransition ? "all" : "none", // Block interaction while transitioning
@@ -371,7 +364,6 @@ const Modal: React.FC<ModalProps> = ({
             }}
           />
           <BoxContainer className={`${rendered && "active"}`}>
-            <AnimatePresence initial={false}></AnimatePresence>
             <AnimatePresence initial={false}>
               {context.errorMessage && (
                 <ErrorMessage
