@@ -85,7 +85,7 @@ const TransactionStepper = () => {
         activeStep={activeStep}
         successIcon={<CheckCircle2 />}
         errorIcon={<XCircle />}
-        labelOrientation="vertical"
+        labelOrientation="horizontal"
       >
         {steps.map((step, index) => (
           <StepperStep isCurrentStep={index === activeStep} index={index} key={index} {...step}>

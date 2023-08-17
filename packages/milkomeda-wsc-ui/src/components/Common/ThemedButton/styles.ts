@@ -13,7 +13,7 @@ export const Container = styled(motion.div)<{
   padding: 0;
   line-height: 0;
   letter-spacing: -0.2px;
-  font-size: var(--wsc-connectbutton-font-size, 16px);
+  font-size: var(--wsc-connectbutton-font-size, 1rem);
   font-weight: var(--wsc-connectbutton-font-weight, 500);
   text-align: center;
   transition: 100ms ease;
@@ -85,7 +85,6 @@ export const ThemeContainer = styled.button`
   margin: 0;
   background: none;
   border-radius: var(--wsc-border-radius);
-
   width: 100%;
 
   &:disabled {

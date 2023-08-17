@@ -197,7 +197,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const log = debugMode ? console.log : () => {};
-  console.log(errorMessage, "errorMessage");
+
   const value = {
     open,
     setOpen,

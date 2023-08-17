@@ -11,6 +11,7 @@ export const StepperStepLabelContainer = styled(motion.div)`
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
   position: relative;
   min-height: 80px;
+  font-size: 0.875rem;
   &[aria-current="step"] {
     color: var(--wsc-body-color);
   }
@@ -64,6 +65,7 @@ export const StepperStepConnectorLast = styled(motion.div)`
 export const StepperStepContainer = styled(motion.div)`
   display: flex;
   flex-direction: row;
+  gap: 18px;
   position: relative;
 
   ${({ $isLastStep }) =>
@@ -135,8 +137,8 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
   }
 `;
 export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: boolean }>`
-  height: 48px;
-  width: 48px;
+  min-height: 40px;
+  min-width: 40px;
   border-radius: 9999px;
   color: white;
   display: inline-flex;
@@ -177,7 +179,8 @@ export const StepperSeparator = styled(Separator.Root)`
   min-height: auto;
   align-self: auto;
   background-color: var(--wsc-stepper-separator);
-  position: absolute;
+  //position: absolute;
+
   width: 100%;
   top: 24px;
   left: 45px;

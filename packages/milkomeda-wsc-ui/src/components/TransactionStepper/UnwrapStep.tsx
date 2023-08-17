@@ -241,7 +241,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               <Spinner />
               <span>{statusUnwrapMessages[txStatus]}</span>
             </SpinnerWrapper>
-            <p style={{ marginBottom: 30 }}>
+            <p style={{ marginBottom: 30, fontSize: "0.875rem" }}>
               Unwrapping transaction may take a few minutes (~3m).
             </p>
           </>

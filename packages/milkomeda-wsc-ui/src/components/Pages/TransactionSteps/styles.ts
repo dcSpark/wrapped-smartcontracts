@@ -7,9 +7,8 @@ export const StepperTransactionContainer = styled(motion.div)`
   width: 100%;
   flex-direction: column;
   gap: 16px;
-  padding-top: 10px;
-  padding-right: 20px;
-  padding-left: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
 `;
 
 export const StepperTransactionInner = styled(motion.div)`
@@ -22,9 +21,9 @@ export const StepperTransactionContent = styled(motion.div)`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 32px;
 `;
 export const StepperTransactionSuccess = styled(motion.div)`
   padding: 16px;
@@ -49,7 +48,7 @@ export const Balance = styled(motion.div)`
   }
   span {
     color: var(--wsc-body-color);
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 `;
 const PlaceholderKeyframes = keyframes`
