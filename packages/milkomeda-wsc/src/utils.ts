@@ -1,6 +1,6 @@
 import AssetFingerprint from "@emurgo/cip14-js";
 import { bech32 } from "bech32";
-import Buffer from "buffer/";
+import Buffer from "buffer";
 import { BridgeRequest } from "./MilkomedaNetwork";
 
 export async function getFingerprintFromBlockfrost(blockfrostId: string): Promise<string> {
