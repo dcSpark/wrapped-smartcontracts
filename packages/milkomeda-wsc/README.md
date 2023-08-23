@@ -23,7 +23,7 @@ WSCLib provides a rich set of features to interact with WSCs:
 Install the library using npm:
 
 ```bash
-npm install wsclib
+npm install milkomeda-wsc
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ npm install wsclib
 Here's how you can use WSCLib in your project:
 
 ```typescript
-import WSCLib, { UserWallet, MilkomedaNetworkName } from 'wsclib';
+import WSCLib, { UserWallet, MilkomedaNetworkName } from 'milkomeda-wsc';
 
 const network = MilkomedaNetworkName.C1Mainnet;
 const wallet = UserWallet.Flint;

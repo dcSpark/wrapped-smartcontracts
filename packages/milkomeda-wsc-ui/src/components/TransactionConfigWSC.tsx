@@ -1,6 +1,6 @@
 import React, { createContext, createElement } from "react";
 import ConnectWSCModal from "./ConnectModal";
-import { PrepareWriteContractConfig, PrepareWriteContractResult } from "@wagmi/core";
+import { PrepareWriteContractConfig } from "@wagmi/core";
 import { DefaultToken } from "./ConnectWSC";
 
 type ContextValue = TransactionConfigWSCProviderProps;
@@ -9,9 +9,10 @@ export const TransactionConfigWSCContext = createContext<ContextValue | null>(nu
 
 export type EvmContractRequest = {
   address: string;
-  abi: PrepareWriteContractResult["abi"];
-  functionName: string;
-  args: readonly unknown[];
+  /* eslint @typescript-eslint/no-explicit-any: "off" */
+  abi: any;
+  functionName: PrepareWriteContractConfig["functionName"];
+  args: unknown[];
   enabled?: boolean;
   overrides?: PrepareWriteContractConfig["overrides"];
 };

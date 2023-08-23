@@ -4,70 +4,44 @@ import { ConnectWSCButton, useWSCProvider } from "milkomeda-wsc-ui";
 import { TransactionConfigWSCProvider } from "milkomeda-wsc-ui";
 import type { TransactionConfigWSCOptions } from "milkomeda-wsc-ui";
 
-import djedABI from "../abi/djed.json";
+import vendingMachineM3S6Abi from "../abi/m3s6VendingMachine.json";
 import { ethers } from "ethers";
 import Link from "next/link";
+import { useAccount } from "wagmi";
 
-const DJED_ADDRESS = "0xc4c0669ea7bff70a6cfa5905a0ba487fc181dc37";
-
-const reserveCoinAddress = "0x66c34c454f8089820c44e0785ee9635c425c9128";
-// const cardanoAddressTReserveCoin =
-//   "cc53696f7d40c96f2bca9e2e8fe31905d8207c4106f326f417ec36727452657365727665436f696e";
-
-const account = "0xb449b3B9943b57F50bEc4E2C6FF861353490Afdb";
-
-const buyOptions: TransactionConfigWSCOptions = {
-  defaultWrapToken: {
-    unit: "lovelace",
-    amount: "10178117048345515637", // 10.17 mADA -> 10 MOR
-  },
-  defaultUnwrapToken: {
-    unit: reserveCoinAddress,
-    amount: "10000000", // amountUnscaled
-  },
-  titleModal: "Buy Reserve Coin",
-  evmTokenAddress: reserveCoinAddress,
-  evmContractRequest: {
-    address: DJED_ADDRESS,
-    abi: djedABI.abi as any,
-    functionName: "buyReserveCoins", //account, FEE_UI_UNSCALED, UI
-    args: [account, "0000000000000000000000000", "0x0232556C83791b8291E9b23BfEa7d67405Bd9839"],
-    overrides: {
-      value: ethers.BigNumber.from("10178117048345515637"),
-    },
-  },
-};
-
-// const sellOptions: TransactionConfigWSCOptions = {
-//   defaultWrapToken: {
-//     unit: cardanoAddressTReserveCoin,
-//     amount: "1000000", // 1 MOR
-//   },
-//   defaultUnwrapToken: {
-//     unit: "",
-//     amount: "977761210430239846",
-//     // amount: 977761210430239846,
-//   },
-//   titleModal: "Sell Reserve Coin",
-//   evmTokenAddress: reserveCoinAddress,
-//   evmContractRequest: {
-//     address: DJED_ADDRESS,
-//     abi: djedABI.abi as any,
-//     functionName: "sellReserveCoins", //account, FEE_UI_UNSCALED, UI
-//     args: [
-//       "1000000",
-//       account,
-//       "0000000000000000000000000",
-//       "0x0232556C83791b8291E9b23BfEa7d67405Bd9839",
-//     ],
-//     overrides: {
-//       value: ethers.BigNumber.from("0"),
-//     },
-//   },
-// };
+const m3s6VendingMachineAddress = "0x5a5697633e93d7C5D319c5362B4A49f87445e33D";
+const evmTokenAddress = "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F";
 
 const Home: NextPage = () => {
   const { isWSCConnected } = useWSCProvider();
+  const { address: account } = useAccount();
+
+  const wscOptions: TransactionConfigWSCOptions = {
+    titleModal: "Buy M3S6 Coin",
+    /* config for wrap token - 1 MADA */
+    defaultWrapToken: {
+      unit: "lovelace",
+      amount: "1000000000000000000",
+    },
+    /* config for evm action execution */
+    evmContractRequest: {
+      address: m3s6VendingMachineAddress,
+      abi: vendingMachineM3S6Abi.abi,
+      functionName: "buyTokens",
+      args: [account],
+      overrides: {
+        value: ethers.BigNumber.from("1000000000000000000"),
+      },
+    },
+    /* config for erc20 token allowance */
+    evmTokenAddress: evmTokenAddress,
+    /* config for unwrap token - 1 m3s6 */
+    defaultUnwrapToken: {
+      unit: evmTokenAddress,
+      amount: "10000000",
+    },
+  };
+
   return (
     <div
       style={{
@@ -78,7 +52,7 @@ const Home: NextPage = () => {
         height: "100vh",
       }}
     >
-      <TransactionConfigWSCProvider options={buyOptions}>
+      <TransactionConfigWSCProvider options={wscOptions}>
         <ConnectWSCButton />
       </TransactionConfigWSCProvider>
       {isWSCConnected && <Link href="/wsc-interface">Check WSC Interface</Link>}

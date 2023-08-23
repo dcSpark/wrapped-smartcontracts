@@ -14,7 +14,7 @@ export const flint = (): WalletProps => {
       connectorButton: <Logos.Flint />,
       qrCode: <Logos.Flint background={true} />,
     },
-    logoBackground: "var(--ck-brand-walletConnect)",
+    logoBackground: "var(--wsc-brand-walletConnect)",
     scannable: true,
     createUri: (uri: string) => uri,
   };

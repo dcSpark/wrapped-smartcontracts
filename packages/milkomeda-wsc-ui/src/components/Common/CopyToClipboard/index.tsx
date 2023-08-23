@@ -6,8 +6,8 @@ import CopyToClipboardIcon from "./CopyToClipboardIcon";
 import Button from "../Button";
 
 const Container = styled.div<{ $disabled?: boolean }>`
-  --color: var(--ck-copytoclipboard-stroke);
-  --bg: var(--ck-body-background);
+  --color: var(--wsc-copytoclipboard-stroke);
+  --bg: var(--wsc-body-background);
   transition: all 220ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
 
   cursor: pointer;
@@ -23,7 +23,7 @@ const Container = styled.div<{ $disabled?: boolean }>`
         `
       : css`
           &:hover {
-            --color: var(--ck-body-color-muted);
+            --color: var(--wsc-body-color-muted);
           }
         `}
 `;

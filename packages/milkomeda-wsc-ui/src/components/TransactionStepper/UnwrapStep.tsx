@@ -9,7 +9,6 @@ import {
   StepTitle,
   TransactionExternalLink,
 } from "./styles";
-import Button from "../Common/Button";
 import { useContext } from "../ConnectWSC";
 import useInterval from "../../hooks/useInterval";
 import { LabelWithBalance, SuccessMessage } from "./WrapStep";
@@ -18,8 +17,6 @@ import { convertTokensToWei, convertWeiToTokens } from "../../utils/convertWeiTo
 import { Spinner } from "../Common/Spinner";
 import { EVMTokenBalance, TxPendingStatus } from "milkomeda-wsc";
 import {
-  BRIDGE_EXPLORER_URL,
-  DEFAULT_SYMBOL,
   LOCK_ADA,
   LOVELACE_UNIT,
   TX_STATUS_CHECK_INTERVAL,
@@ -32,6 +29,9 @@ import { SuccessStep } from "./index";
 import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
+import { useNetwork } from "wagmi";
+import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -47,6 +47,8 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();
+  const { chain } = useNetwork();
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
 
@@ -81,12 +83,14 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find((t) => t.contractAddress === defaultUnwrapToken.unit) ?? {
+    const selectedToken = tokens.find(
+      (t) => t.contractAddress.toLowerCase() === defaultUnwrapToken.unit.toLowerCase()
+    ) ?? {
       balance: "0",
       contractAddress: isWrappingNativeTokenFirst ? defaultUnwrapToken.unit : "",
       decimals: isWrappingNativeTokenFirst ? "0" : "18",
       name: "",
-      symbol: DEFAULT_SYMBOL,
+      symbol: defaultSymbol,
       type: "string",
     };
 
@@ -157,7 +161,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                   <LabelWithBalance
                     label="Bridge Lock-up:"
                     amount={LOCK_ADA}
-                    assetName={DEFAULT_SYMBOL}
+                    assetName={defaultSymbol}
                   />
                 ) : (
                   <>
@@ -172,17 +176,17 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                           .dividedBy(10 ** 6)
                           .toFixed()
                       }
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                     <LabelWithBalance
                       label="Bridge Lock-up:"
                       amount={LOCK_ADA}
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                     <LabelWithBalance
                       label="Bridge fees:"
                       amount={unwrappingFee?.toFixed()}
-                      assetName={unwrappingFee && DEFAULT_SYMBOL}
+                      assetName={unwrappingFee && defaultSymbol}
                       tooltipMessage="This fee is paid to the bridge for unwrapping your token."
                     />
                   </>
@@ -203,7 +207,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       }
                       assetName={unwrappingFee && selectedUnwrapToken?.symbol}
                     />
-                    <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={DEFAULT_SYMBOL} />
+                    <LabelWithBalance label="ADA:" amount={LOCK_ADA} assetName={defaultSymbol} />
                   </>
                 ) : (
                   <>
@@ -222,7 +226,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                           .dividedBy(10 ** 6)
                           .toFixed()
                       }
-                      assetName={DEFAULT_SYMBOL}
+                      assetName={defaultSymbol}
                     />
                   </>
                 )}
@@ -237,7 +241,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               <Spinner />
               <span>{statusUnwrapMessages[txStatus]}</span>
             </SpinnerWrapper>
-            <p style={{ marginBottom: 30 }}>
+            <p style={{ marginBottom: 30, fontSize: "0.875rem" }}>
               Unwrapping transaction may take a few minutes (~3m).
             </p>
           </>
@@ -253,18 +257,17 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
             <SuccessStep />
             <SuccessMessage
               message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
-              href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+              href={`${getBridgeExplorerUrl(chain?.id)}/search/tx?query=${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
-            <Button
-              variant="primary"
+            <ThemeContainer
               onClick={() => {
                 setOpen(false);
                 resetSteps();
               }}
             >
-              Close
-            </Button>
+              <ThemedButton variant="primary">Close</ThemedButton>
+            </ThemeContainer>
           </>
         )}
         {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
@@ -277,31 +280,30 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                 style={{ display: "inline" }}
                 target="_blank"
                 rel="noopener noreferrer"
-                href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+                href={`${getBridgeExplorerUrl(chain?.id)}/search/tx?query=${txHash}`}
               >
                 here in the Milkomeda Bridge Explorer.
               </TransactionExternalLink>{" "}
               You may proceed to close this modal and continue using the app.
             </Alert>
 
-            <Button
-              style={{ marginTop: 40 }}
-              variant="primary"
+            <ThemeContainer
               onClick={() => {
                 resetSteps();
                 setOpen(false);
               }}
+              style={{ marginTop: 40 }}
             >
-              Continue using the app
-            </Button>
+              <ThemedButton variant="primary">Continue using the app</ThemedButton>
+            </ThemeContainer>
           </>
         )}
       </StepLargeHeight>
 
       {(isIdle || isError) && (
-        <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
-          Confirm Unwrapping
-        </Button>
+        <ThemeContainer onClick={unwrapToken} disabled={!selectedUnwrapToken}>
+          <ThemedButton variant="primary">Confirm Unwrapping</ThemedButton>
+        </ThemeContainer>
       )}
     </>
   );

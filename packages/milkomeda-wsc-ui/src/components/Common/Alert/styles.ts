@@ -6,7 +6,6 @@ export const AlertContainer = styled(motion.div)`
   display: flex;
   gap: 8px;
   position: relative;
-  border-radius: 9px;
   margin: 0 auto;
   padding: 10px;
   text-align: left;
@@ -16,10 +15,10 @@ export const AlertContainer = styled(motion.div)`
   max-width: 260px;
   min-width: 100%;
 
-  border-radius: var(--ck-alert-border-radius, 12px);
-  color: var(--ck-alert-color, var(--ck-body-color-muted));
-  background: var(--ck-alert-background, var(--ck-body-background-secondary));
-  box-shadow: var(--ck-alert-box-shadow, var(--ck-body-box-shadow));
+  border-radius: var(--wsc-alert-border-radius, 12px);
+  color: var(--wsc-alert-color, var(--wsc-body-color-muted));
+  background: var(--wsc-alert-background, var(--wsc-body-background-secondary));
+  box-shadow: var(--wsc-alert-box-shadow, var(--wsc-body-box-shadow));
 
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
     padding: 16px;

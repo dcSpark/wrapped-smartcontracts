@@ -5,10 +5,10 @@ import { PlaceholderKeyframes } from "../Common/CustomQRCode/styles";
 
 export const Container = styled.div`
   padding: 29px 24px 24px;
-  border-radius: var(--ck-border-radius, 20px);
-  background: var(--ck-body-background);
-  box-shadow: var(--ck-modal-box-shadow);
-  color: var(--ck-body-color);
+  border-radius: var(--wsc-border-radius, 20px);
+  background: var(--wsc-body-background);
+  box-shadow: var(--wsc-modal-box-shadow);
+  color: var(--wsc-body-color);
   margin: auto;
   min-width: 580px;
   max-width: 580px;
@@ -38,12 +38,12 @@ export const TabsTrigger = styled(Tabs.Trigger)`
   justify-content: center;
   font-size: 1rem;
   line-height: 1;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   &:hover {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
   &[data-state="active"] > span {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
     box-shadow: inset 0 -1px 0 0 currentColor, 0 1px 0 0 currentColor;
     padding-bottom: 6px;
     padding-left: 1px;
@@ -60,7 +60,7 @@ export const TabsContent = styled(Tabs.Content)`
   }
 
   .about-link {
-    color: var(--ck-body-disclaimer-link-color);
+    color: var(--wsc-body-disclaimer-link-color);
     margin-bottom: 10px;
     align-self: flex-end;
     font-size: 0.875rem;
@@ -76,13 +76,13 @@ export const TabsContent = styled(Tabs.Content)`
     li {
       padding: 4px 6px;
       border-radius: 4px;
-      border: 1px solid var(--ck-body-color-muted);
+      border: 1px solid var(--wsc-body-color-muted);
     }
   }
 `;
 
 export const Title = styled.h2`
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   text-align: center;
   margin-top: 0;
   margin-bottom: 14px;
@@ -118,14 +118,14 @@ export const Row = styled.div`
   svg {
     width: 16px;
     height: 16px;
-    color: var(--ck-body-color-muted);
+    color: var(--wsc-body-color-muted);
   }
 `;
 export const Label = styled.span`
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
 `;
 export const Value = styled.span`
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
   font-weight: 500;
 `;
 
@@ -150,13 +150,13 @@ export const InputContainer = styled.div`
   position: relative;
   height: 48px;
   padding: 4px 16px;
-  border: 1px solid var(--ck-body-color-muted);
+  border: 1px solid var(--wsc-body-color-muted);
   border-radius: 4px;
   overflow: hidden;
   display: flex;
   align-items: center;
   &:focus-within {
-    border-color: var(--ck-focus-color);
+    border-color: var(--wsc-focus-color);
   }
   input {
     width: 100%;
@@ -165,15 +165,15 @@ export const InputContainer = styled.div`
     outline: none;
     background: transparent;
     font-size: 0.875rem;
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 
   button {
     position: absolute;
     padding: 8px;
     border-radius: 0.375rem;
-    background: var(--ck-body-background-secondary);
-    color: var(--ck-body-color);
+    background: var(--wsc-body-background-secondary);
+    color: var(--wsc-body-color);
     right: 3px;
     align-self: center;
     font-size: 0.875rem;
@@ -190,7 +190,7 @@ export const Skeleton = styled(motion.div)`
   position: relative;
   overflow: hidden;
   border-radius: 10px;
-  background: var(--ck-body-background-secondary);
+  background: var(--wsc-body-background-secondary);
   inset: 0;
   &:before {
     z-index: 4;
@@ -199,9 +199,9 @@ export const Skeleton = styled(motion.div)`
     inset: 0;
     background-image: linear-gradient(
       90deg,
-      var(--ck-body-background-transparent) 50%,
-      var(--ck-body-background),
-      var(--ck-body-background-transparent)
+      var(--wsc-body-background-transparent) 50%,
+      var(--wsc-body-background),
+      var(--wsc-body-background-transparent)
     );
     opacity: 0.75;
     background-size: 200% 100%;

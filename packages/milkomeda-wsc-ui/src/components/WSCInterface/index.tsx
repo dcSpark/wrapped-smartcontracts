@@ -27,12 +27,7 @@ import Tooltip from "../Common/Tooltip";
 import Button from "../Common/Button";
 import BigNumber from "bignumber.js";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
-import {
-  BRIDGE_EXPLORER_URL,
-  LOVELACE_UNIT,
-  TX_STATUS_CHECK_INTERVAL,
-  TxStatus,
-} from "../../constants/transaction";
+import { LOVELACE_UNIT, TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import useInterval from "../../hooks/useInterval";
 import { ErrorMessage, TransactionExternalLink } from "../TransactionStepper/styles";
@@ -42,8 +37,12 @@ import { truncateCardanoAddress, truncateEthAddress } from "../../utils";
 import { statusUnwrapMessages } from "../TransactionStepper/UnwrapStep";
 import { MilkomedaLink } from "../Common/Modal/styles";
 import { MilkomedaIcon } from "../Common/Modal";
+import { useContext } from "../ConnectWSC";
+import { useNetwork } from "wagmi";
+import { getBridgeExplorerUrl } from "../../utils/transactions";
 
 export const WSCInterface = () => {
+  const context = useContext();
   const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
   const isOriginBalanceNotZero = originBalance != null && +originBalance !== 0;
   const isDestinationBalanceNotZero = destinationBalance != null && +destinationBalance !== 0;
@@ -64,7 +63,7 @@ export const WSCInterface = () => {
   ];
 
   return (
-    <ResetContainer>
+    <ResetContainer $customTheme={context.customTheme}>
       <Container style={{ position: "relative" }}>
         <div
           style={{
@@ -258,6 +257,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
   const { wscProvider } = useWSCProvider();
   const { txStatus, txStatusError, setTxStatusError, setTxStatus, isLoading, isError, isSuccess } =
     useTransactionStatus();
+  const { chain } = useNetwork();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const moveToken = async (token) => {
@@ -299,7 +299,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
       <Row>
         <Label style={{ paddingLeft: "16px" }}>Balance: </Label>
         <Value>
-          {token.unit === "lovelace"
+          {token.unit === LOVELACE_UNIT
             ? convertWeiToTokens({
                 valueWei: token.quantity,
                 token: token,
@@ -331,7 +331,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
             <SuccessMessage
               disableGutters
               message={statusWrapMessages[TxPendingStatus.Confirmed]}
-              href={`${BRIDGE_EXPLORER_URL}/wrap/${txHash}`}
+              href={`${getBridgeExplorerUrl(chain?.id)}/wrap/${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
           )}
@@ -369,7 +369,7 @@ function Pending() {
                 style={{
                   padding: "14px 10px",
                   borderRadius: "4px",
-                  border: "1px solid var(--ck-body-color-muted)",
+                  border: "1px solid var(--wsc-body-color-muted)",
                 }}
               >
                 <Row>
@@ -451,6 +451,7 @@ function AmountInput({ label, onMax, value, onChange, id }) {
 
 function WSCAssetItem({ token, allowedTokensMap }) {
   const { wscProvider } = useWSCProvider();
+  const { chain } = useNetwork();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const { txStatus, txStatusError, setTxStatusError, setTxStatus, isLoading, isError, isSuccess } =
@@ -543,7 +544,7 @@ function WSCAssetItem({ token, allowedTokensMap }) {
         <SuccessMessage
           disableGutters
           message={statusUnwrapMessages[TxPendingStatus.Confirmed]}
-          href={`${BRIDGE_EXPLORER_URL}/search/tx?query=${txHash}`}
+          href={`${getBridgeExplorerUrl[chain?.id ?? 200101]}/search/tx?query=${txHash}`}
           viewLabel="Milkomeda Bridge Explorer"
         />
       )}

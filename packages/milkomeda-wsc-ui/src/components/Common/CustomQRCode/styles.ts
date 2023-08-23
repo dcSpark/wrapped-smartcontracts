@@ -12,9 +12,9 @@ export const QRCodeContainer = styled(motion.div)`
   align-items: center;
   justify-content: center;
   margin: 1px 0 2px;
-  border-radius: var(--ck-qr-border-radius, 24px);
-  background: var(--ck-qr-background, transparent);
-  box-shadow: 0 0 0 1px var(--ck-qr-border-color);
+  border-radius: var(--wsc-qr-border-radius, 24px);
+  background: var(--wsc-qr-background, transparent);
+  box-shadow: 0 0 0 1px var(--wsc-qr-border-color);
   backface-visibility: hidden;
   svg {
     display: block;
@@ -36,8 +36,8 @@ export const PlaceholderKeyframes = keyframes`
   100%{ background-position: -100% 0; }
 `;
 export const QRPlaceholder = styled(motion.div)`
-  --color: var(--ck-qr-dot-color);
-  --bg: var(--ck-qr-background, var(--ck-body-background));
+  --color: var(--wsc-qr-dot-color);
+  --bg: var(--wsc-qr-background, var(--wsc-body-background));
 
   position: absolute;
   inset: 0;

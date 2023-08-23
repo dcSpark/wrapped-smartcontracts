@@ -6,19 +6,24 @@ import {
   StepLargeHeight,
   StepTitle,
 } from "./styles";
-import Button from "../Common/Button";
 import { Spinner } from "../Common/Spinner";
 import { SuccessMessage } from "./WrapStep";
-import { EVM_EXPLORER_URL } from "../../constants/transaction";
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from "wagmi";
+import {
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
 import { ethers } from "ethers";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
+import { getEvmExplorerUrl } from "../../utils/transactions";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
     options: { evmContractRequest },
   } = useTransactionConfigWSC();
-  console.log(evmContractRequest, "evmContractRequest");
+  const { chain } = useNetwork();
 
   const prepareContractWriteQuery = usePrepareContractWrite({
     address: evmContractRequest.address as `0x${string}`,
@@ -32,10 +37,8 @@ const ActionExecutionStep = ({ nextStep }) => {
       ...evmContractRequest.overrides,
     },
   });
-  console.log(prepareContractWriteQuery, "prepareContractWriteQuery");
 
   const contractWriteQuery = useContractWrite(prepareContractWriteQuery.config);
-  console.log(contractWriteQuery, "contractWriteQuery");
 
   const waitForTransactionQuery = useWaitForTransaction({
     hash: contractWriteQuery.data?.hash,
@@ -45,7 +48,10 @@ const ActionExecutionStep = ({ nextStep }) => {
   const isIdle = contractWriteQuery.isIdle;
   const isLoading = contractWriteQuery.isLoading || waitForTransactionQuery.isLoading;
   const isSuccess = waitForTransactionQuery.isSuccess;
-  const isError = waitForTransactionQuery.isError;
+  const isError =
+    waitForTransactionQuery.isError ||
+    contractWriteQuery.isError ||
+    prepareContractWriteQuery.isError;
 
   return (
     <>
@@ -72,30 +78,35 @@ const ActionExecutionStep = ({ nextStep }) => {
         {isError && (
           <ErrorMessage role="alert">
             Ups, something went wrong.{" "}
-            {waitForTransactionQuery.error ? `Error: ${waitForTransactionQuery.error}` : ""}{" "}
+            {waitForTransactionQuery.error
+              ? `Error: ${waitForTransactionQuery.error.message}`
+              : ""}{" "}
+            {contractWriteQuery.error ? `Error: ${contractWriteQuery.error.message}` : ""}{" "}
+            {prepareContractWriteQuery.error
+              ? `Error: ${prepareContractWriteQuery.error.message}`
+              : ""}{" "}
           </ErrorMessage>
         )}
         {isSuccess && (
           <>
             <SuccessMessage
               message="Transaction has been successfully executed."
-              href={`${EVM_EXPLORER_URL}/tx/${contractWriteQuery?.data?.hash}`}
+              href={`${getEvmExplorerUrl(chain?.id)}/tx/${contractWriteQuery?.data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <Button variant="primary" onClick={nextStep}>
-              Continue
-            </Button>
+            <ThemeContainer onClick={nextStep}>
+              <ThemedButton variant="primary">Continue</ThemedButton>
+            </ThemeContainer>
           </>
         )}
       </StepLargeHeight>
       {(isIdle || isError) && (
-        <Button
-          variant="primary"
+        <ThemeContainer
           disabled={!contractWriteQuery?.write}
           onClick={() => contractWriteQuery?.write?.()}
         >
-          Execute Action
-        </Button>
+          <ThemedButton variant="primary">Execute Action</ThemedButton>
+        </ThemeContainer>
       )}
     </>
   );

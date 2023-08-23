@@ -7,7 +7,7 @@ import defaultTheme from "../styles/defaultTheme";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { EVMTokenBalance, PendingTx, WSCLib } from "milkomeda-wsc";
 import useInterval from "../hooks/useInterval";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
@@ -49,6 +49,8 @@ export type WSCContext = {
   isWSCConnected: boolean;
 };
 
+export type CustomTheme = Record<`--wsc-${string}`, string>;
+
 type ContextValue = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -59,6 +61,7 @@ type ContextValue = {
   errorMessage: Error;
   debugMode?: boolean;
   isWSCConnected?: boolean;
+  customTheme?: CustomTheme;
   log: (...props: any) => void;
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
@@ -66,9 +69,8 @@ type ContextValue = {
 
 export const Context = createContext<ContextValue | null>(null);
 
-// export type ConnectWSCOptions = NonNullable<unknown>;
-
 type ConnectKitProviderProps = {
+  customTheme?: CustomTheme;
   children?: React.ReactNode;
   debugMode?: boolean;
 } & useConnectCallbackProps;
@@ -78,6 +80,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   onConnect,
   onDisconnect,
   debugMode = false,
+  customTheme = {},
 }) => {
   // Only allow for mounting ConnectKitProvider once, so we avoid weird global
   // state collisions.
@@ -124,11 +127,13 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
   const [originAddress, setOriginAddress] = useState("");
   const [address, setAddress] = useState("");
+  const { chain } = useNetwork();
 
   // const [transactions, setTransactions] = useState([]);
   // const [algorandConnected, setAlgorandConnected] = useState(false);
   // const [cardanoConnected, setCardanoConnected] = useState(false);
   // const [network, setNetwork] = useState(null);
+
   const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
 
   useEffect(() => {
@@ -136,7 +141,10 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     const loadWscProvider = async () => {
       try {
         const provider = await activeConnector?.getProvider();
-        if (!provider) return;
+
+        if (!provider) {
+          throw new Error("No wsc provider found");
+        }
         const originTokens = await provider.origin_getTokenBalances();
         const tokenBalances = await provider.getTokenBalances();
         const destinationBalance = await provider.eth_getBalance();
@@ -154,7 +162,11 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
         setOriginAddress(originAddress);
         setAddress(address);
       } catch (e) {
-        console.log(e);
+        if (e instanceof Error) {
+          console.error(e);
+          setErrorMessage(` 
+          Error: Connecting to WSC. Make sure your wallet is connected to correct network - ${chain?.name}.`);
+        }
       }
     };
     loadWscProvider();
@@ -181,7 +193,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   useInterval(updateWalletData, wscProvider != null ? 5000 : null);
 
-  useEffect(() => setErrorMessage(null), [route, open]);
+  // useEffect(() => setErrorMessage(null), [route, open]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const log = debugMode ? console.log : () => {};
@@ -207,7 +219,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     isWSCConnected,
     // Other configuration
     errorMessage,
-
+    customTheme,
     debugMode,
     log,
     displayError: (message: string | React.ReactNode | null, code?: any) => {
@@ -222,10 +234,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   return createElement(
     Context.Provider,
     { value },
-    <ThemeProvider theme={defaultTheme}>
-      {children}
-      {/*<ConnectWSCModal />*/}
-    </ThemeProvider>
+    <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>
   );
 };
 

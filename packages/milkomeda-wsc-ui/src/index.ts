@@ -12,6 +12,7 @@ export {
 export { ConnectWSCButton } from "./components/ConnectButton";
 export { useWSCProvider } from "./hooks/useWSCProvider";
 export { WSCInterface } from "./components/WSCInterface";
+export { CardanoWSCConnector } from "./wsc-cardano-connector";
 export { default as supportedConnectors } from "./constants/supportedConnectors";
 
 // Hooks

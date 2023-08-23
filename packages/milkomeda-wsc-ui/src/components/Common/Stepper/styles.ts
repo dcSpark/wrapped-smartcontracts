@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import styled from "../../../styles/styled";
 import { css } from "styled-components";
 import * as Separator from "@radix-ui/react-separator";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const StepperStepLabelContainer = styled(motion.div)`
   display: flex;
@@ -10,8 +11,9 @@ export const StepperStepLabelContainer = styled(motion.div)`
   text-align: ${({ $isLabelVertical }) => ($isLabelVertical ? "center" : "left")};
   position: relative;
   min-height: 80px;
+  font-size: 0.875rem;
   &[aria-current="step"] {
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;
 export const StepperStepOptionalLabel = styled(motion.span)`
@@ -21,7 +23,7 @@ export const StepperStepOptionalLabel = styled(motion.span)`
 `;
 export const StepperSteLabelDescription = styled(motion.span)`
   font-size: 0.875rem;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   position: absolute;
   bottom: 20px;
   white-space: nowrap;
@@ -45,7 +47,11 @@ export const StepperStepConnectorContainer = styled(motion.div)`
     $isCompletedStep &&
     css`
       border-color: rgb(14, 117, 55);
-    `}
+    `};
+
+  @media only screen and(max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: 10px;
+  }
 `;
 
 export const StepperStepConnectorLast = styled(motion.div)`
@@ -59,6 +65,7 @@ export const StepperStepConnectorLast = styled(motion.div)`
 export const StepperStepContainer = styled(motion.div)`
   display: flex;
   flex-direction: row;
+  gap: 18px;
   position: relative;
 
   ${({ $isLastStep }) =>
@@ -106,6 +113,10 @@ export const StepperContainer = styled(motion.div)<{ $isVertical?: boolean }>`
   flex-direction: ${({ $isVertical }) => ($isVertical ? "column" : "row")};
   padding-left: 40px;
   padding-right: 40px;
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 `;
 export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>`
   display: flex;
@@ -119,35 +130,36 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
     $isLabelVertical &&
     css`
       flex-direction: column;
-    `}
+    `};
+
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    max-width: 100%;
+  }
 `;
 export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: boolean }>`
-  height: 48px;
-  width: 48px;
+  min-height: 40px;
+  min-width: 40px;
   border-radius: 9999px;
   color: white;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
-  background: var(--ck-stepper-background-circle);
+  background: var(--wsc-stepper-background-circle);
+  box-shadow: var(--wsc-stepper-box-shadown-circle, none);
   font-weight: 500;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 0.15s;
 
   &[aria-current="step"] {
-    background: var(--ck-stepper-current-background-circle);
+    background: var(--wsc-stepper-current-background-circle);
   }
 
   &[data-highlighted="true"] {
-    background-color: rgb(14, 117, 55);
-    color: white;
+    background-color: var(--wsc-stepper-highlighted-background-circle, rgb(14, 117, 55));
+    color: var(--wsc-stepper-highlighted-text-circle, white);
   }
-
-  //&:hover {
-  //  background-color: rgba(24, 24, 27, 0.9);
-  //}
 
   ${({ $isCompletedStep }) =>
     $isCompletedStep &&
@@ -166,12 +178,13 @@ export const StepperSeparator = styled(Separator.Root)`
   height: 2px;
   min-height: auto;
   align-self: auto;
-  background-color: var(--ck-stepper-separator);
-  position: absolute;
+  background-color: var(--wsc-stepper-separator);
+  //position: absolute;
+
   width: 100%;
   top: 24px;
   left: 45px;
   &[data-highlighted="true"] {
-    background-color: rgb(14, 117, 55);
+    background-color: var(--wsc-stepper-highlighted-background-circle, rgb(14, 117, 55));
   }
 `;

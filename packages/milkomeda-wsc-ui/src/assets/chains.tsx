@@ -61,8 +61,8 @@ const UnknownChain = ({ ...props }: Logo) => {
 };
 
 export const Ethereum = ({ testnet, ...props }: Logo) => {
-  let bg = "var(--ck-chain-ethereum-01, #25292E)";
-  let fill = "var(--ck-chain-ethereum-02, #ffffff)";
+  let bg = "var(--wsc-chain-ethereum-01, #25292E)";
+  let fill = "var(--wsc-chain-ethereum-02, #ffffff)";
 
   if (testnet) {
     bg = "linear-gradient(180deg, #8995A9 0%, #424D5F 99.48%)";

@@ -15,7 +15,7 @@ export const ErrorMessage = styled(motion.div)`
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
-  background: var(--ck-body-color-danger);
+  background: var(--wsc-body-color-danger);
   border-radius: 20px;
   padding: 24px 46px 82px 24px;
   transition: width var(--duration) var(--ease);
@@ -77,7 +77,7 @@ export const OverviewContent = styled(motion.div)`
 export const MainPageContent = styled(motion.div)`
   max-width: 100%;
   width: 800px;
-  padding-top: 48px;
+  padding-top: 40px;
 `;
 
 export const TextWithHr = styled(motion.div)`
@@ -85,7 +85,7 @@ export const TextWithHr = styled(motion.div)`
   position: relative;
   display: block;
   text-align: center;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   font-size: 15px;
   font-weight: 400;
   line-height: 21px;
@@ -96,7 +96,7 @@ export const TextWithHr = styled(motion.div)`
     user-select: none;
     pointer-events: none;
     padding: 0 14px;
-    background: var(--ck-body-background);
+    background: var(--wsc-body-background);
     transition: background-color 200ms ease;
   }
   &:before {
@@ -108,8 +108,8 @@ export const TextWithHr = styled(motion.div)`
     right: 0;
     height: 1px;
     transform: translateY(-1px);
-    background: var(--ck-body-divider);
-    box-shadow: var(--ck-body-divider-box-shadow);
+    background: var(--wsc-body-divider);
+    box-shadow: var(--wsc-body-divider-box-shadow);
   }
 `;
 export const ModalHeading = styled(motion.div)`
@@ -128,8 +128,8 @@ export const ModalHeading = styled(motion.div)`
   text-align: center;
   font-size: 17px;
   line-height: 20px;
-  font-weight: var(--ck-modal-heading-font-weight, 600);
-  color: var(--ck-body-color);
+  font-weight: var(--wsc-modal-heading-font-weight, 600);
+  color: var(--wsc-body-color);
   span {
     display: inline-block;
   }
@@ -161,11 +161,11 @@ export const ModalH1 = styled(motion.h1)<{
   padding: 0;
   line-height: ${(props) => (props.$small ? 20 : 22)}px;
   font-size: ${(props) => (props.$small ? 17 : 19)}px;
-  font-weight: var(--ck-modal-h1-font-weight, 600);
+  font-weight: var(--wsc-modal-h1-font-weight, 600);
   color: ${(props) => {
-    if (props.$error) return "var(--ck-body-color-danger)";
-    if (props.$valid) return "var(--ck-body-color-valid)";
-    return "var(--ck-body-color)";
+    if (props.$error) return "var(--wsc-body-color-danger)";
+    if (props.$valid) return "var(--wsc-body-color-valid)";
+    return "var(--wsc-body-color)";
   }};
   > svg {
     position: relative;
@@ -184,10 +184,10 @@ export const ModalBody = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 21px;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   strong {
     font-weight: 500;
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;
 
@@ -196,10 +196,10 @@ export const ModalBodySmall = styled.div`
   font-size: 13px;
   font-weight: 400;
   line-height: 16px;
-  color: var(--ck-body-color-muted);
+  color: var(--wsc-body-color-muted);
   strong {
     font-weight: 500;
-    color: var(--ck-body-color);
+    color: var(--wsc-body-color);
   }
 `;
 
@@ -213,9 +213,9 @@ export const BackgroundOverlay = styled(motion.div)<{
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--ck-overlay-background, rgba(71, 88, 107, 0.24));
+  background: var(--wsc-overlay-background, rgba(71, 88, 107, 0.24));
   backdrop-filter: ${(props) =>
-    props.$blur ? `blur(${props.$blur}px)` : "var(--ck-overlay-backdrop-filter, none)"};
+    props.$blur ? `blur(${props.$blur}px)` : "var(--wsc-overlay-backdrop-filter, none)"};
   opacity: 0;
   animation: ${(props) => (props.$active ? FadeIn : FadeOut)} 150ms ease-out both;
 `;
@@ -242,7 +242,7 @@ const MobileBoxOut = keyframes`
 export const BoxContainer = styled(motion.div)`
   z-index: 2;
   position: relative;
-  color: var(--ck-body-color);
+  color: var(--wsc-body-color);
 
   animation: 150ms ease both;
   animation-name: ${BoxOut};
@@ -261,9 +261,9 @@ export const BoxContainer = styled(motion.div)`
     transform: translateX(-50%);
     backface-visibility: hidden;
     transition: all 200ms ease;
-    border-radius: var(--ck-border-radius, 20px);
-    background: var(--ck-body-background);
-    box-shadow: var(--ck-modal-box-shadow);
+    border-radius: var(--wsc-border-radius, 20px);
+    background: var(--wsc-body-background);
+    box-shadow: var(--wsc-modal-box-shadow);
   }
 
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
@@ -296,7 +296,7 @@ export const ControllerContainer = styled(motion.div)`
   width: var(--width);
   transition: 0.2s ease width;
   pointer-events: auto;
-  //border-bottom: 1px solid var(--ck-body-divider);
+  //border-bottom: 1px solid var(--wsc-body-divider);
 `;
 
 export const InnerContainer = styled(motion.div)`
@@ -383,7 +383,6 @@ export const ModalContainer = styled.div`
   z-index: 2147483646; // z-index set one below max (2147483647) for if we wish to layer things ontop of the modal in a seperate Portal
   position: fixed;
   inset: 0;
-  --ck-spinner-color: #f07d00;
 `;
 
 export const CloseButton = styled(motion.button)`
@@ -400,8 +399,8 @@ export const CloseButton = styled(motion.button)`
   border-radius: 16px;
   padding: 0;
   margin: 0;
-  color: var(--ck-body-action-color);
-  background: var(--ck-body-background);
+  color: var(--wsc-body-action-color);
+  background: var(--wsc-body-background);
   transition: background-color 200ms ease, transform 100ms ease;
   /* will-change: transform; */
   svg {
@@ -409,7 +408,7 @@ export const CloseButton = styled(motion.button)`
   }
 
   &:hover {
-    background: var(--ck-body-background-secondary);
+    background: var(--wsc-body-background-secondary);
   }
   &:active {
     transform: scale(0.9);
@@ -427,8 +426,8 @@ export const SiweButton = styled(motion.button)`
   border-radius: 16px;
   padding: 0;
   margin: 0;
-  color: var(--ck-body-action-color);
-  background: var(--ck-body-background);
+  color: var(--wsc-body-action-color);
+  background: var(--wsc-body-background);
   transition: background-color 200ms ease, transform 100ms ease;
   /* will-change: transform; */
   svg {
@@ -439,7 +438,7 @@ export const SiweButton = styled(motion.button)`
   &:enabled {
     cursor: pointer;
     &:hover {
-      background: var(--ck-body-background-secondary);
+      background: var(--wsc-body-background-secondary);
     }
     &:active {
       transform: scale(0.9);
@@ -458,8 +457,8 @@ export const BackButton = styled(motion.button)`
   border-radius: 16px;
   padding: 0;
   margin: 0;
-  color: var(--ck-body-action-color);
-  background: var(--ck-body-background);
+  color: var(--wsc-body-action-color);
+  background: var(--wsc-body-background);
   transition: background-color 200ms ease, transform 100ms ease;
   /* will-change: transform; */
   svg {
@@ -471,7 +470,7 @@ export const BackButton = styled(motion.button)`
   &:enabled {
     cursor: pointer;
     &:hover {
-      background: var(--ck-body-background-secondary);
+      background: var(--wsc-body-background-secondary);
     }
     &:active {
       transform: scale(0.9);
@@ -491,8 +490,8 @@ export const InfoButton = styled(motion.button)`
   border-radius: 16px;
   padding: 0;
   margin: 0;
-  color: var(--ck-body-action-color);
-  background: var(--ck-body-background);
+  color: var(--wsc-body-action-color);
+  background: var(--wsc-body-background);
   transition: background-color 200ms ease, transform 100ms ease;
   /* will-change: transform; */
   svg {
@@ -502,7 +501,7 @@ export const InfoButton = styled(motion.button)`
   &:enabled {
     cursor: pointer;
     &:hover {
-      background: var(--ck-body-background-secondary);
+      background: var(--wsc-body-background-secondary);
     }
     &:active {
       transform: scale(0.9);
@@ -522,7 +521,7 @@ export const MilkomedaLink = styled(motion.a)`
   border-radius: 16px;
   margin: 0;
   box-shadow: var(--box-shadow);
-  color: var(--ck-body-action-color);
+  color: var(--wsc-body-action-color);
   background: white;
   padding: 4px;
   transition: background-color 200ms ease, transform 100ms ease;
@@ -534,7 +533,7 @@ export const MilkomedaLink = styled(motion.a)`
   &:enabled {
     cursor: pointer;
     &:hover {
-      background: var(--ck-body-background-secondary);
+      background: var(--wsc-body-background-secondary);
     }
     &:active {
       transform: scale(0.9);
@@ -566,7 +565,7 @@ export const Container = styled(motion.div)`
       margin: 0 auto;
       &:before {
         width: 100%;
-        border-radius: var(--ck-border-radius, 30px) var(--ck-border-radius, 30px) 0 0;
+        border-radius: var(--wsc-border-radius, 30px) var(--wsc-border-radius, 30px) 0 0;
       }
     }
     ${PageContainer} {
@@ -587,7 +586,7 @@ export const Container = styled(motion.div)`
     }
     ${ModalBody} {
       margin: 0 auto;
-      max-width: 295px;
+      max-width: 100%;
     }
     ${PageContents} {
       width: 100%;
@@ -632,19 +631,19 @@ export const Disclaimer = styled(motion.div)`
   justify-content: center;
   margin: 16px -24px -24px -24px;
   padding: 15px 40px 18px;
-  font-size: var(--ck-body-disclaimer-font-size, 13px);
-  font-weight: var(--ck-body-disclaimer-font-weight, 400);
+  font-size: var(--wsc-body-disclaimer-font-size, 13px);
+  font-weight: var(--wsc-body-disclaimer-font-weight, 400);
   text-align: center;
   line-height: 19px;
-  color: var(--ck-body-disclaimer-color, var(--ck-body-color-muted, inherit));
+  color: var(--wsc-body-disclaimer-color, var(--wsc-body-color-muted, inherit));
 
   & a {
-    color: var(--ck-body-disclaimer-link-color, inherit);
-    font-weight: var(--ck-body-disclaimer-font-weight, 400);
+    color: var(--wsc-body-disclaimer-link-color, inherit);
+    font-weight: var(--wsc-body-disclaimer-font-weight, 400);
     text-decoration: none;
     transition: color 200ms ease;
     &:hover {
-      color: var(--ck-body-disclaimer-link-hover-color, inherit);
+      color: var(--wsc-body-disclaimer-link-hover-color, inherit);
     }
   }
 
@@ -665,13 +664,13 @@ export const DisclaimerBackground = styled(motion.div)`
   transform: translateX(-50%);
   transform-origin: bottom center;
 
-  border-radius: var(--ck-border-radius, 30px);
+  border-radius: var(--wsc-border-radius, 30px);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   transition: width 200ms ease;
 
-  background: var(--ck-body-disclaimer-background, var(--ck-body-background-secondary));
-  box-shadow: var(--ck-body-disclaimer-box-shadow);
+  background: var(--wsc-body-disclaimer-background, var(--wsc-body-background-secondary));
+  box-shadow: var(--wsc-body-disclaimer-box-shadow);
 
   ${Disclaimer} {
     margin: 0 !important;
@@ -693,9 +692,9 @@ export const SignInTooltip = styled(motion.div)`
   font-size: 13px;
   line-height: 1.5;
   background: #1a88f8;
-  border-radius: calc(var(--ck-border-radius) * 0.75);
+  border-radius: calc(var(--wsc-border-radius) * 0.75);
   transform: translateY(8px) translateX(-48px);
-  box-shadow: var(--ck-modal-box-shadow);
+  box-shadow: var(--wsc-modal-box-shadow);
   &:before {
     content: "";
     position: absolute;

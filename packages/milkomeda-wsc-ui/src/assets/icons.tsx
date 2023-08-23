@@ -183,7 +183,7 @@ export const CopyToClipboardIcon = ({ ...props }) => (
   >
     <path
       d="M14 9.5V7C14 5.89543 13.1046 5 12 5H7C5.89543 5 5 5.89543 5 7V12C5 13.1046 5.89543 14 7 14H9.5"
-      stroke="var(--ck-body-color-muted)"
+      stroke="var(--wsc-body-color-muted)"
       strokeWidth="2"
     />
     <rect
@@ -192,12 +192,12 @@ export const CopyToClipboardIcon = ({ ...props }) => (
       width="9"
       height="9"
       rx="2"
-      stroke="var(--ck-body-color-muted)"
+      stroke="var(--wsc-body-color-muted)"
       strokeWidth="2"
     />
     <path
       d="M1 3L3 5L7 1"
-      stroke="var(--ck-body-color)"
+      stroke="var(--wsc-body-color)"
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"

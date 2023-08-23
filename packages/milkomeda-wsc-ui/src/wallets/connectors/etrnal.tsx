@@ -5,7 +5,7 @@ import Logos from "../../assets/logos";
 
 export const etrnal = (): WalletProps => {
   return {
-    id: "etrnal-wsc",
+    id: "eternl-wsc",
     name: "Etrnal",
     logos: {
       default: <Logos.Eternl />,
@@ -14,7 +14,7 @@ export const etrnal = (): WalletProps => {
       connectorButton: <Logos.Eternl />,
       qrCode: <Logos.Eternl background={true} />,
     },
-    logoBackground: "var(--ck-brand-walletConnect)",
+    logoBackground: "var(--wsc-brand-walletConnect)",
     scannable: true,
     createUri: (uri: string) => uri,
   };

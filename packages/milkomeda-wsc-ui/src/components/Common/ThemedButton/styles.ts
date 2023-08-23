@@ -8,13 +8,13 @@ export const Container = styled(motion.div)<{
   align-items: center;
   justify-content: flex-start;
   position: relative;
-  height: 40px;
+  height: 42px;
   width: 100%;
   padding: 0;
   line-height: 0;
   letter-spacing: -0.2px;
-  font-size: var(--ck-connectbutton-font-size, 16px);
-  font-weight: var(--ck-connectbutton-font-weight, 500);
+  font-size: var(--wsc-connectbutton-font-size, 1rem);
+  font-weight: var(--wsc-connectbutton-font-weight, 500);
   text-align: center;
   transition: 100ms ease;
   transition-property: color, background, box-shadow, border-radius;
@@ -25,52 +25,52 @@ export const Container = styled(motion.div)<{
   border-radius: var(--border-radius);
 
   &.primary {
-    --color: var(--ck-connectbutton-color);
-    --background: var(--ck-connectbutton-background);
-    --box-shadow: var(--ck-connectbutton-box-shadow);
-    --border-radius: var(--ck-connectbutton-border-radius, 12px);
+    --color: var(--wsc-connectbutton-color);
+    --background: var(--wsc-connectbutton-background);
+    --box-shadow: var(--wsc-connectbutton-box-shadow);
+    --border-radius: var(--wsc-connectbutton-border-radius, 12px);
 
-    --hover-color: var(--ck-connectbutton-hover-color, var(--color));
-    --hover-background: var(--ck-connectbutton-hover-background, var(--background));
-    --hover-box-shadow: var(--ck-connectbutton-hover-box-shadow, var(--box-shadow));
-    --hover-border-radius: var(--ck-connectbutton-hover-border-radius, var(--border-radius));
+    --hover-color: var(--wsc-connectbutton-hover-color, var(--color));
+    --hover-background: var(--wsc-connectbutton-hover-background, var(--background));
+    --hover-box-shadow: var(--wsc-connectbutton-hover-box-shadow, var(--box-shadow));
+    --hover-border-radius: var(--wsc-connectbutton-hover-border-radius, var(--border-radius));
 
-    --active-color: var(--ck-connectbutton-active-color, var(--hover-color));
-    --active-background: var(--ck-connectbutton-active-background, var(--hover-background));
-    --active-box-shadow: var(--ck-connectbutton-active-box-shadow, var(--hover-box-shadow));
+    --active-color: var(--wsc-connectbutton-active-color, var(--hover-color));
+    --active-background: var(--wsc-connectbutton-active-background, var(--hover-background));
+    --active-box-shadow: var(--wsc-connectbutton-active-box-shadow, var(--hover-box-shadow));
     --active-border-radius: var(
-      --ck-connectbutton-active-border-radius,
+      --wsc-connectbutton-active-border-radius,
       var(--hover-border-radius)
     );
   }
   &.secondary {
-    --color: var(--ck-connectbutton-balance-color);
-    --background: var(--ck-connectbutton-balance-background);
-    --box-shadow: var(--ck-connectbutton-balance-box-shadow);
+    --color: var(--wsc-connectbutton-secondary-color);
+    --background: var(--wsc-connectbutton-secondary-background);
+    --box-shadow: var(--wsc-connectbutton-secondary-box-shadow);
     --border-radius: var(
-      --ck-connectbutton-balance-border-radius,
-      var(--ck-connectbutton-border-radius, 12px)
+      --wsc-connectbutton-secondary-border-radius,
+      var(--wsc-connectbutton-border-radius, 12px)
     );
 
-    --hover-color: var(--ck-connectbutton-balance-hover-color, var(--color));
-    --hover-background: var(--ck-connectbutton-balance-hover-background, var(--background));
-    --hover-box-shadow: var(--ck-connectbutton-balance-hover-box-shadow, var(--box-shadow));
+    --hover-color: var(--wsc-connectbutton-secondary-hover-color, var(--color));
+    --hover-background: var(--wsc-connectbutton-secondary-hover-background, var(--background));
+    --hover-box-shadow: var(--wsc-connectbutton-secondary-hover-box-shadow, var(--box-shadow));
     --hover-border-radius: var(
-      --ck-connectbutton-balance-hover-border-radius,
+      --wsc-connectbutton-secondary-hover-border-radius,
       var(--border-radius)
     );
 
-    --active-color: var(--ck-connectbutton-balance-active-color, var(--hover-color));
+    --active-color: var(--wsc-connectbutton-secondary-active-color, var(--hover-color));
     --active-background: var(
-      --ck-connectbutton-balance-active-background,
+      --wsc-connectbutton-secondary-active-background,
       var(--hover-background)
     );
     --active-box-shadow: var(
-      --ck-connectbutton-balance-active-box-shadow,
+      --wsc-connectbutton-secondary-active-box-shadow,
       var(--hover-box-shadow)
     );
     --active-border-radius: var(
-      --ck-connectbutton-balance-active-border-radius,
+      --wsc-connectbutton-secondary-active-border-radius,
       var(--hover-border-radius)
     );
   }
@@ -84,8 +84,7 @@ export const ThemeContainer = styled.button`
   padding: 0;
   margin: 0;
   background: none;
-  border-radius: var(--ck-border-radius);
-
+  border-radius: var(--wsc-border-radius);
   width: 100%;
 
   &:disabled {
@@ -95,7 +94,6 @@ export const ThemeContainer = styled.button`
 
   display: flex;
   flex-wrap: nowrap;
-  background: none;
   cursor: pointer;
   * {
     cursor: pointer;
@@ -117,6 +115,6 @@ export const ThemeContainer = styled.button`
     }
   }
   &:focus-visible {
-    outline: 2px solid var(--ck-family-brand);
+    outline: 2px solid var(--wsc-family-brand);
   }
 `;

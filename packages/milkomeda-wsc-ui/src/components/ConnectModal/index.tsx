@@ -17,8 +17,7 @@ const ConnectModal = () => {
 
   const closeable = context.route !== routes.STEPPER && context.route !== routes.CONNECT;
 
-  const showBackButton =
-    closeable && context.route !== routes.CONNECTORS && context.route !== routes.STEPPER;
+  const showBackButton = context.route !== routes.CONNECTORS && context.route !== routes.STEPPER;
 
   const onBack = () => {
     context.setRoute(routes.CONNECTORS);

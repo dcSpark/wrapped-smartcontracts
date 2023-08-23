@@ -114,6 +114,33 @@ const isEternl = () => {
   const isEternl = Boolean(cardano.eternl);
   if (isEternl) return true;
 };
+const isNami = () => {
+  if (typeof window === "undefined") return false;
+
+  const { cardano } = window;
+  if (!cardano) return false;
+
+  const isNami = Boolean(cardano.nami);
+  if (isNami) return true;
+};
+const isNufi = () => {
+  if (typeof window === "undefined") return false;
+
+  const { cardano } = window;
+  if (!cardano) return false;
+
+  const isNufi = Boolean(cardano.nufi);
+  if (isNufi) return true;
+};
+const isYoroi = () => {
+  if (typeof window === "undefined") return false;
+
+  const { cardano } = window;
+  if (!cardano) return false;
+
+  const isYoroi = Boolean(cardano.yoroi);
+  if (isYoroi) return true;
+};
 
 type ReactChildArray = ReturnType<typeof React.Children.toArray>;
 function flattenChildren(children: React.ReactNode): ReactChildArray {
@@ -138,6 +165,9 @@ export {
   getWalletDownloadUri,
   isFlint,
   isEternl,
+  isNami,
+  isYoroi,
+  isNufi,
   flattenChildren,
   truncateCardanoAddress,
 };

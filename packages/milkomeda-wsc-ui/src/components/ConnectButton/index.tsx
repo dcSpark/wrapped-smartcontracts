@@ -66,7 +66,7 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
   if (!isMounted) return null;
 
   return (
-    <ResetContainer>
+    <ResetContainer $customTheme={context.customTheme}>
       <ThemeContainer
         onClick={() => {
           if (onClick) {
@@ -108,14 +108,14 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
                 },
               }}
             >
-              <ThemedButton variant={"secondary"} style={{ overflow: "hidden" }}>
+              <ThemedButton variant="secondary" style={{ overflow: "hidden" }}>
                 <motion.div style={{ paddingRight: 24 }}>
                   {options.titleModal ?? "Interact with WSC"}
                 </motion.div>
               </ThemedButton>
             </motion.div>
           ) : (
-            <ThemedButton variant={"secondary"}>
+            <ThemedButton variant="secondary">
               <TextContainer
                 key="connectWalletText"
                 initial={"initial"}

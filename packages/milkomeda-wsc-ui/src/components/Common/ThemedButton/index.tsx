@@ -20,16 +20,22 @@ export const PlaceholderButton = () => {
 const ThemedButton: React.FC<ThemedButtonProps> = ({
   children,
   variant = "primary",
-  autoSize = true,
+  autoSize = false,
   duration = 0.3,
   style,
 }) => {
-  const [contentRef] = useMeasure();
+  const [contentRef, bounds] = useMeasure();
   return (
     <Container
       className={variant}
       initial={false}
-      animate={autoSize ? { width: "100%" } : undefined}
+      animate={
+        autoSize
+          ? {
+              width: bounds.width > 10 ? bounds.width : "auto",
+            }
+          : undefined
+      }
       transition={{
         duration: duration,
         ease: [0.25, 1, 0.5, 1],
@@ -41,9 +47,10 @@ const ThemedButton: React.FC<ThemedButtonProps> = ({
         ref={contentRef}
         style={{
           whiteSpace: "nowrap",
-          // width: "fit-content",
+          width: "fit-content",
           position: "relative",
           padding: "0 12px",
+          margin: "auto",
         }}
       >
         {children}
