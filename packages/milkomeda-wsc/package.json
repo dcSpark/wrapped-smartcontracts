@@ -1,6 +1,6 @@
 {
   "name": "milkomeda-wsc",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "license": "MIT",
   "description": "A Typescript library to easily interact with Milkomeda's Wrapped Smart Contracts (WSC)",
   "author": "nicarq",
