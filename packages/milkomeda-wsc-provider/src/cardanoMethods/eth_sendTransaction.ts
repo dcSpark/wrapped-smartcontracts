@@ -86,7 +86,7 @@ const eth_sendTransaction: CustomMethod = async (
       calldata: data ?? [],
     });
 
-    const signedTransaction = await window.cardano.signData(bech32Address, payload.slice(2));
+    const signedTransaction = await window.cardano.signData(cardanoAddress, payload.slice(2));
 
     return await provider.oracleRequest({
       method: "eth_sendAdaActorTransaction",
