@@ -411,8 +411,10 @@ const ConnectWithInjector: React.FC<{
                 {!extensionUrl ? (
                   <>
                     <ModalContent style={{ paddingBottom: 12 }}>
-                      <ModalH1>injectionScreen_unavailable_h1</ModalH1>
-                      <ModalBody>injectionScreen_unavailable_p</ModalBody>
+                      <ModalH1>Unsupported Browser</ModalH1>
+                      <ModalBody>
+                        To connect your wallet, install the extension on Chrome
+                      </ModalBody>
                     </ModalContent>
 
                     {!hasExtensionInstalled && suggestedExtension && (
