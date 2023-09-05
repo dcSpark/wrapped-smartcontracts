@@ -137,8 +137,9 @@ export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>
   }
 `;
 export const StepperStepButton = styled(motion.button)<{ $isCompletedStep?: boolean }>`
-  min-height: 40px;
-  min-width: 40px;
+  height: 40px;
+  width: 40px;
+  flex-shrink: 0;
   border-radius: 9999px;
   color: white;
   display: inline-flex;
@@ -179,11 +180,17 @@ export const StepperSeparator = styled(Separator.Root)`
   min-height: auto;
   align-self: auto;
   background-color: var(--wsc-stepper-separator);
-  //position: absolute;
+
+  ${({ $labelOrientation }) =>
+    $labelOrientation === "vertical" &&
+    css`
+      position: absolute;
+      top: 24px;
+      left: 36px;
+    `}
+  // ${({ $labelOrientation }) => $labelOrientation === "vertical" && css``}
 
   width: 100%;
-  top: 24px;
-  left: 45px;
   &[data-highlighted="true"] {
     background-color: var(--wsc-stepper-highlighted-background-circle, rgb(14, 117, 55));
   }
