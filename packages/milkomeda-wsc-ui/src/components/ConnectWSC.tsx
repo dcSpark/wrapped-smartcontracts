@@ -160,12 +160,13 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     enabled: !!isWSCConnected,
     refetchOnWindowFocus: true,
   });
+  console.log("Error: ", error);
 
-  useEffect(() => {
-    if (!error) return;
-    setErrorMessage(`
-        Error: Connecting to WSC. Make sure your wallet is connected to correct network - ${chain?.name}.`);
-  }, [error, chain?.name]);
+  // useEffect(() => {
+  //   if (!error) return;
+  //   setErrorMessage(`
+  //       Error: Connecting to WSC. Make sure your wallet is connected to correct network - ${chain?.name}.`);
+  // }, [error, chain?.name]);
 
   // useEffect(() => setErrorMessage(null), [route, open]);
 
