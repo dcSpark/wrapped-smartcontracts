@@ -7,7 +7,7 @@ import defaultTheme from "../styles/defaultTheme";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
-import { useAccount, useNetwork, useQuery } from "wagmi";
+import { useAccount, useQuery } from "wagmi";
 import { EVMTokenBalance, PendingTx, WSCLib } from "milkomeda-wsc";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 
@@ -154,7 +154,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   // wsc connector
   const { connector: activeConnector } = useAccount();
-  const { chain } = useNetwork();
+  // const { chain } = useNetwork();
   const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
   const { data: wscInfo, error } = useQuery(["wsc-info"], () => loadWSCInfo(activeConnector), {
     enabled: !!isWSCConnected,
