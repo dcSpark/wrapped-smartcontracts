@@ -18,8 +18,8 @@ import { Spinner } from "../Common/Spinner";
 import { ethers } from "ethers";
 import { SuccessMessage } from "./WrapStep";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
-import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { getEvmExplorerUrl } from "../../utils/transactions";
+import Button from "../Common/Button";
 
 const BRIDGE_DEVNET_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 const BRIDGE_MAINNET_ADDRESS = "0xD0Fab4aE1ff28825aabD2A16566f89EB8948F9aB";
@@ -117,17 +117,17 @@ const TokenAllowanceStep = ({ nextStep }) => {
               href={`${getEvmExplorerUrl(chain?.id)}/tx/${data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <ThemeContainer onClick={nextStep}>
-              <ThemedButton variant="primary">Continue</ThemedButton>
-            </ThemeContainer>
+            <Button variant="primary" onClick={nextStep}>
+              Continue
+            </Button>
           </>
         )}
       </StepLargeHeight>
 
       {(isIdle || isError) && (
-        <ThemeContainer disabled={!write} onClick={() => write?.()}>
-          <ThemedButton variant="primary">Grant token allowance</ThemedButton>
-        </ThemeContainer>
+        <Button variant="primary" disabled={!write} onClick={() => write?.()}>
+          Grant token allowance
+        </Button>
       )}
     </>
   );

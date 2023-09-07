@@ -31,7 +31,6 @@ import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
-import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 
@@ -247,21 +246,23 @@ const WrapStep = ({ nextStep }) => {
 
       {(isIdle || isError) && (
         <WrapperButtons>
-          <ThemeContainer
+          <Button
+            variant="secondary"
             onClick={() => {
               setOpen(false);
             }}
           >
-            <ThemedButton variant="secondary">Cancel</ThemedButton>
-          </ThemeContainer>
-          <ThemeContainer
+            Cancel
+          </Button>
+          <Button
             disabled={
               selectedWrapToken == null || !selectedWrapToken.bridgeAllowed || !isAmountValid
             }
             onClick={wrapToken}
+            variant={"primary"}
           >
-            <ThemedButton variant="primary">Confirm Wrapping</ThemedButton>
-          </ThemeContainer>
+            Confirm Wrapping
+          </Button>
         </WrapperButtons>
       )}
     </>

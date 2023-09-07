@@ -29,9 +29,9 @@ import { SuccessStep } from "./index";
 import Alert from "../Common/Alert";
 import { AlertTriangleIcon } from "lucide-react";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
-import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
+import Button from "../Common/Button";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -260,14 +260,15 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               href={`${getBridgeExplorerUrl(chain?.id)}/search/tx?query=${txHash}`}
               viewLabel="Milkomeda Bridge Explorer"
             />
-            <ThemeContainer
+            <Button
+              variant="primary"
               onClick={() => {
                 setOpen(false);
                 resetSteps();
               }}
             >
-              <ThemedButton variant="primary">Close</ThemedButton>
-            </ThemeContainer>
+              Close
+            </Button>
           </>
         )}
         {txHash && txStatus === TxStatus.WaitingBridgeConfirmation && (
@@ -287,23 +288,24 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               You may proceed to close this modal and continue using the app.
             </Alert>
 
-            <ThemeContainer
+            <Button
               onClick={() => {
                 resetSteps();
                 setOpen(false);
               }}
               style={{ marginTop: 40 }}
+              variant="primary"
             >
-              <ThemedButton variant="primary">Continue using the app</ThemedButton>
-            </ThemeContainer>
+              Continue using the app
+            </Button>
           </>
         )}
       </StepLargeHeight>
 
       {(isIdle || isError) && (
-        <ThemeContainer onClick={unwrapToken} disabled={!selectedUnwrapToken}>
-          <ThemedButton variant="primary">Confirm Unwrapping</ThemedButton>
-        </ThemeContainer>
+        <Button variant="primary" onClick={unwrapToken} disabled={!selectedUnwrapToken}>
+          Confirm Unwrapping
+        </Button>
       )}
     </>
   );
