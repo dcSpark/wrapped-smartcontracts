@@ -172,12 +172,17 @@ export const InputContainer = styled.div`
     position: absolute;
     padding: 8px;
     border-radius: 0.375rem;
-    background: var(--wsc-body-background-secondary);
-    color: var(--wsc-body-color);
+    background: var(--wsc-max-button-background);
+    color: var(--wsc-max-button-color);
     right: 3px;
     align-self: center;
     font-size: 0.875rem;
     cursor: pointer;
+    transition: color background 0.2s ease-in-out;
+    &:hover {
+      background: var(--wsc-max-button-background-hover);
+      color: var(--wsc-max-button-color-hover);
+    }
   }
 `;
 

@@ -50,6 +50,10 @@ export default {
 
     "--wsc-secondary-button-hover-background": "#e0e4eb",
 
+    "--wsc-max-button-background": "#f6f7f9",
+    "--wsc-max-button-color": "#373737",
+    "--wsc-max-button-background-hover": "#f2f4f7",
+    "--wsc-max-button-color-hover": "#373737",
     /** Modal */
     "--wsc-modal-box-shadow": "0px 2px 4px rgba(0, 0, 0, 0.02)",
     "--wsc-overlay-background": "rgba(71, 88, 107, 0.24)",
