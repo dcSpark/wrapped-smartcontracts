@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
-import React, { createContext, createElement, useEffect, useState } from "react";
+import React, { createContext, createElement, useState } from "react";
 // import { Buffer } from "buffer";
 
 import defaultTheme from "../styles/defaultTheme";
