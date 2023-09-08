@@ -33,6 +33,7 @@ import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
+import { useGetOriginTokens } from "../../hooks/wsc-provider";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -48,7 +49,7 @@ export const statusWrapMessages = {
 };
 
 export const useSelectedWrapToken = () => {
-  const { originTokens } = useContext();
+  const { originTokens } = useGetOriginTokens();
   const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },

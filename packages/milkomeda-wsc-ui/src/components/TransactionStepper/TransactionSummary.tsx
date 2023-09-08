@@ -3,7 +3,6 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { LabelWithBalance, useSelectedWrapToken } from "./WrapStep";
 import { useTransactionFees } from "../../hooks/useTransactionFees";
-import { useContext } from "../ConnectWSC";
 import { convertWeiToTokens } from "../../utils/convertWeiToTokens";
 import { OverviewContent } from "../Common/Modal/styles";
 import { BalancesWrapper, ErrorMessage } from "./styles";
@@ -12,9 +11,10 @@ import { OrDivider } from "../Common/Modal";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { getDefaultTokenByChainId } from "../../utils/transactions";
 import { useNetwork } from "wagmi";
+import { useGetStargateInfo } from "../../hooks/wsc-provider";
 
 const Overview = () => {
-  const { stargateInfo } = useContext();
+  const { stargateInfo } = useGetStargateInfo();
   const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },

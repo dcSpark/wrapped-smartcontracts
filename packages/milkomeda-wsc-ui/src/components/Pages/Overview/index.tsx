@@ -1,5 +1,4 @@
 import React from "react";
-import { useContext } from "../../ConnectWSC";
 
 import { OverviewContent } from "../../Common/Modal/styles";
 
@@ -13,9 +12,10 @@ import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 import { getDefaultTokenByChainId } from "../../../utils/transactions";
 import { useNetwork } from "wagmi";
 import { LOVELACE_UNIT } from "../../../constants/transaction";
+import { useGetStargateInfo } from "../../../hooks/wsc-provider";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
-  const { stargateInfo } = useContext();
+  const { stargateInfo } = useGetStargateInfo();
   const { chain } = useNetwork();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
   const {

@@ -32,6 +32,7 @@ import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 import Button from "../Common/Button";
+import { useGetWSCTokens } from "../../hooks/wsc-provider";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -43,7 +44,8 @@ export const statusUnwrapMessages = {
 };
 
 const UnwrapStep = ({ onFinish, resetSteps }) => {
-  const { wscProvider, tokens, setOpen } = useContext();
+  const { wscProvider, setOpen } = useContext();
+  const { tokens } = useGetWSCTokens();
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();

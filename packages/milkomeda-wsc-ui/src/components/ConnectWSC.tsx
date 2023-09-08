@@ -8,8 +8,8 @@ import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
 import { useAccount, useQuery } from "wagmi";
-import { EVMTokenBalance, PendingTx, WSCLib } from "milkomeda-wsc";
-import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
+import { WSCLib } from "milkomeda-wsc";
+import { FunctionKeys } from "../hooks/wsc-provider";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -28,7 +28,7 @@ export type DefaultToken = {
   amount: string;
 };
 
-type StargateInfo = {
+export type StargateInfo = {
   fromNativeTokenInLoveLaceOrMicroAlgo: string;
   stargateMinNativeTokenFromL1: number;
   stargateMinNativeTokenToL1: number;
@@ -36,15 +36,7 @@ type StargateInfo = {
 };
 
 export type WSCContext = {
-  wscProvider: WSCLib | null;
-  originTokens: OriginAmount[];
-  tokens: EVMTokenBalance[];
-  stargateInfo: StargateInfo | null;
-  destinationBalance: string;
-  originBalance: string;
-  pendingTxs: PendingTx[];
-  originAddress: string;
-  address: string;
+  wscProvider?: WSCLib;
   isWSCConnected: boolean;
 };
 
@@ -66,42 +58,10 @@ type ContextValue = {
 } & useConnectCallbackProps &
   WSCContext;
 
-const loadWSCInfo = async (
-  activeConnector: any
-): Promise<{
-  originTokens: OriginAmount[];
-  originBalance: string;
-  tokenBalances: EVMTokenBalance[];
-  destinationBalance: string;
-  stargate: StargateInfo | null;
-  pendingTxs: PendingTx[];
-  originAddress: string;
-  address: string;
-  provider: WSCLib | null;
-}> => {
-  const provider = await activeConnector?.getProvider();
+const getProvider = async (activeConnector: any): Promise<WSCLib> => {
+  const provider = await activeConnector.getProvider();
   if (!provider) throw new Error("No wsc provider found");
-
-  const originTokens = await provider.origin_getTokenBalances();
-  const tokenBalances = await provider.getTokenBalances();
-  const destinationBalance = await provider.eth_getBalance();
-  const stargate = await provider.stargateObject();
-  const pendingTxs = await provider.getPendingTransactions();
-  const originAddress = await provider.origin_getAddress();
-  const address = await provider.eth_getAccount();
-  const originBalance = await provider.origin_getNativeBalance();
-
-  return {
-    originTokens,
-    originBalance,
-    tokenBalances,
-    destinationBalance,
-    stargate,
-    pendingTxs,
-    originAddress,
-    address,
-    provider,
-  };
+  return provider;
 };
 
 export const Context = createContext<ContextValue | null>(null);
@@ -156,23 +116,16 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const { connector: activeConnector } = useAccount();
   // const { chain } = useNetwork();
   const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
-  const { data: wscInfo, error } = useQuery(["wsc-info"], () => loadWSCInfo(activeConnector), {
-    enabled: !!isWSCConnected,
-    refetchOnWindowFocus: true,
-  });
-
-  useEffect(() => {
-    if (!error) return;
-    console.log("Error: ", error);
-    // setErrorMessage(`
-    //     Error: Connecting to WSC. Make sure your wallet is connected to correct network - ${chain?.name}.`);
-  }, [error]);
+  const { data: wscProvider } = useQuery(
+    [FunctionKeys.WSC_PROVIDER, activeConnector?.id],
+    () => getProvider(activeConnector),
+    { enabled: isWSCConnected }
+  );
 
   // useEffect(() => setErrorMessage(null), [route, open]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const log = debugMode ? console.log : () => {};
-
   const value = {
     open,
     setOpen,
@@ -182,15 +135,7 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     setConnector,
     onConnect,
     // wsc provider
-    wscProvider: wscInfo?.provider ?? null,
-    originTokens: wscInfo?.originTokens ?? [],
-    stargateInfo: wscInfo?.stargate ?? null,
-    tokens: wscInfo?.tokenBalances ?? [],
-    destinationBalance: wscInfo?.destinationBalance ?? "",
-    originBalance: wscInfo?.originBalance ?? "",
-    pendingTxs: wscInfo?.pendingTxs ?? [],
-    originAddress: wscInfo?.originAddress ?? "",
-    address: wscInfo?.address ?? "",
+    wscProvider,
     isWSCConnected,
     // Other configuration
     errorMessage,

@@ -1,11 +1,11 @@
-import { useContext } from "../components/ConnectWSC";
 import { EVM_ESTIMATED_FEE, LOCK_ADA } from "../constants/transaction";
 import { convertWeiToTokens } from "../utils/convertWeiToTokens";
 import BigNumber from "bignumber.js";
 import React from "react";
+import { useGetStargateInfo } from "./wsc-provider";
 
 export const useTransactionFees = () => {
-  const { stargateInfo } = useContext();
+  const { stargateInfo } = useGetStargateInfo();
 
   return React.useMemo(() => {
     const wrappingFee =

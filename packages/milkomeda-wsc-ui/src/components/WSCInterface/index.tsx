@@ -40,10 +40,23 @@ import { MilkomedaIcon } from "../Common/Modal";
 import { useContext } from "../ConnectWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl } from "../../utils/transactions";
+import {
+  TOKENS_REFETCH_INTERVAL,
+  useGetAddress,
+  useGetDestinationBalance,
+  useGetOriginAddress,
+  useGetOriginBalance,
+  useGetOriginTokens,
+  useGetPendingTxs,
+  useGetWSCTokens,
+} from "../../hooks/wsc-provider";
 
 export const WSCInterface = () => {
   const context = useContext();
-  const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
+  const { isWSCConnected } = useWSCProvider();
+  const { destinationBalance } = useGetDestinationBalance();
+  const { originBalance } = useGetOriginBalance();
+
   const isOriginBalanceNotZero = originBalance != null && +originBalance !== 0;
   const isDestinationBalanceNotZero = destinationBalance != null && +destinationBalance !== 0;
   const steps = [
@@ -103,7 +116,7 @@ export const WSCInterface = () => {
           </Stepper>
         </div>
 
-        {(!wscProvider || !originBalance || !destinationBalance) && (
+        {(!isWSCConnected || !originBalance || !destinationBalance) && (
           <div style={{ marginTop: 30 }}>
             <List style={{ flexDirection: "row", marginBottom: 20 }}>
               <Skeleton style={{ width: "100%", height: 40 }} />
@@ -119,7 +132,7 @@ export const WSCInterface = () => {
           </div>
         )}
 
-        {wscProvider && originBalance && destinationBalance && (
+        {isWSCConnected && originBalance && destinationBalance && (
           <TabsRoot defaultValue="about" orientation="vertical">
             <TabsList aria-label="WSC Wallet Content">
               <TabsTrigger value="about">
@@ -207,8 +220,8 @@ function About() {
 }
 
 function Cardano() {
-  const { originAddress, originTokens } = useWSCProvider();
-
+  const { originAddress } = useGetOriginAddress();
+  const { originTokens } = useGetOriginTokens({ refetchInterval: TOKENS_REFETCH_INTERVAL });
   const [tokenAmounts, setTokenAmounts] = useState<Map<string, string>>(new Map());
 
   const updateTokenAmount = (tokenUnit: string, amount: string) => {
@@ -351,7 +364,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
 };
 
 function Pending() {
-  const { pendingTxs } = useWSCProvider();
+  const { pendingTxs } = useGetPendingTxs();
 
   return (
     <div>
@@ -400,7 +413,10 @@ function Pending() {
 
 const mADATokenAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 function WSCWallet() {
-  const { address, wscProvider, destinationBalance, tokens } = useWSCProvider();
+  const { wscProvider } = useWSCProvider();
+  const { address } = useGetAddress();
+  const { destinationBalance } = useGetDestinationBalance();
+  const { tokens } = useGetWSCTokens({ refetchInterval: TOKENS_REFETCH_INTERVAL });
   const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
 
   React.useEffect(() => {
