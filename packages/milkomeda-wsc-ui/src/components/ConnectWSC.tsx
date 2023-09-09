@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
-import React, { createContext, createElement, useState } from "react";
+import React, { createContext, createElement, useEffect, useState } from "react";
 // import { Buffer } from "buffer";
 
 import defaultTheme from "../styles/defaultTheme";
@@ -7,9 +7,8 @@ import defaultTheme from "../styles/defaultTheme";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
-import { useAccount, useQuery } from "wagmi";
+import { useAccount } from "wagmi";
 import { WSCLib } from "milkomeda-wsc";
-import { FunctionKeys } from "../hooks/wsc-provider";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -116,11 +115,16 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
   const { connector: activeConnector } = useAccount();
   // const { chain } = useNetwork();
   const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
-  const { data: wscProvider } = useQuery(
-    [FunctionKeys.WSC_PROVIDER, activeConnector?.id],
-    () => getProvider(activeConnector),
-    { enabled: isWSCConnected }
-  );
+
+  const [wscProvider, setWscProvider] = useState<WSCLib>();
+
+  useEffect(() => {
+    if (isWSCConnected) {
+      getProvider(activeConnector).then((provider) => {
+        setWscProvider(provider);
+      });
+    }
+  }, [activeConnector, isWSCConnected]);
 
   // useEffect(() => setErrorMessage(null), [route, open]);
 

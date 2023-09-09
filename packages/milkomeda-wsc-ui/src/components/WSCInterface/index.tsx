@@ -220,7 +220,7 @@ function About() {
 }
 
 function Cardano() {
-  const { originAddress } = useGetOriginAddress();
+  const { isLoading, isSuccess, originAddress } = useGetOriginAddress();
   const { originTokens } = useGetOriginTokens({ refetchInterval: TOKENS_REFETCH_INTERVAL });
   const [tokenAmounts, setTokenAmounts] = useState<Map<string, string>>(new Map());
 
@@ -250,17 +250,28 @@ function Cardano() {
           <span style={{ wordBreak: "break-all" }}>{truncateCardanoAddress(originAddress)}</span>
         </CopyToClipboard>
       </div>
-      {originTokens.length === 0 && <Text style={{ textAlign: "center" }}>No tokens found.</Text>}
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
+      {isSuccess && originTokens.length === 0 && (
+        <Text style={{ textAlign: "center" }}>No tokens found.</Text>
+      )}
       <List>
-        {originTokens.map((token, index) => (
-          <CardanoAssetItem
-            key={index}
-            token={token}
-            updateTokenAmount={updateTokenAmount}
-            tokenAmounts={tokenAmounts}
-            setMaxAmount={setMaxAmount}
-          />
-        ))}
+        {isSuccess &&
+          originTokens.map((token, index) => (
+            <CardanoAssetItem
+              key={index}
+              token={token}
+              updateTokenAmount={updateTokenAmount}
+              tokenAmounts={tokenAmounts}
+              setMaxAmount={setMaxAmount}
+            />
+          ))}
       </List>
     </div>
   );
@@ -364,16 +375,25 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
 };
 
 function Pending() {
-  const { pendingTxs } = useGetPendingTxs();
+  const { isLoading, isSuccess, pendingTxs } = useGetPendingTxs();
 
   return (
     <div>
       <Title>List of pending transactions between Cardano and Milkomeda</Title>
-      {pendingTxs?.length === 0 && (
+      {isSuccess && pendingTxs?.length === 0 && (
         <Text style={{ textAlign: "center" }}>No pending transaction found.</Text>
       )}
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
       <List>
-        {pendingTxs?.length > 0 &&
+        {isSuccess &&
+          pendingTxs?.length > 0 &&
           pendingTxs.map((tx, index) => {
             const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
             return (
@@ -416,7 +436,9 @@ function WSCWallet() {
   const { wscProvider } = useWSCProvider();
   const { address } = useGetAddress();
   const { destinationBalance } = useGetDestinationBalance();
-  const { tokens } = useGetWSCTokens({ refetchInterval: TOKENS_REFETCH_INTERVAL });
+  const { isLoading, isSuccess, tokens } = useGetWSCTokens({
+    refetchInterval: TOKENS_REFETCH_INTERVAL,
+  });
   const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
 
   React.useEffect(() => {
@@ -431,8 +453,17 @@ function WSCWallet() {
       <div style={{ maxWidth: "80%", margin: "auto", marginBottom: 20, fontSize: "0.875rem" }}>
         <CopyToClipboard string={address}>{address}</CopyToClipboard>
       </div>
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
       <List>
-        {destinationBalance &&
+        {isSuccess &&
+          destinationBalance &&
           [
             {
               decimals: 6, // already scaled
