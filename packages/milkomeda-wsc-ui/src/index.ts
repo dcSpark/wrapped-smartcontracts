@@ -14,6 +14,7 @@ export { useWSCProvider } from "./hooks/useWSCProvider";
 export { WSCInterface } from "./components/WSCInterface";
 export { CardanoWSCConnector } from "./wsc-cardano-connector";
 export { default as supportedConnectors } from "./constants/supportedConnectors";
+export { milkomedaChains, supportedWalletNames } from "./defaultConfig";
 
 // Hooks
 // export { default as useIsMounted } from "./hooks/useIsMounted"; // Useful for apps that use SSR
