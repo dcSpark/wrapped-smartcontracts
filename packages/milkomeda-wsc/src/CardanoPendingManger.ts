@@ -159,6 +159,27 @@ export interface MempoolTx {
   }>;
 }
 
+export type CardanoAssetDetail = {
+  asset: string;
+  policy_id: string;
+  asset_name: string;
+  fingerprint: string;
+  quantity: string;
+  initial_mint_tx_hash: string;
+  mint_or_burn_count: number;
+  onchain_metadata: null;
+  onchain_metadata_standard: null;
+  onchain_metadata_extra: null;
+  metadata?: {
+    name: string;
+    description: string;
+    ticker: string;
+    url: string;
+    logo: string;
+    decimals: number;
+  };
+};
+
 class CardanoPendingManager extends PendingManager implements IPendingManager {
   blockfrost: Blockfrost;
 
@@ -358,6 +379,20 @@ class CardanoPendingManager extends PendingManager implements IPendingManager {
     }
     const tx: MempoolTx = await response.json();
     return tx;
+  }
+
+  async fetchCardanoAssetDetails(assetId: string): Promise<CardanoAssetDetail> {
+    const url = this.blockfrost.url + "/assets/" + assetId;
+    const response = await fetch(url, {
+      headers: {
+        project_id: this.blockfrost.projectId,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const tokenInfo = await response.json();
+    return tokenInfo;
   }
 }
 
