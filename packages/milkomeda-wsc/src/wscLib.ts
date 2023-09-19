@@ -138,7 +138,11 @@ export class WSCLib {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const walletName = this.wallet as string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window.cardano as any) = { ...walletProvider, ...window.cardano[walletName] };
+    (window.cardano as any) = {
+      ...window.cardano,
+      ...walletProvider,
+      ...window.cardano[walletName],
+    };
   }
 
   async inject(actorVersion?: number): Promise<WSCLib> {
