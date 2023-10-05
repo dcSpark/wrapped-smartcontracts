@@ -63,7 +63,7 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
           label="Bridge fees:"
           amount={bridgeFees?.toFixed()}
           assetName={defaultSymbol}
-          tooltipMessage="This fee is paid to the bridge for wrapping (0.1 TADA) and unwrapping (1 TADA) your tokens."
+          tooltipMessage={`This fee is paid to the bridge for wrapping (0.1 ${defaultSymbol}) and unwrapping (1 ${defaultSymbol}) your tokens.`}
         />
         <LabelWithBalance
           label="Bridge Lock-up:"

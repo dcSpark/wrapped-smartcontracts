@@ -27,7 +27,7 @@ import Tooltip from "../Common/Tooltip";
 import Button from "../Common/Button";
 import BigNumber from "bignumber.js";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
-import { LOVELACE_UNIT, TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
+import { TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import useInterval from "../../hooks/useInterval";
 import { ErrorMessage, TransactionExternalLink } from "../TransactionStepper/styles";
@@ -232,13 +232,11 @@ function Cardano() {
 
   const setMaxAmount = (token: OriginAmount) => {
     if (!token) return;
-    const adjustedAmount =
-      token.unit === LOVELACE_UNIT
-        ? convertWeiToTokens({
-            valueWei: token.quantity,
-            token: token,
-          })
-        : new BigNumber(token.quantity);
+    const adjustedAmount = convertWeiToTokens({
+      valueWei: token.quantity,
+      token: token,
+    });
+
     updateTokenAmount(token.unit, adjustedAmount.toString());
   };
 
@@ -288,13 +286,10 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
     setTxStatus(TxStatus.Init);
 
     try {
-      const wrapAmount =
-        token.unit === LOVELACE_UNIT
-          ? convertTokensToWei({
-              value: tokenAmounts.get(token.unit) || "0",
-              token: token,
-            })
-          : new BigNumber(tokenAmounts.get(token.unit) || "0");
+      const wrapAmount = convertTokensToWei({
+        value: tokenAmounts.get(token.unit) || "0",
+        token: token,
+      });
 
       const txHash = await wscProvider?.wrap(undefined, token.unit, wrapAmount.toNumber());
       setTxHash(txHash);
@@ -323,12 +318,10 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
       <Row>
         <Label style={{ paddingLeft: "16px" }}>Balance: </Label>
         <Value>
-          {token.unit === LOVELACE_UNIT
-            ? convertWeiToTokens({
-                valueWei: token.quantity,
-                token: token,
-              }).toFixed()
-            : token.quantity}{" "}
+          {convertWeiToTokens({
+            valueWei: token.quantity,
+            token: token,
+          }).toFixed()}
           {token.assetName}
         </Value>
         {!token.bridgeAllowed && (
