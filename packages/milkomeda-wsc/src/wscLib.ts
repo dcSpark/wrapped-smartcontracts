@@ -138,7 +138,11 @@ export class WSCLib {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const walletName = this.wallet as string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window.cardano as any) = { ...walletProvider, ...window.cardano[walletName] };
+    (window.cardano as any) = {
+      ...window.cardano,
+      ...walletProvider,
+      ...window.cardano[walletName],
+    };
   }
 
   async inject(actorVersion?: number): Promise<WSCLib> {
@@ -362,6 +366,16 @@ export class WSCLib {
     const stargateObj: ADAStargateApiResponse = await response.json();
     const assets = stargateObj.assets;
 
+    const userL1Address = await this.origin_getAddress();
+    const evmAddress = await this.eth_getAccount();
+    const pendingMngr = new CardanoPendingManager(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.blockfrost!,
+      this.network,
+      userL1Address,
+      evmAddress
+    );
+
     for (const asset of assets) {
       asset.fingerprint = await getFingerprintFromBridge(asset.idCardano);
     }
@@ -376,9 +390,8 @@ export class WSCLib {
       token.fingerprint = await getFingerprintFromBlockfrost(token.unit);
       token.assetName = await assetNameFromBlockfrostId(token.unit);
       token.bridgeAllowed = assets.some((asset) => token.fingerprint === asset.fingerprint);
-      token.decimals = assets.filter(
-        (asset) => token.fingerprint === asset.fingerprint
-      )[0]?.milkomedaDecimals;
+      token.decimals =
+        (await pendingMngr.fetchCardanoAssetDetails(token.unit)).metadata?.decimals ?? 0;
     }
 
     return tokens;
