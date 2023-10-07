@@ -76,7 +76,7 @@ class Provider extends EventEmitter implements MilkomedaProvider {
   }
 
   private async jsonRpcRequest<T>(url: string, payload: RequestArguments): Promise<T> {
-    const reponse = await fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify({
         jsonrpc: "2.0",
@@ -89,7 +89,7 @@ class Provider extends EventEmitter implements MilkomedaProvider {
       },
     });
 
-    const { result, error } = await reponse.json();
+    const { result, error } = await response.json();
 
     if (error) {
       throw new ProviderRpcError(error.message, error.code, error.data);
