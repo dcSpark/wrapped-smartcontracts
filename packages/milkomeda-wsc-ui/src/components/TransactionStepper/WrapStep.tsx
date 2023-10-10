@@ -77,10 +77,7 @@ export const useSelectedWrapToken = () => {
 
       const defaultToken = {
         ...token,
-        quantity:
-          token.unit === LOVELACE_UNIT
-            ? convertWeiToTokens({ valueWei: token.quantity, token })
-            : new BigNumber(token.quantity),
+        quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
       };
       setSelectedWrapToken(defaultToken);
     };
@@ -167,13 +164,18 @@ const WrapStep = ({ nextStep }) => {
     }
   };
 
-  const formattedAmount =
-    defaultWrapToken.unit === LOVELACE_UNIT
+  const formattedAmount = React.useMemo(() => {
+    if (!defaultWrapToken || !selectedWrapToken) return;
+    return defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
+      : convertWeiToTokens({
+          valueWei: defaultWrapToken.amount,
+          token: selectedWrapToken,
+        });
+  }, [defaultWrapToken, selectedWrapToken]);
 
   const isAmountValid = React.useMemo(() => {
     if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading) return;

@@ -23,14 +23,17 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
   } = useTransactionConfigWSC();
 
   const amount = React.useMemo(() => {
-    if (!defaultWrapToken) return;
+    if (!defaultWrapToken || !selectedWrapToken) return;
     return defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(+defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
-  }, [defaultWrapToken]);
+      : convertWeiToTokens({
+          valueWei: defaultWrapToken.amount,
+          token: selectedWrapToken,
+        });
+  }, [defaultWrapToken, selectedWrapToken]);
 
   const tranferTotalAmount =
     amount &&
@@ -53,11 +56,11 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
                 : selectedWrapToken?.assetName
               : null
           }
-          {...(defaultWrapToken?.unit !== LOVELACE_UNIT && {
-            tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
-              10 ** (selectedWrapToken?.decimals ?? 0)
-            )} RC `,
-          })}
+          // {...(defaultWrapToken?.unit !== LOVELACE_UNIT && {
+          //   tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
+          //     10 ** (selectedWrapToken?.decimals ?? 0)
+          //   )} RC `,
+          // })}
         />
         <LabelWithBalance
           label="Bridge fees:"
