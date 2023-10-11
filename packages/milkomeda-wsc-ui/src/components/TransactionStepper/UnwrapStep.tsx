@@ -33,6 +33,7 @@ import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 import Button from "../Common/Button";
 import { useGetWSCTokens } from "../../hooks/wsc-provider";
+import invariant from "tiny-invariant";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -45,7 +46,7 @@ export const statusUnwrapMessages = {
 
 const UnwrapStep = ({ onFinish, resetSteps }) => {
   const { wscProvider, setOpen } = useContext();
-  const { tokens } = useGetWSCTokens();
+  const { isSuccess: isTokensSuccess, tokens } = useGetWSCTokens();
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();
@@ -85,30 +86,36 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   );
 
   useEffect(() => {
-    const selectedToken = tokens.find(
-      (t) => t.contractAddress.toLowerCase() === defaultUnwrapToken.unit.toLowerCase()
-    ) ?? {
-      balance: "0",
-      contractAddress: isWrappingNativeTokenFirst ? defaultUnwrapToken.unit : "",
-      decimals: isWrappingNativeTokenFirst ? "0" : "18",
-      name: "",
-      symbol: defaultSymbol,
-      type: "string",
-    };
+    if (isTokensSuccess) {
+      const selectedToken = isWrappingNativeTokenFirst
+        ? tokens.find(
+            (t) => t.contractAddress.toLowerCase() === defaultUnwrapToken.unit.toLowerCase()
+          )
+        : {
+            balance: "0",
+            contractAddress: "",
+            decimals: "18",
+            name: "",
+            symbol: defaultSymbol,
+            type: "",
+          };
 
-    const defaultToken = {
-      ...selectedToken,
-      balance: isWrappingNativeTokenFirst
-        ? new BigNumber(defaultUnwrapToken.amount).toString()
-        : convertWeiToTokens({
-            valueWei: defaultUnwrapToken.amount,
-            token: { decimals: 18 },
-          })
-            .dp(6)
-            .toFixed(),
-    };
+      invariant(selectedToken, "default unwrap token not found");
 
-    setSelectedUnwrapToken(defaultToken);
+      const defaultToken = {
+        ...selectedToken,
+        balance: isWrappingNativeTokenFirst
+          ? new BigNumber(defaultUnwrapToken.amount).toString()
+          : convertWeiToTokens({
+              valueWei: defaultUnwrapToken.amount,
+              token: { decimals: 18 },
+            })
+              .dp(6)
+              .toFixed(),
+      };
+
+      setSelectedUnwrapToken(defaultToken);
+    }
   }, [tokens, defaultUnwrapToken.unit]);
 
   const unwrapToken = async () => {

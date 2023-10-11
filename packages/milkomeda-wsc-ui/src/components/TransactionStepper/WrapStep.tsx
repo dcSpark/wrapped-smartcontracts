@@ -34,6 +34,7 @@ import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 import { useGetOriginTokens } from "../../hooks/wsc-provider";
+import invariant from "tiny-invariant";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -49,41 +50,38 @@ export const statusWrapMessages = {
 };
 
 export const useSelectedWrapToken = () => {
-  const { originTokens } = useGetOriginTokens();
+  const { isSuccess, originTokens } = useGetOriginTokens();
   const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();
-
-  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
+  const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
 
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
 
-  const adaToken = originTokens.find((t) => t.unit === LOVELACE_UNIT);
+  invariant(
+    isWrappingNativeTokenFirst ? defaultWrapToken.amount.length >= 18 : true,
+    "Default cardano asset amount should be >= 18 digits"
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   React.useEffect(() => {
-    if (!defaultWrapToken) return;
-    const loadOriginToken = async () => {
+    if (isSuccess) {
       const token = originTokens.find(
         (t) => t.unit.toLowerCase() === defaultWrapToken.unit.toLowerCase()
-      ) ?? {
-        unit: LOVELACE_UNIT,
-        quantity: "0",
-        decimals: defaultWrapToken.unit === LOVELACE_UNIT ? 6 : 0,
-        bridgeAllowed: true,
-        assetName: defaultSymbol,
-        fingerprint: undefined,
-      };
-
+      );
+      invariant(token, "Your cardano wallet does not contain a default token.");
       const defaultToken = {
         ...token,
-        quantity: convertWeiToTokens({ valueWei: token.quantity, token }),
+        quantity: convertWeiToTokens({ valueWei: token?.quantity, token }),
       };
-      setSelectedWrapToken(defaultToken);
-    };
-    loadOriginToken();
-  }, [defaultWrapToken?.amount, defaultWrapToken?.unit, originTokens, setSelectedWrapToken]);
+      setSelectedWrapToken(defaultToken as WrapToken);
+    }
+  }, [originTokens]);
 
+  const adaToken = originTokens.find((t) => t.unit === LOVELACE_UNIT);
   return { selectedWrapToken, adaToken };
 };
 
@@ -99,10 +97,6 @@ const WrapStep = ({ nextStep }) => {
   const { selectedWrapToken, adaToken } = useSelectedWrapToken();
   const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
     useTransactionFees();
-
-  if (!defaultWrapToken) {
-    throw new Error("please set your default cardano asset");
-  }
 
   const {
     txStatus,
@@ -212,7 +206,8 @@ const WrapStep = ({ nextStep }) => {
         {isIdle && selectedWrapToken != null && isAmountValid === false && (
           <ErrorMessage role="alert">
             Error: Insufficient balance. Please verify you have enough funds to cover the
-            transaction.
+            transaction. <br /> Your balance is {selectedWrapToken.quantity?.toString()}{" "}
+            {selectedWrapToken?.assetName}
           </ErrorMessage>
         )}
 

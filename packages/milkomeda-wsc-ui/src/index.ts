@@ -16,5 +16,13 @@ export { CardanoWSCConnector } from "./wsc-cardano-connector";
 export { default as supportedConnectors } from "./constants/supportedConnectors";
 export { milkomedaChains, supportedWalletNames } from "./defaultConfig";
 
-// Hooks
-// export { default as useIsMounted } from "./hooks/useIsMounted"; // Useful for apps that use SSR
+// Hooks for wsc information
+export {
+  useGetOriginTokens,
+  useGetWSCTokens,
+  useGetDestinationBalance,
+  useGetPendingTxs,
+  useGetOriginAddress,
+  useGetAddress,
+  useGetOriginBalance,
+} from "./hooks/wsc-provider";

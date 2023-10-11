@@ -321,7 +321,7 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
           {convertWeiToTokens({
             valueWei: token.quantity,
             token: token,
-          }).toFixed()}
+          }).toFixed()}{" "}
           {token.assetName}
         </Value>
         {!token.bridgeAllowed && (
