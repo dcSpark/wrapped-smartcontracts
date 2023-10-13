@@ -37,53 +37,55 @@ type Options = {
 };
 
 export const useGetOriginTokens = (options?: Options) => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery([FunctionKeys.ORIGIN_TOKENS], () => getOriginTokens(wscProvider), {
     ...options,
-    enabled: !!wscProvider,
+    enabled: !!wscProvider && isWSCConnected,
   });
   return { ...response, originTokens: response.data ?? [] };
 };
 
 export const useGetWSCTokens = (options?: Options) => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
 
   const response = useQuery([FunctionKeys.TOKENS], () => getTokenBalances(wscProvider), {
     ...options,
-    enabled: !!wscProvider,
+    enabled: !!wscProvider && isWSCConnected,
   });
   return { ...response, tokens: response.data ?? [] };
 };
 
 export const useGetDestinationBalance = () => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery(
     [FunctionKeys.DESTINATION_BALANCE],
     () => getDestinationBalance(wscProvider),
-    { refetchOnWindowFocus: true, enabled: !!wscProvider }
+    { refetchOnWindowFocus: true, enabled: !!wscProvider && isWSCConnected }
   );
   return { ...response, destinationBalance: response.data };
 };
 export const useGetStargateInfo = () => {
-  const { wscProvider } = useWSCProvider();
-  const response = useQuery([FunctionKeys.STARGATE_INFO], () => getStargateInfo(wscProvider));
+  const { wscProvider, isWSCConnected } = useWSCProvider();
+  const response = useQuery([FunctionKeys.STARGATE_INFO], () => getStargateInfo(wscProvider), {
+    enabled: !!wscProvider && isWSCConnected,
+  });
   return { ...response, stargateInfo: response.data, enabled: !!wscProvider };
 };
 
 export const useGetPendingTxs = () => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery([FunctionKeys.PENDING_TXS], () => getPendingTxs(wscProvider), {
     refetchInterval: TOKENS_REFETCH_INTERVAL,
-    enabled: !!wscProvider,
+    enabled: !!wscProvider && isWSCConnected,
   });
   return { pendingTxs: response.data ?? [], ...response };
 };
 export const useGetOriginAddress = () => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery<string | undefined, Error>(
     [FunctionKeys.ORIGIN_ADDRESS],
     () => getOriginAddress(wscProvider),
-    { enabled: !!wscProvider }
+    { enabled: !!wscProvider && isWSCConnected }
   );
   return {
     ...response,
@@ -92,18 +94,18 @@ export const useGetOriginAddress = () => {
 };
 
 export const useGetAddress = () => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery([FunctionKeys.ADDRESS], () => getAddress(wscProvider), {
-    enabled: !!wscProvider,
+    enabled: !!wscProvider && isWSCConnected,
   });
   return { ...response, address: response.data ?? "", enabled: !!wscProvider };
 };
 
 export const useGetOriginBalance = () => {
-  const { wscProvider } = useWSCProvider();
+  const { wscProvider, isWSCConnected } = useWSCProvider();
   const response = useQuery([FunctionKeys.ORIGIN_BALANCE], () => getOriginBalance(wscProvider), {
     refetchOnWindowFocus: true,
-    enabled: !!wscProvider,
+    enabled: !!wscProvider && isWSCConnected,
   });
   return { ...response, originBalance: response?.data ?? "", enabled: !!wscProvider };
 };
