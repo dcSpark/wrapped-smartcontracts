@@ -43,6 +43,7 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env": {
         WSC_ORACLE: JSON.stringify(process.env.REACT_APP_WSC_ORACLE),
+        BLOCKFROST_KEY: JSON.stringify(process.env.BLOCKFROST_KEY),
       },
     }),
   ],

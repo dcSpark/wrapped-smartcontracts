@@ -97,12 +97,12 @@ const App: React.FC = () => {
     }
   };
 
-  const handleConnectWalletCardano = async (option: string) => {
+  const handleConnectWalletCardano = async (wallet: string) => {
     if (!cardanoConnected) {
       const network = MilkomedaNetworkName.C1Devnet;
-      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, option, {
+      const wscLib = new WSCLib(MilkomedaNetworkName.C1Devnet, wallet, {
         oracleUrl: process.env.WSC_ORACLE,
-        blockfrostKey: "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb",
+        blockfrostKey: process.env.BLOCKFROST_KEY,
         jsonRpcProviderUrl: undefined,
       });
       wscLib2 = await wscLib.inject();

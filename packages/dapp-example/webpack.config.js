@@ -24,7 +24,14 @@ module.exports = {
     syncWebAssembly: true,
     topLevelAwait: true,
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      "process.env": {
+        BLOCKFROST_KEY: JSON.stringify(process.env.BLOCKFROST_KEY),
+      },
+    })
+  ],
   devServer: {
     port: 4000,
     static: {

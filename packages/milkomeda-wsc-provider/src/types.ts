@@ -1,4 +1,4 @@
-import { PeraWalletConnect } from "@perawallet/connect";
+import type { PeraWalletConnect } from "@perawallet/connect";
 
 export interface RequestArguments {
   readonly method: string;

@@ -34,10 +34,10 @@ Here's how you can use WSCLib in your project:
 import WSCLib, { UserWallet, MilkomedaNetworkName } from 'milkomeda-wsc';
 
 const network = MilkomedaNetworkName.C1Mainnet;
-const wallet = UserWallet.Flint;
-const oracleUrl = 'oracleUrl';
-const jsonRpcProviderUrl = 'jsonRpcProviderUrl';
-const blockfrostKey = 'blockfrostKey';
+const wallet = "flint"; // replace with the cip30 wallet type of your choice
+const oracleUrl = 'oracleUrl'; // replace with the URL for your Oracle
+const jsonRpcProviderUrl = 'jsonRpcProviderUrl'; // replace with your RPC URL
+const blockfrostKey = 'blockfrostKey'; // replace with your blockfrost key
 
 const wscLib = new WSCLib(network, wallet, {
   oracleUrl,

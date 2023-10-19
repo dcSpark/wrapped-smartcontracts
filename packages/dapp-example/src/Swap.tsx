@@ -10,7 +10,7 @@ const JSON_RPC_URL = "https://rpc-devnet-cardano-evm.c1.milkomeda.com";
 const ORACLE_URL = "http://localhost:8080";
 
 const STARGATE_ADDRESS = "addr_test1wz6lvjg3anml96vl22mls5vae3x2cgaqwy2ewp5gj3fcxdcw652wz";
-const BLOCKFROST_API_KEY = "preprodliMqEQ9cvQgAFuV7b6dhA4lkjTX1eBLb";
+const BLOCKFROST_API_KEY = process.env.BLOCKFROST_KEY;
 
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 

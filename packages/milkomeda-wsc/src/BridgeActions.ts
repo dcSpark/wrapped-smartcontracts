@@ -8,7 +8,7 @@ import { Lucid } from "lucid-cardano";
 import { MilkomedaProvider } from "milkomeda-wsc-provider";
 import { MilkomedaNetworkName } from "./WSCLibTypes";
 import { GenericStargate } from "./GenericStargate";
-import { PeraWalletConnect } from "@perawallet/connect";
+import type { PeraWalletConnect } from "@perawallet/connect";
 import algosdk from "algosdk";
 import { hexlify, toUtf8Bytes } from "ethers/lib/utils";
 
