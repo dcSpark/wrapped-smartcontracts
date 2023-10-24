@@ -32,7 +32,7 @@ import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
 import Button from "../Common/Button";
-import { useGetWSCTokens } from "../../hooks/wsc-provider";
+import { useGetDestinationBalance, useGetWSCTokens } from "../../hooks/wsc-provider";
 import invariant from "tiny-invariant";
 
 export const statusUnwrapMessages = {
@@ -47,6 +47,7 @@ export const statusUnwrapMessages = {
 const UnwrapStep = ({ onFinish, resetSteps }) => {
   const { wscProvider, setOpen } = useContext();
   const { isSuccess: isTokensSuccess, tokens } = useGetWSCTokens();
+  const { destinationBalance } = useGetDestinationBalance();
   const {
     options: { defaultUnwrapToken, defaultWrapToken },
   } = useTransactionConfigWSC();
@@ -105,18 +106,16 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       const defaultToken = {
         ...selectedToken,
         balance: isWrappingNativeTokenFirst
-          ? new BigNumber(defaultUnwrapToken.amount).toString()
-          : convertWeiToTokens({
-              valueWei: defaultUnwrapToken.amount,
-              token: { decimals: 18 },
-            })
-              .dp(6)
-              .toFixed(),
+          ? new BigNumber(defaultUnwrapToken.amount).toString() // unscaled
+          : convertTokensToWei({
+              value: new BigNumber(destinationBalance ?? 0).dp(6),
+              token: { decimals: 6 },
+            }).toFixed(), // unscaled
       };
 
       setSelectedUnwrapToken(defaultToken);
     }
-  }, [tokens, defaultUnwrapToken.unit]);
+  }, [tokens, defaultUnwrapToken.unit, destinationBalance]);
 
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider || !unwrappingFee) return;
@@ -127,12 +126,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       assetId: isWrappingNativeTokenFirst ? selectedUnwrapToken.contractAddress : undefined,
       amount: isWrappingNativeTokenFirst
         ? new BigNumber(defaultUnwrapToken.amount)
-        : convertTokensToWei({
-            value: selectedUnwrapToken.balance,
-            token: { decimals: 6 },
-          })
-            .plus(adaLocked.multipliedBy(10 ** 6))
-            .plus(unwrappingFee?.multipliedBy(10 ** 6)),
+        : new BigNumber(selectedUnwrapToken.balance),
     };
 
     try {
@@ -178,10 +172,10 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       label="Received:"
                       amount={
                         selectedUnwrapToken &&
-                        convertTokensToWei({
-                          value: selectedUnwrapToken.balance,
-                          token: { decimals: 6 },
-                        })
+                        unwrappingFee &&
+                        new BigNumber(selectedUnwrapToken.balance)
+                          .minus(adaLocked.multipliedBy(10 ** 6))
+                          .plus(unwrappingFee?.multipliedBy(10 ** 6))
                           .dividedBy(10 ** 6)
                           .toFixed()
                       }
@@ -225,15 +219,10 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
                       label="You'll transfer:"
                       amount={
                         selectedUnwrapToken &&
-                        unwrappingFee &&
-                        convertTokensToWei({
-                          value: selectedUnwrapToken.balance,
+                        convertWeiToTokens({
+                          valueWei: selectedUnwrapToken.balance,
                           token: { decimals: 6 },
-                        })
-                          .plus(adaLocked.multipliedBy(10 ** 6))
-                          .plus(unwrappingFee?.multipliedBy(10 ** 6))
-                          .dividedBy(10 ** 6)
-                          .toFixed()
+                        }).toFixed()
                       }
                       assetName={defaultSymbol}
                     />
@@ -251,7 +240,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
               <span>{statusUnwrapMessages[txStatus]}</span>
             </SpinnerWrapper>
             <p style={{ marginBottom: 30, fontSize: "0.875rem" }}>
-              Unwrapping transaction may take a few minutes (~3m).
+              Unwrapping transaction may take a few minutes (~10 minutes).
             </p>
           </>
         )}

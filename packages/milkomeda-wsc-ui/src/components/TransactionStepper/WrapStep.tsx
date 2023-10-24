@@ -218,7 +218,7 @@ const WrapStep = ({ nextStep }) => {
               <span>{statusWrapMessages[txStatus]}</span>
             </SpinnerWrapper>
             <p style={{ fontSize: "0.875rem" }}>
-              Wrapping transaction may take a few minutes (~5m).
+              Wrapping transaction may take a few minutes (~5 minutes).
             </p>
           </>
         )}
