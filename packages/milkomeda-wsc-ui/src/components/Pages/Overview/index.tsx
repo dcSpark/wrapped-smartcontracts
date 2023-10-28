@@ -56,11 +56,9 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
                 : selectedWrapToken?.assetName
               : null
           }
-          // {...(defaultWrapToken?.unit !== LOVELACE_UNIT && {
-          //   tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
-          //     10 ** (selectedWrapToken?.decimals ?? 0)
-          //   )} RC `,
-          // })}
+          {...(selectedWrapToken?.decimals === 0 && {
+            warningMessage: `The token hasn't defined if this amount includes decimals places e.g., 100 could be a 100 USD or 1.00 USD`,
+          })}
         />
         <LabelWithBalance
           label="Bridge fees:"

@@ -21,7 +21,7 @@ import Button from "../Common/Button";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
 import useInterval from "../../hooks/useInterval";
-import { CheckCircle2, LucideInfo } from "lucide-react";
+import { AlertTriangle, CheckCircle2, LucideInfo } from "lucide-react";
 
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import Tooltip from "../Common/Tooltip";
@@ -47,6 +47,11 @@ export const statusWrapMessages = {
   [TxStatus.WaitingBridgeConfirmation]: "Waiting for bridge confirmation",
   [TxStatus.WaitingL2Confirmation]: "Waiting for L2 confirmation",
   [TxStatus.Confirmed]: "Your asset has been successfully wrapped.",
+};
+
+const cardanoUnitDecimalsMap = {
+  f073e7396802cadc7f9e644f251d3bce11ad44f938d11d875098ddd04d4f52: 6, // RC
+  f4da952809ee5db368fc8ff6de939ac55543b97524614bac98a393964d4f44: 6, // SC
 };
 
 export const useSelectedWrapToken = () => {
@@ -75,6 +80,7 @@ export const useSelectedWrapToken = () => {
       invariant(token, "Your cardano wallet does not contain a default token.");
       const defaultToken = {
         ...token,
+        decimals: cardanoUnitDecimalsMap?.[token.unit] || token.decimals,
         quantity: convertWeiToTokens({ valueWei: token?.quantity, token }),
       };
       setSelectedWrapToken(defaultToken as WrapToken);
@@ -269,7 +275,13 @@ const WrapStep = ({ nextStep }) => {
 
 export default WrapStep;
 
-export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = "" }) => {
+export const LabelWithBalance = ({
+  label,
+  amount,
+  assetName,
+  tooltipMessage = "",
+  warningMessage = "",
+}) => {
   return (
     <LabelWithBalanceContainer>
       <LabelText>{label}</LabelText>
@@ -290,6 +302,11 @@ export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = ""
               {tooltipMessage ? (
                 <Tooltip message={tooltipMessage} xOffset={-6}>
                   <LucideInfo />
+                </Tooltip>
+              ) : null}
+              {warningMessage ? (
+                <Tooltip message={warningMessage} xOffset={-6}>
+                  <AlertTriangle />
                 </Tooltip>
               ) : null}
             </Balance>
