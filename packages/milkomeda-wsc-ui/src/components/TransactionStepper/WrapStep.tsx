@@ -66,7 +66,7 @@ export const useSelectedWrapToken = () => {
 
   invariant(
     isWrappingNativeTokenFirst ? defaultWrapToken.amount.length >= 18 : true,
-    "Default cardano asset amount should be >= 18 digits"
+    "Default cardano asset amount should be >= 18 digits (unscaled mADA)"
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -77,7 +77,7 @@ export const useSelectedWrapToken = () => {
       const token = originTokens.find(
         (t) => t.unit.toLowerCase() === defaultWrapToken.unit.toLowerCase()
       );
-      invariant(token, "Your cardano wallet does not contain a default token.");
+      invariant(token, "Your cardano wallet does not contain the default token.");
       const defaultToken = {
         ...token,
         decimals: cardanoUnitDecimalsMap?.[token.unit] || token.decimals,
