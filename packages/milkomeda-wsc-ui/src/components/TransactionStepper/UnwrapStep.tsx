@@ -49,7 +49,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const { isSuccess: isTokensSuccess, tokens } = useGetWSCTokens();
   const { destinationBalance } = useGetDestinationBalance();
   const {
-    options: { defaultUnwrapToken, defaultWrapToken },
+    options: { defaultWrapToken, evmTokenAddress },
   } = useTransactionConfigWSC();
   const { chain } = useNetwork();
   const defaultSymbol = getDefaultTokenByChainId(chain?.id);
@@ -89,9 +89,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   useEffect(() => {
     if (isTokensSuccess) {
       const selectedToken = isWrappingNativeTokenFirst
-        ? tokens.find(
-            (t) => t.contractAddress.toLowerCase() === defaultUnwrapToken.unit.toLowerCase()
-          )
+        ? tokens.find((t) => t.contractAddress.toLowerCase() === evmTokenAddress.toLowerCase())
         : {
             balance: "0",
             contractAddress: "",
@@ -106,7 +104,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
       const defaultToken = {
         ...selectedToken,
         balance: isWrappingNativeTokenFirst
-          ? new BigNumber(defaultUnwrapToken.amount).toString() // unscaled
+          ? new BigNumber(selectedToken.balance).toString() // unscaled
           : convertTokensToWei({
               value: new BigNumber(destinationBalance ?? 0).dp(6),
               token: { decimals: 6 },
@@ -115,7 +113,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
 
       setSelectedUnwrapToken(defaultToken);
     }
-  }, [tokens, defaultUnwrapToken.unit, destinationBalance]);
+  }, [tokens, evmTokenAddress, destinationBalance]);
 
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider || !unwrappingFee) return;
@@ -124,9 +122,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
     const unwrapOptions = {
       destination: undefined,
       assetId: isWrappingNativeTokenFirst ? selectedUnwrapToken.contractAddress : undefined,
-      amount: isWrappingNativeTokenFirst
-        ? new BigNumber(defaultUnwrapToken.amount)
-        : new BigNumber(selectedUnwrapToken.balance),
+      amount: new BigNumber(selectedUnwrapToken.balance),
     };
 
     try {

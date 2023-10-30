@@ -8,7 +8,7 @@ type ContextValue = TransactionConfigWSCProviderProps;
 export const TransactionConfigWSCContext = createContext<ContextValue | null>(null);
 
 export type EvmContractRequest = {
-  address: string;
+  address: `0x${string}`;
   /* eslint @typescript-eslint/no-explicit-any: "off" */
   abi: any;
   functionName: PrepareWriteContractConfig["functionName"];
@@ -20,9 +20,8 @@ export type EvmContractRequest = {
 export type TransactionConfigWSCOptions = {
   evmContractRequest: EvmContractRequest;
   titleModal?: string;
-  evmTokenAddress: string;
+  evmTokenAddress: `0x${string}`;
   defaultWrapToken: DefaultToken;
-  defaultUnwrapToken: DefaultToken;
 };
 
 type TransactionConfigWSCProviderProps = {
