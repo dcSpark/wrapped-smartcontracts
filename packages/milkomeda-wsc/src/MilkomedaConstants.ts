@@ -127,7 +127,7 @@ export class MilkomedaConstants {
       case MilkomedaNetworkName.C1Mainnet:
         return "https://ada-bridge-mainnet-cardano-evm-us.c1.milkomeda.com/api/v1";
       case MilkomedaNetworkName.C1Devnet:
-        return "https://ada-bridge-devnet-cardano-evm.c1.milkomeda.com/api/v1";
+        return "https://ada-bridge-devnet-cardano-evm-c1.milkomeda.com/api/v1";
       case MilkomedaNetworkName.A1Mainnet:
         return "https://algo-bridge-mainnet-algorand-rollup.a1.milkomeda.com/api/v1";
       case MilkomedaNetworkName.A1Devnet:
