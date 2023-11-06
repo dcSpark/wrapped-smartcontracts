@@ -21,7 +21,7 @@ const Home: NextPage = () => {
     /* config for wrap token - 1 MADA */
     defaultWrapToken: {
       unit: "lovelace",
-      amount: "1000000000000000000",
+      amount: "1000000000000000000", // 1 MADA (18decimals)
     },
     /* config for evm action execution */
     evmContractRequest: {
@@ -33,13 +33,8 @@ const Home: NextPage = () => {
         value: ethers.BigNumber.from("1000000000000000000"),
       },
     },
-    /* config for erc20 token allowance */
+    /* config for erc20 token allowance & unwrapping */
     evmTokenAddress: evmTokenAddress,
-    /* config for unwrap token - 1 m3s6 */
-    defaultUnwrapToken: {
-      unit: evmTokenAddress,
-      amount: "10000000",
-    },
   };
 
   return (
