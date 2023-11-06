@@ -4,7 +4,7 @@ import supportedConnectors from "../../../constants/supportedConnectors";
 
 import { useConnect } from "../../../hooks/useConnect";
 
-import { PageContent, ModalH1, ModalBody, ModalContent } from "../../Common/Modal/styles";
+import { PageContent } from "../../Common/Modal/styles";
 
 import {
   ConnectorsContainer,
@@ -14,14 +14,11 @@ import {
   MobileConnectorsContainer,
   MobileConnectorButton,
   MobileConnectorLabel,
-  InfoBox,
-  InfoBoxButtons,
   MobileConnectorIcon,
 } from "./styles";
 
 import { isMobile } from "../../../utils";
 
-import Button from "../../Common/Button";
 import { Connector } from "wagmi";
 
 const Wallets: React.FC = () => {
@@ -42,54 +39,38 @@ const Wallets: React.FC = () => {
   return (
     <PageContent style={{ width: 312 }}>
       {mobile ? (
-        <>
-          <MobileConnectorsContainer>
-            {connectors.map((connector) => {
-              const info = supportedConnectors.filter((c) => c.id === connector.id)[0];
+        <MobileConnectorsContainer>
+          {connectors.map((connector) => {
+            const info = supportedConnectors.filter((c) => c.id === connector.id)[0];
 
-              if (!info) return null;
-              const logos = info.logos;
-              const name = info.shortName ?? info.name ?? connector.name;
+            if (!info) return null;
+            const logos = info.logos;
+            const name = info.shortName ?? info.name ?? connector.name;
 
-              return (
-                <MobileConnectorButton
-                  key={`m-${connector.id}`}
-                  disabled={!connector.ready}
-                  onClick={() => {
-                    context.setRoute(routes.CONNECT);
-                    context.setConnector(connector.id);
-                    openDefaultConnect(connector);
-                  }}
-                >
-                  <MobileConnectorIcon>
-                    {logos.mobile ?? logos.appIcon ?? logos.connectorButton ?? logos.default}
-                  </MobileConnectorIcon>
-                  <MobileConnectorLabel>{name}</MobileConnectorLabel>
-                </MobileConnectorButton>
-              );
-            })}
-          </MobileConnectorsContainer>
-          <InfoBox>
-            <ModalContent style={{ padding: 0, textAlign: "left" }}>
-              <ModalH1 $small>connectorsScreen_h1</ModalH1>
-              <ModalBody>connectorsScreen_p</ModalBody>
-            </ModalContent>
-            <InfoBoxButtons>
-              <Button variant="tertiary" onClick={() => context.setRoute(routes.ONBOARDING)}>
-                getWallet
-              </Button>
-            </InfoBoxButtons>
-          </InfoBox>
-        </>
+            return (
+              <MobileConnectorButton
+                key={connector.id}
+                disabled={context.route !== routes.CONNECTORS}
+                onClick={() => {
+                  context.setRoute(routes.CONNECT);
+                  context.setConnector(connector.id);
+                }}
+              >
+                <MobileConnectorIcon>
+                  {logos.mobile ?? logos.appIcon ?? logos.connectorButton ?? logos.default}
+                </MobileConnectorIcon>
+                <MobileConnectorLabel>{name}</MobileConnectorLabel>
+              </MobileConnectorButton>
+            );
+          })}
+        </MobileConnectorsContainer>
       ) : (
         <>
           <ConnectorsContainer>
             {connectors.map((connector) => {
               const info = supportedConnectors.filter((c) => c.id === connector.id)[0];
               if (!info) return null;
-
               const logos = info.logos;
-
               const name = info.name ?? connector.name;
 
               let logo = logos.connectorButton ?? logos.default;

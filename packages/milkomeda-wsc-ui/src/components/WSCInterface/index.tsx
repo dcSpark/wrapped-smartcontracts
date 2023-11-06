@@ -181,7 +181,11 @@ function About() {
         provides a user-friendly experience, as users can interact with various systems without
         changing wallets or needing a deep understanding of the underlying processes.
       </Text>
-      <a className="about-link" href="http://example.com/my-article-link" target="_blank">
+      <a
+        className="about-link"
+        href="https://docs.milkomeda.com/cardano/wrapped-smart-contracts"
+        target="_blank"
+      >
         Read more
       </a>
 
@@ -212,7 +216,11 @@ function About() {
           </li>
         ))}
       </List>
-      <a className="about-link" href="http://example.com/my-article-link" target="_blank">
+      <a
+        className="about-link"
+        href="https://docs.milkomeda.com/cardano/wrapped-smart-contracts"
+        target="_blank"
+      >
         Read more
       </a>
     </div>

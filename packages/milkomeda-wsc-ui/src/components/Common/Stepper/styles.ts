@@ -15,6 +15,9 @@ export const StepperStepLabelContainer = styled(motion.div)`
   &[aria-current="step"] {
     color: var(--wsc-body-color);
   }
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: auto;
+  }
 `;
 export const StepperStepOptionalLabel = styled(motion.span)`
   font-size: 0.875rem;
@@ -37,6 +40,11 @@ export const StepperStepConnectorContainer = styled(motion.div)`
   flex: 1 1 0;
   align-self: stretch;
   border-left: 2px solid;
+
+  @media (max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: auto;
+  }
+
   ${({ $isLastStep }) =>
     $isLastStep &&
     css`
@@ -47,11 +55,7 @@ export const StepperStepConnectorContainer = styled(motion.div)`
     $isCompletedStep &&
     css`
       border-color: rgb(14, 117, 55);
-    `};
-
-  @media only screen and(max-width: ${defaultTheme.mobileWidth}px) {
-    min-height: 10px;
-  }
+    `}
 `;
 
 export const StepperStepConnectorLast = styled(motion.div)`
@@ -67,6 +71,10 @@ export const StepperStepContainer = styled(motion.div)`
   flex-direction: row;
   gap: 18px;
   position: relative;
+
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    gap: 0;
+  }
 
   ${({ $isLastStep }) =>
     $isLastStep
@@ -114,8 +122,9 @@ export const StepperContainer = styled(motion.div)<{ $isVertical?: boolean }>`
   padding-left: 40px;
   padding-right: 40px;
   @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+    // min-height: 500px;
   }
 `;
 export const StepperStepRow = styled(motion.div)<{ $isLabelVertical?: boolean }>`
