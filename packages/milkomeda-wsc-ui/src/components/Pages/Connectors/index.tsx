@@ -28,6 +28,7 @@ const Wallets: React.FC = () => {
 
   const { connectAsync, connectors } = useConnect();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const openDefaultConnect = async (connector: Connector) => {
     try {
       await connectAsync({ connector: connector });
