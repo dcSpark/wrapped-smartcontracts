@@ -78,7 +78,7 @@ const parseTheme = (theme: Theme) => {
 // }
 
 const defaultTheme: CustomTheme = {
-  connectKit: {
+  connectWsc: {
     options: {
       iconStyle: "light",
     },
