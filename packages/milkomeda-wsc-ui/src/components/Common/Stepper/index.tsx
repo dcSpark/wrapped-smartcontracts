@@ -329,7 +329,7 @@ interface StepperStepConnectorProps extends React.HTMLAttributes<HTMLDivElement>
 
 const StepperStepConnector = React.memo(
   ({ isCompletedStep, children, isLastStep }: StepperStepConnectorProps) => {
-    const { isVertical } = useStepperContext();
+    const { isVertical, labelOrientation } = useStepperContext();
 
     if (isVertical) {
       return (
@@ -348,10 +348,7 @@ const StepperStepConnector = React.memo(
     }
 
     return (
-      <StepperSeparator
-        data-highlighted={isCompletedStep}
-        orientation={isVertical ? "vertical" : "horizontal"}
-      />
+      <StepperSeparator data-highlighted={isCompletedStep} $labelOrientation={labelOrientation} />
     );
   }
 );

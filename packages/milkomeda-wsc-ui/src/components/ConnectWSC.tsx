@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
-import React, { createContext, createElement, useEffect, useState, useCallback } from "react";
+import React, { createContext, createElement, useEffect, useState } from "react";
 // import { Buffer } from "buffer";
 
 import defaultTheme from "../styles/defaultTheme";
@@ -7,10 +7,8 @@ import defaultTheme from "../styles/defaultTheme";
 import { ThemeProvider } from "styled-components";
 
 import { useConnectCallback, useConnectCallbackProps } from "../hooks/useConnectCallback";
-import { useAccount, useNetwork } from "wagmi";
-import { EVMTokenBalance, PendingTx, WSCLib } from "milkomeda-wsc";
-import useInterval from "../hooks/useInterval";
-import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
+import { useAccount } from "wagmi";
+import { WSCLib } from "milkomeda-wsc";
 
 export const routes = {
   ONBOARDING: "onboarding",
@@ -29,7 +27,7 @@ export type DefaultToken = {
   amount: string;
 };
 
-type StargateInfo = {
+export type StargateInfo = {
   fromNativeTokenInLoveLaceOrMicroAlgo: string;
   stargateMinNativeTokenFromL1: number;
   stargateMinNativeTokenToL1: number;
@@ -37,15 +35,7 @@ type StargateInfo = {
 };
 
 export type WSCContext = {
-  wscProvider: WSCLib | null;
-  originTokens: OriginAmount[];
-  tokens: EVMTokenBalance[];
-  stargateInfo: StargateInfo | null;
-  destinationBalance: string;
-  originBalance: string;
-  pendingTxs: PendingTx[];
-  originAddress: string;
-  address: string;
+  wscProvider?: WSCLib;
   isWSCConnected: boolean;
 };
 
@@ -66,6 +56,12 @@ type ContextValue = {
   displayError: (message: string | React.ReactNode | null, code?: any) => void;
 } & useConnectCallbackProps &
   WSCContext;
+
+const getProvider = async (activeConnector: any): Promise<WSCLib> => {
+  const provider = await activeConnector.getProvider();
+  if (!provider) throw new Error("No wsc provider found");
+  return provider;
+};
 
 export const Context = createContext<ContextValue | null>(null);
 
@@ -117,87 +113,23 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
 
   // wsc connector
   const { connector: activeConnector } = useAccount();
-  const [wscProvider, setWscProvider] = React.useState<WSCLib | null>(null);
-  const [originTokens, setOriginTokens] = useState<OriginAmount[]>([]);
-  const [tokens, setTokens] = useState<EVMTokenBalance[]>([]);
-  const [destinationBalance, setDestinationBalance] = useState("");
-  const [stargateInfo, setStargateInfo] = useState<StargateInfo | null>(null);
-
-  const [originBalance, setOriginBalance] = useState("");
-  const [pendingTxs, setPendingTxs] = useState<PendingTx[]>([]);
-  const [originAddress, setOriginAddress] = useState("");
-  const [address, setAddress] = useState("");
-  const { chain } = useNetwork();
-
-  // const [transactions, setTransactions] = useState([]);
-  // const [algorandConnected, setAlgorandConnected] = useState(false);
-  // const [cardanoConnected, setCardanoConnected] = useState(false);
-  // const [network, setNetwork] = useState(null);
-
+  // const { chain } = useNetwork();
   const isWSCConnected = activeConnector?.id?.includes("wsc") ?? false;
 
+  const [wscProvider, setWscProvider] = useState<WSCLib>();
+
   useEffect(() => {
-    if (!isWSCConnected) return;
-    const loadWscProvider = async () => {
-      try {
-        const provider = await activeConnector?.getProvider();
-
-        if (!provider) {
-          throw new Error("No wsc provider found");
-        }
-        const originTokens = await provider.origin_getTokenBalances();
-        const tokenBalances = await provider.getTokenBalances();
-        const destinationBalance = await provider.eth_getBalance();
-        const stargate = await provider.stargateObject();
-        const pendingTxs = await provider.getPendingTransactions();
-        const originAddress = await provider.origin_getAddress();
-        const address = await provider.eth_getAccount();
-
+    if (isWSCConnected) {
+      getProvider(activeConnector).then((provider) => {
         setWscProvider(provider);
-        setOriginTokens(originTokens);
-        setTokens(tokenBalances ?? []);
-        setDestinationBalance(destinationBalance);
-        setStargateInfo(stargate);
-        setPendingTxs(pendingTxs ?? []);
-        setOriginAddress(originAddress);
-        setAddress(address);
-      } catch (e) {
-        if (e instanceof Error) {
-          console.error(e);
-          setErrorMessage(` 
-          Error: Connecting to WSC. Make sure your wallet is connected to correct network - ${chain?.name}.`);
-        }
-      }
-    };
-    loadWscProvider();
-  }, [activeConnector, wscProvider]);
-
-  const updateWalletData = useCallback(async () => {
-    if (wscProvider == null) return;
-
-    const tokenBalances = await wscProvider.getTokenBalances();
-    setTokens(tokenBalances ?? []);
-
-    const originTokens = await wscProvider.origin_getTokenBalances();
-    setOriginTokens(originTokens ?? []);
-
-    const destinationBalance = await wscProvider.eth_getBalance();
-    setDestinationBalance(destinationBalance);
-
-    const originBalance = await wscProvider.origin_getNativeBalance();
-    setOriginBalance(originBalance);
-
-    const pendingTxs = await wscProvider.getPendingTransactions();
-    setPendingTxs(pendingTxs ?? []);
-  }, [wscProvider]);
-
-  useInterval(updateWalletData, wscProvider != null ? 5000 : null);
+      });
+    }
+  }, [activeConnector, isWSCConnected]);
 
   // useEffect(() => setErrorMessage(null), [route, open]);
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const log = debugMode ? console.log : () => {};
-
   const value = {
     open,
     setOpen,
@@ -208,14 +140,6 @@ export const ConnectWSCProvider: React.FC<ConnectKitProviderProps> = ({
     onConnect,
     // wsc provider
     wscProvider,
-    originTokens,
-    stargateInfo,
-    tokens,
-    destinationBalance,
-    originBalance,
-    pendingTxs,
-    originAddress,
-    address,
     isWSCConnected,
     // Other configuration
     errorMessage,

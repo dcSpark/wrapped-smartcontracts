@@ -21,7 +21,7 @@ import Button from "../Common/Button";
 import { TxPendingStatus } from "milkomeda-wsc";
 import { Spinner } from "../Common/Spinner";
 import useInterval from "../../hooks/useInterval";
-import { CheckCircle2, LucideInfo } from "lucide-react";
+import { AlertTriangle, CheckCircle2, LucideInfo } from "lucide-react";
 
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
 import Tooltip from "../Common/Tooltip";
@@ -31,9 +31,10 @@ import { useTransactionFees } from "../../hooks/useTransactionFees";
 import { ExternalLinkIcon } from "../../assets/icons";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
-import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/transactions";
+import { useGetOriginTokens } from "../../hooks/wsc-provider";
+import invariant from "tiny-invariant";
 
 export type WrapToken = Omit<OriginAmount, "quantity"> & {
   quantity: BigNumber;
@@ -48,45 +49,45 @@ export const statusWrapMessages = {
   [TxStatus.Confirmed]: "Your asset has been successfully wrapped.",
 };
 
+const cardanoUnitDecimalsMap = {
+  f073e7396802cadc7f9e644f251d3bce11ad44f938d11d875098ddd04d4f52: 6, // RC
+  f4da952809ee5db368fc8ff6de939ac55543b97524614bac98a393964d4f44: 6, // SC
+};
+
 export const useSelectedWrapToken = () => {
-  const { originTokens } = useContext();
+  const { isSuccess, originTokens } = useGetOriginTokens();
   const { chain } = useNetwork();
   const {
     options: { defaultWrapToken },
   } = useTransactionConfigWSC();
-
-  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
+  const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
 
   const [selectedWrapToken, setSelectedWrapToken] = React.useState<WrapToken | null>(null);
 
-  const adaToken = originTokens.find((t) => t.unit === LOVELACE_UNIT);
+  invariant(
+    isWrappingNativeTokenFirst ? defaultWrapToken.amount.length >= 18 : true,
+    "Default cardano asset amount should be >= 18 digits (unscaled mADA)"
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   React.useEffect(() => {
-    if (!defaultWrapToken) return;
-    const loadOriginToken = async () => {
+    if (isSuccess) {
       const token = originTokens.find(
         (t) => t.unit.toLowerCase() === defaultWrapToken.unit.toLowerCase()
-      ) ?? {
-        unit: LOVELACE_UNIT,
-        quantity: "0",
-        decimals: defaultWrapToken.unit === LOVELACE_UNIT ? 6 : 0,
-        bridgeAllowed: true,
-        assetName: defaultSymbol,
-        fingerprint: undefined,
-      };
-
+      );
+      invariant(token, "Your cardano wallet does not contain the default token.");
       const defaultToken = {
         ...token,
-        quantity:
-          token.unit === LOVELACE_UNIT
-            ? convertWeiToTokens({ valueWei: token.quantity, token })
-            : new BigNumber(token.quantity),
+        decimals: cardanoUnitDecimalsMap?.[token.unit] || token.decimals,
+        quantity: convertWeiToTokens({ valueWei: token?.quantity, token }),
       };
-      setSelectedWrapToken(defaultToken);
-    };
-    loadOriginToken();
-  }, [defaultWrapToken?.amount, defaultWrapToken?.unit, originTokens, setSelectedWrapToken]);
+      setSelectedWrapToken(defaultToken as WrapToken);
+    }
+  }, [originTokens]);
 
+  const adaToken = originTokens.find((t) => t.unit === LOVELACE_UNIT);
   return { selectedWrapToken, adaToken };
 };
 
@@ -102,10 +103,6 @@ const WrapStep = ({ nextStep }) => {
   const { selectedWrapToken, adaToken } = useSelectedWrapToken();
   const { wrappingFee, evmEstimatedFee, adaLocked, unwrappingFee, bridgeFees } =
     useTransactionFees();
-
-  if (!defaultWrapToken) {
-    throw new Error("please set your default cardano asset");
-  }
 
   const {
     txStatus,
@@ -167,13 +164,18 @@ const WrapStep = ({ nextStep }) => {
     }
   };
 
-  const formattedAmount =
-    defaultWrapToken.unit === LOVELACE_UNIT
+  const formattedAmount = React.useMemo(() => {
+    if (!defaultWrapToken || !selectedWrapToken) return;
+    return defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
+      : convertWeiToTokens({
+          valueWei: defaultWrapToken.amount,
+          token: selectedWrapToken,
+        });
+  }, [defaultWrapToken, selectedWrapToken]);
 
   const isAmountValid = React.useMemo(() => {
     if (!formattedAmount || !wrappingFee || !bridgeFees || !selectedWrapToken || isLoading) return;
@@ -210,7 +212,8 @@ const WrapStep = ({ nextStep }) => {
         {isIdle && selectedWrapToken != null && isAmountValid === false && (
           <ErrorMessage role="alert">
             Error: Insufficient balance. Please verify you have enough funds to cover the
-            transaction.
+            transaction. <br /> Your balance is {selectedWrapToken.quantity?.toString()}{" "}
+            {selectedWrapToken?.assetName}
           </ErrorMessage>
         )}
 
@@ -221,7 +224,7 @@ const WrapStep = ({ nextStep }) => {
               <span>{statusWrapMessages[txStatus]}</span>
             </SpinnerWrapper>
             <p style={{ fontSize: "0.875rem" }}>
-              Wrapping transaction may take a few minutes (~5m).
+              Wrapping transaction may take a few minutes (~5 minutes).
             </p>
           </>
         )}
@@ -247,21 +250,23 @@ const WrapStep = ({ nextStep }) => {
 
       {(isIdle || isError) && (
         <WrapperButtons>
-          <ThemeContainer
+          <Button
+            variant="secondary"
             onClick={() => {
               setOpen(false);
             }}
           >
-            <ThemedButton variant="secondary">Cancel</ThemedButton>
-          </ThemeContainer>
-          <ThemeContainer
+            Cancel
+          </Button>
+          <Button
             disabled={
               selectedWrapToken == null || !selectedWrapToken.bridgeAllowed || !isAmountValid
             }
             onClick={wrapToken}
+            variant={"primary"}
           >
-            <ThemedButton variant="primary">Confirm Wrapping</ThemedButton>
-          </ThemeContainer>
+            Confirm Wrapping
+          </Button>
         </WrapperButtons>
       )}
     </>
@@ -270,7 +275,13 @@ const WrapStep = ({ nextStep }) => {
 
 export default WrapStep;
 
-export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = "" }) => {
+export const LabelWithBalance = ({
+  label,
+  amount,
+  assetName,
+  tooltipMessage = "",
+  warningMessage = "",
+}) => {
   return (
     <LabelWithBalanceContainer>
       <LabelText>{label}</LabelText>
@@ -291,6 +302,11 @@ export const LabelWithBalance = ({ label, amount, assetName, tooltipMessage = ""
               {tooltipMessage ? (
                 <Tooltip message={tooltipMessage} xOffset={-6}>
                   <LucideInfo />
+                </Tooltip>
+              ) : null}
+              {warningMessage ? (
+                <Tooltip message={warningMessage} xOffset={-6}>
+                  <AlertTriangle />
                 </Tooltip>
               ) : null}
             </Balance>

@@ -1,5 +1,5 @@
 /* eslint @typescript-eslint/no-explicit-any: "off" */
-import { Connector, configureChains, ChainProviderFn } from "wagmi";
+import { configureChains, ChainProviderFn } from "wagmi";
 import { Chain } from "wagmi/chains";
 
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
@@ -54,11 +54,12 @@ export const milkomedaChains = [
 const defaultChains = [...milkomedaChains];
 
 type SupportedCardanoWallets = "flint" | "eternl" | "nami" | "nufi" | "yoroi";
+export const supportedWalletNames = ["flint", "eternl", "nami", "nufi", "yoroi"];
 
 type DefaultConnectorsProps = {
   chains: Chain[];
-  blockfrostId: string;
-  oracleUrl: string;
+  blockfrostId?: string;
+  oracleUrl?: string;
   jsonRpcProviderUrl?: string;
   network?: MilkomedaNetworkName;
   cardanoWalletNames?: SupportedCardanoWallets[];
@@ -72,8 +73,8 @@ type DefaultConfigProps = {
   webSocketProvider?: any;
   enableWebSocketProvider?: boolean;
   stallTimeout?: number;
-  blockfrostId: string;
-  oracleUrl: string;
+  blockfrostId?: string;
+  oracleUrl?: string;
   jsonRpcProviderUrl?: string;
   network?: MilkomedaNetworkName;
   cardanoWalletNames?: SupportedCardanoWallets[];
@@ -81,7 +82,7 @@ type DefaultConfigProps = {
 
 type MilkomedaWSCClientProps = {
   autoConnect?: boolean;
-  connectors?: Connector[];
+  connectors?: any[];
   provider: any;
   webSocketProvider?: any;
 };
@@ -92,28 +93,41 @@ const getDefaultConnectors = ({
   oracleUrl,
   jsonRpcProviderUrl,
   network,
-  cardanoWalletNames = ["flint", "eternl", "nami", "nufi", "yoroi"],
+  cardanoWalletNames = [],
 }: DefaultConnectorsProps) => {
-  /* eslint @typescript-eslint/no-explicit-any: "off" */
   let connectors: any[] = [];
 
-  // Add the rest of the connectors
-  connectors = [
-    ...connectors,
-    ...cardanoWalletNames.map(
-      (walletName) =>
-        new CardanoWSCConnector({
-          chains,
-          options: {
-            name: walletName,
-            oracleUrl: oracleUrl,
-            blockfrostKey: blockfrostId,
-            jsonRpcProviderUrl: jsonRpcProviderUrl,
-            network: network ?? MilkomedaNetworkName.C1Devnet,
-          },
-        })
-    ),
-  ];
+  if (blockfrostId && oracleUrl) {
+    connectors = [
+      ...connectors,
+      ...(cardanoWalletNames.length > 0
+        ? cardanoWalletNames.map(
+            (walletName) =>
+              new CardanoWSCConnector({
+                chains,
+                options: {
+                  name: walletName,
+                  oracleUrl: oracleUrl,
+                  blockfrostKey: blockfrostId,
+                  jsonRpcProviderUrl: jsonRpcProviderUrl,
+                  network: network ?? MilkomedaNetworkName.C1Devnet,
+                },
+              })
+          )
+        : [
+            new CardanoWSCConnector({
+              chains,
+              options: {
+                name: "flint",
+                oracleUrl: oracleUrl,
+                blockfrostKey: blockfrostId,
+                jsonRpcProviderUrl: jsonRpcProviderUrl,
+                network: network ?? MilkomedaNetworkName.C1Devnet,
+              },
+            }),
+          ]),
+    ];
+  }
 
   return connectors;
 };
@@ -141,7 +155,6 @@ const defaultConfig = ({
       },
     })
   );
-  // providers.push(publicProvider());
 
   const {
     provider: configuredProvider,

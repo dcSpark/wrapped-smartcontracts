@@ -594,7 +594,7 @@ export const Container = styled(motion.div)`
     }
     ${ControllerContainer} {
       width: 100%;
-      top: 4px;
+      top: 10px;
       border-bottom: 0;
     }
     ${CloseButton} {
