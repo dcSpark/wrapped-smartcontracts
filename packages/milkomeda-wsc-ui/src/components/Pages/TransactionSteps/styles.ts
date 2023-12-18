@@ -1,6 +1,7 @@
 import { keyframes } from "styled-components";
 import styled from "../../../styles/styled";
 import { motion } from "framer-motion";
+import defaultTheme from "../../../constants/defaultTheme";
 
 export const StepperTransactionContainer = styled(motion.div)`
   display: flex;
@@ -9,6 +10,13 @@ export const StepperTransactionContainer = styled(motion.div)`
   gap: 16px;
   padding-right: 10px;
   padding-left: 10px;
+  @media (max-width: ${defaultTheme.mobileWidth}px) {
+    padding-right: 0;
+    padding-left: 0;
+    height: 580px;
+    overflow: scroll;
+    margin-top: 10px;
+  }
 `;
 
 export const StepperTransactionInner = styled(motion.div)`
@@ -24,6 +32,11 @@ export const StepperTransactionContent = styled(motion.div)`
   gap: 8px;
   justify-content: space-between;
   padding: 0 32px;
+  @media (max-width: ${defaultTheme.mobileWidth}px) {
+    padding: 0;
+    padding-bottom: 30px;
+    padding-left: 10px;
+  }
 `;
 export const StepperTransactionSuccess = styled(motion.div)`
   padding: 16px;

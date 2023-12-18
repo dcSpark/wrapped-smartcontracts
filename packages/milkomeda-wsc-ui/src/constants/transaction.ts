@@ -6,7 +6,7 @@ export const EVM_ESTIMATED_FEE = 0.1;
 
 export const LOVELACE_UNIT = "lovelace";
 
-export const TX_STATUS_CHECK_INTERVAL = 5000;
+export const TX_STATUS_CHECK_INTERVAL = 15000;
 
 export const TxStatus = {
   ...TxPendingStatus,

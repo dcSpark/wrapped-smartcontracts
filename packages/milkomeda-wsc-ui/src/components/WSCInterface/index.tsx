@@ -27,7 +27,7 @@ import Tooltip from "../Common/Tooltip";
 import Button from "../Common/Button";
 import BigNumber from "bignumber.js";
 import { OriginAmount } from "milkomeda-wsc/build/CardanoPendingManger";
-import { LOVELACE_UNIT, TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
+import { TX_STATUS_CHECK_INTERVAL, TxStatus } from "../../constants/transaction";
 import { useTransactionStatus } from "../../hooks/useTransactionStatus";
 import useInterval from "../../hooks/useInterval";
 import { ErrorMessage, TransactionExternalLink } from "../TransactionStepper/styles";
@@ -40,10 +40,23 @@ import { MilkomedaIcon } from "../Common/Modal";
 import { useContext } from "../ConnectWSC";
 import { useNetwork } from "wagmi";
 import { getBridgeExplorerUrl } from "../../utils/transactions";
+import {
+  TOKENS_REFETCH_INTERVAL,
+  useGetAddress,
+  useGetDestinationBalance,
+  useGetOriginAddress,
+  useGetOriginBalance,
+  useGetOriginTokens,
+  useGetPendingTxs,
+  useGetWSCTokens,
+} from "../../hooks/wsc-provider";
 
 export const WSCInterface = () => {
   const context = useContext();
-  const { wscProvider, destinationBalance, originBalance } = useWSCProvider();
+  const { isWSCConnected } = useWSCProvider();
+  const { destinationBalance } = useGetDestinationBalance();
+  const { originBalance } = useGetOriginBalance();
+
   const isOriginBalanceNotZero = originBalance != null && +originBalance !== 0;
   const isDestinationBalanceNotZero = destinationBalance != null && +destinationBalance !== 0;
   const steps = [
@@ -103,7 +116,7 @@ export const WSCInterface = () => {
           </Stepper>
         </div>
 
-        {(!wscProvider || !originBalance || !destinationBalance) && (
+        {(!isWSCConnected || !originBalance || !destinationBalance) && (
           <div style={{ marginTop: 30 }}>
             <List style={{ flexDirection: "row", marginBottom: 20 }}>
               <Skeleton style={{ width: "100%", height: 40 }} />
@@ -119,7 +132,7 @@ export const WSCInterface = () => {
           </div>
         )}
 
-        {wscProvider && originBalance && destinationBalance && (
+        {isWSCConnected && originBalance && destinationBalance && (
           <TabsRoot defaultValue="about" orientation="vertical">
             <TabsList aria-label="WSC Wallet Content">
               <TabsTrigger value="about">
@@ -168,7 +181,11 @@ function About() {
         provides a user-friendly experience, as users can interact with various systems without
         changing wallets or needing a deep understanding of the underlying processes.
       </Text>
-      <a className="about-link" href="http://example.com/my-article-link" target="_blank">
+      <a
+        className="about-link"
+        href="https://docs.milkomeda.com/cardano/wrapped-smart-contracts"
+        target="_blank"
+      >
         Read more
       </a>
 
@@ -199,7 +216,11 @@ function About() {
           </li>
         ))}
       </List>
-      <a className="about-link" href="http://example.com/my-article-link" target="_blank">
+      <a
+        className="about-link"
+        href="https://docs.milkomeda.com/cardano/wrapped-smart-contracts"
+        target="_blank"
+      >
         Read more
       </a>
     </div>
@@ -207,8 +228,8 @@ function About() {
 }
 
 function Cardano() {
-  const { originAddress, originTokens } = useWSCProvider();
-
+  const { isLoading, isSuccess, originAddress } = useGetOriginAddress();
+  const { originTokens } = useGetOriginTokens({ refetchInterval: TOKENS_REFETCH_INTERVAL });
   const [tokenAmounts, setTokenAmounts] = useState<Map<string, string>>(new Map());
 
   const updateTokenAmount = (tokenUnit: string, amount: string) => {
@@ -219,13 +240,11 @@ function Cardano() {
 
   const setMaxAmount = (token: OriginAmount) => {
     if (!token) return;
-    const adjustedAmount =
-      token.unit === LOVELACE_UNIT
-        ? convertWeiToTokens({
-            valueWei: token.quantity,
-            token: token,
-          })
-        : new BigNumber(token.quantity);
+    const adjustedAmount = convertWeiToTokens({
+      valueWei: token.quantity,
+      token: token,
+    });
+
     updateTokenAmount(token.unit, adjustedAmount.toString());
   };
 
@@ -237,17 +256,28 @@ function Cardano() {
           <span style={{ wordBreak: "break-all" }}>{truncateCardanoAddress(originAddress)}</span>
         </CopyToClipboard>
       </div>
-      {originTokens.length === 0 && <Text style={{ textAlign: "center" }}>No tokens found.</Text>}
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
+      {isSuccess && originTokens.length === 0 && (
+        <Text style={{ textAlign: "center" }}>No tokens found.</Text>
+      )}
       <List>
-        {originTokens.map((token, index) => (
-          <CardanoAssetItem
-            key={index}
-            token={token}
-            updateTokenAmount={updateTokenAmount}
-            tokenAmounts={tokenAmounts}
-            setMaxAmount={setMaxAmount}
-          />
-        ))}
+        {isSuccess &&
+          originTokens.map((token, index) => (
+            <CardanoAssetItem
+              key={index}
+              token={token}
+              updateTokenAmount={updateTokenAmount}
+              tokenAmounts={tokenAmounts}
+              setMaxAmount={setMaxAmount}
+            />
+          ))}
       </List>
     </div>
   );
@@ -264,13 +294,10 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
     setTxStatus(TxStatus.Init);
 
     try {
-      const wrapAmount =
-        token.unit === LOVELACE_UNIT
-          ? convertTokensToWei({
-              value: tokenAmounts.get(token.unit) || "0",
-              token: token,
-            })
-          : new BigNumber(tokenAmounts.get(token.unit) || "0");
+      const wrapAmount = convertTokensToWei({
+        value: tokenAmounts.get(token.unit) || "0",
+        token: token,
+      });
 
       const txHash = await wscProvider?.wrap(undefined, token.unit, wrapAmount.toNumber());
       setTxHash(txHash);
@@ -299,12 +326,10 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
       <Row>
         <Label style={{ paddingLeft: "16px" }}>Balance: </Label>
         <Value>
-          {token.unit === LOVELACE_UNIT
-            ? convertWeiToTokens({
-                valueWei: token.quantity,
-                token: token,
-              }).toFixed()
-            : token.quantity}{" "}
+          {convertWeiToTokens({
+            valueWei: token.quantity,
+            token: token,
+          }).toFixed()}{" "}
           {token.assetName}
         </Value>
         {!token.bridgeAllowed && (
@@ -351,16 +376,25 @@ const CardanoAssetItem = ({ token, tokenAmounts, updateTokenAmount, setMaxAmount
 };
 
 function Pending() {
-  const { pendingTxs } = useWSCProvider();
+  const { isLoading, isSuccess, pendingTxs } = useGetPendingTxs();
 
   return (
     <div>
       <Title>List of pending transactions between Cardano and Milkomeda</Title>
-      {pendingTxs?.length === 0 && (
+      {isSuccess && pendingTxs?.length === 0 && (
         <Text style={{ textAlign: "center" }}>No pending transaction found.</Text>
       )}
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
       <List>
-        {pendingTxs?.length > 0 &&
+        {isSuccess &&
+          pendingTxs?.length > 0 &&
           pendingTxs.map((tx, index) => {
             const shortHash = `${tx.hash.slice(0, 10)}...${tx.hash.slice(-10)}`;
             return (
@@ -400,7 +434,12 @@ function Pending() {
 
 const mADATokenAddress = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 function WSCWallet() {
-  const { address, wscProvider, destinationBalance, tokens } = useWSCProvider();
+  const { wscProvider } = useWSCProvider();
+  const { address } = useGetAddress();
+  const { destinationBalance } = useGetDestinationBalance();
+  const { isLoading, isSuccess, tokens } = useGetWSCTokens({
+    refetchInterval: TOKENS_REFETCH_INTERVAL,
+  });
   const [allowedTokensMap, setAllowedTokensMap] = React.useState({});
 
   React.useEffect(() => {
@@ -415,8 +454,17 @@ function WSCWallet() {
       <div style={{ maxWidth: "80%", margin: "auto", marginBottom: 20, fontSize: "0.875rem" }}>
         <CopyToClipboard string={address}>{address}</CopyToClipboard>
       </div>
+      {isLoading && (
+        <List style={{ flexDirection: "column", marginBottom: 20 }}>
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+          <Skeleton style={{ width: "100%", height: 40 }} />
+        </List>
+      )}
       <List>
-        {destinationBalance &&
+        {isSuccess &&
+          destinationBalance &&
           [
             {
               decimals: 6, // already scaled

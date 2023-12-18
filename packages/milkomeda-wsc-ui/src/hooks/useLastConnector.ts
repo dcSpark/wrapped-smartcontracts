@@ -6,7 +6,7 @@
 //     add,
 //     update,
 //     clear,
-//   } = useLocalStorage("connectKit.lastConnectorId");
+//   } = useLocalStorage("lastConnectorId");
 //
 //   const updateLastConnectorId = (id: string) => {
 //     if (lastConnectorId) {

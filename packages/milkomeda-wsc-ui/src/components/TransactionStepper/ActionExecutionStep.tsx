@@ -16,8 +16,8 @@ import {
 } from "wagmi";
 import { ethers } from "ethers";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
-import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { getEvmExplorerUrl } from "../../utils/transactions";
+import Button from "../Common/Button";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
@@ -94,19 +94,20 @@ const ActionExecutionStep = ({ nextStep }) => {
               href={`${getEvmExplorerUrl(chain?.id)}/tx/${contractWriteQuery?.data?.hash}`}
               viewLabel="EVM Explorer"
             />
-            <ThemeContainer onClick={nextStep}>
-              <ThemedButton variant="primary">Continue</ThemedButton>
-            </ThemeContainer>
+            <Button variant={"primary"} onClick={nextStep}>
+              Continue
+            </Button>
           </>
         )}
       </StepLargeHeight>
       {(isIdle || isError) && (
-        <ThemeContainer
+        <Button
+          variant="primary"
           disabled={!contractWriteQuery?.write}
           onClick={() => contractWriteQuery?.write?.()}
         >
-          <ThemedButton variant="primary">Execute Action</ThemedButton>
-        </ThemeContainer>
+          Execute Action
+        </Button>
       )}
     </>
   );

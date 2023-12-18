@@ -151,7 +151,7 @@ export const ButtonContainer = styled.button<{
   width: 100%;
   display:block;
   text-align: center;
-  height: 48px;
+  height: var(--wsc-button-height, 48px);
   margin: 12px 0 0;
   line-height: 48px;
   padding: 0 4px;

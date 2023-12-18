@@ -1,10 +1,17 @@
+import defaultTheme from "../../constants/defaultTheme";
 import styled from "../../styles/styled";
 
 export const StepLargeHeight = styled.div`
   min-height: 300px;
+  @media (max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: auto;
+  }
 `;
 export const StepNormalHeight = styled.div`
   min-height: 300px;
+  @media (max-width: ${defaultTheme.mobileWidth}px) {
+    min-height: auto;
+  }
 `;
 export const StepTitle = styled.h1`
   font-size: 1.125rem;
@@ -87,6 +94,11 @@ export const WrapperButtons = styled.div`
   justify-content: flex-end;
   gap: 8px;
   margin-top: 40px;
+  @media only screen and (max-width: ${defaultTheme.mobileWidth}px) {
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+  }
 `;
 export const TransactionCompleteContainer = styled.div`
   position: relative;

@@ -1,5 +1,5 @@
 import React from "react";
-import { useAccount } from "wagmi";
+import { Chain, useAccount, useNetwork } from "wagmi";
 import useIsMounted from "../../hooks/useIsMounted";
 
 import { TextContainer } from "./styles";
@@ -9,6 +9,8 @@ import { AnimatePresence, Variants, motion } from "framer-motion";
 import ThemedButton, { ThemeContainer } from "../Common/ThemedButton";
 import { ResetContainer } from "../../styles";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
+import { useModal } from "../../hooks/useModal";
+import { truncateEthAddress } from "../../utils";
 
 const contentVariants: Variants = {
   initial: {
@@ -38,6 +40,62 @@ const contentVariants: Variants = {
 };
 
 const defaultLabel = "Connect WSC";
+
+type ConnectButtonRendererProps = {
+  children?: (renderProps: {
+    show?: () => void;
+    hide?: () => void;
+    chain?: Chain & {
+      unsupported?: boolean;
+    };
+    unsupported: boolean;
+    isConnected: boolean;
+    isConnecting: boolean;
+    address?: `0x${string}`;
+    truncatedAddress?: string;
+  }) => React.ReactNode;
+};
+const ConnectButtonRenderer: React.FC<ConnectButtonRendererProps> = ({ children }) => {
+  const isMounted = useIsMounted();
+  const context = useContext();
+  const { open, setOpen } = useModal();
+
+  const { chain } = useNetwork();
+  const { address, isConnected } = useAccount();
+
+  function hide() {
+    setOpen(false);
+  }
+
+  function show() {
+    context.setOpen(true);
+    if (!isConnected) {
+      context.setRoute(routes.CONNECTORS);
+      return;
+    }
+    context.setRoute(routes.STEPPER);
+  }
+
+  if (!children) return null;
+  if (!isMounted) return null;
+
+  return (
+    <>
+      {children({
+        show,
+        hide,
+        chain: chain,
+        unsupported: !!chain?.unsupported,
+        isConnected: !!address,
+        isConnecting: open, // Using `open` to determine if connecting as wagmi isConnecting only is set to true when an active connector is awaiting connection
+        address: address,
+        truncatedAddress: address ? truncateEthAddress(address) : undefined,
+      })}
+    </>
+  );
+};
+
+ConnectButtonRenderer.displayName = "ConnectWSCButton.Custom";
 
 type ConnectKitButtonProps = {
   // Options
@@ -108,14 +166,14 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
                 },
               }}
             >
-              <ThemedButton variant="secondary" style={{ overflow: "hidden" }}>
+              <ThemedButton variant="primary" style={{ overflow: "hidden" }}>
                 <motion.div style={{ paddingRight: 24 }}>
                   {options.titleModal ?? "Interact with WSC"}
                 </motion.div>
               </ThemedButton>
             </motion.div>
           ) : (
-            <ThemedButton variant="secondary">
+            <ThemedButton variant="primary">
               <TextContainer
                 key="connectWalletText"
                 initial={"initial"}
@@ -135,3 +193,5 @@ export function ConnectWSCButton({ label, onClick, disabled = false }: ConnectKi
     </ResetContainer>
   );
 }
+
+ConnectWSCButton.Custom = ConnectButtonRenderer;

@@ -1,5 +1,4 @@
 import React from "react";
-import { useContext } from "../../ConnectWSC";
 
 import { OverviewContent } from "../../Common/Modal/styles";
 
@@ -13,9 +12,10 @@ import { useTransactionConfigWSC } from "../../TransactionConfigWSC";
 import { getDefaultTokenByChainId } from "../../../utils/transactions";
 import { useNetwork } from "wagmi";
 import { LOVELACE_UNIT } from "../../../constants/transaction";
+import { useGetStargateInfo } from "../../../hooks/wsc-provider";
 
 const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedWrapToken }) => {
-  const { stargateInfo } = useContext();
+  const { stargateInfo } = useGetStargateInfo();
   const { chain } = useNetwork();
   const { evmEstimatedFee, adaLocked, bridgeFees } = useTransactionFees();
   const {
@@ -23,14 +23,17 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
   } = useTransactionConfigWSC();
 
   const amount = React.useMemo(() => {
-    if (!defaultWrapToken) return;
+    if (!defaultWrapToken || !selectedWrapToken) return;
     return defaultWrapToken.unit === LOVELACE_UNIT
       ? convertWeiToTokens({
           valueWei: defaultWrapToken.amount,
           token: { decimals: 18 },
         }).dp(2, BigNumber.ROUND_UP)
-      : new BigNumber(+defaultWrapToken.amount).dp(4, BigNumber.ROUND_UP);
-  }, [defaultWrapToken]);
+      : convertWeiToTokens({
+          valueWei: defaultWrapToken.amount,
+          token: selectedWrapToken,
+        });
+  }, [defaultWrapToken, selectedWrapToken]);
 
   const tranferTotalAmount =
     amount &&
@@ -53,17 +56,15 @@ const Overview: React.FC<{ selectedWrapToken: WrapToken | null }> = ({ selectedW
                 : selectedWrapToken?.assetName
               : null
           }
-          {...(defaultWrapToken?.unit !== LOVELACE_UNIT && {
-            tooltipMessage: `Please keep in mind that number of decimals calculation for the token is different, eg: ${amount?.toFixed()} tReserveCoin is equivalent to ${amount?.dividedBy(
-              10 ** (selectedWrapToken?.decimals ?? 0)
-            )} RC `,
+          {...(selectedWrapToken?.decimals === 0 && {
+            warningMessage: `The token hasn't defined if this amount includes decimals places e.g., 100 could be a 100 USD or 1.00 USD`,
           })}
         />
         <LabelWithBalance
           label="Bridge fees:"
           amount={bridgeFees?.toFixed()}
           assetName={defaultSymbol}
-          tooltipMessage="This fee is paid to the bridge for wrapping (0.1 TADA) and unwrapping (1 TADA) your tokens."
+          tooltipMessage={`This fee is paid to the bridge for wrapping (0.1 ${defaultSymbol}) and unwrapping (1 ${defaultSymbol}) your tokens.`}
         />
         <LabelWithBalance
           label="Bridge Lock-up:"
