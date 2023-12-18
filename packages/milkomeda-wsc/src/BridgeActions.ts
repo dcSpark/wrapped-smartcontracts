@@ -190,6 +190,23 @@ class BridgeActions {
       const amount = ethers.utils.parseUnits(amountToUnwrap.toString(), 18);
       const adaFee = new BigNumber(this.stargateGeneric.stargateNativeTokenFeeToL1());
       const adaAmount = amountToUnwrap.plus(adaFee);
+      {
+        const txRequest = {
+          to: this.bridgeAddress,
+          data: bridgeContract.interface.encodeFunctionData("submitUnwrappingRequest", [
+            {
+              assetId: ethers.constants.HashZero,
+              from: await signer.getAddress(),
+              to: l1Destination,
+              amount: amount.toString(),
+            },
+          ]),
+          value: ethers.utils.parseUnits(adaAmount.toString(), 18),
+        };
+
+        await signer.estimateGas(txRequest);
+        await this.provider.getGasPrice();
+      }
       const tx = await bridgeContract.connect(signer).submitUnwrappingRequest(
         {
           assetId: ethers.constants.HashZero,
@@ -197,7 +214,7 @@ class BridgeActions {
           to: l1Destination,
           amount: amount.toString(),
         },
-        { gasLimit: 1_000_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
+        { gasLimit: 500_000, value: ethers.utils.parseUnits(adaAmount.toString(), 18) }
       );
 
       console.log("Unwrapping ADA");
