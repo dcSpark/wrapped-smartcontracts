@@ -193,17 +193,17 @@ class BridgeActions {
       {
         const txRequest = {
           to: this.bridgeAddress,
-          data: bridgeContract.interface.encodeFunctionData('submitUnwrappingRequest', [
+          data: bridgeContract.interface.encodeFunctionData("submitUnwrappingRequest", [
             {
               assetId: ethers.constants.HashZero,
               from: await signer.getAddress(),
               to: l1Destination,
               amount: amount.toString(),
-            }
+            },
           ]),
-          value: ethers.utils.parseUnits(adaAmount.toString(), 18)
+          value: ethers.utils.parseUnits(adaAmount.toString(), 18),
         };
-    
+
         await signer.estimateGas(txRequest);
         await this.provider.getGasPrice();
       }
