@@ -53,7 +53,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
     options: { defaultWrapToken, evmTokenAddress },
   } = useTransactionConfigWSC();
   const { chain } = useNetwork();
-  const gasFee = useEstimateGas();
+  const { feeCardano } = useEstimateGas();
   const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
@@ -120,11 +120,13 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider || !unwrappingFee) return;
     setTxStatus(TxStatus.Init);
-    invariant(gasFee, "gas fee not found");
+    invariant(feeCardano, "gas fee not found");
     const unwrapOptions = {
       destination: undefined,
       assetId: isWrappingNativeTokenFirst ? selectedUnwrapToken.contractAddress : undefined,
-      amount: new BigNumber(selectedUnwrapToken.balance).minus(gasFee),
+      amount: isWrappingNativeTokenFirst
+        ? new BigNumber(selectedUnwrapToken.balance)
+        : new BigNumber(selectedUnwrapToken.balance).minus(feeCardano),
     };
 
     try {

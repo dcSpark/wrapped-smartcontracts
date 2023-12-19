@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useProvider } from "wagmi";
 import BigNumber from "bignumber.js";
+import { convertTokensToWei, convertWeiToTokens } from "../utils/convertWeiToTokens";
 
 export const useEstimateGas = () => {
   const [fee, setFee] = useState<BigNumber | undefined>(undefined);
@@ -9,9 +10,21 @@ export const useEstimateGas = () => {
   useEffect(() => {
     provider.getGasPrice().then((gasPrice) => {
       const formattedGasPrice = new BigNumber(gasPrice.toString());
-      setFee(formattedGasPrice.multipliedBy(1_000_000));
+      setFee(formattedGasPrice.multipliedBy(new BigNumber(1_000_000)));
     });
   }, [provider]);
+  const baseFee = convertWeiToTokens({
+    valueWei: fee?.toString(),
+    token: { decimals: 18 },
+  })
+    .dp(2)
+    .toString();
 
-  return fee;
+  return {
+    fee,
+    feeCardano: convertTokensToWei({
+      value: baseFee?.toString(),
+      token: { decimals: 6 },
+    }).toString(),
+  };
 };

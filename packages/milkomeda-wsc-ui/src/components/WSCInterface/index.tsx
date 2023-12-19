@@ -50,6 +50,8 @@ import {
   useGetPendingTxs,
   useGetWSCTokens,
 } from "../../hooks/wsc-provider";
+import { useEstimateGas } from "../../hooks/useEstimatedGas";
+import invariant from "tiny-invariant";
 
 export const WSCInterface = () => {
   const context = useContext();
@@ -500,6 +502,7 @@ function AmountInput({ label, onMax, value, onChange, id }) {
 function WSCAssetItem({ token, allowedTokensMap }) {
   const { wscProvider } = useWSCProvider();
   const { chain } = useNetwork();
+  const { feeCardano } = useEstimateGas();
   const [txHash, setTxHash] = React.useState<string | undefined>();
 
   const { txStatus, txStatusError, setTxStatusError, setTxStatus, isLoading, isError, isSuccess } =
@@ -518,11 +521,14 @@ function WSCAssetItem({ token, allowedTokensMap }) {
     if (!token || !wscProvider) return;
     setTxStatus(TxStatus.Init);
     const isNativeToken = token.contractAddress === mADATokenAddress;
+    invariant(feeCardano, "Gas fee is not defined");
 
     const unwrapOptions = {
       destination: undefined,
       assetId: isNativeToken ? undefined : token.contractAddress,
-      amount: new BigNumber(token.balance),
+      amount: isNativeToken
+        ? new BigNumber(token.balance).minus(feeCardano)
+        : new BigNumber(token.balance),
     };
 
     try {

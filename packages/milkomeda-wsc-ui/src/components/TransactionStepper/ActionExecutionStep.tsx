@@ -25,7 +25,7 @@ const ActionExecutionStep = ({ nextStep }) => {
     options: { evmContractRequest },
   } = useTransactionConfigWSC();
   const { chain } = useNetwork();
-  const gasFee = useEstimateGas();
+  const { fee: gasFee } = useEstimateGas();
 
   const prepareContractWriteQuery = usePrepareContractWrite({
     address: evmContractRequest.address as `0x${string}`,
