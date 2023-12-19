@@ -34,6 +34,7 @@ import { getBridgeExplorerUrl, getDefaultTokenByChainId } from "../../utils/tran
 import Button from "../Common/Button";
 import { useGetDestinationBalance, useGetWSCTokens } from "../../hooks/wsc-provider";
 import invariant from "tiny-invariant";
+import { useEstimateGas } from "../../hooks/useEstimatedGas";
 
 export const statusUnwrapMessages = {
   [TxStatus.Init]: "Confirm Unwrapping",
@@ -52,6 +53,7 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
     options: { defaultWrapToken, evmTokenAddress },
   } = useTransactionConfigWSC();
   const { chain } = useNetwork();
+  const gasFee = useEstimateGas();
   const defaultSymbol = getDefaultTokenByChainId(chain?.id);
 
   const isWrappingNativeTokenFirst = defaultWrapToken.unit === LOVELACE_UNIT;
@@ -118,11 +120,11 @@ const UnwrapStep = ({ onFinish, resetSteps }) => {
   const unwrapToken = async () => {
     if (!selectedUnwrapToken || !wscProvider || !unwrappingFee) return;
     setTxStatus(TxStatus.Init);
-
+    invariant(gasFee, "gas fee not found");
     const unwrapOptions = {
       destination: undefined,
       assetId: isWrappingNativeTokenFirst ? selectedUnwrapToken.contractAddress : undefined,
-      amount: new BigNumber(selectedUnwrapToken.balance),
+      amount: new BigNumber(selectedUnwrapToken.balance).minus(gasFee),
     };
 
     try {
