@@ -18,12 +18,14 @@ import { ethers } from "ethers";
 import { useTransactionConfigWSC } from "../TransactionConfigWSC";
 import { getEvmExplorerUrl } from "../../utils/transactions";
 import Button from "../Common/Button";
+import { useEstimateGas } from "../../hooks/useEstimatedGas";
 
 const ActionExecutionStep = ({ nextStep }) => {
   const {
     options: { evmContractRequest },
   } = useTransactionConfigWSC();
   const { chain } = useNetwork();
+  const gasFee = useEstimateGas();
 
   const prepareContractWriteQuery = usePrepareContractWrite({
     address: evmContractRequest.address as `0x${string}`,
@@ -35,6 +37,13 @@ const ActionExecutionStep = ({ nextStep }) => {
     overrides: {
       gasLimit: ethers.BigNumber.from(1_000_000),
       ...evmContractRequest.overrides,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      ...(evmContractRequest.overrides?.value && {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        value: evmContractRequest.overrides?.value?.sub(gasFee),
+      }),
     },
   });
 
