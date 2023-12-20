@@ -29,26 +29,11 @@ export class PendingManager {
   async getEVMPendingTxs(): Promise<PendingTx[]> {
     // Check all the txs for the past 24 hrs to the bridge SC from the user
     // Check the bridge API and make sure that they haven't been confirmed
-
-    const bridgeAddress = MilkomedaConstants.getBridgeEVMAddress(this.network);
-    const txsToBridge = await this.getTransactionsToBridgeFromAddress(
-      this.evmAddress,
-      bridgeAddress
+    const bridgeRequests = await MilkomedaNetwork.fetchBridgeRequests(
+      this.network,
+      100,
+      `&evm_address=${this.evmAddress}&request_status=Pending`
     );
-    if (txsToBridge.length === 0) return [];
-
-    // check if bridgeTxs exist in the bridge API (if they don't it means that they are pending)
-    // this is a *very* inefficient way to do this, but it's the only way until we have a better API
-    const bridgeRequests = await MilkomedaNetwork.fetchBridgeRequests(this.network);
-    const processedTxHashes = bridgeRequests.map((request) => request.transaction_id);
-    const pendingTxs = txsToBridge.filter((tx) => !processedTxHashes.includes(tx.hash));
-    const pendingTxs_normalized = pendingTxs.map((tx) => ({
-      hash: tx.hash,
-      timestamp: parseInt(tx.timeStamp),
-      explorer: MilkomedaConstants.getEVMExplorerUrl(this.network) + "/tx/" + tx.hash,
-      type: PendingTxType.Unwrap,
-      destinationAddress: "Cardano Address", // TODO: eventually find the address in the input data
-    }));
 
     // this code check for pending txs detected by the bridge that are being unwrapped
     const bridgePendingTxs = bridgeRequests.filter(
@@ -65,9 +50,7 @@ export class PendingManager {
       destinationAddress: tx.to,
     }));
 
-    return [...pendingTxs_normalized, ...bridgePendingTxs_normalized].sort(
-      (a, b) => b.timestamp - a.timestamp
-    );
+    return [...bridgePendingTxs_normalized].sort((a, b) => b.timestamp - a.timestamp);
   }
 
   private async filterTransaction(
