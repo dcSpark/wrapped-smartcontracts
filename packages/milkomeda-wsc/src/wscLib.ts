@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { Blockfrost, Lucid, WalletApi } from "lucid-cardano";
 import type { MilkomedaProvider } from "milkomeda-wsc-provider";
-import { Activity, ActivityManager, ActivityStatus } from "./Activity";
+import { Activity, ActivityManager } from "./Activity";
 import { AlgoPendingManager } from "./AlgoPendingManager";
 import BridgeActions from "./BridgeActions";
 import CardanoPendingManager, {
@@ -605,21 +605,9 @@ export class WSCLib {
   // Show the latest activity of the user: L2 -> L2, L2 -> L1 and L1 -> L2.
   async latestActivity(): Promise<Activity[]> {
     const targetAddress = await this.eth_getAccount();
-    const bridgeActivity = await ActivityManager.getBridgeActivity(this.network, targetAddress);
-    const l2Activity = await this.getL2TransactionList();
-    const l2normalized: Activity[] = l2Activity.map((transaction) => {
-      return {
-        hash: transaction.hash,
-        timestamp: parseInt(transaction.timeStamp),
-        explorer: MilkomedaConstants.getEVMExplorerUrl(this.network) + "/tx/" + transaction.hash,
-        type: PendingTxType.Normal,
-        destinationAddress: transaction.to,
-        status: ActivityStatus.Completed,
-        values: [],
-      };
-    });
+    const bridgeActivity = await ActivityManager.getBridgeActivityV2(this.network, targetAddress);
 
-    const grouped = [...bridgeActivity, ...l2normalized];
+    const grouped = [...bridgeActivity];
     // Remove duplicates based on hash and prioritize non-normal types
     const uniqueActivities = new Map<string, Activity>();
     grouped.forEach((activity) => {

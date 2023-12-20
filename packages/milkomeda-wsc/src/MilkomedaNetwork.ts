@@ -75,8 +75,14 @@ export class MilkomedaNetwork {
     }
   }
 
-  static async fetchBridgeRequests(network: string, totalItems = 100): Promise<BridgeRequest[]> {
-    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?sort=Desc&count=100`;
+  static async fetchBridgeRequests(
+    network: string,
+    totalItems = 100,
+    customPath?: string
+  ): Promise<BridgeRequest[]> {
+    const url =
+      MilkomedaConstants.getBridgeAPIUrl(network) +
+      `/requests?sort=Desc&count=${totalItems}${customPath ?? ""}`;
     const results = await MilkomedaNetwork.bridgeFetchMultiplePages(url, totalItems);
     return results;
   }
