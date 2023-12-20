@@ -18,6 +18,7 @@ export interface Activity extends PendingTx {
 }
 
 export class ActivityManager {
+  // deprecated
   static async getBridgeActivity(
     network: MilkomedaNetworkName,
     evmAddress: string

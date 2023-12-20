@@ -80,6 +80,7 @@ export class PendingManager {
     return goingToBridge;
   }
 
+  // deprecated
   async getTransactionsToBridgeFromAddress(
     address: string,
     bridgeAddress: string
