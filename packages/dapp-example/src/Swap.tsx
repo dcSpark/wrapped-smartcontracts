@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { default as bridgeArtifact } from "./contracts/bridge_abi_v1.json";
 import { bech32ToHexAddress, hexToBytes } from "./utils";
+import type { MilkomedaProvider } from "milkomeda-wsc-provider";
 let cml: typeof import("@dcspark/cardano-multiplatform-lib-browser");
 
 const JSON_RPC_URL = "https://rpc-devnet-cardano-evm.c1.milkomeda.com";
@@ -14,18 +15,21 @@ const BLOCKFROST_API_KEY = process.env.BLOCKFROST_KEY;
 
 const BRIDGE_ADDRESS = "0x319f10d19e21188ecF58b9a146Ab0b2bfC894648";
 
-const inject = async () => {
+const inject = async (): Promise<MilkomedaProvider> => {
   const provider = await import("milkomeda-wsc-provider");
-  await provider.injectCardano(ORACLE_URL, JSON_RPC_URL).setup();
+  const cardanoProvider = provider.injectCardano(ORACLE_URL, JSON_RPC_URL);
+  await cardanoProvider.setup();
 
   cml = await import("@dcspark/cardano-multiplatform-lib-browser");
+
+  return cardanoProvider;
 };
 
 export const getLucid = async (key: string) =>
   Lucid.new(new Blockfrost("https://cardano-preprod.blockfrost.io/api/v0", key), "Preprod");
 
-const wrap = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+const wrap = async (injectedProvider: MilkomedaProvider) => {
+  const provider = new ethers.providers.Web3Provider(injectedProvider);
 
   const lucid = await getLucid(BLOCKFROST_API_KEY);
 
@@ -52,8 +56,8 @@ const wrap = async () => {
   alert("Wrapping submitted");
 };
 
-const swap = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+const swap = async (injectedProvider: MilkomedaProvider) => {
+  const provider = new ethers.providers.Web3Provider(injectedProvider);
 
   const swapContract = new ethers.Contract(
     "0xAE84Ee320C66F2E1f984e28cACa37492f853FC6a",
@@ -90,8 +94,8 @@ const swap = async () => {
   console.log("Swapped");
 };
 
-const unwrap = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
+const unwrap = async (injectedProvider: MilkomedaProvider) => {
+  const provider = new ethers.providers.Web3Provider(injectedProvider);
 
   const tokenContract = new ethers.Contract(
     "0x5fA38625dbd065B3e336e7ef627B06a8e6090e8F",
@@ -135,8 +139,9 @@ const unwrap = async () => {
 };
 
 const App = () => {
+  const [injectedProvider, setInjectedProvider] = React.useState<undefined | MilkomedaProvider>();
   useEffect(() => {
-    inject().catch(console.error);
+    inject().then(provider => { setInjectedProvider(provider); }).catch(console.error);
   }, []);
 
   return (
@@ -146,13 +151,13 @@ const App = () => {
       </Link>
       <h1>Swap</h1>
       <div>
-        <button onClick={wrap}>Wrap</button>
+        <button onClick={() => wrap(injectedProvider)}>Wrap</button>
       </div>
       <div>
-        <button onClick={swap}>Swap</button>
+        <button onClick={() => swap(injectedProvider)}>Swap</button>
       </div>
       <div>
-        <button onClick={unwrap}>Unwrap</button>
+        <button onClick={() => unwrap(injectedProvider)}>Unwrap</button>
       </div>
     </>
   );
