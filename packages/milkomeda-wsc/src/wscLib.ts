@@ -174,8 +174,8 @@ export class WSCLib {
   }
 
   async eth_requestAccounts(): Promise<string> {
-    if (window.ethereum == null) throw new Error("Provider not loaded");
-    const result = (await window.ethereum.request({
+    if (this.wscProvider == null) throw new Error("Provider not loaded");
+    const result = (await this.wscProvider.request({
       method: "eth_requestAccounts",
       params: [],
     })) as string[];
@@ -196,8 +196,8 @@ export class WSCLib {
   }
 
   async getEthersProvider(): Promise<ethers.providers.Web3Provider> {
-    if (!window.ethereum) throw "Provider not loaded";
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (!this.wscProvider) throw "Provider not loaded";
+    const provider = new ethers.providers.Web3Provider(this.wscProvider);
     if (this.isAlgorand()) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (provider.provider as any).peraWallet.chainId = this.peraWallet?.chainId;

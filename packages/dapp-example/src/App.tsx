@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import type { MilkomedaProvider } from "milkomeda-wsc-provider";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -6,26 +7,30 @@ import { Link } from "react-router-dom";
 const COUNTER_ADDRESS = "0000000000000000000000000000000000222222";
 
 const App = () => {
+  const [injectedProvider, setInjectedProvider] = React.useState<undefined | MilkomedaProvider>();
   const injectCardano = async () => {
     const provider = await import("milkomeda-wsc-provider");
-    await provider
-      .injectCardano("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com")
-      .setup(1);
+    const injectedProvider = provider
+      .injectCardano("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
+    setInjectedProvider(injectedProvider);
+    await injectedProvider.setup(1);
 
     alert("Injected");
   };
 
   const injectAlgorand = async () => {
     const provider = await import("milkomeda-wsc-provider");
-    await provider
-      .injectAlgorand("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com")
-      .setup();
+    const injectedProvider = provider
+      .injectAlgorand("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
+    setInjectedProvider(injectedProvider);
+    await injectedProvider.setup();
 
     alert("Injected");
   };
 
   const eth_requestAccounts = async () => {
-    const result = (await window.ethereum.request({
+    if (injectedProvider == null) alert("Provider not injected");
+    const result = (await injectedProvider.request({
       method: "eth_requestAccounts",
       params: [],
     })) as string[];
@@ -34,26 +39,30 @@ const App = () => {
   };
 
   const eth_accounts = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const accounts = await provider.listAccounts();
     alert(accounts);
   };
 
   const eth_blockNumber = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const blockNumber = await provider.getBlockNumber();
     alert(blockNumber);
   };
 
   const eth_getBalance = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const signer = provider.getSigner();
     const balance = await provider.getBalance(signer.getAddress());
     alert(ethers.utils.formatEther(balance));
   };
 
   const sendEther = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const signer = provider.getSigner();
 
     const receiverAddress = prompt("Receiver address");
@@ -69,7 +78,8 @@ const App = () => {
   };
 
   const getCounter = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const counter = new ethers.Contract(
       COUNTER_ADDRESS,
       ["function count() view returns (uint256)", "function increment(uint256)"],
@@ -80,7 +90,8 @@ const App = () => {
   };
 
   const incrementCounter = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
     const counter = new ethers.Contract(
       COUNTER_ADDRESS,
       ["function count() view returns (uint256)", "function increment(uint256)"],

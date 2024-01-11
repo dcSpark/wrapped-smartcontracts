@@ -12,7 +12,8 @@ The provider customizes few json-rpc methods like `eth_sendTransaction`, `eth_re
 ```typescript
 const oldProvider = window.ethereum;
 const provider = await import("provider");
-await provider.inject(oracleUrl, nodeUrl).setup();
+const injectedProvider = provider.inject(oracleUrl, nodeUrl);
+await injectedProvider.setup();
 ```
 
 To switch back to the old provider, for example the MetaMask.
@@ -20,6 +21,10 @@ To switch back to the old provider, for example the MetaMask.
 ```typescript
 window.ethereum = oldProvider;
 ```
+
+Note that there is no guarantee another wallet doesn't come and replace the `window.ethereum` object, so you cannot assume that it always points to the WSC provider. Therefore, to keep a reference to the new WSC provider, you have two options:
+1. Keep a reference to the new provider (`injectedProvider`)
+2. Use [EIP-6963](https://eips.ethereum.org/EIPS/eip-6963) to query the provider at a later date
 
 ## Actor Address
 
@@ -46,11 +51,12 @@ import { ethers } from "ethers";
 import { Blockfrost, Lucid } from "lucid-cardano";
 
 const milkomedaProvider = await import("provider");
-await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
+const injectedProvider = milkomedaProvider.inject(oracleUrl, nodeUrl);
+await injectedProvider.setup();
 
 const amount = 10;
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(injectedProvider);
 
 const signer = provider.getSigner();
 const actorAddress = await signer.getAddress();
@@ -79,11 +85,12 @@ const txHash = await signedTx.submit();
 import { ethers } from "ethers";
 
 const milkomedaProvider = await import("provider");
-await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
+const injectedProvider = milkomedaProvider.inject(oracleUrl, nodeUrl);
+await injectedProvider.setup();
 
 const amount = 10;
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(injectedProvider);
 
 const signer = provider.getSigner();
 
@@ -103,11 +110,12 @@ const receipt = await tx.wait();
 import { ethers } from "ethers";
 
 const milkomedaProvider = await import("provider");
-await milkomedaProvider.inject(oracleUrl, nodeUrl).setup();
+const injectedProvider = milkomedaProvider.inject(oracleUrl, nodeUrl);
+await injectedProvider.setup();
 
 const amount = 10;
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(injectedProvider);
 
 const signer = provider.getSigner();
 
