@@ -41,9 +41,9 @@ const algorandWscEip6963Info: EIP6963ProviderInfo = {
   rdns: "com.milkomeda.a1.wsc",
 } as const;
 
-function addEip6963Listener(provider: EIP6963ProviderInfo) {
+function addEip6963Listener(info: EIP6963ProviderInfo, provider: Provider) {
   const announceEvent = new CustomEvent<EIP6963ProviderDetail>("eip6963:announceProvider", {
-    detail: Object.freeze({ info: cardanoWscEip6963Info, provider }),
+    detail: Object.freeze({ info, provider }),
   }) as EIP6963AnnounceProviderEvent;
 
   // send an event for any dApp that was already listening to let them know about the WSC provider
@@ -57,7 +57,7 @@ function addEip6963Listener(provider: EIP6963ProviderInfo) {
 export const injectCardano = (oracleUrl: string, jsonRpcProviderUrl: string) => {
   const provider = new Provider(oracleUrl, jsonRpcProviderUrl, PROVIDER_TYPES.CARDANO);
   window.ethereum = provider; // note: other wallets may override this or block this from even being set
-  addEip6963Listener(cardanoWscEip6963Info);
+  addEip6963Listener(cardanoWscEip6963Info, provider);
 
   return provider;
 };
@@ -65,7 +65,7 @@ export const injectCardano = (oracleUrl: string, jsonRpcProviderUrl: string) => 
 export const injectAlgorand = (oracleUrl: string, jsonRpcProviderUrl: string) => {
   const provider = new Provider(oracleUrl, jsonRpcProviderUrl, PROVIDER_TYPES.ALGORAND);
   window.ethereum = provider; // note: other wallets may override this or block this from even being set
-  addEip6963Listener(algorandWscEip6963Info);
+  addEip6963Listener(algorandWscEip6963Info, provider);
 
   return provider;
 };
