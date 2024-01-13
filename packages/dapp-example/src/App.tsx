@@ -35,6 +35,11 @@ const App = () => {
       params: [],
     })) as string[];
 
+    // also make sure it doesn't crash when no `params` is specified. This is allowed by EIP-1193
+    (await injectedProvider.request({
+      method: "eth_requestAccounts",
+    })) as string[];
+
     alert(result);
   };
 

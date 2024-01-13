@@ -11,6 +11,16 @@ export const PROVIDER_TYPES = {
 } as const;
 export type ProviderType = (typeof PROVIDER_TYPES)[keyof typeof PROVIDER_TYPES];
 
+/**
+ * A wrapper for EIP-1193
+ * On top of its custom functions, you can use it as a standard EIP-1193 object
+ * ```ts
+ * await wscProvider.request({
+ *     method: "eth_requestAccounts",
+ *     params: [],
+ * })
+ * ```
+ */
 class Provider extends EventEmitter implements MilkomedaProvider {
   private readonly methods: { [key: string]: CustomMethod };
 
@@ -52,6 +62,8 @@ class Provider extends EventEmitter implements MilkomedaProvider {
 
     this.actorVersion = actorVersion;
 
+    // required to emit `connect` as per EIP1193
+    // https://eips.ethereum.org/EIPS/eip-1193#connect-1
     this.emit("connect");
   }
 
@@ -59,6 +71,10 @@ class Provider extends EventEmitter implements MilkomedaProvider {
     await this.setup(actorVersion);
   }
 
+  /**
+   * request method from EIP-1193
+   * https://eips.ethereum.org/EIPS/eip-1193#request-1
+   */
   async request(payload: RequestArguments): Promise<unknown> {
     if (payload.method in this.methods) {
       return this.methods[payload.method](this, payload);
