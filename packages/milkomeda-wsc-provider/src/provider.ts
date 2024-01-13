@@ -20,8 +20,22 @@ export type ProviderType = (typeof PROVIDER_TYPES)[keyof typeof PROVIDER_TYPES];
  *     params: [],
  * })
  * ```
+ *
+ * Or listen to events
+ * ```ts
+ * provider.on('connect', (connectInfo) => { console.log(connectInfo); });
+ * ```
+ *
+ * *Note*: we extend `EventEmitter` instead of forwarding listeners to the underlying RPC.
+ * This is because out of all the events defined in EIP-1193,
+ * the only only relevant to WSCs is the `connect` event emission
+ * which is native to the WSC and not the underlying provider
  */
 class Provider extends EventEmitter implements MilkomedaProvider {
+  /**
+   * Events that need to be handled explicitly by the WSC
+   * Instead of simply being forwarded to the underlying RPC
+   */
   private readonly methods: { [key: string]: CustomMethod };
 
   public readonly peraWallet: PeraWalletConnect | undefined;
@@ -59,12 +73,18 @@ class Provider extends EventEmitter implements MilkomedaProvider {
       method: "eth_actorFactoryAddress",
       params: [actorVersion],
     });
-
     this.actorVersion = actorVersion;
 
     // required to emit `connect` as per EIP1193
     // https://eips.ethereum.org/EIPS/eip-1193#connect-1
-    this.emit("connect");
+    // note: although the spec says this is required, it looks like this isn't well supported:
+    // 1) Some providers like MetaMask follow the spec (https://github.com/MetaMask/providers/blob/126a8c868785eb088511769cd532a72072662369/src/BaseProvider.ts#L323)
+    // 2) Some emit the event without a chainID (https://github.com/floating/eth-provider/blob/69184e9b4101e09e39dd391aef5b1c620a63e147/connections/ws.js#L41)
+    // 3) Some emit no event at all (seemingly HardHat as of Jan 2024)
+    const chainId = (await this.request({
+      method: "eth_chainId",
+    })) as string;
+    this.emit("connect", { chainId });
   }
 
   async changeActorVersion(actorVersion: number): Promise<void> {
@@ -76,10 +96,11 @@ class Provider extends EventEmitter implements MilkomedaProvider {
    * https://eips.ethereum.org/EIPS/eip-1193#request-1
    */
   async request(payload: RequestArguments): Promise<unknown> {
+    // 1) Check if this is a method that requires special support to work with WSC
     if (payload.method in this.methods) {
       return this.methods[payload.method](this, payload);
     }
-
+    // 2) Otherwise, just forward it to the underlying provider
     return this.providerRequest(payload);
   }
 
@@ -91,6 +112,10 @@ class Provider extends EventEmitter implements MilkomedaProvider {
     return this.jsonRpcRequest<T>(this.jsonRpcProviderUrl, payload);
   }
 
+  /**
+   * Implementation of the JSON-RPC API
+   * See https://eips.ethereum.org/EIPS/eip-1474
+   */
   private async jsonRpcRequest<T>(url: string, payload: RequestArguments): Promise<T> {
     const response = await fetch(url, {
       method: "POST",

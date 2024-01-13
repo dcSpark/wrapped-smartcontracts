@@ -12,6 +12,8 @@ The provider customizes few json-rpc methods like `eth_sendTransaction`, `eth_re
 ```typescript
 const oldProvider = window.ethereum;
 const provider = await import("provider");
+// this is the EIP-1193 compatible provider
+// it will internally try to override `window.ethereum` and emit an EIP-6963 event
 const injectedProvider = provider.inject(oracleUrl, nodeUrl);
 await injectedProvider.setup();
 ```

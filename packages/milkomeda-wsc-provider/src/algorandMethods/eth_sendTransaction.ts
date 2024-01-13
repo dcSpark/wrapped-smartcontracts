@@ -24,7 +24,7 @@ const InputSchema = z.union([
 ]);
 
 /**
- * @dev Wraps the eth transaction to the Actor transaction, signs using algorand wallet
+ * @dev Wraps the eth transaction to the Actor transaction, signs using Algorand wallet
  * and sends it to the oracle.
  */
 const eth_sendTransaction: CustomMethod = async (

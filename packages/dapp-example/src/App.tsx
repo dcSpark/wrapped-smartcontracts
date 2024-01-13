@@ -13,6 +13,7 @@ const App = () => {
     const injectedProvider = provider
       .injectCardano("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
     setInjectedProvider(injectedProvider);
+    injectedProvider.on('connect', (connectInfo) => { console.log(connectInfo); });
     await injectedProvider.setup(1);
 
     alert("Injected");
@@ -23,6 +24,7 @@ const App = () => {
     const injectedProvider = provider
       .injectAlgorand("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
     setInjectedProvider(injectedProvider);
+    injectedProvider.on('connect', (connectInfo) => { console.log(connectInfo); });
     await injectedProvider.setup();
 
     alert("Injected");
@@ -55,6 +57,13 @@ const App = () => {
     const provider = new ethers.providers.Web3Provider(injectedProvider);
     const blockNumber = await provider.getBlockNumber();
     alert(blockNumber);
+  };
+
+  const eth_chainId = async () => {
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
+    const networkInfo = await provider.getNetwork();
+    alert(networkInfo.chainId);
   };
 
   const eth_getBalance = async () => {
@@ -127,6 +136,9 @@ const App = () => {
       </div>
       <div>
         <button onClick={eth_blockNumber}>eth_blockNumber</button>
+      </div>
+      <div>
+        <button onClick={eth_chainId}>eth_chainId</button>
       </div>
       <div>
         <button onClick={eth_getBalance}>eth_getBalance</button>
