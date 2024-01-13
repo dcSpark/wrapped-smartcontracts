@@ -11,6 +11,8 @@ export class ProviderRpcError extends Error {
 }
 
 export const JSON_RPC_ERROR_CODES = {
+  // error codes below from the EIP-1474 standards
+  // https://eips.ethereum.org/EIPS/eip-1474
   PARSE_ERROR: -32700,
   INVALID_REQUEST: -32600,
   METHOD_NOT_FOUND: -32601,

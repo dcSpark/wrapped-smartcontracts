@@ -57,6 +57,13 @@ const App = () => {
     alert(blockNumber);
   };
 
+  const eth_chainId = async () => {
+    if (injectedProvider == null) alert("Provider not injected");
+    const provider = new ethers.providers.Web3Provider(injectedProvider);
+    const networkInfo = await provider.getNetwork();
+    alert(networkInfo.chainId);
+  };
+
   const eth_getBalance = async () => {
     if (injectedProvider == null) alert("Provider not injected");
     const provider = new ethers.providers.Web3Provider(injectedProvider);
@@ -127,6 +134,9 @@ const App = () => {
       </div>
       <div>
         <button onClick={eth_blockNumber}>eth_blockNumber</button>
+      </div>
+      <div>
+        <button onClick={eth_chainId}>eth_chainId</button>
       </div>
       <div>
         <button onClick={eth_getBalance}>eth_getBalance</button>
