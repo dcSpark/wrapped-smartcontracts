@@ -13,6 +13,7 @@ const App = () => {
     const injectedProvider = provider
       .injectCardano("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
     setInjectedProvider(injectedProvider);
+    injectedProvider.on('connect', (connectInfo) => { console.log(connectInfo); });
     await injectedProvider.setup(1);
 
     alert("Injected");
@@ -23,6 +24,7 @@ const App = () => {
     const injectedProvider = provider
       .injectAlgorand("http://localhost:8080", "https://rpc-devnet-cardano-evm.c1.milkomeda.com");
     setInjectedProvider(injectedProvider);
+    injectedProvider.on('connect', (connectInfo) => { console.log(connectInfo); });
     await injectedProvider.setup();
 
     alert("Injected");
