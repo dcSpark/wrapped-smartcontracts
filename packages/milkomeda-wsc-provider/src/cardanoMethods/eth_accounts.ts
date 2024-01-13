@@ -6,12 +6,14 @@ import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
 import { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
 import { getActorAddress } from "../utils";
 
-const InputSchema = z.union([
-  z.tuple([]),
-  z.tuple([
-    z.string().refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
-  ]),
-]);
+const InputSchema = z
+  .union([
+    z.tuple([]),
+    z.tuple([
+      z.string().refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
+    ]),
+  ])
+  .optional();
 
 /**
  * @dev Requests cardano address from injected cardano provider and transforms it to the Actor address
@@ -38,7 +40,7 @@ const eth_accounts: CustomMethod = async (
       return [];
     }
 
-    const [salt] = InputSchema.parse(params);
+    const [salt] = InputSchema.parse(params) ?? [];
 
     // After the page refresh the object needs to be enabled again
     await window.cardano.enable();

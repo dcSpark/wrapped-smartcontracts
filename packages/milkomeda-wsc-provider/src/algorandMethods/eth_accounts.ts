@@ -4,15 +4,17 @@ import { JSON_RPC_ERROR_CODES, ProviderRpcError } from "../errors";
 import { CustomMethod, MilkomedaProvider, RequestArguments } from "../types";
 import { getActorAddress } from "../utils";
 
-const InputSchema = z.union([
-  z.tuple([]),
-  z.tuple([
-    z.string().refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
-  ]),
-]);
+const InputSchema = z
+  .union([
+    z.tuple([]),
+    z.tuple([
+      z.string().refine((salt) => ethers.utils.isHexString(salt, 32), { message: "Invalid salt" }),
+    ]),
+  ])
+  .optional();
 
 /**
- * @dev Requests cardano address from the algorand wallet and transforms it to the Actor address
+ * @dev Requests algorand address from the algorand wallet and transforms it to the Actor address
  */
 const eth_accounts: CustomMethod = async (
   provider: MilkomedaProvider,
@@ -37,7 +39,7 @@ const eth_accounts: CustomMethod = async (
   try {
     if (!peraWallet.isConnected || algorandAccounts.length === 0) return [];
 
-    const [salt] = InputSchema.parse(params);
+    const [salt] = InputSchema.parse(params) ?? [];
 
     const [address] = algorandAccounts;
 

@@ -1,3 +1,7 @@
+/**
+ * Errors must be `ProviderRpcError` as per EIP1193
+ * https://eips.ethereum.org/EIPS/eip-1193#errors
+ */
 export class ProviderRpcError extends Error {
   public name = "ProviderRpcError";
 
@@ -19,6 +23,8 @@ export const JSON_RPC_ERROR_CODES = {
   METHOD_NOT_SUPPORTED: -32004,
   LIMIT_EXCEEDED: -32005,
   JSON_RPC_VERSION_NOT_SUPPORTED: -32006,
+  // errors codes below come from the EIP-1193 standard
+  // https://eips.ethereum.org/EIPS/eip-1193#rpc-errors
   USER_REJECTED_REQUEST: 4001,
   UNAUTHORIZED: 4100,
   UNSUPPORTED_METHOD: 4200,
