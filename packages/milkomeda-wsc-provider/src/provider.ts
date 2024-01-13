@@ -20,8 +20,22 @@ export type ProviderType = (typeof PROVIDER_TYPES)[keyof typeof PROVIDER_TYPES];
  *     params: [],
  * })
  * ```
+ *
+ * Or listen to events
+ * ```ts
+ * provider.on('connect', (connectInfo) => { console.log(connectInfo); });
+ * ```
+ *
+ * *Note*: we extend `EventEmitter` instead of forwarding listeners to the underlying RPC.
+ * This is because out of all the events defined in EIP-1193,
+ * the only only relevant to WSCs is the `connect` event emission
+ * which is native to the WSC and not the underlying provider
  */
 class Provider extends EventEmitter implements MilkomedaProvider {
+  /**
+   * Events that need to be handled explicitly by the WSC
+   * Instead of simply being forwarded to the underlying RPC
+   */
   private readonly methods: { [key: string]: CustomMethod };
 
   public readonly peraWallet: PeraWalletConnect | undefined;
