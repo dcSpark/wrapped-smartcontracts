@@ -1,6 +1,6 @@
 {
   "name": "milkomeda-wsc-provider",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A JavaScript Ethereum Provider API for milkomeda wrapped smart contracts.",
   "license": "SGPL-1.0",
   "main": "build/index.js",
