@@ -75,8 +75,14 @@ export class MilkomedaNetwork {
     }
   }
 
-  static async fetchBridgeRequests(network: string, totalItems = 100): Promise<BridgeRequest[]> {
-    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?sort=Desc&count=100`;
+  static async fetchBridgeRequests(
+    network: string,
+    totalItems = 100,
+    customPath?: string
+  ): Promise<BridgeRequest[]> {
+    const url =
+      MilkomedaConstants.getBridgeAPIUrl(network) +
+      `/requests?sort=Desc&count=${totalItems}${customPath ?? ""}`;
     const results = await MilkomedaNetwork.bridgeFetchMultiplePages(url, totalItems);
     return results;
   }
@@ -86,7 +92,7 @@ export class MilkomedaNetwork {
     hash: string
   ): Promise<BridgeRequest | null> {
     const url =
-      MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?mainchain_tx_id=${hash}&count=75`;
+      MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?mainchain_tx_id=${hash}&count=1`;
     const response = await fetch(url);
     const data: BridgeRequestsResponse = await response.json();
 
@@ -101,7 +107,7 @@ export class MilkomedaNetwork {
     network: string,
     hash: string
   ): Promise<BridgeRequest | null> {
-    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?tx_id=${hash}&count=75`;
+    const url = MilkomedaConstants.getBridgeAPIUrl(network) + `/requests?tx_id=${hash}&count=1`;
     const response = await fetch(url);
     const data: BridgeRequestsResponse = await response.json();
 
