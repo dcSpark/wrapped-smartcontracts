@@ -1,6 +1,6 @@
 {
-  "name": "milkomeda-wsc-ui",
-  "version": "0.0.1",
+  "name": "milkomeda-wsc-ui-test-beta",
+  "version": "1.0.20",
   "author": "paulclindo",
   "homepage": "https://github.com/dcSpark/wrapped-smartcontracts#readme",
   "license": "ISC",
@@ -40,7 +40,7 @@
     "detect-browser": "^5.3.0",
     "framer-motion": "^6.3.11",
     "lucide-react": "^0.252.0",
-    "milkomeda-wsc": "0.3.5",
+    "milkomeda-wsc": "0.3.8",
     "qrcode": "^1.5.0",
     "react": "17.x || 18.x",
     "react-confetti": "^6.1.0",
